@@ -23,7 +23,7 @@ unit splash;
 interface
 
 uses
-  QForms,QControls, QStdCtrls, QGraphics, Classes, QExtCtrls;
+  Forms,Controls, StdCtrls, Graphics, Classes, ExtCtrls;
 
 type
   TfrSplash = class(TForm)
@@ -40,6 +40,6 @@ var
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 end.

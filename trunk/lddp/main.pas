@@ -20,16 +20,14 @@ unit main;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
   windowsspecific, registry,
-  {$ENDIF}
-  QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns, Types,
-  QSynHighlighterCpp, QSynHighlighterPas, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, Classes, QActnList, QTypes,
-  QComCtrls, QControls, Inifiles, splash, QSyneditTypes, QGraphics,
-  QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls,
-  QSynEditMiscClasses, QSynEditSearch, QSynEditTextBuffer;
+  Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, Synedit,
+  SynHighlighterLDraw, ExtCtrls, Menus, ImgList, StdActns, Types,
+  SynHighlighterCpp, SynHighlighterPas, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, Classes, ActnList,
+  ComCtrls, Controls, Inifiles, splash, SyneditTypes, Graphics,
+  SyneditKeyCmds, l3check, DATModel, DATBase, StdCtrls,
+  SynEditMiscClasses, SynEditSearch, SynEditTextBuffer, ToolWin;
 
 type
   TfrMain = class(TForm)
@@ -236,7 +234,6 @@ type
     ErrorCheck1: TMenuItem;
     http: TIdHTTP;
     acCheckforUpdate: TAction;
-    N7: TMenuItem;
     SynEditSearch1: TSynEditSearch;
     N14: TMenuItem;
     acBMP2LDraw: TAction;
@@ -372,7 +369,7 @@ const
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 uses
   childwin, about, options, colordialog, dlgsearchreplacetext,
@@ -491,8 +488,8 @@ begin
       LoadFile(Child);
     end;
     memo.Gutter.ShowLineNumbers := frOptions.cboMarginNumbers.Checked;
-    memo.Gutter.Width := frOptions.speMarginWidth.Value;
-    memo.RightEdge := frOptions.speRightLine.Value;
+    memo.Gutter.Width := frOptions.speMarginWidth.AsInteger;
+    memo.RightEdge := frOptions.speRightLine.AsInteger;
   end;
   UpdateControls(false);
 end;
@@ -799,11 +796,11 @@ var
 
 begin
   if (frOptions.cboDet.Checked) then
-    DetThreshold := StrToFloat(Trim(frOptions.seDet.Text));
+    DetThreshold := frOptions.seDet.Value;
   if frOptions.cboDist.Checked then
-    DistThreshold := StrToFloat(Trim(frOptions.seDist.Text));
+    DistThreshold := frOptions.seDist.Value;
   if frOptions.seCollinear.Text <> '' then
-    CollinearPointsThreshold := StrToFloat(Trim(frOptions.seCollinear.Text));
+    CollinearPointsThreshold := frOptions.seCollinear.Value;
 
   with ActiveMDIChild as TfrEditorChild do
   begin
@@ -863,8 +860,8 @@ begin
       with (MDIChildren[i] as TfrEditorChild).memo do
       begin
         Gutter.ShowLineNumbers := frOptions.cboMarginNumbers.Checked;
-        Gutter.Width := frOptions.speMarginWidth.Value;
-        RightEdge := frOptions.speRightLine.Value;
+        Gutter.Width := frOptions.speMarginWidth.AsInteger;
+        RightEdge := frOptions.speRightLine.AsInteger;
       end;
   end
   else frOptions.LoadFormValues;
@@ -1363,9 +1360,9 @@ begin
     DATModel1.Add(Lines[CaretY-1]);
  
     (DATModel1[0] as TDATSubPart).RotationDecimalPlaces :=
-      StrToInt(Trim(frOptions.seRotAcc.Text));
+      frOptions.seRotAcc.Value;
     (DATModel1[0] as TDATSubPart).PositionDecimalPlaces :=
-      StrToInt(Trim(frOptions.sePntAcc.Text));
+      frOptions.sePntAcc.Value;
     DATModel1.InlinePart(0);
 
     DATModel1.Insert(0,'');

@@ -22,8 +22,8 @@ unit colordialog;
 interface
 
 uses
-  QForms, QStdCtrls, QButtons, QExtCtrls,QControls, QComCtrls, Classes,
-  QActnList, QDialogs, QGraphics, SysUtils, Math;
+  Forms, StdCtrls, Buttons, ExtCtrls,Controls, ComCtrls, Classes,
+  ActnList, Dialogs, Graphics, SysUtils, Math;
 
 type
   TfrColorDialog = class(TForm)
@@ -77,7 +77,7 @@ var
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 
 procedure TfrColorDialog.FormShow(Sender: TObject);
@@ -110,7 +110,7 @@ begin
       tmp:=copy(tmp,pos(' ',tmp)+1,30);
       color:=strtoint('$00'+copy(tmp,5,2)+copy(tmp,3,2)+copy(tmp,1,2));
       ShapePtr := FindComponent('Shape'+IntToStr(i)+IntToStr(j)) as TShape;
-      ShapePtr.Color := color;
+      ShapePtr.Brush.Color := color;
       ShapePtr.HelpKeyword := name;
       ShapePtr.tag:=((i-1)*4) + (j-1);
     end;
@@ -158,17 +158,17 @@ begin
 
   if btnewColor.BevelOuter=bvLowered then
   begin
-    btNewColor.color:=(Sender as TShape).color;
+    btNewColor.color:=(Sender as TShape).Brush.color;
     btNewColor.tag:=strtoint(nr);
     btNewcolor.caption:=nr+' - '+cname;
-    btNewColor.Font.Color:=abs($00999999-(Sender as TShape).color);
+    btNewColor.Font.Color:=abs($00999999-(Sender as TShape).Brush.color);
     edColornumber.Text:=nr;
   end
     else begin
-      btOldColor.color:=(Sender as TShape).Color;
+      btOldColor.color:=(Sender as TShape).Brush.Color;
       btOldColor.tag:=strtoint(nr);
       btOldColor.caption:=nr+' - '+cname;
-      btOldColor.Font.Color:=abs($00999999-(Sender as TShape).color);
+      btOldColor.Font.Color:=abs($00999999-(Sender as TShape).Brush.color);
     end
 end;
 

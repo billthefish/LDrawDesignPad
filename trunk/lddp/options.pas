@@ -22,12 +22,12 @@ unit options;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
   windowsspecific,
-  {$ENDIF}
-  QDialogs, QForms, QImgList, QExtCtrls, QStdCtrls, QCheckLst, QMask, QButtons,
-  QControls, QComCtrls, QGraphics, Classes, SysUtils, IniFiles, QSynEdit,
-  QSynMemo, QSynEditHighlighter, QSynHighlighterLDraw;
+  QDialogs, Dialogs, Forms, ImgList, ExtCtrls, StdCtrls, CheckLst, Mask, Buttons,
+  Controls, ComCtrls, QGraphics, Graphics, Classes, SysUtils, IniFiles, SynEdit,
+  SynMemo, SynEditHighlighter, SynHighlighterLDraw, JvMaskEdit, JvSpin,
+  JvTypedEdit, JvEdit;
+
 type
   TfrOptions = class(TForm)
     Panel1: TPanel;
@@ -64,8 +64,6 @@ type
     edParameters: TEdit;
     TabSheet2: TTabSheet;
     GroupBox2: TGroupBox;
-    seDet: TMaskEdit;
-    seDist: TMaskEdit;
     cboDet: TCheckBox;
     cboDist: TCheckBox;
     Memo1: TMemo;
@@ -86,8 +84,6 @@ type
     btExternal: TBitBtn;
     rgStyle: TRadioGroup;
     GroupBox5: TGroupBox;
-    sePntAcc: TMaskEdit;
-    seRotAcc: TMaskEdit;
     lbPntAcc: TLabel;
     lbRotAcc: TLabel;
     TabSheet5: TTabSheet;
@@ -103,17 +99,21 @@ type
     btnReset: TBitBtn;
     SynMemo1: TSynMemo;
     GroupBox6: TGroupBox;
-    seCollinear: TMaskEdit;
     Label6: TLabel;
     Memo3: TMemo;
     GroupBox7: TGroupBox;
     TabSheet6: TTabSheet;
     cboMarginNumbers: TCheckBox;
     GroupBox8: TGroupBox;
-    speMarginWidth: TSpinEdit;
     Label7: TLabel;
-    speRightLine: TSpinEdit;
     Label8: TLabel;
+    speMarginWidth: TJvSpinEdit;
+    speRightLine: TJvSpinEdit;
+    seDist: TJvFloatEdit2;
+    seDet: TJvFloatEdit2;
+    seCollinear: TJvFloatEdit2;
+    sePntAcc: TJvIntegerEdit;
+    seRotAcc: TJvIntegerEdit;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -145,7 +145,7 @@ implementation
 
 uses main;
 
-{$R *.xfm}
+{$R *.dfm}
 
 procedure TfrOptions.UpdateCOntrols;
 begin
@@ -207,8 +207,8 @@ begin
   {$ENDIF}
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
-  shForeground.Color := clButton;
-  shBackground.Color := clButton;
+  shForeground.Brush.Color := clButton;
+  shBackground.Brush.Color := clButton;
   UpdateCOntrols;
   PageControl1.ActivePage:=tsExternal;
 end;
@@ -312,8 +312,8 @@ begin
   end;
   if Assigned(SelectedElement) then
   begin
-    shForeground.Color := SelectedElement.Foreground;
-    shBackground.Color := SelectedElement.Background;
+    shForeground.Brush.Color := SelectedElement.Foreground;
+    shBackground.Brush.Color := SelectedElement.Background;
     btnForeGround.Enabled := True;
     btnBackground.Enabled := True;
   end;
@@ -325,7 +325,7 @@ begin
     if ColorDialog1.Execute then
     begin
       SelectedElement.Foreground := ColorDialog1.Color;
-      shForeground.Color := ColorDialog1.Color;
+      shForeground.Brush.Color := ColorDialog1.Color;
     end;
 end;
 
@@ -335,7 +335,7 @@ begin
     if ColorDialog1.Execute then
     begin
       SelectedElement.Background := ColorDialog1.Color;
-      shBackground.Color := ColorDialog1.Color;
+      shBackground.Brush.Color := ColorDialog1.Color;
     end;
 end;
 
@@ -350,8 +350,8 @@ begin
   NewHighLighter.Free;
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
-  shForeground.Color := clButton;
-  shBackground.Color := clButton;
+  shForeground.Brush.Color := clButton;
+  shBackground.Brush.Color := clButton;
 end;
 
 procedure TfrOptions.SaveFormValues;
@@ -372,11 +372,11 @@ begin
   LDDPini.WriteString(IniSection, 'edEmail_Text', edEMail.Text);
   LDDPini.WriteString(IniSection, 'edName_Text', edName.Text);
   LDDPini.WriteString(IniSection, 'edSig_Text', edSig.Text);
-  LDDPini.WriteString(IniSection, 'seDet_Text', seDet.Text);
-  LDDPini.WriteString(IniSection, 'seDist_Text', seDist.Text);
-  LDDPini.WriteString(IniSection, 'seCollinear_Text', seCollinear.Text);
-  LDDPini.WriteString(IniSection, 'sePntAcc_Text', sePntAcc.Text);
-  LDDPini.WriteString(IniSection, 'seRotAcc_Text', seRotAcc.Text);
+  LDDPini.WriteFloat(IniSection, 'seDet_Value', seDet.Value);
+  LDDPini.WriteFloat(IniSection, 'seDist_Value', seDist.Value);
+  LDDPini.WriteFloat(IniSection, 'seCollinear_Value', seCollinear.Value);
+  LDDPini.WriteInteger(IniSection, 'sePntAcc_Value', sePntAcc.Value);
+  LDDPini.WriteInteger(IniSection, 'seRotAcc_Value', seRotAcc.Value);
   LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
   LDDPini.WriteBool(IniSection, 'cboDet_Checked', cboDet.Checked);
   LDDPini.WriteBool(IniSection, 'cboWaitForFinish_Checked', cboWaitForFinish.Checked);
@@ -407,8 +407,8 @@ begin
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_IdentifierAttriForeground', SynLDRSyn1.IdentifierAttri.Foreground);
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_KeyAttriBackground', SynLDRSyn1.KeyAttri.Background);
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
-  LDDPini.WriteInteger(IniSection, 'speRightLine_Value', speRightLine.Value);
-  LDDPini.WriteInteger(IniSection, 'speMarginWidth_Value', speMarginWidth.Value);
+  LDDPini.WriteInteger(IniSection, 'speRightLine_Value', speRightLine.AsInteger);
+  LDDPini.WriteInteger(IniSection, 'speMarginWidth_Value', speMarginWidth.AsInteger);
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -429,16 +429,16 @@ begin
   edEMail.Text := LDDPini.ReadString(IniSection, 'edEmail_Text', '');
   edName.Text := LDDPini.ReadString(IniSection, 'edName_Text', '');
   edSig.Text := LDDPini.ReadString(IniSection, 'edSig_Text', '');
-  seDet.Text := LDDPini.ReadString(IniSection, 'seDet_Text', '0.1');
-  if Trim(seDet.Text) = '' then seDet.Text := '0.1';
-  seDist.Text := LDDPini.ReadString(IniSection, 'seDist_Text', '0.001');
-  if Trim(seDist.Text) = '' then seDist.Text := '0.001';
-  seCollinear.Text := LDDPini.ReadString(IniSection, 'seCollinear_Text', '0.0001');
-  if Trim(seCollinear.Text) = '' then seCollinear.Text := '0.0001';
-  sePntAcc.Text := LDDPini.ReadString(IniSection, 'sePntAcc_Text', '4');
-  if Trim(sePntAcc.Text) = '' then sePntAcc.Text := '4';
-  seRotAcc.Text := LDDPini.ReadString(IniSection, 'seRotAcc_Text', '4');
-  if Trim(seRotAcc.Text) = '' then seRotAcc.Text := '4';
+  seDet.Value := LDDPini.ReadFloat(IniSection, 'seDet_Value', 0.1);
+  if seDet.Value = 0 then seDet.Value := 0.1;
+  seDist.Value := LDDPini.ReadFloat(IniSection, 'seDist_Value', 0.001);
+  if seDist.Value = 0 then seDist.Value := 0.001;
+  seCollinear.Value := LDDPini.ReadFloat(IniSection, 'seCollinear_Value', 0.0001);
+  if seCollinear.Value = 0 then seCollinear.Value := 0.0001;
+  sePntAcc.Value := LDDPini.ReadInteger(IniSection, 'sePntAcc_Value', 4);
+  if sePntAcc.Value = 0 then sePntAcc.Value := 4;
+  seRotAcc.Value := LDDPini.ReadInteger(IniSection, 'seRotAcc_Value', 4);
+  if seRotAcc.Value = 0 then seRotAcc.Value := 4;
   cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
   cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
   cboWaitForFinish.Checked := LDDPini.ReadBool(IniSection, 'cboWaitForFinish_Checked', false);
@@ -469,8 +469,8 @@ begin
   SynLDRSyn1.IdentifierAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_IdentifierAttriForeground', SynLDRSyn1.IdentifierAttri.Foreground);
   SynLDRSyn1.KeyAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_KeyAttriBackground', SynLDRSyn1.KeyAttri.Background);
   SynLDRSyn1.KeyAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
-  speRightLine.Value := LDDPini.ReadInteger(IniSection, 'speRightLine_Value', 80);
-  speMarginWidth.Value := LDDPini.ReadInteger(IniSection, 'speMarginWidth_Value', 30);
+  speRightLine.AsInteger  := LDDPini.ReadInteger(IniSection, 'speRightLine_Value', 80);
+  speMarginWidth.AsInteger := LDDPini.ReadInteger(IniSection, 'speMarginWidth_Value', 30);
   LDDPini.Free;
 end;
 
