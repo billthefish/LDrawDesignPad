@@ -98,12 +98,13 @@ Description: Checks if form has been changed outside the editor by
              comparing filedate time
 Parameter: Standard
 Return value: Standard
+FILEDATE CHECK IS PLATFORM SPECIFIC - WINDOWS ONLY
 ----------------------------------------------------------------------}
 var r : integer;
     SR : tSearchRec;
 
 begin
-
+  {$IFDEF MSWINDOWS}
   r := FindFirst(self.caption, faAnyFile, SR);
   if r = 0 then
   begin
@@ -121,6 +122,7 @@ begin
         end;
   end;
   FindClose(SR);
+  {$ENDIF}
 
   UpdateControls;
 end;

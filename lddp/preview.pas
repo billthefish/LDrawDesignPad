@@ -3,8 +3,15 @@ unit preview;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls, ToolWin;
+  {$IFDEF MSWINDOWS}
+  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ToolWin,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  QDialogs, QComCtrls, QStdCtrls, QExtCtrls,
+  {$ENDIF}
+  SysUtils, ComCtrls;
 
 type
   TForm1 = class(TForm)
@@ -13,7 +20,9 @@ type
     Panel1: TPanel;
     PaintBox1: TPaintBox;
     ScrollBar: TScrollBar;
+    {$IFDEF MSWINDOWS}
     PrintDialog: TPrintDialog;
+    {$ENDIF}
   private
     { Private declarations }
   public
