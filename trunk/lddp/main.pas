@@ -894,9 +894,15 @@ var
 begin
   Screen.Cursor := crHourGlass;
   if (frOptions.cboDet.Checked) then
-    DetThreshold := frOptions.seDet.Value;
+    DetThreshold := frOptions.seDet.Value
+  else
+    DetThreshold := 0;
+
   if frOptions.cboDist.Checked then
-    DistThreshold := frOptions.seDist.Value;
+    DistThreshold := frOptions.seDist.Value
+  else
+    DistThreshold := 0;
+
   if frOptions.seCollinear.Text <> '' then
     CollinearPointsThreshold := frOptions.seCollinear.Value;
 
@@ -1466,12 +1472,16 @@ begin
     k:=carety;
     lines.Delete(carety-1);
 
+    DATModel1.RotationDecimalPlaces := frOptions.seRotAcc.Value;
+    DATModel1.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+
     for m := DATModel1.Count - 1 downto 0 do
       lines.Insert(carety-1,DATModel1[m].DATString);
 
     carety:=k;
     Modified := true;
   end;
+  (activeMDICHild as TfrEditorChild).UpdateControls;
   DATModel1.Free;
 end;
 
