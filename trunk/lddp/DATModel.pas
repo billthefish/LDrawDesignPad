@@ -68,10 +68,12 @@ type
     private
       strFilePath: string;
       strFileName: string;
+      procedure SetFilePath(fPath: string);
+      procedure SetFileName(fName: string);
 
     public
-      property FilePath: string read strFilePath write strFilePath;
-      property FileName: string read strFileName write strFileName;
+      property FilePath: string read strFilePath write SetFilePath;
+      property FileName: string read strFileName write SetFileName;
       property ModelText: string read GetModelText write SetModelText;
 
       property Lines; default;{Public redeclare of the inherited Lines property}
@@ -162,6 +164,7 @@ type
   TDATMPDModel = class(TPersistent)
     private
       FModelCollection: TObjectList;
+      FDuplicates: Boolean;
 
     protected
       procedure SetModel(Idx: Integer; Value: TDATModel);
@@ -176,8 +179,13 @@ type
       property Models[Idx:Integer]: TDATModel read GetModel write SetModel; default;
       property Count:Integer read GetCount;
       property ModelText: string read GetModelText write SetModelText;
-      procedure Add(objLine: TDATModel);
-      procedure Insert(Index: Integer; objLine: TDATModel);
+      property Duplicates: Boolean read FDuplicates write FDuplicates;
+      procedure Add(objLine: TDATModel); overload;
+      procedure Add(fName, mText: string); overload;
+      procedure Replace(OldModelName: string; NewModel: TDATModel); overload;
+      procedure Replace(OldModelName,NewModelName,NewModelText: string); overload;
+      procedure Insert(Index: Integer; objLine: TDATModel); overload;
+      procedure Insert(Index: Integer; fName, mText: string); overload;
       procedure Clear;
       procedure LoadModel(Filename: string);
       procedure SaveModel(Filename: string);
@@ -316,7 +324,7 @@ end;
 
 procedure TDATCustomModel.Add(strLine: string);
 begin
-  Insert(GetCount, strLine);
+  Insert(Count, strLine);
 end;
 
 procedure TDATCustomModel.Insert(Index: Integer; objLine: TDATType);
@@ -380,6 +388,16 @@ begin
 end;
 
 { TDATModel Code }
+procedure TDATModel.SetFilePath(fPath: string);
+begin
+  strFilePath := Lowercase(fPath);
+end;
+
+procedure TDATModel.SetFileName(fName: string);
+begin
+  strFileName := Lowercase(fName);
+end;
+
 procedure TDATModel.LoadModel(DATFile: string);
 
 var
@@ -1058,18 +1076,6 @@ var
   i,j: Integer;
   DModel: TDATModel;
 
-  procedure AddModel(AModel: TDATModel);
-
-  var
-    TempModel: TDATModel;
-
-  begin
-    TempModel := TDATModel.Create;
-    TempModel.FileName := AModel.FileName;
-    TempModel.ModelText := AModel.ModelText;
-    Self.Add(TempModel);
-  end;
-
 begin
   ModelTxt := TSTringList.Create;
   DModel := TDATModel.Create;
@@ -1100,7 +1106,7 @@ begin
       DModel.FileName := Parse[2];
 
       if IndexOfModel(DModel.FileName) < 0 then
-        AddModel(DModel);
+        Add(DModel.FileName, DModel.ModelText);
     end;
 
     Parse.Free;
@@ -1112,12 +1118,71 @@ end;
 
 procedure TDATMPDModel.Add(objLine: TDATModel);
 begin
-  Insert(GetCount, objLine);
+  Insert(Count, objLine);
+end;
+
+procedure TDATMPDModel.Add(fName, mText: string);
+begin
+  Insert(Count,fName, mText);
+end;
+
+procedure TDATMPDModel.Replace(OldModelName: string; NewModel: TDATModel);
+var
+  i,j: Integer;
+
+begin
+  OldModelName := LowerCase(OldModelName);
+  if (IndexOfModel(OldModelName) >= 0) and
+     (IndexOfModel(NewModel.FileName) < 0) then
+  begin
+    for i := 0 to Count - 1 do
+      for j := 0 to Models[i].Count - 1 do
+        if (Models[i].Lines[j] is TDATSubPart) then
+           if (Models[i].Lines[j] as TDATSubPart).SubPart = OldModelName then
+             (Models[i].Lines[j] as TDATSubPart).SubPart := NewModel.FileName;
+    Delete(IndexOfModel(OldModelName));
+    Add(NewModel);
+  end;
+end;
+
+procedure TDATMPDModel.Replace(OldModelName,NewModelName,NewModelText: string);
+
+var
+ TempModel: TDATModel;
+
+begin
+  TempModel := TDATModel.Create;
+  TempModel.FileName := NewModelName;
+  TempModel.ModelText := NewModelText;
+  Replace(OldModelName, TempModel);
+
+  if IndexOfModel(NewModelName) < 0 then
+    TempModel.Free;
 end;
 
 procedure TDATMPDModel.Insert(Index: Integer; objLine: TDATModel);
 begin
-  FModelCollection.Insert(Index, objLine);
+  if not Duplicates then
+  begin
+    if IndexOfModel(objLine.FileName) < 0 then
+      FModelCollection.Insert(Index, objLine);
+  end
+  else
+    FModelCollection.Insert(Index, objLine);
+end;
+
+procedure TDATMPDModel.Insert(Index: Integer; fName, mText: string);
+var
+  TempModel: TDATModel;
+
+begin
+  TempModel := TDATModel.Create;
+  TempModel.FileName := fName;
+  TempModel.ModelText := mText;
+  Insert(Index,TempModel);
+
+  if IndexOfModel(fName) < 0 then
+    TempModel.Free;
 end;
 
 function TDATMPDModel.GetCount: Integer;
@@ -1139,6 +1204,7 @@ end;
 function TDATMPDModel.IndexOfModel(strName: string; StartIndex: Integer = 0): Integer;
 
 begin
+  strName := LowerCase(strName);
   Result := StartIndex;
   while Result < Count do
   begin

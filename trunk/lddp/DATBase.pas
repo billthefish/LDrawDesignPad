@@ -575,7 +575,6 @@ var
 
 begin
   strSep := DecimalSeparator;
-  DecimalSeparator := '.';
   Result := IntToStr(intLineType) + ' ' +
             IntToStr(Self.Color) + ' ';
 
@@ -588,7 +587,7 @@ begin
                        FloatToStr(RoundTo(FDATMatrix[i,2],-abs(RotAcc))) + ' ' +
                        FloatToStr(RoundTo(FDATMatrix[i,3],-abs(RotAcc))) + ' ';
 
-  Result := Result + ' ' + strSubPartFile + strFileExt;
+  Result := Result + strSubPartFile + strFileExt;
   DecimalSeparator := strSep;
 end;
 
