@@ -256,6 +256,7 @@ type
   end;
 
   function StrToDAT(strLine: string): TDATType;
+  function PositionFromMatrix(DMatrix: TDATMatrix): TDATPoint;
 
 var
 {$IFDEF MSWINDOWS}
@@ -268,6 +269,8 @@ var
                                     (0,1,0,0),
                                     (0,0,1,0),
                                     (0,0,0,1));
+
+  FDATOriginPoint: TDATPoint = (0,0,0);
 
 implementation
 
@@ -814,6 +817,14 @@ begin
     Result := TDATComment.Create;
     (Result as TDATComment).Comment := 'Invalid Line: ' + strLine;
   end;
+end;
+
+function PositionFromMatrix(DMatrix: TDATMatrix): TDATPoint;
+
+begin
+  Result[1] := DMatrix[1,4];
+  Result[2] := DMatrix[2,4];
+  Result[3] := DMatrix[3,4];
 end;
 
 end.

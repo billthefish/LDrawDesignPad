@@ -280,7 +280,6 @@ begin
 end;
 
 procedure TfrOptions.btExternalClick(Sender: TObject);
-var strDir:Widestring;
 begin
   OpenDialog.InitialDir := ExtractFileDir(edExternal.Text);
   OpenDialog.Title := 'Select Program Location';
