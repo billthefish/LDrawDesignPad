@@ -27,14 +27,16 @@ uses
   options in 'options.pas' {frOptions},
   splash in 'splash.pas' {frSplash},
   colordialog in 'colordialog.pas' {frColorDialog},
-  dlgsearchreplacetext in 'dlgsearchreplacetext.pas' {frTextReplaceDialog},
   BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
   modeltreeview in 'modeltreeview.pas' {frModelTreeView},
   windowsspecific in 'windowsspecific.pas',
   linuxspecific in 'linuxspecific.pas',
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
-  DATModel in 'DATModel.pas';
+  DATModel in 'DATModel.pas',
+  dlgSearchText in 'dlgSearchText.pas' {TextSearchDialog},
+  dlgReplaceText in 'dlgReplaceText.pas' {TextReplaceDialog},
+  dlgConfirmReplace in 'dlgConfirmReplace.pas' {ConfirmReplaceDialog};
 
 {$R *.res}
 
@@ -48,7 +50,6 @@ begin
   Application.CreateForm(TfrAboutBox, frAboutBox);
   Application.CreateForm(TfrOptions, frOptions);
   Application.CreateForm(TfrColorDialog, frColorDialog);
-  Application.CreateForm(TfrTextSearchReplaceDialog, frTextSearchReplaceDialog);
   Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
   Application.CreateForm(TfrModelTreeView, frModelTreeView);
   Application.CreateForm(TfrModelTreeView, frModelTreeView);

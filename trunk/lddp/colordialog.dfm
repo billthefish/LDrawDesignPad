@@ -5,8 +5,8 @@ object frColorDialog: TfrColorDialog
   Height = 313
   VertScrollBar.Range = 41
   ActiveControl = edColornumber
-  AutoScroll = False
-  Caption = 'Change Color'
+  BorderStyle = bsDialog
+  Caption = 'Search & Replace Color Dialog'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -24,121 +24,137 @@ object frColorDialog: TfrColorDialog
     Left = 0
     Top = 0
     Width = 415
-    Height = 238
+    Height = 245
     Align = alClient
     Caption = 'Pick your color'
     TabOrder = 0
     object Shape11: TShape
-      Left = 216
+      Left = 225
       Top = 24
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape12: TShape
-      Left = 256
+      Left = 265
       Top = 24
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape22: TShape
-      Left = 256
+      Left = 265
       Top = 64
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape32: TShape
-      Left = 256
+      Left = 265
       Top = 104
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape42: TShape
-      Left = 256
+      Left = 265
       Top = 144
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape43: TShape
-      Left = 296
+      Left = 305
       Top = 144
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape14: TShape
-      Left = 336
+      Left = 345
       Top = 24
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape24: TShape
-      Left = 336
+      Left = 345
       Top = 64
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape34: TShape
-      Left = 336
+      Left = 345
       Top = 104
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape33: TShape
-      Left = 296
+      Left = 305
       Top = 104
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape44: TShape
-      Left = 336
+      Left = 345
       Top = 144
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape13: TShape
-      Left = 296
+      Left = 305
       Top = 24
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape23: TShape
-      Left = 296
+      Left = 305
       Top = 64
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape21: TShape
-      Left = 216
+      Left = 225
       Top = 64
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape31: TShape
-      Left = 216
+      Left = 225
       Top = 104
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Shape41: TShape
-      Left = 216
+      Left = 225
       Top = 144
       Width = 40
       Height = 40
       OnMouseDown = Shape11MouseDown
+      OnMouseMove = Shape11MouseMove
     end
     object Label1: TLabel
       Left = 12
@@ -202,9 +218,9 @@ object frColorDialog: TfrColorDialog
       TabOrder = 0
     end
     object edDescription: TEdit
-      Left = 216
+      Left = 225
       Top = 184
-      Width = 185
+      Width = 177
       Height = 21
       Color = clBtnFace
       Font.Charset = DEFAULT_CHARSET
@@ -217,9 +233,9 @@ object frColorDialog: TfrColorDialog
       TabOrder = 1
     end
     object ScrollBar1: TScrollBar
-      Left = 376
+      Left = 385
       Top = 24
-      Width = 25
+      Width = 16
       Height = 161
       Kind = sbVertical
       PageSize = 0
@@ -238,16 +254,17 @@ object frColorDialog: TfrColorDialog
   end
   object Panel3: TPanel
     Left = 0
-    Top = 238
+    Top = 245
     Width = 415
     Height = 41
     Align = alBottom
+    BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
       415
       41)
     object BitBtn1: TBitBtn
-      Left = 244
+      Left = 242
       Top = 8
       Width = 75
       Height = 25
@@ -301,7 +318,7 @@ object frColorDialog: TfrColorDialog
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
     end
     object BitBtn2: TBitBtn
-      Left = 327
+      Left = 325
       Top = 8
       Width = 77
       Height = 25

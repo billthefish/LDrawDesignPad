@@ -64,6 +64,8 @@ type
     procedure ScrollBar1Change(Sender: TObject);
     procedure Shape11MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure Shape11MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
   private
     { Private declarations }
   public
@@ -170,6 +172,17 @@ begin
       btOldColor.caption:=nr+' - '+cname;
       btOldColor.Font.Color:=abs($00999999-(Sender as TShape).Brush.color);
     end
+end;
+
+
+procedure TfrColorDialog.Shape11MouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+var cname,tmp,nr:string;
+begin
+  nr:=slColors.Names[(Sender as TShape).tag+scrollbar1.position*4];
+  tmp:=slColors.Values[nr];
+  cname:=copy(tmp,1,pos(' ',tmp)-1);
+  edDescription.text:='Nr: '+nr+' - '+cname;
 end;
 
 end.

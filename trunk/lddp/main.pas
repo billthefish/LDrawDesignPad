@@ -26,8 +26,9 @@ uses
   SynHighlighterCpp, SynHighlighterPas, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, Classes, ActnList,
   ComCtrls, Controls, Inifiles, splash, SyneditTypes, Graphics,
-  SyneditKeyCmds, l3check, DATModel, DATBase, StdCtrls, Shellapi,
-  SynEditMiscClasses, SynEditSearch, ToolWin, SynEditTextBuffer;
+  SyneditKeyCmds, l3check, DATModel, DATBase, StdCtrls, Shellapi, dlgReplaceText,
+  SynEditMiscClasses, SynEditSearch, ToolWin, SynEditTextBuffer, dlgSearchText,
+  SynEditRegexSearch;
 
 type
   TfrMain = class(TForm)
@@ -229,7 +230,7 @@ type
     ErrorCheck1: TMenuItem;
     http: TIdHTTP;
     acCheckforUpdate: TAction;
-    SynEditSearch1: TSynEditSearch;
+    SynEditSearch: TSynEditSearch;
     N14: TMenuItem;
     acBMP2LDraw: TAction;
     ConvertBitmaptoLDraw1: TMenuItem;
@@ -295,6 +296,7 @@ type
     acECUnMarkAllTyped: TAction;
     AutofixSelectedError2: TMenuItem;
     AutofixAllErrors2: TMenuItem;
+    SynEditRegexSearch: TSynEditRegexSearch;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -372,9 +374,11 @@ type
     procedure acECFixAllErrorsTypedExecute(Sender: TObject);
     procedure acECMarkAllTypedExecute(Sender: TObject);
     procedure acECUnMarkAllTypedExecute(Sender: TObject);
+    procedure acFindNextUpdate(Sender: TObject);
 
   private
     { Private declarations }
+    fSearchFromCaret: boolean;
     initialized:boolean;
     procedure AppInitialize;
     procedure SetErrorCheckMarks(State: Boolean; ErrorType: string);
@@ -389,7 +393,7 @@ type
     slPlugins:TStringList;
     IniFileName, IniSection: string;
     procedure LoadPlugins(AppInit:Boolean = false);
-    procedure DoSearchReplaceText;
+    procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
     function  GetTmpFileName: String;
     procedure LoadFile(EditCh: TForm);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
@@ -413,8 +417,25 @@ implementation
 {$R *.dfm}
 
 uses
-  childwin, about, options, colordialog, dlgsearchreplacetext,
-  BMP2LDraw, modeltreeview;
+  childwin, about, options, colordialog,
+  BMP2LDraw, modeltreeview, dlgConfirmReplace;
+
+
+var
+  gbSearchBackwards: boolean;
+  gbSearchCaseSensitive: boolean;
+  gbSearchFromCaret: boolean;
+  gbSearchSelectionOnly: boolean;
+  gbSearchTextAtCaret: boolean;
+  gbSearchWholeWords: boolean;
+  gbSearchRegex: boolean;
+
+  gsSearchText: string;
+  gsSearchTextHistory: string;
+  gsReplaceText: string;
+  gsReplaceTextHistory: string;
+
+
 
 
 procedure TfrMain.FileIsDropped ( VAR Msg : TMessage ) ;
@@ -1605,7 +1626,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  DoSearchReplaceText;
+  DoSearchReplaceText(FALSE, FALSE);
 end;
 
 procedure TfrMain.btPollingClick(Sender: TObject);
@@ -1840,58 +1861,96 @@ Description: Show Search and Replace dialogue
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
+var
+  dlg: TTextSearchDialog;
 begin
-  if not AReplace then
-  begin
-    frTextSearchReplaceDialog.cbReplaceText.Visible := False;
-    frTextSearchReplaceDialog.Label2.Visible := False;
-    frTextSearchReplaceDialog.cbReplaceAll.Visible := False;
-  end
+  Statusbar.SimpleText := '';
+  if AReplace then
+    dlg := TTextReplaceDialog.Create(Self)
   else
-  begin
-    frTextSearchReplaceDialog.cbReplaceText.Visible := True;
-    frTextSearchReplaceDialog.Label2.Visible := True;
-    frTextSearchReplaceDialog.cbReplaceAll.Visible := True;
-  end;
-
-  if (activeMDICHild as TfrEditorChild).memo.SelLength > 0 then
-    frTextSearchReplaceDialog.cbSearchText.Text :=
-     (activeMDICHild as TfrEditorChild).memo.SelText;
-  if (frTextSearchReplaceDialog.ShowModal = mrOK) then
-  begin
-    ActiveMDIChild.SetFocus;
-    DoSearchReplaceText;
+    dlg := TTextSearchDialog.Create(Self);
+  with dlg do try
+    // assign search options
+    SearchBackwards := gbSearchBackwards;
+    SearchCaseSensitive := gbSearchCaseSensitive;
+    SearchFromCursor := gbSearchFromCaret;
+    SearchInSelectionOnly := gbSearchSelectionOnly;
+    // start with last search text
+    SearchText := gsSearchText;
+    if gbSearchTextAtCaret then begin
+      // if something is selected search for that text
+      if (activeMDICHild as TfrEditorChild).memo.SelAvail and ((activeMDICHild as TfrEditorChild).memo.BlockBegin.Y = (activeMDICHild as TfrEditorChild).memo.BlockEnd.Y)
+      then
+        SearchText := (activeMDICHild as TfrEditorChild).memo.SelText
+      else
+        SearchText := (activeMDICHild as TfrEditorChild).memo.GetWordAtRowCol((activeMDICHild as TfrEditorChild).memo.CaretXY);
+    end;
+    SearchTextHistory := gsSearchTextHistory;
+    if AReplace then with dlg as TTextReplaceDialog do begin
+      ReplaceText := gsReplaceText;
+      ReplaceTextHistory := gsReplaceTextHistory;
+    end;
+    SearchWholeWords := gbSearchWholeWords;
+    if ShowModal = mrOK then begin
+      gbSearchBackwards := SearchBackwards;
+      gbSearchCaseSensitive := SearchCaseSensitive;
+      gbSearchFromCaret := SearchFromCursor;
+      gbSearchSelectionOnly := SearchInSelectionOnly;
+      gbSearchWholeWords := SearchWholeWords;
+      gbSearchRegex := SearchRegularExpression;
+      gsSearchText := SearchText;
+      gsSearchTextHistory := SearchTextHistory;
+      if AReplace then with dlg as TTextReplaceDialog do begin
+        gsReplaceText := ReplaceText;
+        gsReplaceTextHistory := ReplaceTextHistory;
+      end;
+      fSearchFromCaret := gbSearchFromCaret;
+      if gsSearchText <> '' then begin
+        DoSearchReplaceText(AReplace, gbSearchBackwards);
+        fSearchFromCaret := TRUE;
+      end;
+    end;
+  finally
+    dlg.Free;
   end;
 end;
 
-procedure TfrMain.DoSearchReplaceText;
-{---------------------------------------------------------------------
-Description: Do the actual Search and replace
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+procedure TfrMain.DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
+var
+  Options: TSynSearchOptions;
 begin
-  if (activeMDICHild as TfrEditorChild).memo.SearchReplace(frTextSearchReplaceDialog.SearchText,
-                                                           frTextSearchReplaceDialog.ReplaceText,
-                                                           frTextSearchReplaceDialog.SearchOptions) = 0 then
+  Statusbar.SimpleText := '';
+  if AReplace then
+    Options := [ssoPrompt, ssoReplace, ssoReplaceAll]
+  else
+    Options := [];
+  if ABackwards then
+    Include(Options, ssoBackwards);
+  if gbSearchCaseSensitive then
+    Include(Options, ssoMatchCase);
+  if not fSearchFromCaret then
+    Include(Options, ssoEntireScope);
+  if gbSearchSelectionOnly then
+    Include(Options, ssoSelectedOnly);
+  if gbSearchWholeWords then
+    Include(Options, ssoWholeWord);
+  if gbSearchRegex then
+    (activeMDICHild as TfrEditorChild).memo.SearchEngine := SynEditRegexSearch
+  else
+    (activeMDICHild as TfrEditorChild).memo.SearchEngine := SynEditSearch;
+  if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
   begin
-    if ssoBackwards in frTextSearchReplaceDialog.SearchOptions then
+    MessageBeep(MB_ICONASTERISK);
+    MessageDlg('Searchtext has not been found.', mtInformation, [mbOK], 0);
+    if ssoBackwards in Options then
       (activeMDICHild as TfrEditorChild).memo.BlockEnd := (activeMDICHild as TfrEditorChild).memo.BlockBegin
     else
       (activeMDICHild as TfrEditorChild).memo.BlockBegin := (activeMDICHild as TfrEditorChild).memo.BlockEnd;
     (activeMDICHild as TfrEditorChild).memo.CaretXY := (activeMDICHild as TfrEditorChild).memo.BlockBegin;
-
-    frTextSearchReplaceDialog.SearchOptions :=
-      frTextSearchReplaceDialog.SearchOptions - [ssoEntireScope];
-
-    acFindNext.Enabled := False;
-  end
-  else
-  begin
-    acFindNext.Enabled := True;
-    frTextSearchReplaceDialog.SearchOptions :=
-      frTextSearchReplaceDialog.SearchOptions - [ssoEntireScope];
   end;
+
+  if ConfirmReplaceDialog <> nil then
+    ConfirmReplaceDialog.Free;
 end;
 
 {---------------------------------------------------------------------
@@ -2345,6 +2404,11 @@ procedure TfrMain.acECFixAllErrorsTypedExecute(Sender: TObject);
 begin
   with ActiveMDIChild as TfrEditorChild do
    ErrorCheckErrorFix(False,lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
+end;
+
+procedure TfrMain.acFindNextUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := gsSearchText <> '';
 end;
 
 end.

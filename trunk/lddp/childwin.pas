@@ -49,6 +49,9 @@ type
       Line: Integer; Mark: TSynEditMark);
     procedure lbInfoSelectItem(Sender: TObject; Item: TListItem;
       Selected: Boolean);
+    procedure memoReplaceText(Sender: TObject; const ASearch,
+      AReplace: String; Line, Column: Integer;
+      var Action: TSynReplaceAction);
   private
     { Private declarations }
     tmpFilename:string;
@@ -61,7 +64,7 @@ type
 
 implementation
 
-uses main, preview;
+uses main, preview, dlgConfirmReplace;
 
 {$R *.dfm}
 
@@ -294,6 +297,35 @@ begin
   frMain.acECFixError.Enabled := not UnFixableError;
   frMain.acECFixAllErrorsTyped.Enabled := not UnFixableError;
   frMain.acECFixAllMarkedErrorsTyped.Enabled := not UnFixableError;
+end;
+
+
+procedure TfrEditorChild.memoReplaceText(Sender: TObject; const ASearch,
+  AReplace: String; Line, Column: Integer; var Action: TSynReplaceAction);
+var
+  APos: TPoint;
+  EditRect: TRect;
+begin
+  if ASearch = AReplace then
+    Action := raSkip
+  else begin
+    APos := Point(Column, Line);
+    APos := memo.ClientToScreen(memo.RowColumnToPixels(APos));
+    EditRect := ClientRect;
+    EditRect.TopLeft := ClientToScreen(EditRect.TopLeft);
+    EditRect.BottomRight := ClientToScreen(EditRect.BottomRight);
+
+    if ConfirmReplaceDialog = nil then
+      ConfirmReplaceDialog := TConfirmReplaceDialog.Create(Application);
+    ConfirmReplaceDialog.PrepareShow(EditRect, APos.X, APos.Y,
+      APos.Y + memo.LineHeight, ASearch);
+    case ConfirmReplaceDialog.ShowModal of
+      mrYes: Action := raReplace;
+      mrYesToAll: Action := raReplaceAll;
+      mrNo: Action := raSkip;
+      else Action := raCancel;
+    end;
+  end;
 end;
 
 end.
