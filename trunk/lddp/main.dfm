@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 204
-  Top = 161
+  Left = 233
+  Top = 249
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'
@@ -884,13 +884,6 @@ object frMain: TfrMain
       OnExecute = acExternalsToolbarExecute
       OnUpdate = acToolbarUpdate
     end
-    object acFilePrint: TPrintDlg
-      Category = 'File'
-      Caption = '&Print'
-      ImageIndex = 36
-      ShortCut = 16464
-      OnAccept = acFilePrintAccept
-    end
     object acHighlightLdraw: TAction
       Caption = 'LDraw'
       OnExecute = acHighlightLdrawExecute
@@ -906,6 +899,13 @@ object frMain: TfrMain
     object acMRUList: TAction
       Caption = 'acMRUList'
       OnExecute = acMRUListExecute
+    end
+    object acFilePrint: TAction
+      Category = 'File'
+      Caption = '&Print'
+      ImageIndex = 36
+      ShortCut = 16464
+      OnExecute = acFilePrintExecute
     end
   end
   object ilToolBarColor: TImageList
