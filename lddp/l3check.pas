@@ -309,6 +309,7 @@ begin
              TempMatrix[1,1] := 1 / abs(tempval);
              TempMatrix[2,2] := 1 / abs(tempval);
              TempMatrix[3,3] := 1 / abs(tempval);
+             Translate(-RotationMatrix[1,1],-RotationMatrix[1,2],-RotationMatrix[1,3]);
              Transform(TempMatrix);
              for i := 1 to 3 do
              begin
