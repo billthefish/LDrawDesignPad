@@ -31,8 +31,6 @@ uses
   QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls,
   QSynEditMiscClasses, QSynEditSearch;
 
-
-
 type
   TfrMain = class(TForm)
     acCommentBlock: TAction;
@@ -256,7 +254,6 @@ type
     procedure PluginClick(Sender: TObject);
     procedure acEditOptionsExecute(Sender: TObject);
     procedure acOptionsExecute(Sender: TObject);
-
     procedure acInlineExecute(Sender: TObject);
     procedure acCommentBlockExecute(Sender: TObject);
     procedure acDecIndentExecute(Sender: TObject);
@@ -327,13 +324,11 @@ type
     strChangedCompleteText:string;
     strChangedSelText:string;
     slPlugins:TStringList;
-    lastfind:integer;
     IniFileName, IniSection: string;
-
     procedure LoadPlugins(AppInit:Boolean = false);
     procedure DoSearchReplaceText;
     function  GetTmpFileName: String;
-    procedure LoadFile(fname:string; EditCh: TForm);
+    procedure LoadFile(EditCh: TForm);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateCOntrols(closing:boolean);
     procedure UpdateMRU(NewFileName: TFileName= '');
@@ -354,12 +349,8 @@ implementation
 {$R *.xfm}
 
 uses
-  childwin,
-  about, options, editoptions, colordialog,
-  dlgconfirmreplace, dlgsearchreplacetext, BMP2LDraw;
-
-resourcestring
-  STextNotFound = 'Text not found';
+  childwin, about, options, editoptions, colordialog, dlgsearchreplacetext,
+  BMP2LDraw;
 
 procedure TfrMain.UpdateControls(closing:boolean);
 {---------------------------------------------------------------------
@@ -406,8 +397,10 @@ begin
   end
   else if mdicount > 0 then
   begin
-    acUndo.Enabled:=(mdicount>0) and (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanUndo;
-    acRedo.Enabled:=(mdicount>0) and (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanRedo;
+    acUndo.Enabled:=(mdicount>0) and
+                    (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanUndo;
+    acRedo.Enabled:=(mdicount>0) and
+                    (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanRedo;
   end
   else
   begin
@@ -421,23 +414,23 @@ begin
   acWindowTile.enabled:=mdicount>0;
 end;
 
-procedure tfrMain.LoadFile(fname:string; EditCh: TForm);
+procedure tfrMain.LoadFile(EditCh: TForm);
 {---------------------------------------------------------------------
 Description: Loads given Filename into the active MDI editor child
 Parameter: fname: Filename
 Return value: none
 ----------------------------------------------------------------------}
 begin
-  if FileExists(fName) then
-    with (EditCh as TfrEditorChild) do
+  with (EditCh as TfrEditorChild) do
+    if FileExists(Caption) then
     begin
-      filedatetime:=FileDateToDateTime(FileAge(fname));
-      Memo.Lines.LoadFromFile(fName);
+      filedatetime:=FileDateToDateTime(FileAge(Caption));
+      Memo.Lines.LoadFromFile(Caption);
       Memo.modified:=false;
       updatecontrols;
     end
-  else
-     MessageDlg('File '''+fname+''' not found!', mtError, [mbOK], 0);
+    else
+      MessageDlg('File '''+Caption+''' not found!', mtError, [mbOK], 0);
 end;
 
 procedure TfrMain.CreateMDIChild(const CaptionName: string; new:boolean);
@@ -469,7 +462,7 @@ begin
         Memo.Highlighter:=SynCppSyn
       else if (FileExt = '.pas') or (FileExt = '.dpr') then
         Memo.Highlighter:=SynPasSyn;
-      LoadFile(CaptionName, Child);
+      LoadFile(Child);
     end;
   end;
   UpdateControls(false);
@@ -679,7 +672,7 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   if MessageDlg('Reload last saved version?'+#13+#10+'All changes will be lost!', mtConfirmation, [mbYes, mbNo], 0)=mrYes
-    then LoadFile(activeMDICHild.caption, ActiveMDIChild);
+    then LoadFile(ActiveMDIChild);
 end;
 
 procedure TfrMain.FormCreate(Sender: TObject);
@@ -1797,7 +1790,6 @@ begin
                                                            frTextSearchReplaceDialog.ReplaceText,
                                                            frTextSearchReplaceDialog.SearchOptions) = 0 then
   begin
-    Statusbar.SimpleText := STextNotFound;
     if ssoBackwards in frTextSearchReplaceDialog.SearchOptions then
       (activeMDICHild as TfrEditorChild).memo.BlockEnd := (activeMDICHild as TfrEditorChild).memo.BlockBegin
     else
@@ -1815,9 +1807,6 @@ begin
     frTextSearchReplaceDialog.SearchOptions :=
       frTextSearchReplaceDialog.SearchOptions - [ssoEntireScope];
   end;
-
-  if frConfirmReplaceDialog <> nil then
-    frConfirmReplaceDialog.Free;
 end;
 
 {---------------------------------------------------------------------
