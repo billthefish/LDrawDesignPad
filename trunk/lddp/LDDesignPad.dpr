@@ -16,24 +16,17 @@ uses
 
 {$R *.RES}
 
-var splashscreen: TfrSplash;
-
 begin
-
-  SplashScreen := TfrSplash.Create(Application);
   try
-    splashscreen.show;
-    splashscreen.update;
     screen.cursor:=-11;
     Application.Initialize;
     Application.Title := 'LDraw DesignPad';
-  Application.CreateForm(TfrMain, frMain);
-  Application.CreateForm(TfrAboutBox, frAboutBox);
-  Application.CreateForm(TfrOptions, frOptions);
-  Application.CreateForm(TfrColorDialog, frColorDialog);
+    Application.CreateForm(TfrMain, frMain);
+    Application.CreateForm(TfrAboutBox, frAboutBox);
+    Application.CreateForm(TfrOptions, frOptions);
+    Application.CreateForm(TfrColorDialog, frColorDialog);
   finally
     screen.cursor:=0;
-    splashscreen.free;
   end;
   Application.Run;
 end.
