@@ -240,6 +240,8 @@ begin
   FreeLibrary(libHndl);
 end;
 
+//procedure CallLibFunction(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
+
 procedure OpenInBrowser(url:string);
 begin
   ShellExecute( Application.Handle, 'open', PChar( url) , nil, nil, SW_NORMAL );

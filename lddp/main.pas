@@ -305,6 +305,19 @@ type
     Pollonrequest1: TMenuItem;
     Pollonrequest2: TMenuItem;
     N24: TMenuItem;
+    ToolButton31: TToolButton;
+    acMirrorX: TAction;
+    acMirrorY: TAction;
+    acMirrorZ: TAction;
+    Mirror1: TMenuItem;
+    XAxis1: TMenuItem;
+    YAxis1: TMenuItem;
+    ZAxis1: TMenuItem;
+    N13: TMenuItem;
+    MirrorLineOn1: TMenuItem;
+    XAxis2: TMenuItem;
+    YAxis2: TMenuItem;
+    ZAxis2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -387,6 +400,7 @@ type
     procedure acSortByPositionExecute(Sender: TObject);
     procedure acRandomizeColorsExecute(Sender: TObject);
     procedure Pollonrequest1Click(Sender: TObject);
+    procedure acMirrorExecute(Sender: TObject);
     
   private
     { Private declarations }
@@ -2839,6 +2853,35 @@ begin
     SelText := DModel.ModelText;
   end;
   DModel.Free;
+end;
+
+procedure TfrMain.acMirrorExecute(Sender: TObject);
+
+var
+  DATLine: TDATType;
+  rows, i: integer;
+
+begin
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    BlockEnd := BufferCoord(Length(Lines[BlockBegin.Line - 1]) + 1, BlockBegin.Line);
+
+    DATLine := StrToDAT(SelText);
+
+    case DATLine.LineType of
+      0: rows := 0;
+      1,3: rows := 3;
+      2: rows := 2;
+      4,5: rows := 4;
+    end;
+
+    if rows > 0 then
+      for i := 1 to rows do
+        (DATLine as TDATElement).RM[i,(Sender as TComponent).Tag] := -(DATLine as TDATElement).RM[i,(Sender as TComponent).Tag];
+
+    SelText := DATLine.DATString;
+  end;
 end;
 
 end.
