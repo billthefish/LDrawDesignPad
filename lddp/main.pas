@@ -2588,6 +2588,9 @@ var
   tmpBlEndY: Integer;
   DModel: TDATModel;
   i: Integer;
+  QuadCombine: TDATQuad;
+  ErrorLine: string;
+  tx,ty,tz: Extended;
 
   procedure ProcessTriangles(tri1, tri2: TDATTriangle);
 
@@ -2599,27 +2602,94 @@ var
   begin
     for j := 1 to 3 do
     begin
-      flag := false;
-      for k := 0 to Length(QuadPoints) do
-        if CheckSamePoint(tri1.Point[j],QuadPoints[k]) then
-          flag := true;
-      if not flag then
+      if Length(QuadPoints) > 0 then
       begin
-        SetLength(QuadPoints, Length(QuadPoints) + 1);
-        QuadPoints[Length(QuadPoints) - 1] := tri1.Point[i];
+        flag := false;
+        for k := 0 to Length(QuadPoints) - 1 do
+          if CheckSamePoint(tri1.Point[j],QuadPoints[k]) then
+            flag := true;
+        if not flag then
+        begin
+          SetLength(QuadPoints, Length(QuadPoints) + 1);
+          QuadPoints[Length(QuadPoints) - 1] := tri1.Point[j];
+        end;
+      end
+      else
+      begin
+        SetLength(QuadPoints,1);
+        QuadPoints[0] := tri1.Point[j];
       end;
       flag := false;
-      for k := 0 to Length(QuadPoints) do
+      for k := 0 to Length(QuadPoints) - 1 do
         if CheckSamePoint(tri2.Point[j],QuadPoints[k]) then
           flag := true;
       if not flag then
       begin
         SetLength(QuadPoints, Length(QuadPoints) + 1);
-        QuadPoints[Length(QuadPoints) - 1] := tri2.Point[i];
+        QuadPoints[Length(QuadPoints) - 1] := tri2.Point[j];
       end;
     end;
+
     if Length(QuadPoints) = 4 then
-      inc(i);
+    begin
+      QuadCombine := TDATQuad.Create;
+      QuadCombine.Point[1] := QuadPoints[0];
+      QuadCombine.Point[2] := QuadPoints[1];
+      QuadCombine.Point[3] := QuadPoints[2];
+      QuadCombine.Point[4] := QuadPoints[2];
+      QuadCombine.Color := tri1.Color;
+      ErrorLine := L3CheckLine(QuadCombine.DATString);
+
+      if pos('Bad vertex sequence, 0132',ErrorLine)>0 then
+        with QuadCombine do
+        begin
+          tx := x4;
+          ty := y4;
+          tz := z4;
+          x4 := x3;
+          y4 := y3;
+          z4 := z3;
+          x3 := tx;
+          y3 := ty;
+          z3 := tz;
+        end
+
+      else if pos('Bad vertex sequence, 0312',ErrorLine)>0 then
+        with QuadCombine do
+        begin
+          tx := x3;
+          ty := y3;
+          tz := z3;
+          x3 := x2;
+          y3 := y2;
+          z3 := z2;
+          x2 := x4;
+          y2 := y4;
+          z2 := z4;
+          x4 := tx;
+          y4 := ty;
+          z4 := tz;
+        end;
+
+      ErrorLine := L3CheckLine(QuadCombine.DATString);
+      flag := true;
+      if (pos('Collinear vertices',ErrorLine)>0) or
+         (pos('Vertices not coplaner',ErrorLine)>0) then
+        if MessageDlg('Combining these triangles:' + #13#10 +
+                      tri1.DATString + #13#10 +
+                      tri2.DATString + #13#10 +
+                      'will result in a quad with collinear or' + #13#10 +
+                      'not coplaner vertices' + #13#10 +
+                      'Combine anyway?', mtWarning, [mbYes, mbNo], 0) = mrNo then
+          flag := false;
+
+      if flag then
+      begin
+        DModel.Insert(i, QuadCombine.DATString);
+        DModel.Delete(i+1);
+        DModel.Delete(i+1);
+      end;
+    end;
   end;
 
 begin
@@ -2638,13 +2708,10 @@ begin
     if DModel.Count >= 2 then
       while i < DModel.Count do
       begin
-        if (not (DModel[i] is TDATTriangle)) and (not (DModel[i+1] is TDATTriangle)) then
-          while (i < DModel.Count) do
-            if (not (DModel[i] is TDATBlankLine)) then
-              inc(i);
-        if i < DModel.Count - 2 then
+        if i <= DModel.Count - 2 then
           if (DModel[i] is TDATTriangle) and (DModel[i+1] is TDATTriangle) then
             ProcessTriangles(DModel[i] as TDATTriangle, DModel[i+1] as TDATTriangle);
+        inc(i);
       end;
     SelText := DModel.ModelText;
   end;
