@@ -29,7 +29,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: EditU2.pas,v 1.2 2003-07-03 07:17:36 billthefish Exp $
+$Id: EditU2.pas,v 1.3 2004-03-01 22:04:56 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -324,8 +324,6 @@ type
       AFiles: TStrings);
     procedure SynEditorEnter(Sender: TObject);
     procedure SynEditorExit(Sender: TObject);
-    procedure SynEditorGutterClick(Sender: TObject; X, Y, Line: Integer;
-      mark: TSynEditMark);
     procedure SynEditorKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure SynEditorKeyPress(Sender: TObject; var Key: Char);
@@ -383,6 +381,8 @@ type
     procedure cbShrinkListClick(Sender: TObject);
     procedure cbCompletionAttrChange(Sender: TObject);
     procedure cbxCompletionColorChange(Sender: TObject);
+    procedure SynEditorGutterClick(Sender: TObject; Button: TMouseButton;
+      X, Y, Line: Integer; Mark: TSynEditMark);
   private
     fDisableMarkButtons: boolean;
     fFileName: string;
@@ -1066,26 +1066,6 @@ begin
     LogEvent('OnExit');
 end;
 
-procedure TDemoMainForm.SynEditorGutterClick(Sender: TObject; X, Y,
-  Line: Integer; mark: TSynEditMark);
-begin
-  if cbOther.Checked then
-    LogEvent('OnGutterClick');
-  SynEditor.CaretY := Line;
-  if not assigned(mark) then begin // place first mark
-    SpeedButton1.Down := true;
-    SpeedButton1.Click;
-  end else
-  if (not mark.IsBookmark) and (mark.ImageIndex >= SpeedButton1.Tag) then begin
-    if mark.ImageIndex = SpeedButton5.Tag then begin // remove mark
-      SpeedButton5.Down := false;
-      SpeedButton5.Click;
-    end else
-      mark.ImageIndex := mark.ImageIndex + 1;
-  end;
-  ResetMarkButtons;
-end;
-
 procedure TDemoMainForm.SynEditorKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -1177,7 +1157,7 @@ const
   ModifiedStrs: array[boolean] of string = ('', 'Modified');
   InsertModeStrs: array[boolean] of string = ('Overwrite', 'Insert');
 var
-  p: TPoint;
+  p: TBufferCoord;
   Token: string;
   Attri: TSynHighlighterAttributes;
 begin
@@ -1185,11 +1165,18 @@ begin
   // caret position has changed
   if Changes * [scAll, scCaretX, scCaretY] <> [] then begin
     p := SynEditor.CaretXY;
-    inpCaretX.Value := p.X;
-    inpCaretY.Value := p.Y;
+    // Detach OnChange events from spin edits,
+    // because re-setting caret position clears selection
+    inpCaretX.OnChange := nil;
+    inpCaretY.OnChange := nil;
+    inpCaretX.Value := p.Char;
+    inpCaretY.Value := p.Line;
+    // Re-attach OnChange events to spin edits
+    inpCaretX.OnChange := inpCaretXChange;
+    inpCaretY.OnChange := inpCaretYChange;
     inpLineText.Text := SynEditor.LineText;
     outLineCount.Text := IntToStr(SynEditor.Lines.Count);
-    Statusbar.Panels[0].Text := Format('%6d:%3d', [p.Y, p.X]);
+    Statusbar.Panels[0].Text := Format('%6d:%3d', [p.Line, p.Char]);
     ResetMarkButtons;
   end;
   // horz scroll position has changed
@@ -1419,7 +1406,7 @@ end;
 
 procedure TDemoMainForm.cbCommentsClick(Sender: TObject);
 var
-  CmntSet: CommentStyles;
+  CmntSet: TCommentStyles;
 begin
   CmntSet := [];
   if cbCommentsAnsi.Checked then
@@ -1454,17 +1441,17 @@ end;
 
 procedure TDemoMainForm.SpeedButtonClick(Sender: TObject);
 var
-  p: TPoint;
+  p: TBufferCoord;
   Mark: TSynEditMark;
 begin
   if not fDisableMarkButtons then with SynEditor do begin
     p := CaretXY;
-    Marks.ClearLine(p.Y);
+    Marks.ClearLine(p.Line);
     if (Sender as TSpeedButton).Down then begin
       Mark := TSynEditMark.Create(SynEditor);
       with Mark do begin
-        Line := p.Y;
-        Column := p.X;
+        Line := p.Line;
+        Char := p.Char;
         ImageIndex := (Sender as TSpeedButton).Tag;
         Visible := TRUE;
         InternalImage := BookMarkOptions.BookMarkImages = nil;
@@ -1667,6 +1654,27 @@ begin
     2 : SynCompletionProposal1.ClSelect := IndexToColor(cbxCompletionColor.ItemIndex);
     3 : SynCompletionProposal1.ClSelectedText := IndexToColor(cbxCompletionColor.ItemIndex);
   end;
+end;
+
+procedure TDemoMainForm.SynEditorGutterClick(Sender: TObject;
+  Button: TMouseButton; X, Y, Line: Integer; Mark: TSynEditMark);
+begin
+  if cbOther.Checked then
+    LogEvent('OnGutterClick');
+  SynEditor.CaretY := Line;
+  if not assigned(mark) then begin // place first mark
+    SpeedButton1.Down := true;
+    SpeedButton1.Click;
+  end else
+  if (not mark.IsBookmark) and (mark.ImageIndex >= SpeedButton1.Tag) then begin
+    if mark.ImageIndex = SpeedButton5.Tag then begin // remove mark
+      SpeedButton5.Down := false;
+      SpeedButton5.Click;
+    end else
+      mark.ImageIndex := mark.ImageIndex + 1;
+  end;
+  ResetMarkButtons;
+
 end;
 
 end.

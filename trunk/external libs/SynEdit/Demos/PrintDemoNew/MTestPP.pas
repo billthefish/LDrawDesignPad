@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: MTestPP.pas,v 1.2 2003-07-03 07:17:50 billthefish Exp $
+$Id: MTestPP.pas,v 1.3 2004-03-01 22:04:57 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
