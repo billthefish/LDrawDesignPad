@@ -231,11 +231,11 @@ begin
     // Set current postion to errorline
     L3PErrorLine := StrToInt(lbinfo.Items[lbinfo.Itemindex].SubItems[0]);
     memo.TopLine := L3PErrorLine;
-    memo.CaretXY := MakeBufferCoord(1, L3PErrorLine);
+    memo.CaretXY := BufferCoord(1, L3PErrorLine);
     
     // Highlight errorline
     memo.BlockBegin := memo.CaretXY;
-    memo.BlockEnd := MakeBufferCoord(1, L3PErrorLine + 1);
+    memo.BlockEnd := BufferCoord(1, L3PErrorLine + 1);
 
     // Change focus from L3P error pane to editor pane
     memo.setfocus;
@@ -279,7 +279,7 @@ begin
   with memo do
   begin
     BlockBegin := CaretXY;
-    BlockEnd := MakeBufferCoord(Length(Lines[Line-1]) + 1 , CaretY);
+    BlockEnd := BufferCoord(Length(Lines[Line-1]) + 1 , CaretY);
   end;
 end;
 
@@ -314,7 +314,7 @@ begin
     APos := memo.ClientToScreen(
       memo.RowColumnToPixels(
       memo.BufferToDisplayPos(
-        MakeBufferCoord(Column, Line) ) ) );
+        BufferCoord(Column, Line) ) ) );
     EditRect := ClientRect;
     EditRect.TopLeft := ClientToScreen(EditRect.TopLeft);
     EditRect.BottomRight := ClientToScreen(EditRect.BottomRight);
