@@ -133,6 +133,12 @@ We especially thank you, the user, for downloading our program
 
 + = New feature  * = Bugfix   - = Removed feature
 
+v1.5.6 13 November 2004
++ Added color replace toolbar
++ Added ability to define multiple user defined extarnal programs
++ Added subfile selection feature
+* Fixed mirror to handle mutiple lines
+
 v1.5.5 29 August 2004
 + Added mirror selected line.
 + Update inline feature to inline multiple line selection
