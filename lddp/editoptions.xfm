@@ -1,6 +1,6 @@
 object frEditOptions: TfrEditOptions
-  Left = 765
-  Top = 180
+  Left = 618
+  Top = 238
   Width = 387
   Height = 400
   VertScrollBar.Range = 37
@@ -32,13 +32,13 @@ object frEditOptions: TfrEditOptions
       Caption = 'LDraw Highlighting'
       object shForeground: TShape
         Left = 112
-        Top = 40
+        Top = 32
         Width = 97
         Height = 17
       end
       object shBackground: TShape
         Left = 112
-        Top = 88
+        Top = 72
         Width = 97
         Height = 17
       end
@@ -53,16 +53,16 @@ object frEditOptions: TfrEditOptions
       object Label2: TLabel
         Left = 112
         Top = 16
-        Width = 57
+        Width = 84
         Height = 13
-        Caption = '&Foreground:'
+        Caption = '&Foreground Color:'
       end
       object Label3: TLabel
         Left = 112
-        Top = 64
-        Width = 61
+        Top = 56
+        Width = 88
         Height = 13
-        Caption = '&Background:'
+        Caption = '&Background Color:'
       end
       object lstElement: TListBox
         Left = 0
@@ -474,54 +474,9 @@ object frEditOptions: TfrEditOptions
             ShortCut = 16496
           end>
       end
-      object gbStyleOptions: TGroupBox
-        Left = 272
-        Top = 16
-        Width = 105
-        Height = 113
-        Caption = 'Style'
-        Enabled = False
-        TabOrder = 4
-        object cbxBold: TCheckBox
-          Left = 8
-          Top = 16
-          Width = 89
-          Height = 17
-          Caption = 'Bold'
-          TabOrder = 0
-          OnClick = cbxBoldClick
-        end
-        object cbxItalic: TCheckBox
-          Left = 8
-          Top = 40
-          Width = 89
-          Height = 17
-          Caption = 'Italic'
-          TabOrder = 1
-          OnClick = cbxItalicClick
-        end
-        object cbxUnderline: TCheckBox
-          Left = 8
-          Top = 64
-          Width = 89
-          Height = 17
-          Caption = 'Underline'
-          TabOrder = 2
-          OnClick = cbxUnderlineClick
-        end
-        object cbxStrikeOut: TCheckBox
-          Left = 8
-          Top = 88
-          Width = 89
-          Height = 17
-          Caption = 'Strikeout'
-          TabOrder = 3
-          OnClick = cbxStrikeOutClick
-        end
-      end
       object btnForeground: TButton
         Left = 216
-        Top = 40
+        Top = 32
         Width = 25
         Height = 17
         Caption = '...'
@@ -532,12 +487,12 @@ object frEditOptions: TfrEditOptions
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 6
+        TabOrder = 5
         OnClick = btnForegroundClick
       end
       object btnBackground: TButton
         Left = 216
-        Top = 88
+        Top = 72
         Width = 25
         Height = 17
         Caption = '...'
@@ -548,7 +503,7 @@ object frEditOptions: TfrEditOptions
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 7
+        TabOrder = 6
         OnClick = btnBackgroundClick
       end
     end
@@ -669,7 +624,7 @@ object frEditOptions: TfrEditOptions
       Top = 7
       Width = 115
       Height = 25
-      Caption = 'Restore Defaults'
+      Caption = '&Restore Defaults'
       TabOrder = 2
       OnClick = Button1Click
       Glyph.Data = {
@@ -718,11 +673,11 @@ object frEditOptions: TfrEditOptions
     end
   end
   object SynLDRSyn1: TSynLDRSyn
-    Left = 41
-    Top = 336
+    Left = 129
+    Top = 368
   end
   object ColorDialog1: TColorDialog
-    Left = 76
-    Top = 334
+    Left = 164
+    Top = 366
   end
 end
