@@ -1439,7 +1439,7 @@ begin
                 '0 KEYWORDS your keywords'+#13#10;
   with (activeMDICHild as TfrEditorChild).memo do
   begin
-    CaretXY := MakeBufferCoord(1,1);
+    CaretXY := BufferCoord(1,1);
     SelText := HeaderText;
     Modified := true;
   end;
@@ -1487,8 +1487,8 @@ begin
         if (Lines[j] <> '') and (Lines[j] <> #13#10) and
            (Lines[j] <> #13) and (Lines[j] <> #10) then
           Lines[j] := '0 ' + Lines[j];
-       BlockBegin := MakeBufferCoord(1,startcol + 1);
-       BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1)
+       BlockBegin := BufferCoord(1,startcol + 1);
+       BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1)
      end;
    end;
 end;
@@ -1516,8 +1516,8 @@ begin
        else
          endcol := BlockEnd.Line - 1;
 
-       BlockBegin := MakeBufferCoord(1,startcol + 1);
-       BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+       BlockBegin := BufferCoord(1,startcol + 1);
+       BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
        DModel := TDATModel.Create;
        DModel.ModelText := SelText;
@@ -1527,8 +1527,8 @@ begin
 
        SelText := DModel.ModelText;
 
-       BlockBegin := MakeBufferCoord(1,startcol + 1);
-       BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+       BlockBegin := BufferCoord(1,startcol + 1);
+       BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
        DModel.Free;
      end;
@@ -1726,8 +1726,8 @@ begin
         else
           endcol := BlockEnd.Line - 1;
 
-        BlockBegin := MakeBufferCoord(1,startcol + 1);
-        BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+        BlockBegin := BufferCoord(1,startcol + 1);
+        BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
         clr.ModelText := SelText;
 
@@ -1742,8 +1742,8 @@ begin
 
         SelText := clr.ModelText;
 
-        BlockBegin := MakeBufferCoord(1,startcol + 1);
-        BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+        BlockBegin := BufferCoord(1,startcol + 1);
+        BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
       end;
     end;
   end;
@@ -1899,119 +1899,120 @@ var
   DATElem: TDATElement;
 
 begin
- with (activeMDICHild as TfrEditorChild) do
- begin
-   // Set postion to line with error
-   lbInfoDblClick(Sender);
+  with (activeMDICHild as TfrEditorChild) do
+  begin
+    if lbInfo.ItemIndex >= 0 then
+      // Set postion to line with error
+      lbInfoDblClick(Sender);
 
-   // Fix the error
-   if pos('Bad vertex sequence, 0132',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-   begin
-     DATElem := TDATQuad.Create;
-     with DATElem as TDATQuad do
-     begin
-       DATString := memo.lines[memo.CaretY-1];
-       tx := x4;
-       ty := y4;
-       tz := z4;
-       x4 := x3;
-       y4 := y3;
-       z4 := z3;
-       x3 := tx;
-       y3 := ty;
-       z3 := tz;
-       memo.lines[memo.CaretY-1] := DATString;
-       DATElem.Free;
-       lbInfo.items.delete(lbInfo.ItemIndex);
-     end;
-   end
+      // Fix the error
+      if pos('Bad vertex sequence, 0132',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATQuad.Create;
+        with DATElem as TDATQuad do
+        begin
+          DATString := memo.lines[memo.CaretY-1];
+          tx := x4;
+          ty := y4;
+          tz := z4;
+          x4 := x3;
+          y4 := y3;
+          z4 := z3;
+          x3 := tx;
+          y3 := ty;
+          z3 := tz;
+          memo.lines[memo.CaretY-1] := DATString;
+          DATElem.Free;
+          lbInfo.items.delete(lbInfo.ItemIndex);
+        end;
+      end
 
-   else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-   begin
-     memo.lines[memo.CaretY-1]:='';
-     lbInfo.items.delete(lbInfo.ItemIndex);
-   end
+      else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+      begin
+        memo.lines[memo.CaretY-1]:='';
+        lbInfo.items.delete(lbInfo.ItemIndex);
+      end
 
-   else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-   begin
-     DATElem := TDATSubPart.Create;
-     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-     (DATElem as TDATSubPart).RM[1,2] := 1;
-     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-     DATElem.Free;
-     lbInfo.items.delete(lbInfo.ItemIndex);
-   end
+      else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATSubPart.Create;
+        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+        (DATElem as TDATSubPart).RM[1,2] := 1;
+        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+        DATElem.Free;
+        lbInfo.items.delete(lbInfo.ItemIndex);
+      end
 
-   else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-   begin
-     DATElem := TDATSubPart.Create;
-     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-     (DATElem as TDATSubPart).RM[2,2] := 1;
-     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-     DATElem.Free;
-     lbInfo.items.delete(lbInfo.ItemIndex);
-   end
+      else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATSubPart.Create;
+        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+        (DATElem as TDATSubPart).RM[2,2] := 1;
+        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+        DATElem.Free;
+        lbInfo.items.delete(lbInfo.ItemIndex);
+      end
 
-   else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-   begin
-     DATElem := TDATSubPart.Create;
-     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-     (DATElem as TDATSubPart).RM[3,2] := 1;
-     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-     DATElem.Free;
-     lbInfo.items.delete(lbInfo.ItemIndex);
-   end
+      else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATSubPart.Create;
+        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+        (DATElem as TDATSubPart).RM[3,2] := 1;
+        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+        DATElem.Free;
+        lbInfo.items.delete(lbInfo.ItemIndex);
+      end
 
-   else if pos('Y column all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-   begin
-     DATElem := TDATSubPart.Create;
-     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-     (DATElem as TDATSubPart).RM[2,2] := 1;
-     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-     DATElem.Free;
-     lbInfo.items.delete(lbInfo.ItemIndex);
-   end
+      else if pos('Y column all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATSubPart.Create;
+        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+        (DATElem as TDATSubPart).RM[2,2] := 1;
+        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+        DATElem.Free;
+        lbInfo.items.delete(lbInfo.ItemIndex);
+      end
 
-   else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-   begin
-     DATElem := TDATQuad.Create;
-     with DATElem as TDATQuad do
-     begin
-       DATString := memo.lines[memo.CaretY-1];
-       tx := x3;
-       ty := y3;
-       tz := z3;
-       x3 := x2;
-       y3 := y2;
-       z3 := z2;
-       x2 := x4;
-       y2 := y4;
-       z2 := z4;
-       x4 := tx;
-       y4 := ty;
-       z4 := tz;
-       memo.lines[memo.CaretY-1] := DATString;
-       DATElem.Free;
-       lbInfo.Items.Delete(lbInfo.ItemIndex);
-     end;
-   end;
+      else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATQuad.Create;
+        with DATElem as TDATQuad do
+        begin
+          DATString := memo.lines[memo.CaretY-1];
+          tx := x3;
+          ty := y3;
+          tz := z3;
+          x3 := x2;
+          y3 := y2;
+          z3 := z2;
+          x2 := x4;
+          y2 := y4;
+          z2 := z4;
+          x4 := tx;
+          y4 := ty;
+          z4 := tz;
+          memo.lines[memo.CaretY-1] := DATString;
+          DATElem.Free;
+          lbInfo.Items.Delete(lbInfo.ItemIndex);
+        end;
+      end;
 
-   if lbInfo.Items.Count < 1 then
-   begin
-     pnInfo.Visible := False;
-     Splitter1.Visible := False;
-     acECFixError.Enabled := False;
-     acECFixAllErrors.Enabled := False;
-     acECFixAllErrorsTyped.Enabled := False;
-     acECFixAllMarkedErrors.Enabled := False;
-     acECFixAllMarkedErrorsTyped.Enabled := False;
-     acECMarkAll.Enabled := False;
-     acECUnMarkAll.Enabled := False;
-     acECMarkAllTyped.Enabled := False;
-     acECUnMarkAllTyped.Enabled := False;
-     acECCopy.Enabled := False;
-   end;
- end;
+      if lbInfo.Items.Count < 1 then
+      begin
+        pnInfo.Visible := False;
+        Splitter1.Visible := False;
+        acECFixError.Enabled := False;
+        acECFixAllErrors.Enabled := False;
+        acECFixAllErrorsTyped.Enabled := False;
+        acECFixAllMarkedErrors.Enabled := False;
+        acECFixAllMarkedErrorsTyped.Enabled := False;
+        acECMarkAll.Enabled := False;
+        acECUnMarkAll.Enabled := False;
+        acECMarkAllTyped.Enabled := False;
+        acECUnMarkAllTyped.Enabled := False;
+        acECCopy.Enabled := False;
+      end;
+  end;
 end;
 
 procedure TfrMain.acECFixAllErrorsExecute(Sender: TObject);
@@ -2310,8 +2311,8 @@ begin
     else
       endcol := BlockEnd.Line - 1;
 
-    BlockBegin := MakeBufferCoord(1,startcol + 1);
-    BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+    BlockBegin := BufferCoord(1,startcol + 1);
+    BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
     if SelLength <> 0 then
     begin
@@ -2323,8 +2324,8 @@ begin
 
       SelText := DATModel1.ModelText;
 
-      BlockBegin := MakeBufferCoord(1,startcol + 1);
-      BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+      BlockBegin := BufferCoord(1,startcol + 1);
+      BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
       DATModel1.Free;
     end;
@@ -2613,8 +2614,8 @@ begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     tmpBlEndY := BlockEnd.Line;
-    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
-    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
     DModel.ModelText := SelText;
     SelText := DModel.ModelText;
   end;
@@ -2754,8 +2755,8 @@ begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     tmpBlEndY := BlockEnd.Line;
-    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
-    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
 
     DModel.ModelText := SelText;
 
@@ -2789,8 +2790,8 @@ begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     tmpBlEndY := BlockEnd.Line;
-    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
-    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
 
     DModel1.ModelText := SelText;
 
@@ -2814,8 +2815,8 @@ begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     tmpBlEndY := BlockEnd.Line;
-    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
-    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
 
     DModel.ModelText := SelText;
     for i := 0 to DModel.Count - 1 do

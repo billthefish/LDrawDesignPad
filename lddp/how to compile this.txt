@@ -9,6 +9,7 @@ To compile this source successfully, you'll also need to download and install th
 
 
 * SynEdit  - http://synedit.sourceforge.net
-             Note: you will need the newest released CVS snapshot
+             Note: Use the zip file in the External Libraries/SynEdit folder
 
 * JEDI-VCL  - http://jvcl.sourceforge.net
+              Note: Use version 2.1.  Our source is not yet 3.0 Beta complient
