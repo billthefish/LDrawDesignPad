@@ -20,7 +20,7 @@ unit about;
 interface
 
 uses
-  Windows, Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
   ExtCtrls, SysUtils, Buttons;
   
 type
@@ -33,8 +33,7 @@ type
     BitBtn1: TBitBtn;
     procedure FormShow(Sender: TObject);
   private
-    function GetFileVersion(const FileName: TFileName;
-                            var Major, Minor, Release, Build: word): Boolean;
+
   public
     { Public declarations }
   end;
@@ -46,42 +45,14 @@ implementation
 
 {$R *.dfm}
 
-function TfrAboutBox.GetFileVersion(const FileName: TFileName;
-                                    var Major, Minor, Release, Build: word): Boolean;
-var
-  size, len: LongWord;
-  handle: THandle;
-  buffer: PChar;
-  pinfo: ^VS_FIXEDFILEINFO;
-
-begin
-  Result := False;
-  size := GetFileVersionInfoSize(Pointer(FileName), handle);
-
-  if size > 0 then begin
-    GetMem(buffer, size);
-  if GetFileVersionInfo(Pointer(FileName), 0, size, buffer) then
-    if VerQueryValue(buffer, '\', pointer(pinfo), len) then
-    begin
-      Major   := HiWord(pinfo.dwFileVersionMS);
-      Minor   := LoWord(pinfo.dwFileVersionMS);
-      Release := HiWord(pinfo.dwFileVersionLS);
-      Build   := LoWord(pinfo.dwFileVersionLS);
-      Result  := True;
-    end;
-
-    FreeMem(buffer);
-  end;
-end;
+uses
+  windowsspecific;
 
 procedure TfrAboutBox.FormShow(Sender: TObject);
 
-var
-  Major, Minor, Release, Build: word;
-
 begin
-  if GetFileVersion(Application.ExeName, Major, Minor, Release, Build) then
-    Version.Caption := Format('Version %d.%d.%d.%d', [Major, Minor, Release, Build])
+  if GetAppVersion(Application.ExeName) <> '' then
+    Version.Caption := 'Version ' + GetAppVersion(Application.ExeName)
   else
     Version.Caption := 'Version information not available';
 end;

@@ -19,7 +19,7 @@ unit windowsspecific;
 
 interface
 
-uses windows, shellapi, messages, sysutils, classes,  Forms, version;
+uses Windows, ShellAPI, Messages, Sysutils, Classes, Forms;
 
 type
   TLDDPCallBack = procedure(strCBText : PChar );
@@ -65,21 +65,39 @@ function PluginInfo(fname:string; nr: Byte):string;
 procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
 procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
 procedure OpenInBrowser(url:string);
-function GetWindowsVersion:string;
+function GetAppVersion(const FileName: TFileName): string;
 function GetDOSVar (VarName: string): string;
-
 
 implementation
 
 uses main;
 
-function GetWindowsVersion:string;
-var ver:TVersion;
+function GetAppVersion(const FileName: TFileName): string;
+var
+  size, len: LongWord;
+  handle: THandle;
+  buffer: PChar;
+  pinfo: ^VS_FIXEDFILEINFO;
+  Major, Minor, Release, Build: Word;
+
 begin
-  ver:=TVersion.Create(paramstr(0));
-  Result:=IntToStr (ver.HauptVersion) + '.' +
-              IntToStr (ver.NebenVersion);
-  ver.free;
+  Result := '';
+  size := GetFileVersionInfoSize(Pointer(FileName), handle);
+
+  if size > 0 then begin
+    GetMem(buffer, size);
+  if GetFileVersionInfo(Pointer(FileName), 0, size, buffer) then
+    if VerQueryValue(buffer, '\', pointer(pinfo), len) then
+    begin
+      Major   := HiWord(pinfo.dwFileVersionMS);
+      Minor   := LoWord(pinfo.dwFileVersionMS);
+      Release := HiWord(pinfo.dwFileVersionLS);
+      Build   := LoWord(pinfo.dwFileVersionLS);
+      Result := Format('%d.%d.%d.%d', [Major, Minor, Release, Build]);
+    end;
+
+    FreeMem(buffer);
+  end;
 end;
 
 function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
