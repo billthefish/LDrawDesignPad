@@ -26,7 +26,8 @@ uses
   Windows, Messages,
   {$ENDIF}
   QTypes, Classes, Variants, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QExtCtrls, SysUtils;
+  QExtCtrls, SysUtils,
+  Types; //Needed in Kylix for TRect definition?
 
 type
   TfrConfirmReplaceDialog = class(TForm)
