@@ -25,7 +25,7 @@ unit l3check;
 interface
 
 uses
-  DATModel, DATBase, SysUtils;
+  DATModel, DATBase, SysUtils, QDialogs;
 
 function L3CheckLine(Line: string): string;
 
@@ -36,6 +36,8 @@ var
 
 implementation
 
+var
+  Debug: Boolean = False;
 
 function MatrixDet(m: TDATMatrix): Extended;
 begin
@@ -53,19 +55,19 @@ end;
 
 function PointCrossProduct(p1,p2: TDATPoint): TDATPoint;
 begin
-  Result[1] := p1[2] * p2[3] - p1[3] * p2[2];
-  Result[2] := p1[3] * p2[1] - p1[1] * p2[3];
-  Result[3] := p1[1] * p2[2] - p1[2] * p2[1];
+  Result[1] := (p1[2] * p2[3]) - (p1[3] * p2[2]);
+  Result[2] := (p1[3] * p2[1]) - (p1[1] * p2[3]);
+  Result[3] := (p1[1] * p2[2]) - (p1[2] * p2[1]);
 end;
 
 function PointDotProduct(p1,p2: TDATPoint): Extended;
 begin
-  Result := p1[1] * p2[1] + p1[2] * p2[2] + p1[3] * p2[3];
+  Result := (p1[1] * p2[1]) + (p1[2] * p2[2]) + (p1[3] * p2[3]);
 end;
 
 function PointLength(p1: TDATPoint): Extended;
 begin
-  Result := Sqrt(p1[1] * p1[1] + p1[2] * p1[2] + p1[3] * p1[3]);
+  Result := Sqrt((p1[1] * p1[1]) + (p1[2] * p1[2]) + (p1[3] * p1[3]));
 end;
 
 function SubPartIsXZPrimitive(Subp: string): Boolean;
@@ -101,11 +103,12 @@ function L3CheckLine(Line: string): string;
 
 var
   DLine: TDATType;
-  det,dp, maxdist: Extended;
+  det, dp, maxdist: Extended;
   i,j: Integer;
   A,B,C: Boolean;
   TempMatrix: TDATMatrix;
   TempPoint, TempPoint2: TDATPoint;
+  v01, v02, v03, v12, v13, v23, cp1, cp2: TDATPoint;
   dist: array[1..4] of Extended;
 
 begin
@@ -196,23 +199,35 @@ begin
            end;
            if Result = '' then
            begin
-             A := PointDotProduct(PointCrossProduct(PointSubtract(Point[2],Point[1]),
-                                                    PointSubtract(Point[3],Point[1])),
-                                  PointCrossProduct(PointSubtract(Point[3],Point[1]),
-                                                    PointSubtract(Point[4],Point[1]))) > 0;
-             B := PointDotProduct(PointCrossProduct(PointSubtract(Point[3],Point[2]),
-                                                    PointSubtract(Point[2],Point[1])),
-                                  PointCrossProduct(PointSubtract(Point[2],Point[1]),
-                                                    PointSubtract(Point[4],Point[2]))) > 0;
-             C := -PointDotProduct(PointCrossProduct(PointSubtract(Point[3],Point[1]),
-                                                     PointSubtract(Point[3],Point[2])),
-                                   PointCrossProduct(PointSubtract(Point[3],Point[2]),
-                                                     PointSubtract(Point[4],Point[3]))) > 0;
-             if not A then
+             v01 := PointSubtract(Point[2], Point[1]);
+             v02 := PointSubtract(Point[3], Point[1]);
+             v03 := PointSubtract(Point[4], Point[1]);
+             v12 := PointSubtract(Point[3], Point[2]);
+             v13 := PointSubtract(Point[4], Point[2]);
+             v23 := PointSubtract(Point[4], Point[3]);
+             cp1 := PointCrossProduct(v01, v02);
+             cp2 := PointCrossProduct(v02, v03);
+             A := PointDotProduct(cp1, cp2) > 0.0;
+             cp1 := PointCrossProduct(v12, v01);
+             cp2 := PointCrossProduct(v01, v13);
+             B := PointDotProduct(cp1, cp2) > 0.0;
+             cp1 := PointCrossProduct(v02, v12);
+             cp2 := PointCrossProduct(v12, v23);
+             C := -PointDotProduct(cp1, cp2) > 0.0;
+
+             if A = False then
+             begin
                if B then
-                 if not C then Result := 'Bad vertex sequence, 0312 used'
+               begin
+                 if C = False then
+                   Result := 'Bad vertex sequence, 0312 used';
+               end
                else
-                 if C then Result := 'Bad vertex sequence, 0132 used';
+               begin
+                 if C then
+                   Result := 'Bad vertex sequence, 0132 used';
+               end;
+             end;
            end;
            if (Result = '') and (DetThreshold > 0)  then
            begin
