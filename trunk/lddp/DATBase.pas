@@ -29,6 +29,7 @@ type
      instead of varible length arrays *)
   TDATPoint = array[1..3] of Extended;
   TDATMatrix = array[1..4,1..4] of Extended;
+  TDATRotationMatrix = array[1..3,1..3] of Extended;
 
 (*
   The general structure of the DAT Classes is:
@@ -138,6 +139,8 @@ type
       function GetFileName: string;
       function GetPosition: TDATPoint;
       procedure SetPosition(posit: TDATPoint);
+      function GetRMatrix: TDATRotationMatrix;
+      procedure SetRMatrix(rotmat: TDATRotationMatrix);
       function M4Multiply(M1,M2:TDATMatrix): TDATMatrix;
 
     protected
@@ -160,6 +163,7 @@ type
       procedure Transform(M: array of Extended;
                             Reverse: Boolean = false); overload;
 
+      property RMatrix: TDATRotationMatrix read GetRMatrix write SetRMatrix;
       property X: Extended index 13 read GetCoordinate write SetCoordinate;
       property Y: Extended index 14 read GetCoordinate write SetCoordinate;
       property Z: Extended index 15 read GetCoordinate write SetCoordinate;
@@ -269,6 +273,10 @@ var
                                     (0,1,0,0),
                                     (0,0,1,0),
                                     (0,0,0,1));
+
+  FDATIdentityRotationMatrix: TDATRotationMatrix = ((1,0,0),
+                                                    (0,1,0),
+                                                    (0,0,1));
 
   FDATOriginPoint: TDATPoint = (0,0,0);
 
@@ -505,6 +513,32 @@ begin
   result[1] := FDATMatrix[1,4];
   result[2] := FDATMatrix[2,4];
   result[3] := FDATMatrix[3,4];
+end;
+
+function TDATSubPart.GetRMatrix: TDATRotationMatrix;
+begin
+  Result[1,1] := FDATMatrix[1,1];
+  Result[1,2] := FDATMatrix[1,2];
+  Result[1,3] := FDATMatrix[1,3];
+  Result[2,1] := FDATMatrix[2,1];
+  Result[2,2] := FDATMatrix[2,2];
+  Result[2,3] := FDATMatrix[2,3];
+  Result[3,1] := FDATMatrix[3,1];
+  Result[3,2] := FDATMatrix[3,2];
+  Result[3,3] := FDATMatrix[3,3];
+end;
+
+procedure TDATSubPart.SetRMatrix(rotmat: TDATRotationMatrix);
+begin
+  FDATMatrix[1,1] := rotmat[1,1];
+  FDATMatrix[1,2] := rotmat[1,2];
+  FDATMatrix[1,3] := rotmat[1,3];
+  FDATMatrix[2,1] := rotmat[2,1];
+  FDATMatrix[2,2] := rotmat[2,2];
+  FDATMatrix[2,3] := rotmat[2,3];
+  FDATMatrix[3,1] := rotmat[3,1];
+  FDATMatrix[3,2] := rotmat[3,2];
+  FDATMatrix[3,3] := rotmat[3,3];
 end;
 
 procedure TDATSubPart.SetSubPartFile(strSP: string);
