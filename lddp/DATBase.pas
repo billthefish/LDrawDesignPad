@@ -261,7 +261,14 @@ type
 
   function StrToDAT(strLine: string): TDATType;
   function PositionFromMatrix(DMatrix: TDATMatrix): TDATPoint;
-
+  function DATPoint(X,Y,Z: Extended): TDATPoint;
+  function DATMatrix(M11,M12,M13,M14,
+                     M21,M22,M23,M24,
+                     M31,M32,M33,M34,
+                     M41,M42,M43,M44: Extended): TDATMatrix;
+  function DATRotationMatrix(M11,M12,M13,
+                             M21,M22,M23,
+                             M31,M32,M33: Extended): TDATRotationMatrix;
 var
 {$IFDEF MSWINDOWS}
   LDrawBasePath: string = 'C:\Lego\LDRAW\';
@@ -544,7 +551,7 @@ end;
 procedure TDATSubPart.SetSubPartFile(strSP: string);
 begin
   strFileExt := LowerCase(ExtractFileExt(strSP));
-  if strFileExt = '' then strFileExt := '.DAT';
+  if strFileExt = '' then strFileExt := '.dat';
   strSubPartFile := LowerCase(ChangeFileExt(strSP,''));
 end;
 
@@ -847,6 +854,51 @@ begin
   Result[1] := DMatrix[1,4];
   Result[2] := DMatrix[2,4];
   Result[3] := DMatrix[3,4];
+end;
+
+function DATPoint(X,Y,Z: Extended): TDATPoint;
+begin
+  Result[1] := X;
+  Resilt[2] := Y;
+  Result[3] := Z;
+end;
+
+function DATMatrix(M11,M12,M13,M14,
+                   M21,M22,M23,M24,
+                   M31,M32,M33,M34,
+                   M41,M42,M43,M44: Extended): TDATMatrix;
+begin
+  Result[1,1] := M11;
+  Result[1,2] := M12;
+  Result[1,3] := M13;
+  Result[1,4] := M14;
+  Result[2,1] := M21;
+  Result[2,2] := M22;
+  Result[2,3] := M23;
+  Result[2,4] := M24;
+  Result[3,1] := M31;
+  Result[3,2] := M32;
+  Result[3,3] := M33;
+  Result[3,4] := M34;
+  Result[4,1] := M41;
+  Result[4,2] := M42;
+  Result[4,3] := M43;
+  Result[4,4] := M44;
+end;
+
+function DATRotationMatrix(M11,M12,M13,
+                           M21,M22,M23,
+                           M31,M32,M33: Extended): TDATRotationMatrix;
+begin
+  Result[1,1] := M11;
+  Result[1,2] := M12;
+  Result[1,3] := M13;
+  Result[2,1] := M21;
+  Result[2,2] := M22;
+  Result[2,3] := M23;
+  Result[3,1] := M31;
+  Result[3,2] := M32;
+  Result[3,3] := M33;
 end;
 
 end.

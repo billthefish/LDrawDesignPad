@@ -148,10 +148,12 @@ type
     procedure btnColorSelectClick(Sender: TObject);
     procedure lbxColorsClick(Sender: TObject);
     procedure edColorNameChange(Sender: TObject);
+    procedure btnColorRestoreClick(Sender: TObject);
+
   private
     SelectedElement: TSynHighlighterAttributes;
     ColorBarList: TStringList;
-    procedure ColorButtonChange(ImageColor: TColor; Name, Number: string; Index: Integer);
+    procedure ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
 
   public
     IniFileName: string;
@@ -460,6 +462,7 @@ begin
 end;
 
 procedure TfrOptions.LoadFormValues;
+
 var
   i: Integer;
   SelectedColor: TStringList;
@@ -591,7 +594,7 @@ begin
     end;
 end;
 
-procedure TfrOptions.ColorButtonChange(ImageColor: TColor; Name, Number: string; Index: Integer);
+procedure TfrOptions.ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
 
 var
   ColorButtonBitmap: TBitmap;
@@ -612,10 +615,12 @@ begin
     Polygon([Point(1,1), Point(1,14), Point (14,14), Point(14,1)]);
   end;
 
-  with frMain.tbrColorReplace.Buttons[Index] do
+  with frMain.tbrColorReplace.Buttons[ButtonIndex] do
   begin
     ImageIndex := frMain.ilToolBarColor.AddMasked(ColorButtonBitmap, clFuchsia);
-    Hint := Name + ' ' + Number;
+    Hint := ColorName + ' ' + ColorNumber;
+    Caption := ColorName + ' ' + ColorNumber;
+    Tag := StrToInt(ColorNumber);
   end;
   ColorButtonBitmap.Free;
 end;
@@ -631,6 +636,48 @@ begin
                       IntToStr(edColorNumber.Value), lbxColors.ItemIndex);
     lbxColors.Items[lbxColors.ItemIndex] := edColorName.Text
   end;
+end;
+
+procedure TfrOptions.btnColorRestoreClick(Sender: TObject);
+
+var
+  i: Integer;
+  SelectedColor: TStringList;
+
+begin
+  ColorBarList.Text := 'Black,0,$00212121' + #13#10 +
+                       'Blue,1,$00B23300' + #13#10 +
+                       'Green,2,$00148C00' + #13#10 +
+                       'Teal,3,$009F9900' + #13#10 +
+                       'Red,4,$002600C4' + #13#10 +
+                       'Dark_Pink,5,$009566DF' + #13#10 +
+                       'Brown,6,$0000205C' + #13#10 +
+                       'Gray,7,$00C1C2C1' + #13#10 +
+                       'Dark_Gray,8,$00525F63' + #13#10 +
+                       'Light_Blue,9,$00DCAB6B' + #13#10 +
+                       'Bright_Green,10,$0090EE6B' + #13#10 +
+                       'Turquiose,11,$00A7A633' + #13#10 +
+                       'Light_Red,12,$007A85FF' + #13#10 +
+                       'Pink,13,$00C6A4F9' + #13#10 +
+                       'Yellow,14,$0000DCFF' + #13#10 +
+                       'White,15,$00FFFFFF';
+
+  SelectedColor := TStringList.Create;
+  for i := 0 to 15 do
+  begin
+    SelectedColor.CommaText := StringReplace(ColorBarList[i], ' ', '_', [rfReplaceAll]);
+    lbxColors.Items[i] := StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]);
+    ColorButtonChange(StrToInt(SelectedColor[2]),
+                      StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]),
+                      SelectedColor[1], i);
+  end;
+  SelectedColor.Free;
+
+  lbxColors.ItemIndex := -1;
+  shpColor.Brush.Color := clBtnFace;
+  edColorName.Text := '';
+  edColorNumber.Value := 0;
+
 end;
 
 end.

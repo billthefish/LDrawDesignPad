@@ -386,81 +386,97 @@ object frMain: TfrMain
         Left = 5
         Top = 0
         Caption = 'tbnColor0'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor1: TToolButton
         Left = 30
         Top = 0
         Caption = 'tbnColor1'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor2: TToolButton
         Left = 55
         Top = 0
         Caption = 'tbnColor2'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor3: TToolButton
         Left = 80
         Top = 0
         Caption = 'tbnColor3'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor4: TToolButton
         Left = 105
         Top = 0
         Caption = 'tbnColor4'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor5: TToolButton
         Left = 130
         Top = 0
         Caption = 'tbnColor5'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor6: TToolButton
         Left = 155
         Top = 0
         Caption = 'tbnColor6'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor7: TToolButton
         Left = 180
         Top = 0
         Caption = 'tbnColor7'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor8: TToolButton
         Left = 205
         Top = 0
         Caption = 'tbnColor8'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor9: TToolButton
         Left = 230
         Top = 0
         Caption = 'tbnColor9'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor10: TToolButton
         Left = 255
         Top = 0
         Caption = 'tbnColor10'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor11: TToolButton
         Left = 280
         Top = 0
         Caption = 'tbnColor11'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor12: TToolButton
         Left = 305
         Top = 0
         Caption = 'tbnColor12'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor13: TToolButton
         Left = 330
         Top = 0
         Caption = 'tbnColor13'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor14: TToolButton
         Left = 355
         Top = 0
         Caption = 'tbnColor14'
+        OnClick = acColorReplaceShortcutExecute
       end
       object tbnColor15: TToolButton
         Left = 380
         Top = 0
         Caption = 'tbnColor15'
+        OnClick = acColorReplaceShortcutExecute
       end
     end
   end
@@ -1302,7 +1318,7 @@ object frMain: TfrMain
     Left = 40
     Top = 232
     Bitmap = {
-      494C010129002C00040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010129002C00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2758,7 +2774,8 @@ object frMain: TfrMain
       FC01FE008000FFFFFC40FE000000FFFFFC40FE000000FFFFFC1980000000FFF7
       F80380000005C1F7F00F80000003C3FBE03F80000003C7FBC07F80050003CBFB
       80FF80030003DCF701FF80070003FF0F03FF81FF0003FFFF87FF80FF8007FFFF
-      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF}
+      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+      000000000000}
   end
   object pmMemo: TPopupMenu
     AutoHotkeys = maManual

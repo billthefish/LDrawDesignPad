@@ -776,8 +776,8 @@ begin
     end;
     boHose12:
     begin
-      Line1.SubPart := 'x757.dat';
-      Line2.SubPart := 'x760.dat';
+      Line1.SubPart := '757.dat';
+      Line2.SubPart := '760.dat';
       BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 30.855,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
       BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 45,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
       BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -22.25,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
@@ -785,7 +785,7 @@ begin
       LengthMod := 53.5;
       BezLength := 171.5;
       Segments := 33;
-      strFileType := 'x758.dat';
+      strFileType := '758.dat';
     end;
     boRibbedHose:
     begin
@@ -863,23 +863,21 @@ begin
       dummyPart.Position := Line2.Position;
       Add(dummyPart.DATString);
     end
-    else if strFileType = 'x758.dat' then
+    else if strFileType = '758.dat' then
     begin
-      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + 'x759.dat';
+      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '759.dat';
       dummyPart.RotationMatrix := Line1.RotationMatrix;
       dummyPart.Position := GetBezierCoordinate(dummyPart,[1, 0, 0, 0,  0, 1, 0, 16,  0, 0, 1, 0,  0, 0, 0, 1], True, True);
       Add(dummyPart.DATString);
 
-      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + 'x759.dat';
+      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '759.dat';
       dummyPart.RotationMatrix := Line2.RotationMatrix;
       dummyPart.Position :=  GetBezierCoordinate(dummyPart,[-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, -1, 0,  0, 0, 0, 1], True, True);
       dummyPart.Position := Line2.Position;
       Add(dummyPart.DATString);
     end;
 
-    dummyPoint[1] := 0;
-    dummyPoint[2] := 0;
-    dummyPoint[3] := 0;
+    dummyPoint := FDATOriginPoint;
     dummyPart.Color := FColor;
 
     for i:= 0 to System.Length(BezIntLen)-1 do
@@ -896,12 +894,12 @@ begin
       pntC2 := PointSum(BezEnd, PointMult( PointSum( PointMult( BezEnd, -1), BezCont2),Factor));
       while rlCount < (Segments * PointPerSegment) do
       begin
-        intCount:=Round(rlCount);
+        intCount := Round(rlCount);
         BezIntPos[intCount] :=  BezierSum(((rlCount/Segments)/PointPerSegment),BezBegin,pntC1,pntC2,BezEnd);
         rlLength:= rlLength + EuclidDistance(BezIntPos[intCount], lastPoint);
         BezIntLen[intCount] := rlLength;
         lastPoint := BezIntPos[intCount];
-        rlCount := rlCount+1;
+        rlCount := rlCount + 1;
       end;
       if rlLength < BezLength then
       begin

@@ -1346,7 +1346,7 @@ object frOptions: TfrOptions
           Top = 184
           Width = 105
           Height = 21
-          CheckChars = '0123456789'
+          CheckChars = '01234567890'
           CriticalPoints.CheckPoints = cpNone
           CriticalPoints.ColorAbove = clBlue
           CriticalPoints.ColorBelow = clRed
@@ -1363,6 +1363,7 @@ object frOptions: TfrOptions
           Height = 25
           Caption = '&Restore Defaults'
           TabOrder = 4
+          OnClick = btnColorRestoreClick
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
             0800000000000001000000000000000000000001000000000000000000000000
