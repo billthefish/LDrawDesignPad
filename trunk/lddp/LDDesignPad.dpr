@@ -33,10 +33,11 @@ uses
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
   DATModel in 'DATModel.pas',
-  dlgSearchText in 'dlgSearchText.pas' {TextSearchDialog},
-  dlgReplaceText in 'dlgReplaceText.pas' {TextReplaceDialog},
+  dlgSearchText in 'dlgsearchtext.pas' {TextSearchDialog},
+  dlgReplaceText in 'dlgreplacetext.pas' {TextReplaceDialog},
   dlgConfirmReplace in 'dlgConfirmReplace.pas' {ConfirmReplaceDialog},
-  BezWindow in 'BezWindow.pas' {frmDATCurve};
+  BezWindow in 'BezWindow.pas' {frmDATCurve},
+  dlgSubpart in 'dlgSubpart.pas' {frSubFile};
 
 {$R *.res}
 
@@ -53,6 +54,7 @@ begin
   Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
   Application.CreateForm(TfrModelTreeView, frModelTreeView);
   Application.CreateForm(TfrmDATCurve, frmDATCurve);
+  Application.CreateForm(TfrSubFile, frSubFile);
   finally
     screen.cursor:=0;
   end;
