@@ -141,7 +141,7 @@ begin
   frMain.acUndo.Enabled:=Memo.CanUndo;
   frMain.acRedo.Enabled:=Memo.CanRedo;
   frMain.StatusBar.Panels[1].text:=inttostr(memo.CaretY)+':'+inttostr(memo.CaretX);
-
+          
   if memo.lines[memo.CaretY-1] <> '' then
   begin
     clr:=Trim(memo.lines[memo.CaretY-1]);

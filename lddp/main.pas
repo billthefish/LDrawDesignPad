@@ -299,11 +299,17 @@ type
     ProcessthroughLSynth1: TMenuItem;
     acLSynth: TAction;
     GenrateBendibleObject1: TMenuItem;
-    acBendibleObject: TAction;
+    acBendableObject: TAction;
     acAutoRound: TAction;
     AutoRoundSelection1: TMenuItem;
     AutoRoundSelection2: TMenuItem;
     GenerateBendibleObject1: TMenuItem;
+    acSortByPosition: TAction;
+    N14: TMenuItem;
+    CopyErrorListToClipboard1: TMenuItem;
+    N23: TMenuItem;
+    CopyErrorListToClipboard2: TMenuItem;
+    acECCopy: TAction;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -383,8 +389,9 @@ type
     procedure acECUnMarkAllTypedExecute(Sender: TObject);
     procedure acFindNextUpdate(Sender: TObject);
     procedure acLSynthExecute(Sender: TObject);
-    procedure acBendibleObjectExecute(Sender: TObject);
+    procedure acBendableObjectExecute(Sender: TObject);
     procedure acAutoRoundExecute(Sender: TObject);
+    procedure acECCopyExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -954,6 +961,7 @@ begin
       acECUnMarkAll.Enabled := True;
       acECMarkAllTyped.Enabled := True;
       acECUnMarkAllTyped.Enabled := True;
+      acECCopy.Enabled := True;
       lbInfo.ItemIndex := 0;
       lbInfo.OnSelectItem(nil, lbInfo.Items[lbInfo.ItemIndex], True);
     end
@@ -970,6 +978,7 @@ begin
       acECUnMarkAll.Enabled := False;
       acECMarkAllTyped.Enabled := False;
       acECUnMarkAllTyped.Enabled := False;
+      acECCopy.Enabled := False;
       StatusBar.Panels[0].Text := 'No Errors Found!';
     end;
   Screen.Cursor := crDefault;
@@ -1851,6 +1860,7 @@ begin
      acECUnMarkAll.Enabled := False;
      acECMarkAllTyped.Enabled := False;
      acECUnMarkAllTyped.Enabled := False;
+     acECCopy.Enabled := False;
    end;
  end;
 end;
@@ -2428,6 +2438,24 @@ begin
    ErrorCheckErrorFix(False,lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
 end;
 
+procedure TfrMain.acECCopyExecute(Sender: TObject);
+
+var
+  i: Integer;
+  errorlist: string;
+
+begin
+  errorlist := '';
+  with (ActiveMDIChild as TfrEditorChild) do
+  begin
+    for i := 0 to lbInfo.Items.Count - 1 do
+      errorlist := errorlist + 'Line ' + lbInfo.Items[i].SubItems[0] +
+                   ': ' + lbInfo.Items[i].SubItems[1] +
+                   ': ' + memo.Lines[StrToInt(lbInfo.Items[i].SubItems[0]) - 1] + #13#10;
+    memo.DoCopyToClipboard(errorlist);
+  end;
+end;
+
 procedure TfrMain.acFindNextUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := gsSearchText <> '';
@@ -2462,7 +2490,7 @@ begin
   DeleteFile(InputFile);
 end;
 
-procedure TfrMain.acBendibleObjectExecute(Sender: TObject);
+procedure TfrMain.acBendableObjectExecute(Sender: TObject);
 
 var
   SelectedLines: TStringList;
