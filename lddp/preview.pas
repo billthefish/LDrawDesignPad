@@ -5,13 +5,13 @@ interface
 uses
   {$IFDEF MSWINDOWS}
   Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, ToolWin,
+  StdCtrls, ExtCtrls, ToolWin, ComCtrls,
   {$ENDIF}
   {$IFDEF LINUX}
   Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QComCtrls, QStdCtrls, QExtCtrls,
   {$ENDIF}
-  SysUtils, ComCtrls;
+  SysUtils;
 
 type
   TForm1 = class(TForm)
