@@ -773,7 +773,7 @@ begin
       BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 30.855,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
       BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 45,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
       BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -22.25,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -25,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -37,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
       LengthMod := 53.5;
       BezLength := 171.5;
       Segments := 33;
