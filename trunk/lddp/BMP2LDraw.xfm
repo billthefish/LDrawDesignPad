@@ -62,7 +62,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
     Top = 293
     Width = 349
     Height = 129
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Anchors = [akLeft, akBottom]
     Font.CharSet = fcsLatin1
     Font.Color = clText
@@ -442,8 +442,11 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
   end
   object OpenDialog: TOpenDialog
     Filter = 'Bitmaps (*.bmp)|*.bmp|All files (*.*)|*.*'
+    FilterIndex = 0
     Options = [ofFileMustExist, ofEnableSizing]
+    Height = 0
     Title = 'Open bitmap'
+    Width = 0
     Left = 192
     Top = 189
   end

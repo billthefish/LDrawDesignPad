@@ -112,7 +112,6 @@ object frEditorChild: TfrEditorChild
     Gutter.LeftOffset = 0
     Gutter.RightOffset = 0
     Highlighter = frMain.SynLDRSyn
-    Options = [eoAutoIndent, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
     SearchEngine = frMain.SynEditSearch1
     TabWidth = 2
     OnChange = MemoChange

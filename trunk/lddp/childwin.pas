@@ -233,8 +233,8 @@ begin
     memo.CaretXY := Point(1, L3PErrorLine);
     
     // Highlight errorline
-    memo.selstart:=memo.selstart+length(memo.lines[memo.CaretY-1]);
-    memo.selend:=memo.selstart-length(memo.lines[memo.CaretY-1]);
+    memo.BlockBegin := memo.CaretXY;
+    memo.BlockEnd := Point(1, L3PErrorLine + 1);
 
     // Change focus from L3P error pane to editor pane
     memo.setfocus;
