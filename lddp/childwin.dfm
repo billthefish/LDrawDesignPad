@@ -23,7 +23,7 @@ object frEditorChild: TfrEditorChild
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 268
+    Top = 261
     Width = 620
     Height = 7
     Cursor = crVSplit
@@ -33,7 +33,7 @@ object frEditorChild: TfrEditorChild
   end
   object pnInfo: TPanel
     Left = 0
-    Top = 275
+    Top = 268
     Width = 620
     Height = 91
     Align = alBottom
@@ -102,7 +102,7 @@ object frEditorChild: TfrEditorChild
     Left = 0
     Top = 0
     Width = 620
-    Height = 268
+    Height = 261
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

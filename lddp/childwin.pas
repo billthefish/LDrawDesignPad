@@ -25,7 +25,7 @@ uses
   windowsspecific,
   Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, Synedit,
   SynHighlighterLDraw, ExtCtrls, Classes, Types, ComCtrls, Controls,
-  SyneditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch;
+  SyneditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch, SynEditMiscProcs;
 
 type
   TfrEditorChild = class(TForm)
@@ -231,11 +231,11 @@ begin
     // Set current postion to errorline
     L3PErrorLine := StrToInt(lbinfo.Items[lbinfo.Itemindex].SubItems[0]);
     memo.TopLine := L3PErrorLine;
-    memo.CaretXY := Point(1, L3PErrorLine);
+    memo.CaretXY := MakeBufferCoord(1, L3PErrorLine);
     
     // Highlight errorline
     memo.BlockBegin := memo.CaretXY;
-    memo.BlockEnd := Point(1, L3PErrorLine + 1);
+    memo.BlockEnd := MakeBufferCoord(1, L3PErrorLine + 1);
 
     // Change focus from L3P error pane to editor pane
     memo.setfocus;
@@ -279,7 +279,7 @@ begin
   with memo do
   begin
     BlockBegin := CaretXY;
-    BlockEnd := Point(Length(Lines[Line-1]) + 1 , CaretY);
+    BlockEnd := MakeBufferCoord(Length(Lines[Line-1]) + 1 , CaretY);
   end;
 end;
 
@@ -310,8 +310,11 @@ begin
   if ASearch = AReplace then
     Action := raSkip
   else begin
-    APos := Point(Column, Line);
-    APos := memo.ClientToScreen(memo.RowColumnToPixels(APos));
+//    APos := Point(Column, Line);
+    APos := memo.ClientToScreen(
+      memo.RowColumnToPixels(
+      memo.BufferToDisplayPos(
+        MakeBufferCoord(Column, Line) ) ) );
     EditRect := ClientRect;
     EditRect.TopLeft := ClientToScreen(EditRect.TopLeft);
     EditRect.BottomRight := ClientToScreen(EditRect.BottomRight);
