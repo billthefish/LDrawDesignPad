@@ -244,6 +244,8 @@ type
     N14: TMenuItem;
     acBMP2LDraw: TAction;
     ConvertBitmaptoLDraw1: TMenuItem;
+    acModelTreeView: TAction;
+    ViewModelTree1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -311,12 +313,12 @@ type
     procedure acCheckforUpdateExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure acBMP2LDrawExecute(Sender: TObject);
+    procedure acModelTreeViewExecute(Sender: TObject);
 
   private
     { Private declarations }
     initialized:boolean;
     procedure AppInitialize;
-    procedure CreateMDIChild(const CaptionName: string;new:boolean);
 
 
   public
@@ -334,6 +336,7 @@ type
     procedure UpdateMRU(NewFileName: TFileName= '');
     procedure LoadFormValues;
     procedure SaveFormValues;
+    procedure CreateMDIChild(const CaptionName: string; new: Boolean);
   end;
 
 
@@ -350,7 +353,7 @@ implementation
 
 uses
   childwin, about, options, editoptions, colordialog, dlgsearchreplacetext,
-  BMP2LDraw;
+  BMP2LDraw, modeltreeview;
 
 procedure TfrMain.UpdateControls(closing:boolean);
 {---------------------------------------------------------------------
@@ -2084,6 +2087,11 @@ end;
 procedure TfrMain.acBMP2LDrawExecute(Sender: TObject);
 begin
   frBMP2LDrawMain.showmodal;
+end;
+
+procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
+begin
+  frModelTreeView.ShowModal;
 end;
 
 end.
