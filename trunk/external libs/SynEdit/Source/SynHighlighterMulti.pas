@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterMulti.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynHighlighterMulti.pas,v 1.2 2003-07-03 07:23:10 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -150,12 +150,14 @@ type
 
   {
   * Usage notes *
-  If you don't need to nest MultiSyns as Schemes, just as DefaultHighlighter,
+    If you don't need to nest MultiSyns as Schemes, just as DefaultHighlighter,
   you can nest up to 2 MultiSyns, each of them containing up to 7 Schemes. This
-  is the way MultiSyn works better. (implemented in NewRangeProc)
-  If you need to use a MultiSyn nested as Scheme, then you can nest up to
+  is the way MultiSyn works best. (implemented in NewRangeProc)
+    If you need to use a MultiSyn nested as Scheme, then you can nest up to
   5 MultiSyns, but Ranges aren't persisted across occurrences of Schemes that
   have multiple lines. (implemented in OldRangeProc)
+    Clarification: when I say "you can nest up to X" MultiSyns, I mean having
+  X+1 levels of MultiSyns.
 
   MultiSyn doesn't work by default with dynamic highlighters; you must use
   OnCustomRange. This is because dynamic highlighters' Ranges are pointers,
@@ -245,6 +247,7 @@ type
     procedure ResetRange; override;
     function UpdateRangeProcs: boolean;
     property CurrScheme: integer read fCurrScheme write fCurrScheme;
+    property CurrLine: string read fLine;
 {$IFNDEF SYN_CLX}
     function LoadFromRegistry(RootKey: HKEY; Key: string): boolean; override;
     function SaveToRegistry(RootKey: HKEY; Key: string): boolean; override;
@@ -438,16 +441,13 @@ end;
 
 procedure TSynMultiSyn.OldRangeProc(Operation: TRangeOperation; var Range: cardinal);
 const
-  MaxNestedMultiSyn = 4;
+  MaxNestedMultiSyn = 6;
   { number of bits of the Range that will be used to store the SchemeIndex }
-  SchemeIndexSize = 5;
+  SchemeIndexSize = 4;
   MaxSchemeCount = (1 shl SchemeIndexSize) -1;
   { number of bits of the Range that will be used to store the SchemeRange }
-  SchemeRangeSize = 12;
+  SchemeRangeSize = 8;
   MaxSchemeRange = (1 shl SchemeRangeSize) -1;
-  { if the compiler stops here, something is wrong with the constants above }
-  RangeInfoSize: byte = ( SizeOf(pointer) * 8 ) -
-    ( (MaxNestedMultiSyn * SchemeIndexSize) + SchemeRangeSize );
 var
   iHL: TSynCustomHighlighter;
   iSchemeIndex: cardinal;
@@ -689,8 +689,9 @@ begin
       iScheme := nil;
     while iLine <> '' do
       if iScheme <> nil then begin
-        iParser.Expression := iScheme.ConvertExpression( iScheme.EndExpr );
-        if iParser.Exec( iScheme.ConvertExpression( iLine ) ) then begin
+        iParser.Expression := iScheme.EndExpr;
+        iParser.ModifierI := not iScheme.CaseSensitive;
+        if iParser.Exec( iLine ) then begin
           iExpr := Copy( NewValue, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0] );
           //GBN 31/01/2002 - Start
           DoCheckMarker(iScheme, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0],iExpr,False);
@@ -710,8 +711,9 @@ begin
           begin
             continue;
           end;
-          iParser.Expression := iScheme.ConvertExpression( iScheme.StartExpr );
-          if iParser.Exec( iScheme.ConvertExpression( iLine ) ) then begin
+          iParser.Expression := iScheme.StartExpr;
+          iParser.ModifierI := not iScheme.CaseSensitive;
+          if iParser.Exec( iLine ) then begin
             iExpr := Copy( NewValue, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0] );
             //GBN 31/01/2002 - Start
             DoCheckMarker(iScheme, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0],iExpr,True);
@@ -900,6 +902,8 @@ end;
 procedure TSynMultiSyn.UserRangeProc(Operation: TRangeOperation; var Range: cardinal);
 begin
   OnCustomRange( Self, Operation, pointer(Range) );
+  if (Operation = roSet) and (DefaultHighlighter <> nil) then
+    fTmpRange := DefaultHighlighter.GetRange;
 end;
 
 procedure TSynMultiSyn.SetOnCustomRange(const Value: TCustomRangeEvent);

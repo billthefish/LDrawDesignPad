@@ -70,7 +70,7 @@ contains
   QSynHighlighterGeneral in '../Source/QSynHighlighterGeneral.pas',
   QSynHighlighterHC11 in '../Source/QSynHighlighterHC11.pas',
   QSynHighlighterHP48 in '../Source/QSynHighlighterHP48.pas',
-//MISSING  QSynHighlighterHP48Utils in '../Source/QSynHighlighterHP48Utils.pas',
+  QSynHighlighterHP48Utils in '../Source/QSynHighlighterHP48Utils.pas',
   QSynHighlighterHashEntries in '../Source/QSynHighlighterHashEntries.pas',
   QSynHighlighterHtml in '../Source/QSynHighlighterHtml.pas',
   QSynHighlighterIni in '../Source/QSynHighlighterIni.pas',

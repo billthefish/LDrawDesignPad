@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterSml.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynHighlighterSml.pas,v 1.2 2003-07-03 07:23:10 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -210,25 +210,22 @@ uses
   SynEditStrConst;
 {$ENDIF}
 
+const
+  Identifiers = [#39, '_', '0'..'9', 'a'..'z', 'A'..'Z'];
+
 var
-  Identifiers: array[#0..#255] of ByteBool;
   mHashTable: array[#0..#255] of Integer;
 
 procedure MakeIdentTable;
 var
-  I, J: Char;
+  I: Char;
 begin
   for I := #0 to #255 do
   begin
-    Case I of
-      #39, '_', '0'..'9', 'a'..'z', 'A'..'Z': Identifiers[I] := True;
-    else Identifiers[I] := False;
-    end;
-    J := UpCase(I);
-    Case I in ['_', 'A'..'Z', 'a'..'z'] of
-      True: mHashTable[I] := Ord(J) - 64
-    else mHashTable[I] := 0;
-    end;
+    if I in ['_', 'A'..'Z', 'a'..'z'] then
+      mHashTable[I] := Ord(UpCase(I)) - 64
+    else
+      mHashTable[I] := 0;
   end;
 end;
 
@@ -305,7 +302,7 @@ end;
 function TSynSMLSyn.KeyHash(ToHash: PChar): Integer;
 begin
   Result := 0;
-  while ToHash^ in [#39, '_', '0'..'9', 'a'..'z', 'A'..'Z'] do
+  while ToHash^ in Identifiers do
   begin
     inc(Result, mHashTable[ToHash^]);
     inc(ToHash);
@@ -324,7 +321,7 @@ begin
     Result := True;
     for i := 1 to fStringLen do
     begin
-      if mHashTable[Temp^] <> mHashTable[aKey[i]] then
+      if Temp^ <> aKey[i] then
       begin
         Result := False;
         break;
@@ -620,7 +617,7 @@ procedure TSynSMLSyn.IdentProc;
 begin
   fTokenID := IdentKind((fLine + Run));
   inc(Run, fStringLen);
-  while Identifiers[fLine[Run]] do inc(Run);
+  while fLine[Run] in Identifiers do inc(Run);
 end;
 
 procedure TSynSMLSyn.LFProc;

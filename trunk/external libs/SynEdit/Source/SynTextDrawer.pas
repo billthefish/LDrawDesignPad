@@ -55,7 +55,7 @@
                         Added BaseStyle property to TheFontFont class.
  ==============================================================================}
 
-// $Id: SynTextDrawer.pas,v 1.1 2003-06-08 10:35:49 c_schmitz Exp $
+// $Id: SynTextDrawer.pas,v 1.2 2003-07-03 07:24:18 billthefish Exp $
 
 // SynEdit note: The name had to be changed to get SynEdit to install 
 //   together with mwEdit into the same Delphi installation

@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterHtml.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynHighlighterHtml.pas,v 1.2 2003-07-03 07:23:08 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -2200,8 +2200,15 @@ begin
         fAndCode:=-1;
         i:=Run;
         inc(Run,2);
-        while (fLine[Run] in ['0'..'9']) do
+        if fLine[Run] in ['X', 'x'] then
+        begin
           inc(Run);
+          while (fLine[Run] in ['0'..'9', 'A'..'F', 'a'..'f']) do
+            inc(Run);
+        end
+        else
+          while (fLine[Run] in ['0'..'9']) do
+            inc(Run);
         if (fLine[Run]=';') then begin
           inc(Run);
           Run:=i;
@@ -2251,8 +2258,15 @@ begin
       if (fLine[Run+1]='#') then begin
         fAndCode:=-1;
         inc(Run,2);
-        while (fLine[Run] in ['0'..'9']) do
+        if fLine[Run] in ['X', 'x'] then
+        begin
           inc(Run);
+          while (fLine[Run] in ['0'..'9', 'A'..'F', 'a'..'f']) do
+            inc(Run);
+        end
+        else
+          while (fLine[Run] in ['0'..'9']) do
+            inc(Run);
         if (fLine[Run]=';') then begin
           inc(Run);
           fTokenID := tkAmpersand;

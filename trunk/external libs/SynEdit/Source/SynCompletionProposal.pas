@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynCompletionProposal.pas,v 1.1 2003-06-08 10:33:21 c_schmitz Exp $
+$Id: SynCompletionProposal.pas,v 1.2 2003-07-03 07:23:04 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -225,6 +225,7 @@ type
 {$IFDEF SYN_CLX}
     function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer;
       const MousePos: TPoint): Boolean; override;
+    function WidgetFlags: Integer; override;
 {$ELSE}
     procedure WMMouseWheel(var Msg: TMessage); message WM_MOUSEWHEEL;
     procedure WMActivate (var Message: TWMActivate); message WM_ACTIVATE;
@@ -1271,6 +1272,11 @@ begin
   Position := Position - iWheelClicks * iLinesToScroll;
   Update;
   Result := True;
+end;
+
+function TSynBaseCompletionProposalForm.WidgetFlags: Integer;
+begin
+  Result := Integer(WidgetFlags_WType_Popup);
 end;
 
 {$ELSE SYN_CLX}

@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEdit.pas,v 1.1 2003-06-08 10:33:21 c_schmitz Exp $
+$Id: SynEdit.pas,v 1.2 2003-07-03 07:23:04 billthefish Exp $
 
 
 You may retrieve the latest version of this file at the SynEdit home page,
@@ -38,8 +38,6 @@ Known Issues:
 - Initial WordWrap code is there, but it is incomplete and does not function
   Don't use it yet.
 -------------------------------------------------------------------------------}
-
-{$BOOLEVAL OFF}
 
 {$IFNDEF QSYNEDIT}
 unit SynEdit;
@@ -197,7 +195,7 @@ type
   TSynEditorOption = (
     eoAltSetsColumnMode,       //Holding down the Alt Key will put the selection mode into columnar format
     eoAutoIndent,              //Will indent the caret on new lines with the same amount of leading white space as the preceding line
-    eoAutoSizeMaxLeftChar,     //Automatically resizes the max left char when adding lines
+    eoAutoSizeMaxLineWidth,    //Automatically resizes the MaxLineWidth property when inserting text
     eoDisableScrollArrows,     //Disables the scroll bar arrow buttons when you can't scroll in that direction any more
     eoDragDropEditing,         //Allows you to select a block of text and drag it within the document to another location
     eoDropFiles,               //Allows the editor accept OLE file drops
@@ -303,8 +301,8 @@ type
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
-  TGutterClickEvent = procedure(Sender: TObject; X, Y, Line: integer;
-    mark: TSynEditMark) of object;
+  TGutterClickEvent = procedure(Sender: TObject; Button: TMouseButton;
+    X, Y, Line: integer; Mark: TSynEditMark) of object;
 
   TSynEditPlugin = class(TObject)
   private
@@ -365,7 +363,7 @@ type
     fOrigRedoList: TSynEditUndoList;                                            //ddh 2002-7-15
     fLinesInWindow: Integer;
     fLeftChar: Integer;
-    fMaxLeftChar: Integer;
+    fMaxLineWidth: Integer;
     fPaintLock: Integer;
     fReadOnly: Boolean;
     fRightEdge: Integer;
@@ -420,7 +418,6 @@ type
     fOnCommandProcessed: TProcessCommandEvent;
     fOnDropFiles: TDropFilesEvent;
     fOnGutterClick: TGutterClickEvent;
-    fOnGutterRightClick: TGutterClickEvent;
     fOnPaint: TPaintEvent;
     fOnPlaceMark: TPlaceMarkEvent;
     fOnProcessCommand: TProcessCommandEvent;
@@ -533,7 +530,7 @@ type
     procedure SetLeftChar(Value: Integer);
     procedure SetLines(Value: TStrings);
     procedure SetLineText(Value: string);
-    procedure SetMaxLeftChar(Value: integer);
+    procedure SetMaxLineWidth(Value: integer);
     procedure SetMaxUndo(const Value: Integer);
     procedure SetModified(Value: boolean);
     procedure SetOptions(Value: TSynEditorOptions);
@@ -815,7 +812,7 @@ type
     property LineText: string read GetLineText write SetLineText;
     property Lines: TStrings read fLines write SetLines;
     property Marks: TSynEditMarkList read fMarkList;
-    property MaxLeftChar: integer read fMaxLeftChar write SetMaxLeftChar
+    property MaxLineWidth: integer read fMaxLineWidth write SetMaxLineWidth
       default 1024;
     property Modified: Boolean read fModified write SetModified;
     property PaintLock: Integer read fPaintLock;
@@ -882,8 +879,6 @@ type
     property OnDropFiles: TDropFilesEvent read fOnDropFiles write fOnDropFiles;
     property OnGutterClick: TGutterClickEvent
       read fOnGutterClick write fOnGutterClick;
-    property OnGutterRightClick: TGutterClickEvent
-      read fOnGutterRightClick write fOnGutterRightClick;
     property OnGutterGetText: TGutterGetTextEvent read fOnGutterGetText
       write fOnGutterGetText;
     property OnGutterPaint: TGutterPaintEvent read fOnGutterPaint
@@ -906,6 +901,8 @@ type
     property OnLineNumber: TLineNumberEvent
       read fOnLineNumber write FOnLineNumber;
     property IsScrolling : Boolean read FIsScrolling;                           //ddh 2002-06-22
+  published
+    property Cursor default crIBeam;
   end;
 
   TSynEdit = class(TCustomSynEdit)
@@ -970,7 +967,7 @@ type
     property InsertMode;
     property Keystrokes;
     property Lines;
-    property MaxLeftChar;
+    property MaxLineWidth;
     property MaxUndo;
     property Options;
     property OverwriteCaret;
@@ -993,7 +990,6 @@ type
     property OnContextHelp;
     property OnDropFiles;
     property OnGutterClick;
-    property OnGutterRightClick;
     property OnGutterGetText;
     property OnGutterPaint;
     property OnLineNumber;
@@ -1344,7 +1340,7 @@ begin
   ParentColor := False;
   TabStop := True;
   fInserting := True;
-  fMaxLeftChar := 1024;
+  fMaxLineWidth := 1024;
   fScrollBars := ssBoth;
   fBorderStyle := bsSingle;
   fInsertCaret := ctVerticalLine;
@@ -2199,8 +2195,7 @@ var
   allmrk: TSynEditMarks;
   mark  : TSynEditMark;
 begin
-  if (Assigned(fOnGutterClick) and (Button <> mbRight)) or
-     (Assigned(fOnGutterRightClick) and (Button = mbRight))then
+  if Assigned(fOnGutterClick) then
   begin
     line := PixelsToRowColumn(Point(X, Y)).Y;
     if line <= Lines.Count then begin
@@ -2216,9 +2211,7 @@ begin
           end;
         end;
       end; //for
-      if (Button = mbRight) then
-        fOnGutterRightClick(Self, X, Y, line, mark)
-      else fOnGutterClick(Self, X, Y, line, mark);
+      fOnGutterClick(Self, Button, X, Y, line, mark);
     end;
   end;
 end;
@@ -3431,7 +3424,7 @@ begin
      { find new position for CaretX }
       repeat
         Dec(tmpCaret.y);
-        i := Length(TSynEditStringList(fLines).ExpandedStrings[tmpCaret.y - 1]);
+        i := TSynEditStringList(fLines).ExpandedStringLengths[tmpCaret.y - 1];
         tmpCaret.x := tmpCaret.x + i;
       until (tmpCaret.y = 0) or not TSynEditStringList(fLines).IsLineWraped(tmpCaret.y - 1);
     { now we move CaretY up to new position}
@@ -3494,7 +3487,7 @@ var
   nInval1, nInval2: integer;
   SelChanged: boolean;
 begin
-  Value.x := MinMax(Value.x, 1, fMaxLeftChar +1);
+  Value.x := MinMax(Value.x, 1, fMaxLineWidth +1);
   Value.y := MinMax(Value.y, 1, Lines.Count);
   if (SelectionMode = smNormal) then
     if (Value.y >= 1) and (Value.y <= Lines.Count) then
@@ -3531,7 +3524,7 @@ var
 {$ENDIF}
 begin
   if not (eoNoSelection in Options) then begin
-    Value.x := MinMax(Value.x, 1, fMaxLeftChar +1);
+    Value.x := MinMax(Value.x, 1, fMaxLineWidth +1);
     Value.y := MinMax(Value.y, 1, Lines.Count);
     if (SelectionMode = smNormal) then
       if (Value.y >= 1) and (Value.y <= Lines.Count) then
@@ -3633,7 +3626,7 @@ var
   nMaxX: integer;
 begin
   DoOnPaintTransient(ttBefore);                                                 //GBN 2001-10-23
-  nMaxX := fMaxLeftChar + CharsInWindow -1;
+  nMaxX := MaxLineWidth+1;
   if Value.Y > Lines.Count then
     Value.Y := Lines.Count;
   if Value.Y < 1 then begin
@@ -3760,7 +3753,7 @@ var
   iTextArea: TRect;
 begin
   if eoScrollPastEol in Options then
-    MaxVal := fMaxLeftChar
+    MaxVal := MaxLineWidth - CharsInWindow +1
   else begin
     MaxVal := TSynEditStringList(Lines).LengthOfLongestLine;
     if MaxVal > CharsInWindow then
@@ -4265,7 +4258,7 @@ var
       if fScrollBars <> ssNone then begin
         if fScrollBars in [ssBoth, ssHorizontal] then begin
           if eoScrollPastEol in Options then
-            nMaxScroll := fMaxLeftChar + CharsInWindow -1
+            nMaxScroll := MaxLineWidth
           else
             nMaxScroll := Max( TSynEditStringList(Lines).LengthOfLongestLine, 1 );
 
@@ -4322,7 +4315,7 @@ begin
       if fScrollBars in [ssBoth, ssHorizontal] then begin
 
         if eoScrollPastEol in Options then
-          nMaxScroll := fMaxLeftChar + CharsInWindow -1
+          nMaxScroll := MaxLineWidth
         else
           nMaxScroll := Max( TSynEditStringList(Lines).LengthOfLongestLine, 1 );
         if nMaxScroll <= MAX_SCROLL then
@@ -4577,7 +4570,7 @@ begin
   case Msg.ScrollCode of
       // Scrolls to start / end of the line
     SB_TOP: LeftChar := 1;
-    SB_BOTTOM: LeftChar := MaxLeftChar;
+    SB_BOTTOM: LeftChar := MaxLineWidth - CharsInWindow +1;
       // Scrolls one char left / right
     SB_LINEDOWN: LeftChar := LeftChar + 1;
     SB_LINEUP: LeftChar := LeftChar - 1;
@@ -4592,7 +4585,7 @@ begin
     begin
       FIsScrolling := True;                                                     //ddh 2002-06-22
       if eoScrollPastEol in Options then
-        iMaxWidth := fMaxLeftChar + CharsInWindow -1
+        iMaxWidth := MaxLineWidth
       else
         iMaxWidth := Max( TSynEditStringList(Lines).LengthOfLongestLine, 1 );
       if iMaxWidth > MAX_SCROLL then
@@ -4786,11 +4779,11 @@ begin
   InvalidateLines(Index + 1, MaxInt);
   InvalidateGutterLines(Index + 1, MaxInt);
 
-  if (eoAutoSizeMaxLeftChar in fOptions) then
+  if (eoAutoSizeMaxLineWidth in fOptions) then
   begin
-    L := Length(TSynEditStringList(Lines).ExpandedStrings[Index]);
-    if L > fMaxLeftChar then
-      MaxLeftChar := L;
+    L := TSynEditStringList(Lines).ExpandedStringLengths[Index];
+    if L > MaxLineWidth then
+      MaxLineWidth := L;
   end;
 end;
 {end}                                                                           //mh 2000-10-10
@@ -4826,11 +4819,11 @@ begin
   InvalidateLines(Index + 1, TopLine + LinesInWindow);
   InvalidateGutterLines(Index + 1, TopLine + LinesInWindow);
 
-  if (eoAutoSizeMaxLeftChar in fOptions) then
+  if (eoAutoSizeMaxLineWidth in fOptions) then
   begin
-    L := Length(TSynEditStringList(Lines).ExpandedStrings[Index]);
-    if L > fMaxLeftChar then
-      MaxLeftChar := L;
+    L := TSynEditStringList(Lines).ExpandedStringLengths[Index];
+    if L > MaxLineWidth then
+      MaxLineWidth := L;
   end;
 end;
 
@@ -4843,11 +4836,11 @@ begin
   else
     InvalidateLines(Index + 1, Index + 1);
 
-  if (eoAutoSizeMaxLeftChar in fOptions) then
+  if (eoAutoSizeMaxLineWidth in fOptions) then
   begin
-    L := Length(TSynEditStringList(Lines).ExpandedStrings[Index]);
-    if L > fMaxLeftChar then
-      MaxLeftChar := L;
+    L := TSynEditStringList(Lines).ExpandedStringLengths[Index];
+    if L > MaxLineWidth then
+      MaxLineWidth := L;
   end;
 end;
 
@@ -4971,7 +4964,7 @@ var
   end;
 
 begin
-  Value.x := MinMax(Value.x, 1, fMaxLeftChar);
+  Value.x := MinMax(Value.x, 1, fMaxLineWidth );
   Value.y := MinMax(Value.y, 1, Lines.Count);
   TempString := (Lines[Value.Y - 1] + #$0);
   if (Value.X > Length(TempString)) then begin
@@ -5013,7 +5006,7 @@ var
   IdChars: TSynIdentChars;
   Dummy: TSynIdentChars;
 begin
-  Value.x := MinMax(Value.x, 1, fMaxLeftChar);
+  Value.x := MinMax(Value.x, 1, MaxLineWidth+1);
   Value.y := MinMax(Value.y, 1, Lines.Count);
   TempString := Lines[Value.Y - 1];
   if TempString = '' then exit;
@@ -5033,7 +5026,8 @@ begin
     // no word on the left side, so look to the right side
     if not (TempString[Runner.X] in IdChars) then begin
       Runner := Value;
-      while Runner.X < fMaxLeftChar do begin
+      while Runner.X <= fMaxLineWidth do
+      begin
         if (TempString[Runner.X] in IdChars) then break;
         Inc(Runner.X);
       end;
@@ -5050,13 +5044,12 @@ begin
   if Runner.X < 1 then Runner.X := 1;
   fBlockBegin := Runner;
   Runner := Value;
-  while (Runner.X < fMaxLeftChar) and                                           //DDH 10/19/01
-        (Runner.X<=Length(TempString)) do
+  while Runner.X <= Length(TempString) do
   begin
     if not (TempString[Runner.X] in IdChars) then break;
     Inc(Runner.X);
   end;
-  if Runner.X > fMaxLeftChar then Runner.X := fMaxLeftChar;
+  if Runner.X > fMaxLineWidth then Runner.X := fMaxLineWidth +1;
   fBlockEnd := Runner;
 // set caret to the end of selected block
   InternalCaretXY := Runner;
@@ -5842,11 +5835,11 @@ var
   iLongestLineLength: integer;
 begin
   Invalidate;
-  if eoAutoSizeMaxLeftChar in fOptions then
+  if eoAutoSizeMaxLineWidth in fOptions then
   begin
     iLongestLineLength := TSynEditStringList(Lines).LengthOfLongestLine;
-    if iLongestLineLength >= MaxLeftChar then
-      MaxLeftChar := iLongestLineLength;
+    if iLongestLineLength > MaxLineWidth then
+      MaxLineWidth := iLongestLineLength;
   end;
   UpdateScrollBars;
 end;
@@ -5974,9 +5967,11 @@ begin
         BB := BlockBegin;
         BE := BlockEnd;
         DropAfter := (NewCaret.Y > BE.Y)
-          or ((NewCaret.Y = BE.Y) and (NewCaret.X > BE.X));
+          or ((NewCaret.Y = BE.Y) and ((NewCaret.X > BE.X) or
+          ((not DropMove) and (NewCaret.X = BE.X)) ));
         DoDrop := DropAfter or (NewCaret.Y < BB.Y)
-          or ((NewCaret.Y = BB.Y) and (NewCaret.X < BB.X));
+          or ((NewCaret.Y = BB.Y) and ((NewCaret.X < BB.X) or
+          ((not DropMove) and (NewCaret.X = BB.X)) ));
       end;
       if DoDrop then begin
         BeginUndoBlock;                                                         //mh 2000-11-20
@@ -6236,12 +6231,12 @@ begin
   end;
 end;
 
-procedure TCustomSynEdit.SetMaxLeftChar(Value: integer);
+procedure TCustomSynEdit.SetMaxLineWidth(Value: integer);
 begin
   Value := Max( Value, 1 );
-  if fMaxLeftChar <> Value then begin
-    fMaxLeftChar := Value;
-    Invalidate;
+  if MaxLineWidth <> Value then
+  begin
+    fMaxLineWidth := Value;
   end;
 end;
 
@@ -6727,9 +6722,25 @@ begin
           DoOnPaintTransient(ttBefore);                                         //GBN 2001-10-23
           Len := Length(LineText);
           if Command = ecDeleteWord then begin
-            if CaretX > Len + 1 then
-              InternalCaretX := Len + 1;
-            WP := NextWordPos;
+            WP := WordEnd;
+            Temp := LineText;
+            if WP.X <= CaretX then
+            begin
+              if WP.X > Len then
+              begin
+                Inc( WP.Y );
+                WP.X := 1;
+                Temp := Lines[ WP.Y -1 ];
+              end
+              else if Temp[WP.X] <> #32 then
+                Inc( WP.X );
+            end;
+            {$IFOPT R+}
+            Temp := Temp + #0; 
+            {$ENDIF}
+            if Temp <> '' then
+              while Temp[WP.X] = #32 do
+                Inc( WP.X );
           end else
             WP := Point(Len + 1, CaretY);
           if (WP.X <> CaretX) or (WP.Y <> CaretY) then begin
@@ -6739,7 +6750,7 @@ begin
               SetBlockBegin(CaretXY);
               SetBlockEnd(WP);
               Helper := SelText;
-              SetSelText('');
+              SetSelText( StringOfChar(' ', CaretX - BlockBegin.X) );
               fUndoList.AddChange(crSilentDeleteAfterCursor, CaretXY, WP,
                 Helper, smNormal);
             finally
@@ -6965,7 +6976,14 @@ begin
               if bChangeScroll then Include(fOptions, eoScrollPastEol);
               StartOfBlock := CaretXY;
 
-              if fInserting then begin
+              if fInserting then
+              begin
+                if not(eoAutoSizeMaxLineWidth in Options) and (
+                  (CaretX > MaxLineWidth) or
+                  (TSynEditStringList(Lines).ExpandedStringLengths[CaretY-1] >= MaxLineWidth) ) then
+                begin
+                  Exit;
+                end;
                 Insert(AChar, Temp, CaretX);
                 if Len = 0 then
                   InternalCaretX := Length(Temp) +1
@@ -7803,9 +7821,7 @@ begin
   end;                                                                          //
   try
     while (ptCurrent.Y >= ptStart.Y) and (ptCurrent.Y <= ptEnd.Y) do begin
-      //GBN - Added #10 to enable regular expression searches on new
-      //      line to work
-      nInLine := fSearchEngine.FindAll( Lines[ptCurrent.Y - 1]+#10 );
+      nInLine := fSearchEngine.FindAll( Lines[ptCurrent.Y - 1] );
       iResultOffset := 0;
       if bBackward then
         n := Pred(fSearchEngine.ResultCount)

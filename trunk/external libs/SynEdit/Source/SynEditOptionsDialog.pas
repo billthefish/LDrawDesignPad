@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditOptionsDialog.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynEditOptionsDialog.pas,v 1.2 2003-07-03 07:23:05 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -302,7 +302,7 @@ type
     FMaxUndo: Integer;
     FExtraLineSpacing: Integer;
     FTabWidth: Integer;
-    FMaxLeftChar: Integer;
+    FMaxLineWidth: Integer;
     FRightEdge: Integer;
     FSelectedColor: TSynSelectedColor;
     FRightEdgeColor: TColor;
@@ -338,7 +338,7 @@ type
     property InsertCaret : TSynEditCaretType read FInsertCaret write FInsertCaret;
     property OverwriteCaret : TSynEditCaretType read FOverwriteCaret write FOverwriteCaret;
     property HideSelection : Boolean read FHideSelection write FHideSelection;
-    property MaxLeftChar : Integer read FMaxLeftChar write FMaxLeftChar;
+    property MaxLineWidth : Integer read FMaxLineWidth write FMaxLineWidth;
     property MaxUndo : Integer read FMaxUndo write FMaxUndo;
     property SelectedColor : TSynSelectedColor read FSelectedColor write FSelectedColor;
     property TabWidth : Integer read FTabWidth write FTabWidth;
@@ -426,7 +426,7 @@ begin
     Self.HideSelection := TCustomSynEdit(Source).HideSelection;
     Self.InsertCaret := TCustomSynEdit(Source).InsertCaret;
     Self.OverwriteCaret := TCustomSynEdit(Source).OverwriteCaret;
-    Self.MaxLeftChar := TCustomSynEdit(Source).MaxLeftChar;
+    Self.MaxLineWidth := TCustomSynEdit(Source).MaxLineWidth;
     Self.MaxUndo := TCustomSynEdit(Source).MaxUndo;
     Self.RightEdge := TCustomSynEdit(Source).RightEdge;
     Self.RightEdgeColor := TCustomSynEdit(Source).RightEdgeColor;
@@ -453,7 +453,7 @@ begin
     TCustomSynEdit(Dest).HideSelection := Self.HideSelection;
     TCustomSynEdit(Dest).InsertCaret := Self.InsertCaret;
     TCustomSynEdit(Dest).OverwriteCaret := Self.OverwriteCaret;
-    TCustomSynEdit(Dest).MaxLeftChar := Self.MaxLeftChar;
+    TCustomSynEdit(Dest).MaxLineWidth := Self.MaxLineWidth;
     TCustomSynEdit(Dest).MaxUndo := Self.MaxUndo;
     TCustomSynEdit(Dest).RightEdge := Self.RightEdge;
     TCustomSynEdit(Dest).RightEdgeColor := Self.RightEdgeColor;
@@ -483,7 +483,7 @@ begin
   HideSelection := False;
   InsertCaret := ctVerticalLine;
   OverwriteCaret := ctBlock;
-  MaxLeftChar := 1024;
+  MaxLineWidth := 1024;
   MaxUndo := 1024;
   RightEdge := 80;
   RightEdgeColor := clSilver;
