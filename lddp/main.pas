@@ -23,31 +23,28 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Classes, Graphics, Forms, Controls, Menus,
+  Windows, Graphics, Forms, Controls, Menus,
   StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
   ActnList, ToolWin, ImgList, HttpProt,
   version, registry,
-
-  JvMRUList, JvPlacemnt, JvStrUtils, IniFiles,
+  JvStrUtils,
   {$ENDIF}
 
   {$IFDEF LINUX}
-  QTypes, QComCtrls, QControls, Types, Classes, Variants, QForms,
+  QTypes, QComCtrls, QControls, Types, Variants, QForms,
   QExtCtrls, QMenus, QImgList, QStdActns, QActnList,
   QDialogs, QGraphics,
 
   QSynHighlighterPas, QSynHighlighterCpp, QSynEditPrint,
   QSynEditHighlighter, QSynHighlighterLDraw,
   {$ENDIF}
-
+  Classes,
   SynEdit, SynEditHighlighter, SynHighlighterLDraw,
   SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
   SynEditTypes,
-
+  IniFiles,
   SysUtils, //for TSearchRec & TFileName
-  splash,   //splash screen
-  JvStrHlder;
-
+  splash;   //splash screen
 
 type TLDrawArray= record
   typ:integer;
@@ -74,11 +71,9 @@ type
     acFileClose: TWindowClose;
     acFileExit: TAction;
     acFileNew: TAction;
-    acFileOpen: TFileOpen;
     acFilePrint: TPrintDlg;
     acFileRevert: TAction;
     acFileSave: TAction;
-    acFileSaveAs: TFileSaveAs;
     acFileToolbar: TAction;
     acFind: TAction;
     acFindNext: TAction;
@@ -261,6 +256,10 @@ type
     WindowTileItem: TMenuItem;
     WindowTileItem2: TMenuItem;
     WindowTileVertical1: TWindowTileVertical;
+    OpenDialog1: TOpenDialog;
+    SaveDialog1: TSaveDialog;
+    acFileOpen: TAction;
+    acFileSaveAs: TAction;
     procedure acCommentBlockExecute(Sender: TObject);
     procedure acDecIndentExecute(Sender: TObject);
     procedure acEditCopyExecute(Sender: TObject);
@@ -271,11 +270,8 @@ type
     procedure acExternalsToolbarExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
     procedure acFileNewExecute(Sender: TObject);
-    procedure acFileOpenAccept(Sender: TObject);
     procedure acFilePrintAccept(Sender: TObject);
     procedure acFileRevertExecute(Sender: TObject);
-    procedure acFileSaveAsAccept(Sender: TObject);
-    procedure acFileSaveAsBeforeExecute(Sender: TObject);
     procedure acFileSaveExecute(Sender: TObject);
     procedure acFileToolbarExecute(Sender: TObject);
     procedure acFindExecute(Sender: TObject);
@@ -323,6 +319,8 @@ type
     procedure Pollevery3sec1Click(Sender: TObject);
     procedure Pollevery5sec1Click(Sender: TObject);
     procedure tmPollTimer(Sender: TObject);
+    procedure acFileSaveAsExecute(Sender: TObject);
+    procedure acFileOpenExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -576,9 +574,6 @@ begin
   acReplace.Enabled:=mdicount>0;
   Plugins1.Enabled:=mdicount>0;
   Insert1.Enabled:=mdicount>0;
-  acHighlightLdraw.Enabled := mdicount>0;
-  acHighlightPascal.Enabled := mdicount>0;
-  acHighlightCpp.Enabled := mdicount>0;
   Search1.Enabled := mdicount>0;
   Tools1.Enabled := mdicount>0;
   Window1.Enabled := mdicount>0;
@@ -660,21 +655,26 @@ begin
   ActiveMDIChild.Tag := 1;
 end;
 
-procedure TfrMain.acFileOpenAccept(Sender: TObject);
+procedure TfrMain.acFileOpenExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Opens chosen existing filenames in a new editor child windows
 Parameter: Standard
 Return value: none
 ----------------------------------------------------------------------}
+
 var
   i: Integer;
+
 begin
-    for i:=0 to acFileOpen.Dialog.Files.Count -1 do
+  if OpenDialog1.Execute then
+  begin
+    for i:=0 to OpenDialog1.Files.Count -1 do
     begin
-      CreateMDIChild(acFileOpen.Dialog.Files[i], false);
+      CreateMDIChild(OpenDialog1.Files[i], false);
       ActiveMDIChild.Tag := 0;
-      UpdateMRU(acFileOpen.Dialog.Files[i]);
+      UpdateMRU(OpenDialog1.Files[i]);
     end;
+  end;
 end;
 
 procedure TfrMain.HelpAboutExecute(Sender: TObject);
@@ -752,23 +752,22 @@ begin
     end;
 end;
 
+procedure TfrMain.acFileSaveAsExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Saves a file to disk after asking for filename
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-procedure TfrMain.acFileSaveAsBeforeExecute(Sender: TObject);
 begin
-  acFileSaveAs.Dialog.filename:=activeMDIChild.caption;
-end;
-
-procedure TfrMain.acFileSaveAsAccept(Sender: TObject);
-begin
-    ActiveMDIChild.caption:=acFileSaveAs.Dialog.filename;
+  SaveDialog1.FileName := ActiveMDIChild.Caption;
+  if SaveDialog1.Execute then
+  begin
+    ActiveMDIChild.caption := SaveDialog1.FileName;
     if ActiveMDIChild.Tag > 0 then
-      UpdateMRU(acFileSaveAs.Dialog.filename);
+      UpdateMRU(SaveDialog1.FileName);
     ActiveMDIChild.Tag := 0;
     acFileSaveExecute(Sender);
+  end;
 end;
 
 procedure TfrMain.FormShow(Sender: TObject);
@@ -2279,5 +2278,7 @@ begin
   MRUSectionList.Free;
   iniLDDP.Free;
 end;
+
+
 
 end.

@@ -597,19 +597,13 @@ object frMain: TfrMain
       ShortCut = 16462
       OnExecute = acFileNewExecute
     end
-    object acFileOpen: TFileOpen
+    object acFileOpen: TAction
       Category = 'File'
       Caption = '&Open'
-      Dialog.DefaultExt = 'dat'
-      Dialog.Filter = 
-        'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
-        'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
-      Dialog.Options = [ofHideReadOnly, ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
-      Dialog.Title = 'Choose LDraw File...'
       Hint = 'Open|Open a file'
       ImageIndex = 7
       ShortCut = 16463
-      OnAccept = acFileOpenAccept
+      OnExecute = acFileOpenExecute
     end
     object acFileClose: TWindowClose
       Category = 'File'
@@ -624,19 +618,12 @@ object frMain: TfrMain
       ShortCut = 16467
       OnExecute = acFileSaveExecute
     end
-    object acFileSaveAs: TFileSaveAs
+    object acFileSaveAs: TAction
       Category = 'File'
       Caption = 'Save &As'
-      Dialog.DefaultExt = 'dat'
-      Dialog.Filter = 
-        'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
-        '.*)|*.*'
-      Dialog.Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
-      Dialog.Title = 'Save File as...'
       Hint = 'Save As|Saves the active file with a new name'
       ImageIndex = 18
-      BeforeExecute = acFileSaveAsBeforeExecute
-      OnAccept = acFileSaveAsAccept
+      OnExecute = acFileSaveAsExecute
     end
     object acFileExit: TAction
       Category = 'File'
@@ -2465,5 +2452,25 @@ object frMain: TfrMain
       Action = acExternalsToolbar
       AutoCheck = True
     end
+  end
+  object OpenDialog1: TOpenDialog
+    DefaultExt = 'dat'
+    Filter = 
+      'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
+      'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
+    Options = [ofHideReadOnly, ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
+    Title = 'Choose LDraw File...'
+    Left = 8
+    Top = 208
+  end
+  object SaveDialog1: TSaveDialog
+    DefaultExt = 'dat'
+    Filter = 
+      'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
+      '.*)|*.*'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
+    Title = 'Save File as...'
+    Left = 40
+    Top = 208
   end
 end
