@@ -27,7 +27,6 @@ object frAboutBox: TfrAboutBox
     Height = 169
     BevelOuter = bvLowered
     Color = clWhite
-    ParentColor = False
     TabOrder = 0
     object ProgramIcon: TImage
       Left = 8
