@@ -21,14 +21,15 @@ unit childwin;
 
 interface
 
-uses QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns,
-  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
-  QSyneditTypes, QStdCtrls
+uses
   {$IFDEF MSWINDOWS}
-  ,windowsspecific, registry
-  {$ENDIF}
-;
+  windowsspecific,
+  {$ELSEIF LINUX}
+  linuxspecific,
+  {$IFEND}
+  QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
+  QSynHighlighterLDraw, QExtCtrls, Classes, QTypes, QComCtrls, QControls,
+  QSyneditTypes, QStdCtrls;
 
 type
   TfrEditorChild = class(TForm)

@@ -28,7 +28,7 @@ uses
   {$IFEND}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
   QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns,
-  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
+  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash,
   QSyneditTypes, IdBaseComponent, IdComponent, IdTCPConnection, QGraphics, QSyneditKeyCmds,
   QSynHighlighterCpp, QSynHighlighterPas, IdTCPClient, IdHTTP, l3check, DATModel, DATBase;
 
@@ -250,15 +250,16 @@ type
 
     {$IFDEF MSWINDOWS}  //NOT IN KYLIX RIGHT NOW
     procedure acHomepageExecute(Sender: TObject);
-    procedure acInlineExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
     procedure acL3PCheckExecute(Sender: TObject);
     procedure acLDViewExecute(Sender: TObject);
     procedure acMLCadExecute(Sender: TObject);
     procedure acUserDefinedExecute(Sender: TObject);
     procedure acFilePrintExecute(Sender: TObject);
+    procedure PluginClick(Sender: TObject);
     {$ENDIF}
 
+    procedure acInlineExecute(Sender: TObject);
     procedure acCommentBlockExecute(Sender: TObject);
     procedure acDecIndentExecute(Sender: TObject);
     procedure acEditCopyExecute(Sender: TObject);
@@ -303,7 +304,6 @@ type
     procedure HelpAboutExecute(Sender: TObject);
     procedure mnPollL3LabClick(Sender: TObject);
     procedure mnPollToSelectedClick(Sender: TObject);
-    procedure PluginClick(Sender: TObject);
     procedure pmL3PPopup(Sender: TObject);
     procedure Pollevery30secs1Click(Sender: TObject);
     procedure Pollevery3sec1Click(Sender: TObject);
@@ -333,11 +333,13 @@ type
     strIniName: string;
     LDDPini: TMemIniFile;
 
-    procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
-    Function  GetTMPFileName: String;
-    function  LDrawParse(line:String): TLDrawArray;
-    procedure LoadFile(fname:string);
+    {$IFDEF MSWINDOWS}
     procedure LoadPlugins(AppInit:Boolean = false);
+    {$ENDIF}
+
+    procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
+    function  GetTmpFileName: String;
+    procedure LoadFile(fname:string);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateCOntrols(closing:boolean);
     procedure UpdateMRU(NewFileName: TFileName= '');
@@ -375,58 +377,6 @@ var
 
 resourcestring
   STextNotFound = 'Text not found';
-
-function ExtractWordPos(N: Integer; const S: string; const WordDelims: TSysCharSet; var Pos: Integer): string;
-{---------------------------------------------------------------------
-Description: Returns words at specific position from a string
-             using given delimiters
-Parameter: N=N-nD Word, s:string to search, WordDelims: Word-Delimiter, var pos: position
-Return value: var pos: Position that is returned
-----------------------------------------------------------------------}
-var
-  I, Len: Integer;
-
-        function WordPosition(const N: Integer; const S: string;
-        const WordDelims: TSysCharSet): Integer;
-        var
-          Count, I: Integer;
-        begin
-          Count := 0;
-          I := 1;
-          Result := 0;
-          while (I <= Length(S)) and (Count <> N) do
-          begin
-            { skip over delimiters }
-            while (I <= Length(S)) and (S[I] in WordDelims) do Inc(I);
-            { if we're not beyond end of S, we're at the start of a word }
-            if I <= Length(S) then Inc(Count);
-            { if not finished, find the end of the current word }
-            if Count <> N then
-              while (I <= Length(S)) and not (S[I] in WordDelims) do Inc(I)
-            else Result := I;
-          end;
-        end;
-
-
-
-begin
-  Len := 0;
-  I := WordPosition(N, S, WordDelims);
-  Pos := I;
-  if I <> 0 then
-    { find the end of the current word }
-    while (I <= Length(S)) and not(S[I] in WordDelims) do
-    begin
-      { add the I'th character to result }
-      Inc(Len);
-      SetLength(Result, Len);
-      Result[Len] := S[I];
-      Inc(I);
-    end;
-  SetLength(Result, Len);
-end;
-
-
 
 procedure TfrMain.UpdateControls(closing:boolean);
 {---------------------------------------------------------------------
@@ -691,10 +641,16 @@ begin
     LDDPini.Free;
 
     {$IFDEF MSWINDOWS}
-    frOptions.fstOptions.IniFileName := strIniName;
-    frEditOptions.fstEditOptions.IniFileName := strIniName;
-    frOptions.fstOptions.RestoreFormPlacement;
-    frEditOptions.fstEditOptions.RestoreFormPlacement;
+      frOptions.fstOptions.IniFileName := strIniName;
+      frEditOptions.fstEditOptions.IniFileName := strIniName;
+      frOptions.fstOptions.RestoreFormPlacement;
+      frEditOptions.fstEditOptions.RestoreFormPlacement;
+      regT:=Tregistry.create;
+      regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
+      regt.WriteString('InstallDir', application.ExeName);
+      regt.free;
+      slPlugins:=TStringlist.create;
+      LoadPlugins(true);
     {$ENDIF}
 
     UpdateMRU;
@@ -704,17 +660,9 @@ begin
     if LastOpen1.count > 0 then
     OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption);
 
-    {$IFDEF MSWINDOWS}
-     regT:=Tregistry.create;
-     regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
-     regt.WriteString('InstallDir', application.ExeName);
-     regt.free;
-    {$ENDIF}
 
     SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
-    slPlugins:=TStringlist.create;
     pmMemo.tag:=pmMemo.items.count;
-    LoadPlugins(true);
     if paramcount>0 then
       for i:=1 to paramcount do CreateMDIChild(paramstr(i),false);
   finally
@@ -800,7 +748,7 @@ begin
 end;
 
 
-Function TfrMain.GetTMPFileName: String;
+Function TfrMain.GetTmpFileName: String;
 {---------------------------------------------------------------------
 Description: Create a unique temporal filename
 Parameter: None
@@ -850,28 +798,6 @@ begin
     else
       pnInfo.Height := 1;
   end;
-end;
-
-
-procedure TfrMain.acLDViewExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute LDView
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-begin
-  if (not FIleExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
-    MessageDlg('You have to specify a valid path to LDView.exe first!', mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
-  end;
-  (activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((activeMDICHild as TfrEditorChild).tempFileName);
-  {$IFDEF MSWINDOWS}
-  DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-  {$ELSEIF LINUX}
-
-  {$IFEND}
 end;
 
 procedure TfrMain.acOptionsExecute(Sender: TObject);
@@ -932,6 +858,27 @@ begin
   (activeMDICHild as TfrEditorChild).memo.Redo;
 end;
 
+{$IFDEF MSWINDOWS}
+procedure TfrMain.acLDViewExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Execute LDView
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+
+begin
+  if (not FIleExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
+    MessageDlg('You have to specify a valid path to LDView.exe first!', mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
+  end;
+  (activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((activeMDICHild as TfrEditorChild).tempFileName);
+  {$IFDEF MSWINDOWS}
+  DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
+  {$ELSEIF LINUX}
+
+  {$IFEND}
+end;
 
 procedure TfrMain.acMLCadExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -956,6 +903,72 @@ begin
   {$IFEND}
 end;
 
+
+procedure TfrMain.acHomepageExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Open LDDP project homepage
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+begin
+  OpenInBrowser('http://www.sourceforge.net/projects/lddp');
+end;
+
+procedure TfrMain.acUserDefinedExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Execute user defined program
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+
+var opt:byte;
+
+    function ParseString(toparse:string):string;
+    var short,long:string;
+    // %0 will be replaced by the path and filename of the exported file LDDP has generated,
+    // %1 is replaced by the path only,
+    // %2 will be replaced by the file-name only (without extension),
+    // %3 is used a place holder for the path and the filename without extension.
+    // %4, %5, %6, %7 are the same as %0 to %3 except they use the short form for paths and file-names that means the 8.3 notation of MS-DOS.
+    begin
+      long:=(activeMDICHild as TfrEditorChild).tempFileName;
+      short:=GetShortFileName(long);
+      toparse:=StringReplace(toparse,'%0',long,[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%1',ExtractFilePath(long),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%2',ChangeFileExt(ExtractFileName(long),''),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%3',ChangeFileExt(long,''),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%4',short,[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%5',ExtractFilePath(short),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%6',ChangeFileExt(ExtractFileName(short),''),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%7',ChangeFileExt(short,''),[rfReplaceAll]);
+      Result:=toParse;
+    end;
+
+begin
+  with frOptions do begin
+    if not FileExists(edExternal.text) then
+    begin
+      MessageDlg('You have to specify a valid external program first!', mtError, [mbOK], 0);
+      acOptionsExecute(Sender);
+      exit;
+    end;
+    case rgStyle.ItemIndex of
+      1: opt:=SW_HIDE;
+      2: opt:=SW_SHOWNOACTIVATE;
+      3: opt:=SW_MAXIMIZE;
+      else
+         opt:=SW_SHOWNORMAL;
+    end;
+    if cboShowCommand.checked then ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
+    (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
+    {$IFDEF MSWINDOWS}
+      DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
+    {$ELSEIF LINUX}
+
+    {$IFEND}
+
+  end;
+end;
 
 procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
 {---------------------------------------------------------------------
@@ -1097,6 +1110,28 @@ begin
 
 end;
 
+procedure TfrMain.acL3LabExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Execute L3Lab
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+begin
+  if (not FIleExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
+  begin
+    MessageDlg('You have to specify a valid path to L3Lab.exe first!', mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
+  end;
+  (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
+  {$IFDEF MSWINDOWS}
+  DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
+  {$ELSEIF LINUX}
+
+  {$IFEND}
+end;
+{$ENDIF}
+
 procedure TfrMain.acincIndentExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Insert indent based on tabWidth
@@ -1143,50 +1178,6 @@ begin
  end;
 end;
 
-
-Function TfrMain.LDrawParse(line:String): TLDrawArray;
-{---------------------------------------------------------------------
-Description: Parse a line into a TLDrawArray
-Parameter: line: string -  LIne to parse
-Return value: TLdrawArray
-----------------------------------------------------------------------}
-var i,j,m:integer;
-    s:TLDrawArray;
-begin
-   s.typ:=-1;
-   s.color:=-1;
-   if trim(line)='' then
-   begin
-     Result:=s;
-     exit;
-   end;
-   try
-     for I:=1 to 4 do
-       for j:=1 to 3 do
-         s.xyz[i,j]:=0;
-     line:=trim(line)+' ';
-     s.typ:=strtoint(copy(line,1,pos(' ',line)-1));
-     if (s.typ>0) and (s.typ<6) then
-     begin
-       line:=trim(copy(line,pos(' ',line)+1,length(line)));
-       s.color:=strtoint(copy(line,1,pos(' ',line)-1));
-       line:=trim(copy(line,pos(' ',line)+1,length(line)));
-       m:=s.typ;
-       if (m=1) or (m=5) then m:=4;
-       for i:=1 to m do
-         for j:=1 to 3 do
-         begin
-           s.xyz[i,j]:=strtofloat(copy(line,1,pos(' ',line)-1));
-           line:=trim(copy(line,pos(' ',line)+1,length(line)))+' ';
-         end;
-       if s.typ=1 then s.partname:=trim(line);
-     end;
-   except
-   end;
-   Result:=s;
-end;
-
-
 procedure TfrMain.acCommentBlockExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Comment a block using zero's
@@ -1201,7 +1192,7 @@ begin
      if seltext<>'' then
      begin
         j:=selstart;
-        tmp:='0 '+Replacestr(seltext,#13#10,#13#10+'0 ');
+        tmp:='0 '+StringReplace(seltext,#13#10,#13#10+'0 ', [rfReplaceAll]);
         seltext:=tmp;
         selstart:=j;
         selend:=j+length(tmp);
@@ -1224,7 +1215,7 @@ begin
      if seltext<>'' then
      begin
         j:=selstart;
-        tmp:=copy(Replacestr(#13#10+seltext,#13#10+'0 ',#13#10),3,selend-selstart);
+        tmp:=copy(StringReplace(#13#10+seltext,#13#10+'0 ',#13#10, [rfReplaceAll]),3,selend-selstart);
         seltext:=tmp;
         selstart:=j;
         selend:=j+length(tmp);
@@ -1266,7 +1257,7 @@ begin
           if trim(st[i])='' then st.delete(i);
         if not bCR then tmp:=copy(st.text,1,length(st.text)-2)
           else tmp:=st.text;
-        k:=length(Replacestr(tmp,#13,''));
+        k:=length(StringReplace(tmp,#13,'',[rfReplaceAll]));
         seltext:=tmp;
         selstart:=j+k;
         selend:=selstart-k;
@@ -1314,75 +1305,6 @@ begin
  end;
  DATModel1.Free;
 end;
-
-
-procedure TfrMain.acUserDefinedExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute user defined program
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-var opt:byte;
-
-    function ParseString(toparse:string):string;
-    var short,long:string;
-    // %0 will be replaced by the path and filename of the exported file LDDP has generated,
-    // %1 is replaced by the path only,
-    // %2 will be replaced by the file-name only (without extension),
-    // %3 is used a place holder for the path and the filename without extension.
-    // %4, %5, %6, %7 are the same as %0 to %3 except they use the short form for paths and file-names that means the 8.3 notation of MS-DOS.
-    begin
-      long:=(activeMDICHild as TfrEditorChild).tempFileName;
-      short:=GetShortFileName(long);
-      toparse:=ReplaceStr(toparse,'%0',long);
-      toparse:=ReplaceStr(toparse,'%1',ExtractFilePath(long));
-      toparse:=ReplaceStr(toparse,'%2',ChangeFileExt(ExtractFileName(long),''));
-      toparse:=ReplaceStr(toparse,'%3',ChangeFileExt(long,''));
-      toparse:=ReplaceStr(toparse,'%4',short);
-      toparse:=ReplaceStr(toparse,'%5',ExtractFilePath(short));
-      toparse:=ReplaceStr(toparse,'%6',ChangeFileExt(ExtractFileName(short),''));
-      toparse:=ReplaceStr(toparse,'%7',ChangeFileExt(short,''));
-      Result:=toParse;
-    end;
-
-begin
-  with frOptions do begin
-    if not FileExists(edExternal.text) then
-    begin
-      MessageDlg('You have to specify a valid external program first!', mtError, [mbOK], 0);
-      acOptionsExecute(Sender);
-      exit;
-    end;
-    case rgStyle.ItemIndex of
-      1: opt:=SW_HIDE;
-      2: opt:=SW_SHOWNOACTIVATE;
-      3: opt:=SW_MAXIMIZE;
-      else
-         opt:=SW_SHOWNORMAL;
-    end;
-    if cboShowCommand.checked then ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
-    (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-    {$IFDEF MSWINDOWS}
-      DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
-    {$ELSEIF LINUX}
-
-    {$IFEND}
-
-  end;
-end;
-
-
-procedure TfrMain.acHomepageExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Open LDDP project homepage
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  OpenInBrowser('http://www.sourceforge.net/projects/lddp');
-end;
-
 
 procedure TfrMain.acReplaceColorExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1541,28 +1463,6 @@ Return value: None
 begin
   DoSearchReplaceText(FALSE, FALSE);
 end;
-
-procedure TfrMain.acL3LabExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute L3Lab
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  if (not FIleExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
-  begin
-    MessageDlg('You have to specify a valid path to L3Lab.exe first!', mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
-  end;
-  (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-  {$IFDEF MSWINDOWS}
-  DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-  {$ELSEIF LINUX}
-
-  {$IFEND}
-end;
-
 
 procedure TfrMain.btPollingClick(Sender: TObject);
 {---------------------------------------------------------------------
