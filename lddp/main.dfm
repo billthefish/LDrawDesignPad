@@ -649,6 +649,12 @@ object frMain: TfrMain
       object InlinePart2: TMenuItem
         Action = acInline
       end
+      object SubfileSelection1: TMenuItem
+        Action = acSubFile
+      end
+      object N25: TMenuItem
+        Caption = '-'
+      end
       object ReverseWinding1: TMenuItem
         Action = acReverseWinding
       end
@@ -1321,6 +1327,12 @@ object frMain: TfrMain
       Category = 'Search'
       Caption = 'Replace Color Shortcut'
       OnExecute = acColorReplaceShortcutExecute
+    end
+    object acSubFile: TAction
+      Category = 'Editor'
+      Caption = 'Subfile Selection'
+      Hint = 'Move Selection to New Subfile'
+      OnExecute = acSubFileExecute
     end
   end
   object ilToolBarColor: TImageList
@@ -2853,6 +2865,9 @@ object frMain: TfrMain
     end
     object InlinePart1: TMenuItem
       Action = acInline
+    end
+    object SubfileSelection2: TMenuItem
+      Action = acSubFile
     end
     object ReverseWinding2: TMenuItem
       Action = acReverseWinding

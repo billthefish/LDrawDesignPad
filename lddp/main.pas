@@ -341,6 +341,10 @@ type
     acincIdent1: TMenuItem;
     pmExternal: TPopupMenu;
     ReplaceColorShortcut1: TMenuItem;
+    acSubFile: TAction;
+    SubfileSelection1: TMenuItem;
+    N25: TMenuItem;
+    SubfileSelection2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -427,6 +431,7 @@ type
     procedure acColorToolbarExecute(Sender: TObject);
     procedure acColorReplaceShortcutExecute(Sender: TObject);
     procedure tbUserDefinedClick(Sender: TObject);
+    procedure acSubFileExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -469,7 +474,7 @@ implementation
 
 uses
   childwin, about, options, colordialog, BezWindow,
-  BMP2LDraw, modeltreeview, dlgConfirmReplace;
+  BMP2LDraw, modeltreeview, dlgConfirmReplace, dlgSubpart;
 
 
 var
@@ -2988,6 +2993,72 @@ end;
 procedure TfrMain.tbUserDefinedClick(Sender: TObject);
 begin
 // Empty. Required for Button to be enabled
+end;
+
+procedure TfrMain.acSubFileExecute(Sender: TObject);
+
+var
+  SubFile: TStringList;
+  FileType: string;
+  i: Integer;
+
+begin
+  ExpandSelection;
+  with (ActiveMDIChild as TfrEditorChild) do
+  begin
+    //Init Form Values
+    frSubFile.edFilename.Text := ExtractFileName(Caption);
+    frSubFile.edAuthor.Text := frOptions.edName.Text;
+    frSubFile.edTitle.Text := '';
+    frSubFile.edComments.Clear;
+    frSubFile.rgType.ItemIndex := -1;
+    frSubFile.cbUnofficial.Checked := False;
+
+    //Subfile selected text
+    if frSubfile.ShowModal = mrOK then
+    begin
+      case frSubFile.rgType.ItemIndex of
+        1: FileType := 'Submodel';
+        2: FileType := 'Part';
+        3: FileType := 'Subpart';
+        4: FileType := 'Primitive';
+        else FileType := 'Model';
+      end;
+
+      if frSubFile.cbUnofficial.Checked then
+        FileType := 'Unofficial ' + FileType;
+
+      for i := 0 to frSubFile.edComments.Lines.Count - 1 do
+        frSubFile.edComments.Lines[i] := '0 ' + frSubFile.edComments.Lines[i];
+
+      SubFile := TStringList.Create;
+      SubFile.Text := '0 ' + frSubFile.edTitle.Text + #13#10 +
+                      '0 Name: ' + frSubFile.edFileName.Text + #13#10 +
+                      '0 Author: ' + frSubFile.edAuthor.Text + #13#10 +
+                      '0 ' + FileType + #13#10 +
+                      frSubFile.edComments.Text + #13#10 +
+                      memo.SelText;
+
+      if FileExists(ExtractFilePath(Caption) + frSubFile.edFileName.Text) then
+      begin
+        if MessageDlg('File of same name already exists.  Overwrite?',
+                      mtWarning, mbOKCancel, 0) = mrOK then
+        begin
+          SubFile.SaveToFile(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
+          memo.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
+          CreateMDIChild(ExtractFilePath(Caption) + frSubFile.edFileName.Text,false);
+          UpdateMRU(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
+        end;
+      end
+      else
+      begin
+        SubFile.SaveToFile(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
+        memo.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
+        CreateMDIChild(ExtractFilePath(Caption) + frSubFile.edFileName.Text,false);
+        UpdateMRU(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
+      end;
+    end;
+  end;
 end;
 
 end.
