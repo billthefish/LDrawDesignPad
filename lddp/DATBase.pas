@@ -177,6 +177,7 @@ type
       function GetPoint(idx: Integer): TDATPoint;
       procedure SetPoint(idx: Integer; Value: TDATPoint);
       function GetExtremeValue(Index: Integer): Extended;
+      function GetCenterValue(Index: Integer): Extended;
 
     public
       (* Use this property to get or set the individual points of the Line,
@@ -189,6 +190,9 @@ type
       property MinY: Extended index 4 read GetExtremeValue;
       property MaxZ: Extended index 5 read GetExtremeValue;
       property MinZ: Extended index 6 read GetExtremeValue;
+      property CenterX: Extended index 1 read GetCenterValue;
+      property CenterY: Extended index 2 read GetCenterValue;
+      property CenterZ: Extended index 3 read GetCenterValue;
 
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); override;
   end;
@@ -571,24 +575,33 @@ function TDATSubPart.GetDATString:string;
 
 var
  strSep: Char;
- i: Integer;
+ pacc, racc: string;
 
 begin
   strSep := DecimalSeparator;
-  Result := IntToStr(intLineType) + ' ' +
-            IntToStr(Self.Color) + ' ';
 
-  Result := Result + FloatToStr(RoundTo(FDATMatrix[1,4],-abs(PntAcc))) + ' ' +
-                       FloatToStr(RoundTo(FDATMatrix[2,4],-abs(PntAcc))) + ' ' +
-                       FloatToStr(RoundTo(FDATMatrix[3,4],-abs(PntAcc))) + ' ';
+  pacc := IntToStr(PntAcc);
+  racc := IntToStr(RotAcc);
 
-  for i := 1 to 3 do
-    Result := Result + FloatToStr(RoundTo(FDATMatrix[i,1],-abs(RotAcc))) + ' ' +
-                       FloatToStr(RoundTo(FDATMatrix[i,2],-abs(RotAcc))) + ' ' +
-                       FloatToStr(RoundTo(FDATMatrix[i,3],-abs(RotAcc))) + ' ';
-
-  Result := Result + strSubPartFile + strFileExt;
+  Result := Format('%d %d ' +
+                   '%.' + pacc + 'g ' +
+                   '%.' + pacc + 'g ' +
+                   '%.' + pacc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g ' +
+                   '%.' + racc + 'g %s', [LineType, Color,
+                                          RM[1,4], RM[2,4], RM[3,4],
+                                          RM[1,1], RM[1,2], RM[1,3],
+                                          RM[2,1], RM[2,2], RM[2,3],
+                                          RM[3,1], RM[3,2], RM[3,3], FileName]);
   DecimalSeparator := strSep;
+
 end;
 
 procedure TDATSubPart.ProcessDATLine(strText:string);
@@ -673,7 +686,7 @@ begin
 
   j := LineType;
 
-  if j = 5 then j := 4;
+  if j = 5 then j := 2;
 
   Result := RM[1, coord];
 
@@ -682,6 +695,18 @@ begin
       1,3,5: if RM[i, coord] > Result then Result := RM[i, coord];
       2,4,6: if RM[i, coord] < Result then Result := RM[i, coord];
     end;
+end;
+
+function TDATGeometric.GetCenterValue(Index: Integer): Extended;
+
+begin
+  case LineType of
+    2,5: Result := (RM[1,Index] + RM[2,Index]) / 2;
+    3: Result := (RM[1,Index] + RM[2,Index] + RM[3,Index]) / 3;
+    4: Result := (RM[1,Index] + RM[2,Index] + RM[3,Index] + RM[4,Index]) / 4;
+    else
+      result := 0;
+  end;  
 end;
 
 procedure TDATGeometric.Transform(M: TDATMatrix; Reverse: Boolean = false);
@@ -711,27 +736,28 @@ end;
 function TDATGeometric.GetDATString:string;
 
 var
- strSep: Char;
- i, NumIter: Integer;
+ pacc: string;
 
 begin
-  strSep := DecimalSeparator;
-  DecimalSeparator := '.';
-  Result := IntToStr(intLineType) + ' ' +
-            IntToStr(intColor) + ' ';
+  pacc := IntToStr(PntAcc);
 
   case intLineType of
-    2: NumIter := 2;
-    3: NumIter := 3;
-    else NumIter := 4;
+    2:  Result := Format('%d %d ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
+                                    '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ',
+                         [LineType, Color, RM[1,1], RM[1,2], RM[1,3], RM[2,1], RM[2,2], RM[2,3]]);
+    3:  Result := Format('%d %d ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
+                                    '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
+                                    '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ',
+                         [LineType, Color, RM[1,1], RM[1,2], RM[1,3], RM[2,1], RM[2,2], RM[2,3],
+                                           RM[3,1], RM[3,2], RM[3,3]]);
+    4,5:  Result := Format('%d %d ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
+                                      '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
+                                      '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
+                                      '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ',
+                           [LineType, Color, RM[1,1], RM[1,2], RM[1,3], RM[2,1], RM[2,2], RM[2,3],
+                                             RM[3,1], RM[3,2], RM[3,3], RM[4,1], RM[4,2], RM[4,3]]);
+    else Result := '';
   end;
-
-  for i := 1 to NumIter do
-    Result := Result + FloatToStr(RoundTo(FDATMatrix[i,1],-abs(RotAcc))) + ' ' +
-                       FloatToStr(RoundTo(FDATMatrix[i,2],-abs(RotAcc))) + ' ' +
-                       FloatToStr(RoundTo(FDATMatrix[i,3],-abs(RotAcc))) + ' ';
-
-  DecimalSeparator := strSep;
 end;
 
 procedure TDATGeometric.ProcessDATLine(strText:string);
@@ -919,5 +945,14 @@ begin
   Result[3,2] := M32;
   Result[3,3] := M33;
 end;
+
+initialization
+  {Some locales use "," as the decimal separator
+   This changes the decimal separtor to "." as required by the LDraw spec
+   without changing the master settings. }
+  DecimalSeparator := '.';
+
+finalization
+// Nothing
 
 end.

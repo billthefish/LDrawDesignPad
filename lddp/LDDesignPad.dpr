@@ -37,7 +37,8 @@ uses
   dlgReplaceText in 'dlgreplacetext.pas' {TextReplaceDialog},
   dlgConfirmReplace in 'dlgConfirmReplace.pas' {ConfirmReplaceDialog},
   BezWindow in 'BezWindow.pas' {frmDATCurve},
-  dlgSubpart in 'dlgSubpart.pas' {frSubFile};
+  dlgSubpart in 'dlgSubpart.pas' {frSubFile},
+  sorting in 'sorting.pas' {fmSort};
 
 {$R *.res}
 
@@ -55,6 +56,7 @@ begin
   Application.CreateForm(TfrModelTreeView, frModelTreeView);
   Application.CreateForm(TfrmDATCurve, frmDATCurve);
   Application.CreateForm(TfrSubFile, frSubFile);
+  Application.CreateForm(TfmSort, fmSort);
   finally
     screen.cursor:=0;
   end;

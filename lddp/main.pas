@@ -424,7 +424,6 @@ type
     procedure acECCopyExecute(Sender: TObject);
     procedure MetaMenuClick(Sender: TObject);
     procedure acTriangleCombineExecute(Sender: TObject);
-    procedure acSortByPositionExecute(Sender: TObject);
     procedure acRandomizeColorsExecute(Sender: TObject);
     procedure Pollonrequest1Click(Sender: TObject);
     procedure acMirrorExecute(Sender: TObject);
@@ -432,6 +431,7 @@ type
     procedure acColorReplaceShortcutExecute(Sender: TObject);
     procedure tbUserDefinedClick(Sender: TObject);
     procedure acSubFileExecute(Sender: TObject);
+    procedure acSortByPositionExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -473,7 +473,7 @@ implementation
 {$R *.dfm}
 
 uses
-  childwin, about, options, colordialog, BezWindow,
+  childwin, about, options, colordialog, BezWindow, sorting,
   BMP2LDraw, modeltreeview, dlgConfirmReplace, dlgSubpart;
 
 
@@ -951,8 +951,6 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  DecimalSeparator:='.';
-  ThousandSeparator:=',';
   DragAcceptFiles( Handle,True ) ;
 end;
 
@@ -2431,13 +2429,15 @@ Description: Checks for a newer version looking for a special url
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var strVersionHTTP:string;
-    strActualVersion:string;
+var
+  strVersionHTTP:string;
+  strActualVersion:string;
 
 begin
   strActualVersion := GetAppVersion(Application.ExeName);
   strVersionHTTP := http.Get('http://lddp.sourceforge.net/lddp.ver');
-  if trim(strVersionHTTP)=strActualVersion then MessageDlg('There is no newer version available.', mtInformation, [mbOK], 0)
+  if trim(strVersionHTTP)=strActualVersion then
+    MessageDlg('There is no newer version available.', mtInformation, [mbOK], 0)
   else
   begin
     MessageDlg('There is a newer version available!!!', mtInformation, [mbOK], 0);
@@ -2874,31 +2874,56 @@ end;
 procedure TfrMain.acSortByPositionExecute(Sender: TObject);
 
 var
-  ValueList: TStringList;
-  DModel1: TDATModel;
-  i, tmpBlEndY: Integer;
+  DModel, DModel2: TDATModel;
+  i: Integer;
 
 begin
-  ValueList := TStringList.Create;
-  DModel1 := TDATModel.Create;
-
-  ValueList.Sorted := True;
-
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Line;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    DModel := TDATModel.Create;
+    if SelLength > 0 then
+      fmSort.rgScope.ItemIndex := 1
+    else
+      fmSort.rgScope.ItemIndex := 0;
 
-    DModel1.ModelText := SelText;
+    if fmSort.ShowModal = mrOk then
+    begin
+      if fmSort.rgScope.ItemIndex = 0 then
+        SelectAll
+      else
+        ExpandSelection;
 
-    for i := 0 to DModel1.Count - 1 do
-      ValueList.Add(DModel1[i].DATString);
+      DModel.ModelText := SelText;
 
-    SelText := ValueList.Text;
+      case fmSort.cbSort.ItemIndex of
+        0: DModel.SortModel(SortMinX);
+        1: DModel.SortModel(SortMaxX);
+        2: DModel.SortModel(SortCenterX);
+        3: DModel.SortModel(SortMinY);
+        4: DModel.SortModel(SortMaxY);
+        5: DModel.SortModel(SortCenterY);
+        6: DModel.SortModel(SortMinZ);
+        7: DModel.SortModel(SortMaxZ);
+        8: DModel.SortModel(SortCenterZ);
+        9: DModel.SortModel(SortColor);
+      end;
+
+      // Reverse Text if selected
+      // This is sloppy, a better way can be found
+      if fmSort.rgSortDirection.ItemIndex < 1 then
+      begin
+        DModel2 := TDATModel.Create;
+
+        for i := DModel.Count - 1 downto 0 do
+          DModel2.Add(DModel[i].DATString);
+
+        DModel.ModelText := DModel2.ModelText;
+        DModel2.Free;
+      end;
+
+      SelText := DModel.ModelText;
+    end;
   end;
-  DModel1.Free;
-  ValueList.Free;
 end;
 
 procedure TfrMain.acRandomizeColorsExecute(Sender: TObject);
@@ -3055,5 +3080,16 @@ begin
     end;
   end;
 end;
+
+initialization
+  {Some locales use "," as the decimal separator
+   This changes the decimal separtor to "." as required by the LDraw spec
+   without changing the master settings. }
+  Application.UpdateFormatSettings := False;
+  DecimalSeparator := '.';
+  ThousandSeparator:=',';
+
+finalization
+// Nothing
 
 end.
