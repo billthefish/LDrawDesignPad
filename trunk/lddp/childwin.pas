@@ -134,9 +134,10 @@ var
   i: Integer;
   DLine: TDATType;
   DModel: TDATModel;
+  tempBB, tempBE: TBufferCoord;
 
 begin
-  If Memo.modified then
+  if memo.modified then
   begin
     frMain.Statusbar.Panels[2].Text:='Modified'
   end
@@ -154,12 +155,18 @@ begin
   else
   begin
     DModel := TDATModel.Create;
+    tempBB := memo.BlockBegin;
+    tempBE := memo.BlockEnd;
+
     frMain.ExpandSelection;
     DModel.ModelText := memo.SelText;
     for i := 0 to DModel.Count - 1 do
       if DModel[i].LineType = 1 then
         frMain.acInline.enabled := True;
     DModel.Free;
+
+    memo.BlockBegin := tempBB;
+    memo.BlockEnd := tempBE;
   end;
 
   if frMain.slPlugins.Count > 0 then
