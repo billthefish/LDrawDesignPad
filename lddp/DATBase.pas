@@ -25,9 +25,30 @@ uses
   Math;
 
 type
+  (* These types allow passing of fixed arrays between procedures
+     instead of varible length arrays *)
   TDATPoint = array[1..3] of Extended;
   TDATMatrix = array[1..4,1..4] of Extended;
 
+(*
+  The general structure of the DAT Classes is:
+
+                        TDATType
+                         /   \
+                        /     \
+           TDATComment--       \
+                      /       TDATElement
+     TDATBlankLine----         /   \
+                              /     \
+                TDATSubPart---       \
+                                    TDATGeometric
+                                      /      \
+                                     /        \
+                              TDATPolygon      ----TDATLine
+                                /   \          \
+                               /     \          ----TDATOpLine
+               TDATTriangle---        ---TDATQuad
+*)
   TDATType=class(TObject)
     private
       strLine: string;
@@ -39,10 +60,16 @@ type
 
     public
       constructor Create; virtual;
+
+      (* Returns the linetype of the object *)
       property LineType: Byte read intLineType;
+
+      (* Get or set a properly formatted DAT text line that represents
+         the DAT Object's values *)
       property DATString: string read GetDATString write ProcessDATLine;
   end;
 
+  (* Represents LineType 0 *)
   TDATComment=class(TDATType)
     private
       strComment: string;
@@ -55,9 +82,11 @@ type
       constructor Create; override;
 
     published
+      (* Get or Set the Comment portion of the DAT text*)
       property Comment: string read strComment write strComment;
   end;
 
+  (* Used as a place holder for a blank line (#13#10) *)
   TDATBlankLine=class(TDATType)
     protected
       function GetDATString:string; override;
@@ -77,7 +106,8 @@ type
 
     public
       constructor Create; override;
-      (* Use this propert to get or set the matrix (Linetype 1) or
+
+      (* Use this property to get or set the matrix (Linetype 1) or
          all points (Linetypes 2-5) in one go using a TDATMatrix type *)
       property RotationMatrix: TDATMatrix read FDATMatrix write FDATMatrix;
 
@@ -85,9 +115,13 @@ type
          or point set (Linetypes 2-5) *)
       property RM[idx1,idx2: Integer]: Extended read GetRMVal write SetRMVal;
 
+      (* Multiply the current Object by the given Matrix *)
       procedure Transform(M: TDATMatrix;
                             Reverse: Boolean = false); overload; virtual; abstract;
+      (* Translate the current Object by x,y,z*)
       procedure Translate(x,y,z: Extended);
+
+      (* Rotate the current Object by w around the vector [x,y,z,1] *)
       procedure Rotate(w,x,y,z: Extended);
 
     published
@@ -113,16 +147,19 @@ type
     public
       constructor Create; override;
       property Position: TDATPoint read GetPosition write SetPosition;
+
+      (* The file reference plus extention *)
       property FileName: string read GetFileName write SetSubPartFile;
+      (* The file reference without extention *)
+      property SubPart: string read strSubPartFile write SetSubPartFile;
 
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; override;
+
       (* Format for the array fed to this fuction is:
           [x,y,z,rm11,rm12,rm13,rm21,rm22,rm23,rm31,rm32,rm33] *)
       procedure Transform(M: array of Extended;
                             Reverse: Boolean = false); overload;
 
-    published
-      property SubPart: string read strSubPartFile write SetSubPartFile;
       property X: Extended index 13 read GetCoordinate write SetCoordinate;
       property Y: Extended index 14 read GetCoordinate write SetCoordinate;
       property Z: Extended index 15 read GetCoordinate write SetCoordinate;
