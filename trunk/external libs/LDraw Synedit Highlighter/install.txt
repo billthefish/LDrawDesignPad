@@ -1,0 +1,9 @@
+This is everything you need to use the LDraw highlighter.  
+Just install into the SynEdit source directory and reregister 
+the SynEdit package.  
+
+The highlighter is still not perfect 
+but it’s the best I could do considering the wonderful lack 
+of documentation for SynEdit.
+
+Orion - billthefish
