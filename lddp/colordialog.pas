@@ -179,10 +179,14 @@ procedure TfrColorDialog.Shape11MouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 var cname,tmp,nr:string;
 begin
-  nr:=slColors.Names[(Sender as TShape).tag+scrollbar1.position*4];
-  tmp:=slColors.Values[nr];
-  cname:=copy(tmp,1,pos(' ',tmp)-1);
-  edDescription.text:='Nr: '+nr+' - '+cname;
+  if (Sender as TShape).tag+scrollbar1.position*4<slColors.count then
+  begin
+    nr:=slColors.Names[(Sender as TShape).tag+scrollbar1.position*4];
+    tmp:=slColors.Values[nr];
+    cname:=copy(tmp,1,pos(' ',tmp)-1);
+    edDescription.text:='Nr: '+nr+' - '+cname;
+  end
+   else edDescription.text:='';
 end;
 
 end.
