@@ -29,8 +29,7 @@ uses
   QSynHighlighterCpp, QSynHighlighterPas, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, Classes, QActnList, QTypes,
   QComCtrls, QControls, Inifiles, splash, QSyneditTypes, QGraphics,
-  QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls, IdIntercept,
-  IdLogBase, IdLogDebug;
+  QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls;
 
 
 type TLDrawArray= record
@@ -2042,6 +2041,11 @@ end;
 
 
 procedure TfrMain.acCheckforUpdateExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Checks for a newer version looking for a special url
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 var strVersionHTTP:string;
     strActualVersion:string;
 begin
@@ -2055,10 +2059,10 @@ begin
   else
      begin
         MessageDlg('There is a newer version available!!!', mtInformation, [mbOK], 0);
-        {$IFDEF MSWINDOWS} //NOT IN KYLIX YET
+        {$IFDEF MSWINDOWS}
            OpenInBrowser('http://www.sourceforge.net/projects/lddp');
         {$ELSE}
-
+            // To-Do
         {$ENDIF}
      end;
 end;
