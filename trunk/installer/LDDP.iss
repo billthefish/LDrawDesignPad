@@ -25,6 +25,7 @@ Source: "C:\Lego\Source Code\LDDP\plugins\*.*"; DestDir: "{app}\Plugins Samples 
 Source: "C:\Lego\Source Code\LDDP\plugins\delphi\EditorPluginSample.dll"; DestDir: "{app}\Plugins\"; Flags: ignoreversion
 Source: "C:\Lego\Source Code\LDDP\lddp\colors.pal"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Lego\Source Code\LDDP\lddp\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Windows\System32\qtintf70.dll"; DestDir: "{sys}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
