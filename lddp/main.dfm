@@ -426,6 +426,21 @@ object frMain: TfrMain
       object SelectAll1: TMenuItem
         Action = acSelectAll
       end
+      object N3: TMenuItem
+        Caption = '-'
+      end
+      object Find1: TMenuItem
+        Action = acFind
+      end
+      object FindNext1: TMenuItem
+        Action = acFindNext
+      end
+      object Replace1: TMenuItem
+        Action = acReplace
+      end
+      object ChangeColor2: TMenuItem
+        Action = acReplaceColor
+      end
       object N13: TMenuItem
         Caption = '-'
       end
@@ -435,9 +450,9 @@ object frMain: TfrMain
       object Uncomment1: TMenuItem
         Action = acUncommentBlock
       end
-      object N12: TMenuItem
-        Caption = '-'
-      end
+    end
+    object View1: TMenuItem
+      Caption = 'View'
       object Toolbars: TMenuItem
         Caption = '&Toolbars'
         Hint = 'Show or Hide Toolbars'
@@ -457,26 +472,32 @@ object frMain: TfrMain
           Action = acExternalsToolbar
         end
       end
-      object N3: TMenuItem
-        Caption = '-'
-      end
-      object miMiscOptions: TMenuItem
-        Action = acOptions
-      end
     end
-    object Search1: TMenuItem
-      Caption = 'Search'
-      object Find1: TMenuItem
-        Action = acFind
+    object Insert1: TMenuItem
+      Caption = 'Insert'
+      object StandardPartHeader1: TMenuItem
+        Action = acInsertPartHeader
       end
-      object FindNext1: TMenuItem
-        Action = acFindNext
+      object UpdateHeader1: TMenuItem
+        Action = acInsertUpdateLine
       end
-      object Replace1: TMenuItem
-        Action = acReplace
-      end
-      object ChangeColor2: TMenuItem
-        Action = acReplaceColor
+      object BFCStatement2: TMenuItem
+        Caption = 'BFC Statement'
+        object CERTIFY1: TMenuItem
+          Action = acInsertBFCCertifyCW
+        end
+        object CERTIFYCCW1: TMenuItem
+          Action = acInsertBFCCertifyCCW
+        end
+        object INVERNEXT1: TMenuItem
+          Action = acInsertBFCInvertnext
+        end
+        object CLIP1: TMenuItem
+          Action = acInsertBFCClip
+        end
+        object NOCLIP1: TMenuItem
+          Action = acInsertBFCNoClip
+        end
       end
     end
     object Tools1: TMenuItem
@@ -487,33 +508,6 @@ object frMain: TfrMain
         ImageIndex = 39
         object Nonefound1: TMenuItem
           Caption = '(None found)'
-        end
-      end
-      object Insert1: TMenuItem
-        Caption = '&Insert'
-        object StandardPartHeader1: TMenuItem
-          Action = acInsertPartHeader
-        end
-        object UpdateHeader1: TMenuItem
-          Action = acInsertUpdateLine
-        end
-        object BFCStatement2: TMenuItem
-          Caption = 'BFC Statement'
-          object CERTIFY1: TMenuItem
-            Action = acInsertBFCCertifyCW
-          end
-          object CERTIFYCCW1: TMenuItem
-            Action = acInsertBFCCertifyCCW
-          end
-          object INVERNEXT1: TMenuItem
-            Action = acInsertBFCInvertnext
-          end
-          object CLIP1: TMenuItem
-            Action = acInsertBFCClip
-          end
-          object NOCLIP1: TMenuItem
-            Action = acInsertBFCNoClip
-          end
         end
       end
       object ExternalPrograms1: TMenuItem
@@ -600,6 +594,12 @@ object frMain: TfrMain
       end
       object ViewModelTree1: TMenuItem
         Action = acModelTreeView
+      end
+      object N7: TMenuItem
+        Caption = '-'
+      end
+      object miMiscOptions: TMenuItem
+        Action = acOptions
       end
     end
     object Window1: TMenuItem
