@@ -166,7 +166,7 @@ type
     ToolButton28: TToolButton;
     Print1: TMenuItem;
     acFindNext: TAction;
-    N7: TMenuItem;
+    Search1: TMenuItem;
     Find1: TMenuItem;
     FindNext1: TMenuItem;
     Replace1: TMenuItem;
@@ -554,6 +554,12 @@ begin
   acReplace.Enabled:=mdicount>0;
   Plugins1.Enabled:=mdicount>0;
   Insert1.Enabled:=mdicount>0;
+  acHighlightLdraw.Enabled := mdicount>0;
+  acHighlightPascal.Enabled := mdicount>0;
+  acHighlightCpp.Enabled := mdicount>0;
+  Search1.Enabled := mdicount>0;
+  Tools1.Enabled := mdicount>0;
+  Window1.Enabled := mdicount>0;
   acCommentBlock.Enabled:=mdicount>0;
   acUnCommentBlock.Enabled:=mdicount>0;
   acIncIndent.Enabled:=mdicount>0;
@@ -1637,10 +1643,13 @@ begin
       acOptionsExecute(Sender);
       exit;
     end;
-    opt:=SW_SHOWNORMAL;
-    if rbWindowHidden.checked then opt:=SW_HIDE;
-    if rbWindowNormalRemain.checked then opt:=SW_SHOWNOACTIVATE;
-    if rbWindowMaximized.checked then opt:=SW_MAXIMIZE;
+    case rgStyle.ItemIndex of
+      1: opt:=SW_HIDE;
+      2: opt:=SW_SHOWNOACTIVATE;
+      3: opt:=SW_MAXIMIZE;
+      else
+         opt:=SW_SHOWNORMAL;
+    end;
     if cboShowCommand.checked then ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
     (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
     DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
