@@ -49,7 +49,7 @@ type
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; virtual;
       procedure Translate(x,y,z: Extended); virtual;
       function GetDATType(strLine: string): TDATType;
-      procedure Clear;
+      procedure Clear; virtual;
 
     public
       constructor Create; virtual;
@@ -70,17 +70,37 @@ type
 
     public
       property FilePath: string read strFilePath write strFilePath;
+      property ModelText: string read GetModelText write SetModelText;
+
       property Lines; default;{Public redeclare of the inherited Lines property}
       property Count; {Public redeclare of the inherited Count property}
-      property ModelText: string read GetModelText write SetModelText;
+
+      { Load a model from a dat or ldr file.  MPD support not yet added}
       procedure LoadModel(Filename: string);
+
+      { Save a model to dat or ldr format.  MPD support not yet added}
       procedure SaveModel(Filename: string);
+
+      {Delete line at index}
       procedure Delete(Index: Integer);
+
+      {Inline part at index}
       procedure InlinePart(Index: Integer);
+
+      {Inline all parts (linetype 1) in the model}
       procedure InlineAll;
+
+      {Finds the first instance of the supplied line starting from the supplied
+       index (default 0)}
       function IndexOfLine(strLine: string; StartIndex: Integer = 0): Integer;
+
+      {Add all the lines from the supplied DATModel}
       procedure AddLines(ModelObj: TDATModel; Index: Integer = -1);
 
+      procedure CommentLine(Index: Integer);
+      procedure UnCommentLine(Index: Integer);
+
+//    Inherited from TDATCustomModel
       procedure Add(strLine: string); overload; override;
       procedure Add(objLine: TDATType); overload; override;
       procedure Insert(Index: Integer; strLine: string); overload; override;
@@ -88,7 +108,7 @@ type
       procedure Rotate(w,x,y,z: Extended); override;
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; override;
       procedure Translate(x,y,z: Extended); override;
-      procedure Clear;
+      procedure Clear; override;
   end;
 
 (*
@@ -173,18 +193,28 @@ var
 begin
   strCurrentLine := Trim(strLine);
 
-  if strCurrentLine = '' then
+  if (strCurrentLine = '') or (strCurrentLine = #13#10) or
+     (strCurrentLine = #13) or (strCurrentLine = #10) then
     Result := TDATBlankLine.Create
   else
-    case strCurrentLine[1] of
-      '0': Result := TDATComment.Create;
-      '1': Result := TDATSubPart.Create;
-      '2': Result := TDATLine.Create;
-      '3': Result := TDATTriangle.Create;
-      '4': Result := TDATQuad.Create;
-      '5': Result := TDATOpLine.Create;
-      else Result := TDATBlankLine.Create;
-  end;
+    if Length(strCurrentLine) > 1 then
+      if strCurrentLine[2] = ' ' then
+        case strCurrentLine[1] of
+          '0': Result := TDATComment.Create;
+          '1': Result := TDATSubPart.Create;
+          '2': Result := TDATLine.Create;
+          '3': Result := TDATTriangle.Create;
+          '4': Result := TDATQuad.Create;
+          '5': Result := TDATOpLine.Create;
+          else Result := TDATBlankLine.Create;
+        end
+      else
+        Result := TDATBlankLine.Create
+    else
+      if strCurrentLine[1] = '0' then
+        Result := TDATComment.Create
+      else
+        Result := TDATBlankLine.Create;
 end;
 
 procedure TDATCustomModel.Add(objLine: TDATType);
@@ -419,6 +449,40 @@ begin
     inc(Result);
   end;
   if Result = Count then Result := -1;
+end;
+
+procedure TDATModel.CommentLine(Index: Integer);
+
+var
+  DLine: string;
+
+begin
+  if (not (Lines[Index] is TDATComment)) and
+     (not (Lines[Index] is TDATBlankLine)) then
+  begin
+    DLine := Lines[Index].DATString;
+    Delete(Index);
+    Insert(Index, DLine);
+  end;
+end;
+
+procedure TDATModel.UnCommentLine(Index: Integer);
+
+var
+  DLine: string;
+
+begin
+  if Lines[Index] is TDATComment then
+  begin
+    Dline := (Lines[Index] as TDATComment).Comment;
+    Delete(Index);
+    Insert(Index, DLine);
+    if Lines[Index] is TDATBlankLine then
+    begin
+      Delete(Index);
+      Insert(Index, '0 ' + DLine);
+    end;
+  end;
 end;
 
 procedure TDATModel.Add(objLine: TDATType);
