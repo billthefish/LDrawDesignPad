@@ -1120,13 +1120,12 @@ begin
 
     if ExtractfileExt(lowercase(sr.name))='.dll' then
     begin
-      if FileExists(ChangeFileExt(PluginFile, '.bmp')) then
-      begin
+      try
         plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
         imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
-      end
-      else
-        imgix := -1;  
+      except
+        imgix := -1;
+      end;  
       NewItem := TMenuItem.Create(Plugins3);
       Newitem.tag:=slplugins.count-1;
       NewItem.caption:=frMain.PLuginInfo(PluginFile,1);
