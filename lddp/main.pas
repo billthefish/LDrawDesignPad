@@ -68,7 +68,7 @@ type
     acInsertPartHeader: TAction;
     acInsertUpdateLine: TAction;
     acL3Lab: TAction;
-    acL3PCheck: TAction;
+    acErrorCheck: TAction;
     acLDView: TAction;
     acMLCad: TAction;
     acMRUList: TAction;
@@ -160,7 +160,6 @@ type
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
     ToolButton8: TToolButton;
-    ToolButton9: TToolButton;
     TrimLines2: TMenuItem;
     UpdateHeader2: TMenuItem;
     acWindowCascade: TWindowCascade;
@@ -248,6 +247,8 @@ type
     acReverseWinding: TAction;
     BFCStatement2: TMenuItem;
     ReverseWinding2: TMenuItem;
+    ToolButton9: TToolButton;
+    ErrorCheck1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -282,7 +283,7 @@ type
     procedure acInsertBFCExecute(Sender: TObject);
     procedure acInsertPartHeaderExecute(Sender: TObject);
     procedure acInsertUpdateLineExecute(Sender: TObject);
-    procedure acL3PCheckExecute(Sender: TObject);
+    procedure acErrorCheckExecute(Sender: TObject);
     procedure acMRUListExecute(Sender: TObject);
     procedure acRedoExecute(Sender: TObject);
     procedure acReplaceColorExecute(Sender: TObject);
@@ -389,7 +390,7 @@ begin
   acFilePrint.Enabled:=mdicount>0;
   acFileSave.Enabled:=mdicount>0;
   acFileRevert.Enabled:=mdicount>0;
-  acl3pcheck.Enabled:=mdicount>0;
+  acErrorCheck.Enabled:=mdicount>0;
   acldview.Enabled:=mdicount>0;
   acl3Lab.Enabled:=mdicount>0;
   acmlcad.Enabled:=mdicount>0;
@@ -761,7 +762,7 @@ begin
 end;
 
 
-procedure TfrMain.acL3PCheckExecute(Sender: TObject);
+procedure TfrMain.acErrorCheckExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Perform L3P Check
 Parameter: None
