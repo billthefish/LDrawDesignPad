@@ -20,7 +20,6 @@ unit windowsspecific;
 
 interface
 
-{$IFDEF MSWINDOWS}
 uses windows, shellapi, messages, sysutils, classes,  Forms, version;
 
 type
@@ -70,11 +69,10 @@ procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4
 procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
 procedure OpenInBrowser(url:string);
 function GetWindowsVersion:string;
-{$ENDIF}
 
 
 implementation
-{$IFDEF MSWINDOWS}
+
 uses main;
 
 function GetWindowsVersion:string;
@@ -291,6 +289,5 @@ procedure OpenInBrowser(url:string);
 begin
   ShellExecute( Application.Handle, 'open', PChar( url) , nil, nil, SW_NORMAL );
 end;
-{$ENDIF}
 
 end.

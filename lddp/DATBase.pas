@@ -49,7 +49,7 @@ type
                                /     \          ----TDATOpLine
                TDATTriangle---        ---TDATQuad
 *)
-  TDATType=class(TObject)
+  TDATType=class(TPersistent)
     private
       strLine: string;
 

@@ -200,11 +200,7 @@ end;
 
 procedure TfrOptions.FormShow(Sender: TObject);
 begin
-  {$IFDEF MSWINDOWS}
   OpenDialog.Filter := 'Executibles (*.*)|*.exe';
-  {$ELSE}
-  OpenDialog.Filter := 'Executibles (*)|*';
-  {$ENDIF}
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
   shForeground.Brush.Color := clButton;
