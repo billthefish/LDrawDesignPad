@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 261
-  Top = 111
+  Left = 339
+  Top = 342
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'
@@ -441,18 +441,23 @@ object frMain: TfrMain
         Hint = 'Show or Hide Toolbars'
         object FilesToolbar: TMenuItem
           Action = acFileToolbar
+          AutoCheck = True
         end
         object Edit2: TMenuItem
           Action = acEditingToolbar
+          AutoCheck = True
         end
         object SearchReplace1: TMenuItem
           Action = acSearchToolbar
+          AutoCheck = True
         end
         object Windows2: TMenuItem
           Action = acWindowsToolbar
+          AutoCheck = True
         end
         object ExternalPrograms3: TMenuItem
           Action = acExternalsToolbar
+          AutoCheck = True
         end
       end
       object N3: TMenuItem
@@ -460,6 +465,10 @@ object frMain: TfrMain
       end
       object miMiscOptions: TMenuItem
         Action = acOptions
+        Caption = '&Misc Options'
+      end
+      object miEditorOptions: TMenuItem
+        Action = acEditOptions
         Hint = 'Options|Change Program Settings'
       end
     end
@@ -825,6 +834,10 @@ object frMain: TfrMain
       Category = 'EditorBlocks'
       Caption = 'BFC Statement'
       OnExecute = acInsertBFCExecute
+    end
+    object acEditOptions: TAction
+      Caption = '&Editor Options'
+      OnExecute = acEditOptionsExecute
     end
     object acFileToolbar: TAction
       Category = 'Toolbars'

@@ -215,6 +215,8 @@ type
     SynEditPrint: TSynEditPrint;
     SynCppSyn: TSynCppSyn;
     SynPasSyn: TSynPasSyn;
+    miEditorOptions: TMenuItem;
+    acEditOptions: TAction;
     N12: TMenuItem;
     Toolbars: TMenuItem;
     pmToolbars: TPopupMenu;
@@ -251,6 +253,7 @@ type
     procedure acReplaceExecute(Sender: TObject);
     procedure acL3PCheckExecute(Sender: TObject);
     procedure acOptionsExecute(Sender: TObject);
+    procedure acEditOptionsExecute(Sender: TObject);
     procedure acLDViewExecute(Sender: TObject);
     procedure acUndoExecute(Sender: TObject);
     procedure acRedoExecute(Sender: TObject);
@@ -334,8 +337,8 @@ implementation
 
 {$R *.DFM}
 
-uses ChildWin, shellapi, About, options, ColorDialog, dlgConfirmReplace,
-     dlgSearchText, dlgReplaceText;
+uses ChildWin, shellapi, About, options, editoptions, ColorDialog,
+     dlgConfirmReplace, dlgSearchText, dlgReplaceText;
 
 var
   gbSearchBackwards: boolean;
@@ -761,6 +764,8 @@ begin
   regt.WriteString('InstallDir', application.ExeName);
   regt.free;
   frOptions.fstOptions.RestoreFormPlacement;
+  frEditOptions.fstEditOptions.RestoreFormPlacement;
+  SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
   slPlugins:=TStringlist.create;
   pmMemo.tag:=pmMemo.items.count;
   LoadPlugins;
@@ -944,7 +949,7 @@ begin
   DeleteFile(s);
   st.loadfromfile(Zieldatei);
   if st.count=0 then begin
-    MessageDlg('An unknow error occured while trying '+#13+#10+'to execute L3P.', mtError, [mbOK], 0);
+    MessageDlg('An unknown error occured while trying '+#13+#10+'to execute L3P.', mtError, [mbOK], 0);
     exit;
   end;
   DeleteFile(Zieldatei);
@@ -982,7 +987,23 @@ Return value: None
 begin
   frOptions.fstOptions.RestoreFormPlacement;
   if frOptions.showmodal=mrOK then frOptions.fstOptions.SaveFormPlacement
-     else frOptions.fstOptions.RestoreFormPlacement;
+    else frOptions.fstOptions.RestoreFormPlacement;
+end;
+
+procedure TfrMain.acEditOptionsExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Show modal edit option window
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+begin
+  frEditOptions.fstEditOptions.RestoreFormPlacement;
+  if frEditOptions.showmodal=mrOK then
+  begin
+    frEditOptions.fstEditOptions.SaveFormPlacement;
+    SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
+  end
+  else frEditOptions.fstEditOptions.RestoreFormPlacement;
 end;
 
 procedure TfrMain.acLDViewExecute(Sender: TObject);
@@ -2100,4 +2121,3 @@ begin
 end;
 {---------------------------------------------------------------------}
 end.
-

@@ -195,7 +195,6 @@ end;
 
 procedure TfrOptions.FormShow(Sender: TObject);
 begin
-
   UpdateCOntrols;
   PageControl1.ActivePage:=tsExternal;
 end;
