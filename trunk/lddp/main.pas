@@ -1095,10 +1095,15 @@ Parameter: None
 Return value: None
 ----------------------------------------------------------------------}
 var sr:TSearchRec;
-    i:integer;
+    i, imgix:integer;
     newitem:TMenuItem;
+    PluginPath, PluginFile: string;
+    plgBitmap: TBitMap;
+
 begin
-  i:=FIndfirst(extractfilepath(paramstr(0))+'Plugins\*.dl*',faAnyFile,sr);
+  plgBitmap := TBitMap.Create;
+  PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins\';
+  i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
   frOptions.cblPlugins.clear;
   slPlugins.clear;
   frOptions.cblPlugins.sorted:=false;
@@ -1106,25 +1111,36 @@ begin
   while plugins3.Count>0 do plugins3.items[Plugins3.Count-1].free;
   while i=0 do
   begin
+    PluginFile := PluginPath + sr.Name;
     splashscreen.lbState.Caption:='Initializing plugin: '+sr.name;
     splashscreen.update;
-    frOptions.cblPlugins.Items.Add(copy(sr.name,1,pos('.',sr.name)-1)+' - '+ frMain.PLuginInfo((extractfilepath(paramstr(0))+'\Plugins\'+sr.name),3));
-    slplugins.add(frMain.PLuginInfo((extractfilepath(paramstr(0))+'Plugins\'+sr.name),6)+','+extractfilePath(paramstr(0))+'Plugins\'+sr.name);
+    frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
+                                   ' - ' + frMain.PLuginInfo(PluginFile,3));
+    slplugins.add(frMain.PLuginInfo(PluginFile,6)+','+PluginFile);
 
     if ExtractfileExt(lowercase(sr.name))='.dll' then
     begin
+      if FileExists(ChangeFileExt(PluginFile, '.bmp')) then
+      begin
+        plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
+        imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
+      end
+      else
+        imgix := -1;  
       NewItem := TMenuItem.Create(Plugins3);
       Newitem.tag:=slplugins.count-1;
-      NewItem.caption:=frMain.PLuginInfo((extractfilepath(paramstr(0))+'Plugins\'+sr.name),1);
-      NewItem.hint:=frMain.PLuginInfo((extractfilepath(paramstr(0))+'Plugins\'+sr.name),3);
+      NewItem.caption:=frMain.PLuginInfo(PluginFile,1);
+      NewItem.hint:=frMain.PLuginInfo(PluginFile,3);
       newItem.onclick:=PluginClick;
+      NewItem.ImageIndex := imgix;
       plugins3.Insert(plugins3.count,Newitem);
 
       NewItem := TMenuItem.Create(Plugins1);
       Newitem.tag:=slplugins.count-1;
-      NewItem.caption:=frMain.PLuginInfo((extractfilepath(paramstr(0))+'Plugins\'+sr.name),1);
-      NewItem.hint:=frMain.PLuginInfo((extractfilepath(paramstr(0))+'Plugins\'+sr.name),3);
+      NewItem.caption:=frMain.PluginInfo(PluginFile,1);
+      NewItem.hint:=frMain.PluginInfo(PluginFile,3);
       newItem.onclick:=PluginClick;
+      NewItem.ImageIndex := imgix;
       plugins1.Insert(plugins1.count,Newitem);
     end;
     frOptions.cblPlugins.checked[frOptions.cblPlugins.Items.count-1]:= (ExtractfileExt(lowercase(sr.name))='.dll');
