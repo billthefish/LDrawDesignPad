@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 329
-    ActivePage = TabSheet7
+    ActivePage = TabSheet2
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -837,6 +837,7 @@ object frOptions: TfrOptions
           Height = 17
           Caption = 'Unit Det Coplanarity Check Threshold:'
           TabOrder = 3
+          Visible = False
         end
         object Memo4: TMemo
           Left = 288
@@ -851,6 +852,7 @@ object frOptions: TfrOptions
             'Hi-res primitives typically use 0.001.')
           ReadOnly = True
           TabOrder = 5
+          Visible = False
         end
         object seDist: TJvValidateEdit
           Left = 200
@@ -902,6 +904,7 @@ object frOptions: TfrOptions
           TabOrder = 9
           Text = '0.0001'
           Value = 0.000100000000000000
+          Visible = False
         end
         object seCollinear: TJvValidateEdit
           Left = 200

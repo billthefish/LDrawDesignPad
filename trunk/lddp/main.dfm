@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 405
-  Top = 530
+  Left = 510
+  Top = 329
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -732,7 +732,6 @@ object frMain: TfrMain
       end
       object SoortByPosition1: TMenuItem
         Action = acSortByPosition
-        Enabled = False
       end
       object CombineTrianglesIntoQuad1: TMenuItem
         Action = acTriangleCombine
@@ -1279,7 +1278,6 @@ object frMain: TfrMain
     object acSortByPosition: TAction
       Category = 'Misc'
       Caption = 'Sort Selection By Position'
-      Visible = False
       OnExecute = acSortByPositionExecute
     end
     object acECCopy: TAction
