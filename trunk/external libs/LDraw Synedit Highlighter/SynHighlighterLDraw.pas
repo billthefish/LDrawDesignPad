@@ -27,32 +27,39 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterLDraw.pas,v 1.1 2003-06-08 10:32:22 c_schmitz Exp $
+$Id: SynHighlighterLDraw.pas,v 1.2 2003-06-08 18:46:03 duncan2 Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
 
 -------------------------------------------------------------------------------}
+{
+@abstract(Provides an LDraw syntax highlighter for SynEdit)
+@author()
+@created()
+@lastmod()
+The SynHighlighterLDraw unit provides SynEdit with a LEGO LDraw (.ldr / .dat) highlighter.
+}
 
+{$IFNDEF QSYNHIGHLIGHTERLDRAW}
 unit SynHighlighterLDraw;
+{$ENDIF}
+
 
 {$I SynEdit.inc}
 
 interface
 
 uses
-  SysUtils,
-  Classes,
-{$IFDEF SYN_CLX}
-  QControls,
-  QGraphics,
-{$ELSE}
-  Windows,
-  Controls,
-  Graphics,
-{$ENDIF}
-  SynEditTypes,
-  SynEditHighlighter;
+  {$IFDEF SYN_CLX}
+  Qt, QControls, QGraphics,
+  QSynEditHighlighter,
+  QSynEditTypes,
+  {$ELSE}
+  Windows, Controls, Graphics,
+  SynEditHighlighter, SynEditTypes,
+  {$ENDIF}
+  SysUtils, Classes;
 
 type
   TtkTokenKind = (
@@ -159,7 +166,11 @@ type
 implementation
 
 uses
+{$IFDEF SYN_CLX}
+  QSynEditStrConst;
+{$ELSE}
   SynEditStrConst;
+{$ENDIF}
 
 {$IFDEF SYN_COMPILER_3_UP}
 resourcestring
