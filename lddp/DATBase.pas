@@ -387,15 +387,9 @@ procedure TDATElement.Translate(x,y,z: Extended);
 
 var
   R: TDATMatrix;
-  i,j: Byte;
 
 begin
-  for i := 1 to 4 do
-  begin
-    for j := 1 to 4 do
-      R[i,j] := 0;
-    R[i,i] := 1;
-  end;
+  R := FDATIdentityMatrix;
 
   R[1,4] := x;
   R[2,4] := y;
@@ -409,16 +403,10 @@ procedure TDATElement.Rotate(w,x,y,z: Extended);
 
 var
  R: TDATMatrix;
- t: Single;
- i,j: Byte;
-
+ t: Extended;
+ 
 begin
-  for i := 1 to 4 do
-  begin
-    for j := 1 to 4 do
-      R[i,j] := 0;
-    R[i,i] := 1;
-  end;
+  R := FDATIdentityMatrix;
 
   t := DegToRad(w) / 2;
   w := Sqrt(x * x + y * y + z * z);
