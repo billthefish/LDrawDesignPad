@@ -30,13 +30,13 @@ uses
   BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
   modeltreeview in 'modeltreeview.pas' {frModelTreeView},
   windowsspecific in 'windowsspecific.pas',
-  linuxspecific in 'linuxspecific.pas',
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
   DATModel in 'DATModel.pas',
   dlgSearchText in 'dlgSearchText.pas' {TextSearchDialog},
   dlgReplaceText in 'dlgReplaceText.pas' {TextReplaceDialog},
-  dlgConfirmReplace in 'dlgConfirmReplace.pas' {ConfirmReplaceDialog};
+  dlgConfirmReplace in 'dlgConfirmReplace.pas' {ConfirmReplaceDialog},
+  BezWindow in 'BezWindow.pas' {frmDATCurve};
 
 {$R *.res}
 
@@ -52,7 +52,7 @@ begin
   Application.CreateForm(TfrColorDialog, frColorDialog);
   Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
   Application.CreateForm(TfrModelTreeView, frModelTreeView);
-  Application.CreateForm(TfrModelTreeView, frModelTreeView);
+  Application.CreateForm(TfrmDATCurve, frmDATCurve);
   finally
     screen.cursor:=0;
   end;
