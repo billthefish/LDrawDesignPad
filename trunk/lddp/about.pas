@@ -31,6 +31,7 @@ uses
   Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QStdCtrls, QExtCtrls,
   {$ENDIF}
+  main,
   SysUtils;
   
 type
@@ -56,11 +57,21 @@ implementation
 {$R *.dfm}
 
 procedure TfrAboutBox.FormShow(Sender: TObject);
-var ver:Tversion;
+
+ {$IFDEF MSWINDOWS}
+var
+ ver:Tversion;
+ {$ENDIF}
+
 begin
+  {$IFDEF MSWINDOWS}
   ver:=TVersion.Create(Application.ExeName);
   Version.Caption:='Version '+ver.FileVersionStr;
   ver.free;
+  {$ENDIF}
+  {$IFDEF LINUX}
+   Version.Caption:='Version '+ main.LDDPLINUXVERSION;
+  {$ENDIF}
 end;
 
 end.

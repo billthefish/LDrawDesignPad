@@ -25,6 +25,7 @@ uses
   {$IFDEF MSWINDOWS}
   Windows, Messages, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, JvPlacemnt, ActnList, StdActns,
+  SynEditHighlighter, SynHighlighterLDraw, SynEdit, SynMemo,
   {$ENDIF}
   {$IFDEF LINUX}
   Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
@@ -32,20 +33,22 @@ uses
   QExtCtrls, QSynEdit, QSynMemo, QComCtrls,
   {$ENDIF}
   JvColorBox,
-  SynEditHighlighter, SynHighlighterLDraw, SynEdit, SynMemo,
   SysUtils;
 
 type
   TfrEditOptions = class(TForm)
     PageControl1: TPageControl;
+    {$IFDEF MSWINDOWS}
     fstEditOptions: TJvFormStorage;
+    clbForeground: TColorBox;
+    clbBackground: TColorBox;
+    {$ENDIF}
+
     TabSheet1: TTabSheet;
     lstElement: TListBox;
     Label1: TLabel;
     SynMemo1: TSynMemo;
     SynLDRSyn1: TSynLDRSyn;
-    clbForeground: TColorBox;
-    clbBackground: TColorBox;
     Label2: TLabel;
     Label3: TLabel;
     GroupBox1: TGroupBox;
@@ -101,8 +104,10 @@ begin
     10: SelectedElement := SynLDRSyn1.OpLineAttri;
     else SelectedElement := nil;
   end;
+{$IFDEF MSWINDOWS}
   clbForeground.Selected := SelectedElement.Foreground;
   clbBackground.Selected := SelectedElement.Background;
+{$ENDIF}
   if fsBold in SelectedElement.Style then cbxBold.Checked := True;
   if fsItalic in SelectedElement.Style then cbxItalic.Checked := True;
   if fsUnderline in SelectedElement.Style then cbxUnderline.Checked := True;
@@ -111,14 +116,18 @@ end;
 
 procedure TfrEditOptions.clbForegroundChange(Sender: TObject);
 begin
+{$IFDEF MSWINDOWS}
   if SelectedElement <> nil then
   SelectedElement.Foreground := clbForeground.Selected;
+{$ENDIF}
 end;
 
 procedure TfrEditOptions.clbBackgroundChange(Sender: TObject);
 begin
+{$IFDEF MSWINDOWS}
   if SelectedElement <> nil then
   SelectedElement.Background := clbBackground.Selected;
+{$ENDIF}
 end;
 
 procedure TfrEditOptions.cbxBoldClick(Sender: TObject);
@@ -168,8 +177,11 @@ begin
   NewHighLighter.Free;
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
+  {$IFDEF MSWINDOWS}
   clbForeground.Selected := clNone;
   clbBackground.Selected := clNone;
+  {$ENDIF}
+
 end;
 
 procedure TfrEditOptions.FormShow(Sender: TObject);
@@ -177,8 +189,11 @@ procedure TfrEditOptions.FormShow(Sender: TObject);
 begin
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
+  {$IFDEF MSWINDOWS}
   clbForeground.Selected := clNone;
   clbBackground.Selected := clNone;
+  {$ENDIF}
+
 end;
 
 end.

@@ -28,7 +28,7 @@ uses
   {$ENDIF}
   {$IFDEF LINUX}
   Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
-  QDialogs, QStdCtrls, QExtCtrl, QExtCtrls
+  QDialogs, QStdCtrls, QExtCtrls,
   {$ENDIF}
   SysUtils;
 
@@ -61,7 +61,9 @@ resourcestring
 
 procedure TfrConfirmReplaceDialog.FormCreate(Sender: TObject);
 begin
+  {$IFDEF MSWINDOWS} //KYLIX VERSION POSSIBLE?
   Image1.Picture.Icon.Handle := LoadIcon(0, IDI_QUESTION);
+  {$ENDIF}
 end;
 
 procedure TfrConfirmReplaceDialog.FormDestroy(Sender: TObject);
