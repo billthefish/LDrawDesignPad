@@ -401,10 +401,4 @@ object frColorDialog: TfrColorDialog
         5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
     end
   end
-  object StrHolder1: TJvStrHolder
-    Macros = <>
-    Left = 8
-    Top = 232
-    InternalVer = 1
-  end
 end

@@ -33,14 +33,12 @@ uses
   {$ENDIF}
   JvColorBox,
   JvComponent,
-  JvStrHlder,
   SysUtils;
 
 type
   TfrColorDialog = class(TForm)
     GroupBox1: TGroupBox;
     ScrollBar: TScrollBar;
-    StrHolder1: TJvStrHolder;
     Label1: TLabel;
     Label2: TLabel;
     edColornumber: TEdit;
@@ -81,6 +79,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    slColors:TStringlist;
   end;
 
 var
@@ -95,9 +94,9 @@ var i:integer;
     color:TColor;
     name,tmp:string;
 begin
-  scrollbar.max:=round((strholder1.Strings.count/4)+0.5)-4;
+  scrollbar.max:=round((slColors.count/4)+0.5)-4;
   for i:=0 to 15 do begin
-    if scrollbar.Position*4+i<=strholder1.strings.count-1 then tmp:=strHolder1.Strings[scrollbar.Position*4+i]
+    if scrollbar.Position*4+i<=slColors.count-1 then tmp:=slColors[scrollbar.Position*4+i]
       else tmp:='';
     tmp:=copy(tmp,pos('=',tmp)+1,30);
     name:=copy(tmp,1,pos(' ',tmp)-1);
@@ -126,8 +125,8 @@ procedure TfrColorDialog.JvColorSquare1MouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 var cname,tmp,nr:string;
 begin
-  if (Sender as TJvColorSquare).tag+scrollbar.position*4<strholder1.Strings.count then
-    tmp:=strholder1.Strings[(Sender as TJvColorSquare).tag+scrollbar.position*4];
+  if (Sender as TJvColorSquare).tag+scrollbar.position*4<slColors.count then
+    tmp:=slColors[(Sender as TJvColorSquare).tag+scrollbar.position*4];
   nr:=copy(tmp,1,pos('=',tmp)-1);
   tmp:=copy(tmp,pos('=',tmp)+1,30);
   cname:=copy(tmp,1,pos(' ',tmp)-1);
@@ -138,7 +137,7 @@ procedure TfrColorDialog.JvColorSquare1ColorClick(Sender: TObject;
   Button: TMouseButton; Color: TColor);
 var cname,nr,tmp:string;
 begin
-  tmp:=strholder1.Strings[(Sender as TJvColorSquare).tag+scrollbar.position*4];
+  tmp:=slColors[(Sender as TJvColorSquare).tag+scrollbar.position*4];
   nr:=copy(tmp,1,pos('=',tmp)-1);
   tmp:=copy(tmp,pos('=',tmp)+1,20);
   cname:=copy(tmp,1,pos(' ',tmp)-1);

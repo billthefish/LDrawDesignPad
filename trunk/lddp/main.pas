@@ -1707,7 +1707,11 @@ var clr:TLDrawArray;
     cvalue:integer;
     bCR:boolean;
 begin
-    frColorDialog.StrHolder1.strings.LoadFromFile(ExtractFilePath(paramstr(0))+'colors.pal');
+    if not Assigned(frColorDialog.slColors) then
+    begin
+      frColorDialog.slColors:=TStringlist.create;
+    end;
+    frColorDialog.slColors.LoadFromFile(ExtractFilePath(paramstr(0))+'colors.pal');
     if ((activeMDICHild as TfrEditorChild).memo.selstart-(activeMDICHild as TfrEditorChild).memo.selend=0) then begin
       frColorDialog.rbreplaceselection.enabled:=false;
       frColorDialog.rbreplaceLine.checked:=true;;
@@ -1725,10 +1729,9 @@ begin
     end
      else begin
        frColorDialog.rbReplaceLine.checked:=true;
-       frColorDialog.rbReplaceAll.enabled:=false;
      end;
     try
-      tmp:=frColorDialog.strholder1.Strings[frColorDialog.strholder1.Strings.IndexOfName(inttostr(clr.color))];
+      tmp:=frColorDialog.slColors[frColorDialog.slColors.IndexOfName(inttostr(clr.color))];
     except
       MessageDlg('Invalid colornumber!', mtError, [mbOK], 0);
       exit;
