@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 205
-  Top = 123
+  Left = 239
+  Top = 148
   Width = 792
   Height = 434
   VertScrollBar.Range = 49

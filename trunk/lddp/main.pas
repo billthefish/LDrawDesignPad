@@ -27,7 +27,7 @@ uses
   ActnList, ComCtrls, Controls, Inifiles, splash, SyneditTypes, Graphics,
   SyneditKeyCmds, l3check, DATModel, DATBase, StdCtrls, Shellapi,
   dlgReplaceText, SynEditMiscClasses, SynEditSearch, ToolWin, SynEditTextBuffer,
-  dlgSearchText, SynEditRegexSearch;
+  dlgSearchText, SynEditRegexSearch, SynEditMiscProcs;
 
 type
   TfrMain = class(TForm)
@@ -1429,10 +1429,7 @@ begin
   HeaderText := HeaderText + #13#10 + '0 Unofficial Element'+#13#10+
                 '0 KEYWORDS your keywords'+#13#10;
   with (activeMDICHild as TfrEditorChild).memo do
-  begin
     Text := HeaderText + Text;
-    Undolist.AddChange(crInsert,Point(1,1),Point(1,6),'',SelectionMode);
-  end;
 end;
 
 
@@ -1466,18 +1463,18 @@ begin
    begin
      if seltext<>'' then
      begin
-       startcol := BlockBegin.Y - 1;
-       if BlockEnd.X = 1 then
-         endcol := BlockEnd.Y - 2
+       startcol := BlockBegin.Line - 1;
+       if BlockEnd.Char = 1 then
+         endcol := BlockEnd.Line - 2
        else
-         endcol := BlockEnd.y - 1;
+         endcol := BlockEnd.Line - 1;
 
        for j := startcol to endcol do
         if (Lines[j] <> '') and (Lines[j] <> #13#10) and
            (Lines[j] <> #13) and (Lines[j] <> #10) then
           Lines[j] := '0 ' + Lines[j];
-       BlockBegin := Point(1,startcol + 1);
-       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1)
+       BlockBegin := MakeBufferCoord(1,startcol + 1);
+       BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1)
      end;
    end;
 end;
@@ -1499,14 +1496,14 @@ begin
    begin
      if seltext<>'' then
      begin
-       startcol := BlockBegin.Y - 1;
-       if BlockEnd.X = 1 then
-         endcol := BlockEnd.Y - 2
+       startcol := BlockBegin.Line - 1;
+       if BlockEnd.Char = 1 then
+         endcol := BlockEnd.Line - 2
        else
-         endcol := BlockEnd.y - 1;
+         endcol := BlockEnd.Line - 1;
 
-       BlockBegin := Point(1,startcol + 1);
-       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+       BlockBegin := MakeBufferCoord(1,startcol + 1);
+       BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
        DModel := TDATModel.Create;
        DModel.ModelText := SelText;
@@ -1516,8 +1513,8 @@ begin
 
        SelText := DModel.ModelText;
 
-       BlockBegin := Point(1,startcol + 1);
-       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+       BlockBegin := MakeBufferCoord(1,startcol + 1);
+       BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
        DModel.Free;
      end;
@@ -1709,14 +1706,14 @@ begin
       begin
         clr.Clear;
 
-        startcol := BlockBegin.Y - 1;
-        if BlockEnd.X = 1 then
-          endcol := BlockEnd.Y - 2
+        startcol := BlockBegin.Line - 1;
+        if BlockEnd.Char = 1 then
+          endcol := BlockEnd.Line - 2
         else
-          endcol := BlockEnd.y - 1;
+          endcol := BlockEnd.Line - 1;
 
-        BlockBegin := Point(1,startcol + 1);
-        BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+        BlockBegin := MakeBufferCoord(1,startcol + 1);
+        BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
         clr.ModelText := SelText;
 
@@ -1731,8 +1728,8 @@ begin
 
         SelText := clr.ModelText;
 
-        BlockBegin := Point(1,startcol + 1);
-        BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+        BlockBegin := MakeBufferCoord(1,startcol + 1);
+        BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
       end;
     end;
   end;
@@ -2036,7 +2033,7 @@ begin
     SearchText := gsSearchText;
     if gbSearchTextAtCaret then begin
       // if something is selected search for that text
-      if (activeMDICHild as TfrEditorChild).memo.SelAvail and ((activeMDICHild as TfrEditorChild).memo.BlockBegin.Y = (activeMDICHild as TfrEditorChild).memo.BlockEnd.Y)
+      if (activeMDICHild as TfrEditorChild).memo.SelAvail and ((activeMDICHild as TfrEditorChild).memo.BlockBegin.Line = (activeMDICHild as TfrEditorChild).memo.BlockEnd.Line)
       then
         SearchText := (activeMDICHild as TfrEditorChild).memo.SelText
       else
@@ -2279,15 +2276,15 @@ begin
   begin
     DATModel1 := TDATModel.Create;
 
-    startcol := BlockBegin.Y - 1;
+    startcol := BlockBegin.Line - 1;
 
-    if BlockEnd.X = 1 then
-      endcol := BlockEnd.Y - 2
+    if BlockEnd.Char = 1 then
+      endcol := BlockEnd.Line - 2
     else
-      endcol := BlockEnd.y - 1;
+      endcol := BlockEnd.Line - 1;
 
-    BlockBegin := Point(1,startcol + 1);
-    BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+    BlockBegin := MakeBufferCoord(1,startcol + 1);
+    BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
     if SelLength <> 0 then
     begin
@@ -2299,8 +2296,8 @@ begin
 
       SelText := DATModel1.ModelText;
 
-      BlockBegin := Point(1,startcol + 1);
-      BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+      BlockBegin := MakeBufferCoord(1,startcol + 1);
+      BlockEnd := MakeBufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
       DATModel1.Free;
     end;
@@ -2585,9 +2582,9 @@ begin
   DModel.PositionDecimalPlaces := frOptions.sePntAcc.Value;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Y;
-    BlockBegin := Point(1, BlockBegin.Y);
-    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    tmpBlEndY := BlockEnd.Line;
+    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
+    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
     DModel.ModelText := SelText;
     SelText := DModel.ModelText;
   end;
@@ -2721,9 +2718,9 @@ begin
   
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Y;
-    BlockBegin := Point(1, BlockBegin.Y);
-    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    tmpBlEndY := BlockEnd.Line;
+    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
+    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
 
     DModel.ModelText := SelText;
 
@@ -2756,9 +2753,9 @@ begin
 
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Y;
-    BlockBegin := Point(1, BlockBegin.Y);
-    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    tmpBlEndY := BlockEnd.Line;
+    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
+    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
 
     DModel1.ModelText := SelText;
 
@@ -2781,9 +2778,9 @@ begin
   DModel := TDATModel.Create;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Y;
-    BlockBegin := Point(1, BlockBegin.Y);
-    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    tmpBlEndY := BlockEnd.Line;
+    BlockBegin := MakeBufferCoord(1, BlockBegin.Line);
+    BlockEnd := MakeBufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
 
     DModel.ModelText := SelText;
     for i := 0 to DModel.Count - 1 do
