@@ -239,7 +239,6 @@ type
     HelpAboutItem: TMenuItem;
     LDDPHomepage1: TMenuItem;
     CheckforUpdate1: TMenuItem;
-    N7: TMenuItem;
     ToolButton7: TToolButton;
     ReverseWinding1: TMenuItem;
     acReverseWinding: TAction;
