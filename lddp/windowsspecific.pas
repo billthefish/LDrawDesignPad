@@ -59,7 +59,6 @@ const
   SW_MAX = 10;
 
 function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
-//function GetDOSVar (VarName: string): string;
 function GetShortFileName(Const FileName : String) : String;
 function WindowsDir:string;
 function GetTempDir:string;
@@ -68,6 +67,7 @@ procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4
 procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
 procedure OpenInBrowser(url:string);
 function GetWindowsVersion:string;
+function GetDOSVar (VarName: string): string;
 
 
 implementation
@@ -181,27 +181,7 @@ begin
   if copy(tempdir,length(tempdir),1)<>'\' then tempdir:=tempdir+'\';
   Result:=tempDir;
 end;
-(*
-  function GetDOSVar (VarName: string): string;
-  {---------------------------------------------------------------------
-  Description: Find out DOS var settings (path etc.)
-  Parameter: name of DOS var
-  Return value: value of dos var
-  ----------------------------------------------------------------------}
 
-  const StrSize = 250    ;
-  var PName,PBuff : PChar ;
-      DataSize    : byte  ;
-  begin
-   Getmem  (PName,StrSize) ;
-   Getmem  (PBuff,StrSize) ;
-   StrCopy (PName,pchar(VarName)) ;
-   Datasize := GetEnvironmentVariable (PName,PBuff,StrSize) ;
-   Result := copy(string(PBuff),1,Datasize) ;
-   FreeMem (PName) ;
-   FreeMem (PBuff) ;
-  end;
-*)
 function PluginInfo(fname:string; nr:integer):string;
 {---------------------------------------------------------------------
 Description: Get Info from plugin DLL
@@ -263,6 +243,30 @@ end;
 procedure OpenInBrowser(url:string);
 begin
   ShellExecute( Application.Handle, 'open', PChar( url) , nil, nil, SW_NORMAL );
+end;
+
+function GetDOSVar (VarName: string): string;
+{---------------------------------------------------------------------
+Description: Find out DOS var settings (path etc.)
+Parameter: name of DOS var
+Return value: value of dos var
+----------------------------------------------------------------------}
+
+const
+  StrSize = 250;
+
+var
+  PName,PBuff: PChar;
+  DataSize: byte;
+
+begin
+  Getmem(PName,StrSize);
+  Getmem(PBuff,StrSize);
+  StrCopy(PName,pchar(VarName));
+  Datasize := GetEnvironmentVariable(PName,PBuff,StrSize);
+  Result := Copy(string(PBuff),1,Datasize);
+  FreeMem(PName);
+  FreeMem(PBuff);
 end;
 
 end.
