@@ -614,6 +614,9 @@ object frMain: TfrMain
       object ConvertBitmaptoLDraw1: TMenuItem
         Action = acBMP2LDraw
       end
+      object ViewModelTree1: TMenuItem
+        Action = acModelTreeView
+      end
     end
     object Window1: TMenuItem
       Caption = 'Window'
@@ -979,6 +982,11 @@ object frMain: TfrMain
       Category = 'Misc'
       Caption = 'Convert Bitmap to LDraw'
       OnExecute = acBMP2LDrawExecute
+    end
+    object acModelTreeView: TAction
+      Category = 'Misc'
+      Caption = 'View Model Tree'
+      OnExecute = acModelTreeViewExecute
     end
   end
   object ilToolBarColor: TImageList

@@ -35,12 +35,16 @@ object frEditOptions: TfrEditOptions
         Top = 32
         Width = 97
         Height = 17
+        Brush.Color = clButton
+        Color = clButton
       end
       object shBackground: TShape
         Left = 112
         Top = 72
         Width = 97
         Height = 17
+        Brush.Color = clButton
+        Color = clButton
       end
       object Label1: TLabel
         Left = 0

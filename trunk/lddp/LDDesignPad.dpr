@@ -30,13 +30,12 @@ uses
   dlgsearchreplacetext in 'dlgsearchreplacetext.pas' {frTextReplaceDialog},
   BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
   editoptions in 'editoptions.pas' {frEditOptions},
-  {$IFDEF MSWINDOWS}
   windowsspecific in 'windowsspecific.pas',
-  {$ENDIF}
   linuxspecific in 'linuxspecific.pas',
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
-  DATModel in 'DATModel.pas';
+  DATModel in 'DATModel.pas',
+  modeltreeview in 'modeltreeview.pas' {frModelTreeView};
 
 {$R *.res}
 
@@ -47,12 +46,13 @@ begin
     Application.Title := 'LDraw DesignPad';
 
     Application.CreateForm(TfrMain, frMain);
-    Application.CreateForm(TfrAboutBox, frAboutBox);
-    Application.CreateForm(TfrOptions, frOptions);
-    Application.CreateForm(TfrColorDialog, frColorDialog);
-    Application.CreateForm(TfrEditOptions, frEditOptions);
-    Application.CreateForm(TfrTextSearchReplaceDialog, frTextSearchReplaceDialog);
-    Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
+  Application.CreateForm(TfrAboutBox, frAboutBox);
+  Application.CreateForm(TfrOptions, frOptions);
+  Application.CreateForm(TfrColorDialog, frColorDialog);
+  Application.CreateForm(TfrEditOptions, frEditOptions);
+  Application.CreateForm(TfrTextSearchReplaceDialog, frTextSearchReplaceDialog);
+  Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
+  Application.CreateForm(TfrModelTreeView, frModelTreeView);
   finally
     screen.cursor:=0;
   end;
