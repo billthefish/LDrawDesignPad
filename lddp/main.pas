@@ -2111,12 +2111,13 @@ end;
 
 
 procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
+
+var
+  i: Integer;
+
 begin
-   while MDIChildCount > 0 do
-   begin
-     ActiveMDIChild.Close;
-     ActiveMDIChild.Free;
-   end;
+   for i:= MDIChildCount-1 downto 0 do
+     MDIChildren[i].Close;
 end;
 
 
