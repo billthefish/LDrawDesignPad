@@ -296,6 +296,9 @@ type
     AutofixSelectedError2: TMenuItem;
     AutofixAllErrors2: TMenuItem;
     SynEditRegexSearch: TSynEditRegexSearch;
+    N22: TMenuItem;
+    ProcessthroughLSynth1: TMenuItem;
+    acLSynth: TAction;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -374,6 +377,7 @@ type
     procedure acECMarkAllTypedExecute(Sender: TObject);
     procedure acECUnMarkAllTypedExecute(Sender: TObject);
     procedure acFindNextUpdate(Sender: TObject);
+    procedure acLSynthExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -1305,7 +1309,7 @@ Return value: None
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
-    Lines.Insert(CaretY-1, '0 ' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
+    Lines.Insert(CaretY-1, '0 //' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
                            frOptions.edSIG.text + ' Update description');
     Modified := true;
   end;
@@ -2406,6 +2410,35 @@ end;
 procedure TfrMain.acFindNextUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := gsSearchText <> '';
+end;
+
+procedure TfrMain.acLSynthExecute(Sender: TObject);
+
+var
+  TempFile: TStringList;
+  CommandFile,CommandLine,InputFile,OutputFile:string;
+
+begin
+  if (not FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe')) then begin
+    MessageDlg('You have to specify a valid path to lsynthcp.exe first!', mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
+  end;
+  OutputFile:=GetShortFileName(GetTempDir+GetTmpFileName);
+  TempFile:=TstringList.create;
+  CommandLine:=GetShortFileName(frOptions.edLSynthDir.text)+'\lsynthcp.exe ';
+  InputFile:=GetShortFileName(extractFilePath((activeMDICHild as TfrEditorChild).TempFileName))+ExtractFIleName((activeMDICHild as TfrEditorChild).TempFileName);
+  (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(InputFile);
+  TempFile.add(CommandLine+' '+InputFile+' '+OutputFile);
+  CommandFile:=GetShortFileName(GetTempDir)+GetTMPFIleName+'.bat';
+  TempFile.SaveToFile(CommandFile);
+  DOCommand(GetDOSVar('COMSPEC')+' /C '+ CommandFile,SW_HIDE,true);
+  DeleteFile(CommandFile);
+  TempFile.loadfromfile(OutputFile);
+  (activeMDICHild as TfrEditorChild).memo.Text := TempFile.Text;
+  TempFile.Free;
+  DeleteFile(OutputFile);
+  DeleteFile(InputFile);
 end;
 
 end.

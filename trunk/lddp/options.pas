@@ -112,6 +112,10 @@ type
     seCollinear: TJvFloatEdit2;
     sePntAcc: TJvIntegerEdit;
     seRotAcc: TJvIntegerEdit;
+    Label12: TLabel;
+    edLSynthDir: TEdit;
+    btLSynth: TBitBtn;
+    lbLSynth: TLabel;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -126,6 +130,7 @@ type
     procedure btnForegroundClick(Sender: TObject);
     procedure btnBackgroundClick(Sender: TObject);
     procedure btnResetClick(Sender: TObject);
+    procedure btLSynthClick(Sender: TObject);
   private
     SelectedElement: TSynHighlighterAttributes;
   public
@@ -181,6 +186,15 @@ begin
     else begin
       lbL3Lab.font.Color:=clRed;
       lbL3Lab.Caption:='Not found!';
+    end;
+
+  if FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe') then begin
+    lbLSynth.font.Color:=clGreen;
+    lbLSynth.Caption:='Found!';
+  end
+    else begin
+      lbLSynth.font.Color:=clRed;
+      lbLSynth.Caption:='Not found!';
     end;
 
 
@@ -280,6 +294,14 @@ begin
   UpdateControls;
 end;
 
+procedure TfrOptions.btLSynthClick(Sender: TObject);
+var strDir:string;
+begin
+  strDir:=edLSynthDir.Text;
+  if SelectDirectory('Choose lynthcp Location','',strDir) then edLSynthDir.Text:=strDir;
+  UpdateControls;
+end;
+
 procedure TfrOptions.btExternalClick(Sender: TObject);
 begin
   OpenDialog.InitialDir := ExtractFileDir(edExternal.Text);
@@ -361,6 +383,7 @@ begin
   LDDPini.WriteString(IniSection, 'edMLCadDir_Text', edMLCadDir.Text);
   LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
   LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
+  LDDPini.WriteString(IniSection, 'edLSynthDir_Text', edLSynthDir.Text);
   LDDPini.WriteString(IniSection, 'edExternal_Text', edExternal.Text);
   LDDPini.WriteString(IniSection, 'edParameters_Text', edParameters.Text);
   LDDPini.WriteString(IniSection, 'edEmail_Text', edEMail.Text);
@@ -418,6 +441,7 @@ begin
   edMLCadDir.Text := LDDPini.ReadString(IniSection, 'edMLCadDir_Text', '');
   edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
   edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
+  edLSynthDir.Text := LDDPini.ReadString(IniSection, 'edLSynthDir_Text', '');
   edExternal.Text := LDDPini.ReadString(IniSection, 'edExternal_Text', '');
   edParameters.Text := LDDPini.ReadString(IniSection, 'edParameters_Text', '');
   edEMail.Text := LDDPini.ReadString(IniSection, 'edEmail_Text', '');

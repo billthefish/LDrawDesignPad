@@ -25,7 +25,7 @@ object frMain: TfrMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 369
+    Top = 361
     Width = 784
     Height = 19
     AutoHint = True
@@ -42,7 +42,6 @@ object frMain: TfrMain
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -632,6 +631,12 @@ object frMain: TfrMain
       object ReverseWinding1: TMenuItem
         Action = acReverseWinding
       end
+      object N22: TMenuItem
+        Caption = '-'
+      end
+      object ProcessthroughLSynth1: TMenuItem
+        Action = acLSynth
+      end
       object N14: TMenuItem
         Caption = '-'
       end
@@ -1096,6 +1101,12 @@ object frMain: TfrMain
       Caption = 'Unmark All of Selected Type'
       Enabled = False
       OnExecute = acECUnMarkAllTypedExecute
+    end
+    object acLSynth: TAction
+      Category = 'Misc'
+      Caption = 'Process Through LSynth'
+      Hint = 'Run Current Text Though LSynth'
+      OnExecute = acLSynthExecute
     end
   end
   object ilToolBarColor: TImageList
@@ -2745,15 +2756,15 @@ object frMain: TfrMain
     Footer.DefaultFont.Height = -13
     Footer.DefaultFont.Name = 'Arial'
     Footer.DefaultFont.Style = []
-    Margins.Left = 25
-    Margins.Right = 15
-    Margins.Top = 25
-    Margins.Bottom = 25
-    Margins.Header = 15
-    Margins.Footer = 15
-    Margins.LeftHFTextIndent = 2
-    Margins.RightHFTextIndent = 2
-    Margins.HFInternalMargin = 0.5
+    Margins.Left = 25.000000000000000000
+    Margins.Right = 15.000000000000000000
+    Margins.Top = 25.000000000000000000
+    Margins.Bottom = 25.000000000000000000
+    Margins.Header = 15.000000000000000000
+    Margins.Footer = 15.000000000000000000
+    Margins.LeftHFTextIndent = 2.000000000000000000
+    Margins.RightHFTextIndent = 2.000000000000000000
+    Margins.HFInternalMargin = 0.500000000000000000
     Margins.MirrorMargins = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2818,14 +2829,20 @@ object frMain: TfrMain
     Top = 296
   end
   object http: TIdHTTP
+    MaxLineAction = maException
+    ReadTimeout = 0
+    AllowCookies = True
     ProtocolVersion = pv1_0
-    Request.Accept = 'text/html, */*'
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
     Request.ContentLength = 0
     Request.ContentRangeEnd = 0
     Request.ContentRangeStart = 0
     Request.ContentType = 'text/html'
-    Request.ProxyPort = 0
+    Request.Accept = 'text/html, */*'
+    Request.BasicAuthentication = False
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    HTTPOptions = [hoForceEncodeParams]
     Left = 72
     Top = 200
   end
