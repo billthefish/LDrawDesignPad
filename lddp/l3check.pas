@@ -25,7 +25,7 @@ unit l3check;
 interface
 
 uses
-  DATModel, DATBase, SysUtils;
+  DATModel, DATBase, SysUtils, Dialogs;
 
 function CheckSamePoint(p1,p2: TDATPoint): Boolean;
 function L3CheckLine(Line: string): string;
@@ -116,7 +116,7 @@ var
   det, dp, maxdist, tempval: Extended;
   i,j: Integer;
   A,B,C: Boolean;
-  TempMatrix: TDATMatrix;
+  TempMatrix, OriginalQuad: TDATMatrix;
   TempPoint, TempPoint2: TDATPoint;
   v01, v02, v03, v12, v13, v23, cp1, cp2: TDATPoint;
   dist: array[1..4] of Extended;
@@ -297,19 +297,48 @@ begin
            end;
            if (Result = '') and (UnitDetThreshold > 0)  then
            begin
+             OriginalQuad := RotationMatrix;
+
+             Translate(-RotationMatrix[1,1],-RotationMatrix[1,2],-RotationMatrix[1,3]);
+
+             ShowMessage('1 ' + DatString);
+
+             tempval := ArcTan2(RotationMatrix[2,2], RotationMatrix[2,1]);
+             Rotate(-RadToDeg(tempval),0,0,1);
+             tempval := ArcTan2(RotationMatrix[2,3], RotationMatrix[2,1]);
+             Rotate(-RadToDeg(tempval),0,1,0);
+
+             ShowMessage('2 ' + DatString);
+
+             TempMatrix := FDATIdentityMatrix;
+             TempMatrix[1,1] := 1 / abs(RotationMatrix[2,1]);
+             TempMatrix[2,2] := 1 / abs(RotationMatrix[2,1]);
+             TempMatrix[3,3] := 1 / abs(RotationMatrix[2,1]);
+             Transform(TempMatrix);
+
+             ShowMessage('3 ' + DatString);
+
+             tempval := ArcTan2(RotationMatrix[3,3], RotationMatrix[3,2]);
+             Rotate(-RadToDeg(tempval),1,0,0);
+
+             OriginalQuad := RotationMatrix;
+
+             RM[4,3] := 0;
+
              tempval := RotationMatrix[1,1];
              for i := 1 to 4 do
              begin
-               TempPoint := Point[i];
-               if abs(TempPoint[1]) > abs(tempval) then tempval := TempPoint[1];
-               if abs(TempPoint[2]) > abs(tempval) then tempval := TempPoint[2];
-               if abs(TempPoint[3]) > abs(tempval) then tempval := TempPoint[3];
+               if abs(RotationMatrix[i,1]) > abs(tempval) then tempval := RotationMatrix[i,1];
+               if abs(RotationMatrix[i,2]) > abs(tempval) then tempval := RotationMatrix[i,2];
+               if abs(RotationMatrix[i,3]) > abs(tempval) then tempval := RotationMatrix[i,3];
              end;
              TempMatrix := FDATIdentityMatrix;
              TempMatrix[1,1] := 1 / abs(tempval);
              TempMatrix[2,2] := 1 / abs(tempval);
              TempMatrix[3,3] := 1 / abs(tempval);
-             Translate(-RotationMatrix[1,1],-RotationMatrix[1,2],-RotationMatrix[1,3]);
+
+             RotationMatrix := OriginalQuad;
+//             Translate(-RotationMatrix[1,1],-RotationMatrix[1,2],-RotationMatrix[1,3]);
              Transform(TempMatrix);
              for i := 1 to 3 do
              begin
