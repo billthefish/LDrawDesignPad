@@ -22,7 +22,7 @@ unit editoptions;
 interface
 
 uses
-  QFOrms, QSynEditHighlighter, QSynHighlighterLDraw, JvPlacemnt, QStdCtrls,
+  QForms, QSynEditHighlighter, QSynHighlighterLDraw, JvPlacemnt, QStdCtrls,
   QButtons, QExtCtrls, QSynEdit, QSynMemo, QControls, QComCtrls, Classes,
   QActnList, QSyneditTypes, SysUtils, QDialogs, QGraphics;
 

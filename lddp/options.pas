@@ -27,13 +27,8 @@ uses
   {$ELSEIF LINUX}
   linuxspecific,
   {$IFEND}
-  QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns,
-  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
-  QSyneditTypes, IdBaseComponent, IdComponent, QGraphics, QSyneditKeyCmds,
-  QSynHighlighterCpp, QSynHighlighterPas, IdHTTP, QMask,
-  QStdCtrls, QButtons, QCheckLst;
-
+  QDialogs, QForms, QImgList, QExtCtrls, QStdCtrls, QCheckLst, QMask, QButtons,
+  QControls, QComCtrls, QGraphics, Classes, SysUtils;
 type
   TfrOptions = class(TForm)
     PageControl1: TPageControl;
