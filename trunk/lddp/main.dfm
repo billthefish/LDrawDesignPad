@@ -5,7 +5,7 @@ object frMain: TfrMain
   Height = 434
   VertScrollBar.Range = 49
   AutoScroll = False
-  Caption = 'LDDesignPad for LDraw'
+  Caption = 'LDaw Design Pad'
   Color = clAppWorkSpace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -565,7 +565,7 @@ object frMain: TfrMain
             Caption = 'Poll every 1 sec'
             GroupIndex = 1
             RadioItem = True
-            OnClick = Pollevery3sec1Click
+            OnClick = Pollevery1sec2Click
           end
           object Pollevery2sec1: TMenuItem
             Caption = 'Poll every 2 sec'
@@ -577,6 +577,12 @@ object frMain: TfrMain
             Caption = 'Poll every 5 sec'
             GroupIndex = 1
             RadioItem = True
+          end
+          object Pollonrequest2: TMenuItem
+            Caption = 'Poll on request'
+            GroupIndex = 1
+            RadioItem = True
+            OnClick = Pollonrequest1Click
           end
         end
       end
@@ -2692,24 +2698,30 @@ object frMain: TfrMain
       Caption = '-'
       GroupIndex = 1
     end
-    object Pollevery3sec1: TMenuItem
+    object Pollevery1sec2: TMenuItem
       Caption = 'Poll every 1 sec'
       GroupIndex = 1
       RadioItem = True
-      OnClick = Pollevery3sec1Click
+      OnClick = Pollevery1sec2Click
     end
-    object Pollevery5sec1: TMenuItem
+    object Pollevery2sec2: TMenuItem
       Caption = 'Poll every 2 secs'
       Checked = True
       GroupIndex = 1
       RadioItem = True
-      OnClick = Pollevery5sec1Click
+      OnClick = Pollevery2sec2Click
     end
-    object Pollevery30secs1: TMenuItem
+    object Pollevery5sec2: TMenuItem
       Caption = 'Poll every 5 secs'
       GroupIndex = 1
       RadioItem = True
-      OnClick = Pollevery30secs1Click
+      OnClick = Pollevery5sec2Click
+    end
+    object Pollonrequest1: TMenuItem
+      Caption = 'Poll on request'
+      GroupIndex = 1
+      RadioItem = True
+      OnClick = Pollonrequest1Click
     end
   end
   object tmPoll: TTimer

@@ -101,9 +101,9 @@ type
     pmMemo: TPopupMenu;
     pmPolling: TPopupMenu;
     pmToolbars: TPopupMenu;
-    Pollevery30secs1: TMenuItem;
-    Pollevery3sec1: TMenuItem;
-    Pollevery5sec1: TMenuItem;
+    Pollevery5sec2: TMenuItem;
+    Pollevery1sec2: TMenuItem;
+    Pollevery2sec2: TMenuItem;
     SearchandReplace1: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
@@ -303,6 +303,8 @@ type
     Processing1: TMenuItem;
     RandomizeColorsinSelection1: TMenuItem;
     RandomizeColorsinSelection2: TMenuItem;
+    Pollonrequest1: TMenuItem;
+    Pollonrequest2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -352,9 +354,9 @@ type
     procedure HelpAboutExecute(Sender: TObject);
     procedure mnPollL3LabClick(Sender: TObject);
     procedure mnPollToSelectedClick(Sender: TObject);
-    procedure Pollevery30secs1Click(Sender: TObject);
-    procedure Pollevery3sec1Click(Sender: TObject);
-    procedure Pollevery5sec1Click(Sender: TObject);
+    procedure Pollevery5sec2Click(Sender: TObject);
+    procedure Pollevery1sec2Click(Sender: TObject);
+    procedure Pollevery2sec2Click(Sender: TObject);
     procedure tmPollTimer(Sender: TObject);
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
@@ -384,6 +386,7 @@ type
     procedure acTriangleCombineExecute(Sender: TObject);
     procedure acSortByPositionExecute(Sender: TObject);
     procedure acRandomizeColorsExecute(Sender: TObject);
+    procedure Pollonrequest1Click(Sender: TObject);
     
   private
     { Private declarations }
@@ -694,9 +697,9 @@ begin
   SaveDialog1.FileName := ActiveMDIChild.Caption;
   if SaveDialog1.Execute then
   begin
+    if ((ActiveMDIChild.Tag > 0) or (ActiveMDIChild.caption <> SaveDialog1.FileName)) then UpdateMRU(SaveDialog1.FileName);
+      ActiveMDIChild.Tag := 0;
     ActiveMDIChild.caption := SaveDialog1.FileName;
-    if ActiveMDIChild.Tag > 0 then UpdateMRU(SaveDialog1.FileName);
-    ActiveMDIChild.Tag := 0;
     acFileSaveExecute(Sender);
   end;
 end;
@@ -1792,7 +1795,7 @@ begin
  // do nothing
 end;
 
-procedure TfrMain.Pollevery3sec1Click(Sender: TObject);
+procedure TfrMain.Pollevery1sec2Click(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Set polling interval to 1 sec
 Parameter: Standard
@@ -1800,14 +1803,15 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
  Pollevery1sec1.Checked := true;
- Pollevery3sec1.Checked := true;
+ Pollevery1sec2.Checked := true;
+ Pollonrequest2.ShortCut := 0;
  tmPoll.Enabled:=false;
  tmPoll.Interval:=1000;
  tmPoll.Enabled:=true;
 end;
 
 
-procedure TfrMain.Pollevery5sec1Click(Sender: TObject);
+procedure TfrMain.Pollevery2sec2Click(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Set polling interval to 2 secs
 Parameter: Standard
@@ -1815,14 +1819,15 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
  Pollevery2sec1.Checked := true;
- Pollevery5sec1.Checked := true;
+ Pollevery2sec2.Checked := true;
+ Pollonrequest2.ShortCut := 0;
  tmPoll.Enabled:=false;
  tmPoll.Interval:=2000;
  tmPoll.Enabled:=true;
 
 end;
 
-procedure TfrMain.Pollevery30secs1Click(Sender: TObject);
+procedure TfrMain.Pollevery5sec2Click(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Set polling interval to 5 secs
 Parameter: Standard
@@ -1830,12 +1835,21 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
  Pollevery5sec.Checked := true;
- Pollevery30secs1.Checked := true;
+ Pollevery5sec2.Checked := true;
+ Pollonrequest2.ShortCut := 0;
  tmPoll.Enabled:=false;
  tmPoll.Interval:=5000;
  tmPoll.Enabled:=true;
 end;
 
+procedure TfrMain.Pollonrequest1Click(Sender: TObject);
+begin
+  Pollonrequest1.Checked := true;
+  Pollonrequest2.Checked := true;
+  Pollonrequest2.ShortCut := TextToShortcut('F11');
+  tmPoll.Enabled:=false;
+  tmPollTimer(nil);
+end;
 
 procedure TfrMain.tmPollTimer(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1867,6 +1881,8 @@ Return value: None
 begin
   mnPollL3Lab.checked:= not mnPollL3Lab.checked;
   PolltoL3LabLDView1.Checked := not PolltoL3LabLDView1.Checked;
+  if (Pollonrequest1.Checked) and (not mnPollL3Lab.checked) then
+    Pollonrequest1.ShortCut := 0;
 end;
 
 
@@ -2698,8 +2714,8 @@ var
       if (pos('Collinear vertices',ErrorLine)>0) or
          (pos('Vertices not coplaner',ErrorLine)>0) then
         if MessageDlg('Combining these triangles:' + #13#10 +
-                      tri1.DATString + #13#10 +
-                      tri2.DATString + #13#10 +
+                      tri1.DATString + '(Line: ' + IntToStr((ActiveMDIChild as TfrEditorChild).memo.BlockBegin.Line + i) + ')' + #13#10 +
+                      tri2.DATString + '(Line: ' + IntToStr((ActiveMDIChild as TfrEditorChild).memo.BlockBegin.Line + i + 1) + ')' + #13#10 +
                       'will result in a quad with collinear or' + #13#10 +
                       'not coplaner vertices' + #13#10 +
                       'Combine anyway?', mtWarning, [mbYes, mbNo], 0) = mrNo then
