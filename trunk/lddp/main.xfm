@@ -408,7 +408,7 @@ object frMain: TfrMain
         Top = 2
         Height = 23
         Action = acReverseWinding
-        Caption = 'Reverse Windinf'
+        Caption = 'Reverse Winding'
       end
     end
   end
@@ -949,7 +949,7 @@ object frMain: TfrMain
     end
     object acReverseWinding: TAction
       Category = 'Editor'
-      Caption = 'Reverse Windinf'
+      Caption = 'Reverse Winding'
       ImageIndex = 38
       ShortCut = 16471
       OnExecute = acReverseWindingExecute

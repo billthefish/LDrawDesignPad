@@ -640,11 +640,14 @@ begin
     frOptions.edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory','');
     LDDPini.Free;
 
+    frOptions.IniFileName := strIniName;
+    frEditOptions.IniFileName := strIniName;
+    frOptions.IniSection := 'LDDP Options';
+    frEditOptions.IniSection := 'LDDP Edit Options';
+    frOptions.LoadFormValues;
+    frEditOptions.LoadFormValues;
+
     {$IFDEF MSWINDOWS}
-      frOptions.fstOptions.IniFileName := strIniName;
-      frEditOptions.fstEditOptions.IniFileName := strIniName;
-      frOptions.fstOptions.RestoreFormPlacement;
-      frEditOptions.fstEditOptions.RestoreFormPlacement;
       regT:=Tregistry.create;
       regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
       regt.WriteString('InstallDir', application.ExeName);
@@ -776,9 +779,6 @@ var
   i:integer;
 
 begin
-
-{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
-
   if frOptions.cboDet.Checked then
     DetThreshold := StrToFloat(Trim(frOptions.seDet.Text));
   if frOptions.cboDist.Checked then
@@ -802,9 +802,6 @@ begin
     else
       pnInfo.Height := 1;
   end;
-
-{$ENDIF} //NOT WORKING IN KYLIX YET
-
 end;
 
 procedure TfrMain.acOptionsExecute(Sender: TObject);
@@ -814,9 +811,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
-
-  frOptions.fstOptions.RestoreFormPlacement;
+  frOptions.LoadFormValues;
 
   if frOptions.showmodal=mrOK then
   begin
@@ -825,11 +820,9 @@ begin
       LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
     LDDPini.UpdateFile;
     LDDPini.Free;
-    frOptions.fstOptions.SaveFormPlacement;
+    frOptions.SaveFormValues;
   end
-  else frOptions.fstOptions.RestoreFormPlacement;
-
-{$ENDIF} //NOT WORKING IN KYLIX YET
+  else frOptions.LoadFormValues;
 end;
 
 
@@ -841,15 +834,13 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
-  frEditOptions.fstEditOptions.RestoreFormPlacement;
+  frEditOptions.LoadFormValues;
   if frEditOptions.showmodal=mrOK then
   begin
-    frEditOptions.fstEditOptions.SaveFormPlacement;
+    frEditOptions.SaveFormValues;
     SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
   end
-  else frEditOptions.fstEditOptions.RestoreFormPlacement;
-{$ENDIF} //NOT WORKING IN KYLIX YET
+  else frEditOptions.LoadFormValues;
 end;
 
 

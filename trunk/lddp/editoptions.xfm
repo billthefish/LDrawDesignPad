@@ -717,27 +717,6 @@ object frEditOptions: TfrEditOptions
         FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
     end
   end
-  object fstEditOptions: TJvFormStorage
-    Active = False
-    IniSection = 'LDDP Edit Options'
-    Options = []
-    StoredProps.Strings = (
-      'SynLDRSyn1.ColorAttri'
-      'SynLDRSyn1.CommentAttri'
-      'SynLDRSyn1.FirstTriAttri'
-      'SynLDRSyn1.FourthTriAttri'
-      'SynLDRSyn1.IdentifierAttri'
-      'SynLDRSyn1.KeyAttri'
-      'SynLDRSyn1.LineAttri'
-      'SynLDRSyn1.OpLineAttri'
-      'SynLDRSyn1.QuadAttri'
-      'SynLDRSyn1.SecondTriAttri'
-      'SynLDRSyn1.ThirdTriAttri'
-      'SynLDRSyn1.TriangleAttri')
-    StoredValues = <>
-    Left = 8
-    Top = 336
-  end
   object SynLDRSyn1: TSynLDRSyn
     Left = 41
     Top = 336
