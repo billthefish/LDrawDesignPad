@@ -1218,8 +1218,9 @@ begin
        startcol := CharIndexToRowCol(SelStart).Y - 1;
        endcol := CharIndexToRowCol(SelEnd).Y - 1;
        for j := startcol to endcol do
-         Lines[j] := '0 ' + Lines[j];
-
+        if (Lines[j] <> '') and (Lines[j] <> #13#10) and
+           (Lines[j] <> #13) and (Lines[j] <> #10) then
+          Lines[j] := '0 ' + Lines[j];
        tmpPoint.X := 1;
        tmpPoint.Y := startcol+1;
        SelStart := RowColToCharIndex(tmpPoint);
@@ -1236,18 +1237,35 @@ Description: Uncomment a zero'ed block
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var j:integer;
-    tmp:string;
+var
+  j:integer;
+  startcol,endcol: Integer;
+  tmpPoint: TPoint;
+  DModel: TDATModel;
+
 begin
    with (activeMDICHild as TfrEditorChild).memo do
    begin
      if seltext<>'' then
      begin
-        j:=selstart;
-        tmp:=copy(StringReplace(#13#10+seltext,#13#10+'0 ',#13#10, [rfReplaceAll]),3,selend-selstart);
-        seltext:=tmp;
-        selstart:=j;
-        selend:=j+length(tmp);
+       startcol := CharIndexToRowCol(SelStart).Y - 1;
+       endcol := CharIndexToRowCol(SelEnd).Y - 1;
+
+       DModel := TDATModel.Create;
+       for j := startcol to endcol do
+       begin
+         DModel.Clear;
+         DModel.Add(Lines[j]);
+         DModel.UnCommentLine(0);
+         Lines[j] := DModel[0].DATString;
+       end;
+       DModel.Free;
+
+       tmpPoint.X := 1;
+       tmpPoint.Y := startcol+1;
+       SelStart := RowColToCharIndex(tmpPoint);
+       tmpPoint.Y := endcol+2;
+       SelEnd := RowColToCharIndex(tmpPoint) - 1;
      end;
    end;
 end;
