@@ -318,6 +318,26 @@ type
     XAxis2: TMenuItem;
     YAxis2: TMenuItem;
     ZAxis2: TMenuItem;
+    ToolBar6: TToolBar;
+    ToolButton33: TToolButton;
+    ToolButton34: TToolButton;
+    ToolButton35: TToolButton;
+    ToolButton36: TToolButton;
+    ToolButton37: TToolButton;
+    ToolButton38: TToolButton;
+    ToolButton39: TToolButton;
+    ToolButton40: TToolButton;
+    ToolButton41: TToolButton;
+    ToolButton42: TToolButton;
+    ToolButton43: TToolButton;
+    ToolButton44: TToolButton;
+    ToolButton45: TToolButton;
+    ToolButton46: TToolButton;
+    ToolButton47: TToolButton;
+    ToolButton48: TToolButton;
+    ColorBar1: TMenuItem;
+    acColorToolbar: TAction;
+    acColorReplaceShortcut: TAction;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -401,7 +421,9 @@ type
     procedure acRandomizeColorsExecute(Sender: TObject);
     procedure Pollonrequest1Click(Sender: TObject);
     procedure acMirrorExecute(Sender: TObject);
-    
+    procedure acColorToolbarExecute(Sender: TObject);
+    procedure acColorReplaceShortcutExecute(Sender: TObject);
+
   private
     { Private declarations }
     fSearchFromCaret: boolean;
@@ -537,6 +559,7 @@ begin
   Mirror1.Enabled := mdicount>0;
   ErrorCheck1.Enabled := mdicount>0;
   MirrorLineOn1.Enabled := mdicount>0;
+  ToolBar6.Enabled := mdicount>0;
 
   if Assigned(ActiveMDICHild) then
   begin
@@ -2195,6 +2218,11 @@ begin
   Toolbar2.visible := not(Toolbar2.visible);
 end;
 {---------------------------------------------------------------------}
+procedure TfrMain.acColorToolbarExecute(Sender: TObject);
+begin
+  Toolbar6.visible := not(Toolbar6.visible);
+end;
+
 procedure TfrMain.acToolbarUpdate(Sender: TObject);
 begin
   acFileToolBar.Checked := Toolbar1.visible;
@@ -2202,6 +2230,7 @@ begin
   acSearchToolBar.Checked := Toolbar3.visible;
   acWindowsToolBar.Checked := Toolbar4.visible;
   acExternalsToolBar.Checked := Toolbar2.visible;
+  acColorToolBar.Checked := Toolbar6.visible;
 end;
 {---------------------------------------------------------------------}
 
@@ -2400,6 +2429,12 @@ begin
   Top := LDDPini.ReadInteger(IniSection, 'frMain_Top', Top);
   Width := LDDPini.ReadInteger(IniSection, 'frMain_Width', Width);
   Height := LDDPini.ReadInteger(IniSection, 'frMain_Height', Height);
+  Toolbar1.Visible := LDDPini.ReadBool(IniSection, 'Toolbar1_Visible', Toolbar1.Visible);
+  Toolbar2.Visible := LDDPini.ReadBool(IniSection, 'Toolbar2_Visible', Toolbar2.Visible);
+  Toolbar3.Visible := LDDPini.ReadBool(IniSection, 'Toolbar3_Visible', Toolbar3.Visible);
+  Toolbar4.Visible := LDDPini.ReadBool(IniSection, 'Toolbar4_Visible', Toolbar4.Visible);
+  Toolbar5.Visible := LDDPini.ReadBool(IniSection, 'Toolbar5_Visible', Toolbar5.Visible);
+  Toolbar6.Visible := LDDPini.ReadBool(IniSection, 'Toolbar6_Visible', Toolbar6.Visible);
   LDDPini.Free;
 end;
 
@@ -2421,6 +2456,12 @@ begin
   LDDPini.WriteInteger(IniSection, 'frMain_Top', Top);
   LDDPini.WriteInteger(IniSection, 'frMain_Width', Width);
   LDDPini.WriteInteger(IniSection, 'frMain_Height', Height);
+  LDDPini.WriteBool(IniSection, 'Toolbar1_Visible', Toolbar1.Visible);
+  LDDPini.WriteBool(IniSection, 'Toolbar2_Visible', Toolbar2.Visible);
+  LDDPini.WriteBool(IniSection, 'Toolbar3_Visible', Toolbar3.Visible);
+  LDDPini.WriteBool(IniSection, 'Toolbar4_Visible', Toolbar4.Visible);
+  LDDPini.WriteBool(IniSection, 'Toolbar5_Visible', Toolbar5.Visible);
+  LDDPini.WriteBool(IniSection, 'Toolbar6_Visible', Toolbar6.Visible);
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -2896,6 +2937,31 @@ begin
 
     SelText := DATLine.DATString;
   end;
+end;
+
+procedure TfrMain.acColorReplaceShortcutExecute(Sender: TObject);
+
+var
+  i, tmpBlEndY: Integer;
+  DModel: TDATModel;
+
+begin
+  DModel := TDATModel.Create;
+  ShowMessage((Sender as TToolButton).Hint);
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    tmpBlEndY := BlockEnd.Line;
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+
+    DModel.ModelText := SelText;
+    for i := 0 to DModel.Count - 1 do
+      if DModel[i] is TDATElement then
+        (DModel[i] as TDATElement).Color := (Sender as TComponent).Tag;
+
+    SelText := DModel.ModelText;
+  end;
+  DModel.Free;
 end;
 
 end.
