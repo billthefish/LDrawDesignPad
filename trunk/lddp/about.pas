@@ -65,7 +65,7 @@ begin
   ver.free;
   {$ENDIF}
   {$IFDEF LINUX}
-   Version.Caption:='Version '+ main.LDDPLINUXVERSION;
+   Version.Caption:='Version '+ LDDPLINUXVERSION;
   {$ENDIF}
 end;
 

@@ -23,7 +23,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  windowsspecific, registry, JvPlacemnt,
+  windowsspecific, JvPlacemnt,
   {$ELSEIF LINUX}
   linuxspecific,
   {$IFEND}
@@ -36,9 +36,9 @@ type
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-
+    {$IFDEF MSWINDOWS}
     fstOptions: TJvFormStorage;
-
+    {$ENDIF}
     Label1: TLabel;
     cboL3P: TCheckBox;
     Bevel1: TBevel;

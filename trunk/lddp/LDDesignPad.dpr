@@ -31,7 +31,9 @@ uses
   dlgreplacetext in 'dlgreplacetext.pas' {frTextReplaceDialog},
   dlgconfirmreplace in 'dlgconfirmreplace.pas' {frConfirmReplaceDialog},
   editoptions in 'editoptions.pas', {frEditOptions}
+  {$IFDEF MSWINDOWS}
   windowsspecific in 'windowsspecific.pas',
+  {$ENDIF}
   linuxspecific in 'linuxspecific.pas',
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
