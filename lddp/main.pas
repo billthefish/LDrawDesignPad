@@ -777,7 +777,9 @@ Parameter: None
 Return value: None
 ----------------------------------------------------------------------}
 var i:integer;
-    iniLDDP:TMemIniFile;
+  {$IFDEF WINDOWS}
+    regT:Tregistry;
+  {$ENDIF}
 
 begin
   SplashScreen := TfrSplash.Create(Application);
@@ -791,11 +793,15 @@ begin
   frEditOptions.fstEditOptions.IniFileName := strIniName;
   frOptions.fstOptions.RestoreFormPlacement;
   frEditOptions.fstEditOptions.RestoreFormPlacement;
-  iniLDDP:=TMemIniFile.Create(strIniName);
-  iniLDDP.WriteString('InstallDir', ExtractFilePath(Application.ExeName), '');
-  iniLDDP.UpdateFile;
-  iniLDDP.free;
   UpdateMRU;
+  {$IFDEF WINDOWS}
+   regT:=Tregistry.create;
+   regt.RootKey:=HKEY_CURRENT_USER;
+   regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
+   regt.WriteString('InstallDir', application.ExeName);
+   regt.free;
+  {$ENDIF}
+
   SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
   slPlugins:=TStringlist.create;
   pmMemo.tag:=pmMemo.items.count;
