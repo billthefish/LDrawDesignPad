@@ -3,13 +3,17 @@ HOW TO COMPILE LDDP
 
 You'll need:
 
-- Borland Delphi. (Delphi version 6 or up required)
+* Borland Delphi. (Delphi version 6 or up required)
 
-To compile this source successfully, you'll also need to download and install the following component suites:
+To compile this source successfully, you'll also need to download 
+and install the following component suites:
 
+* SynEdit 
+	http://synedit.sourceforge.net
+	Note: Use the zip file in the External Libraries/SynEdit folder
 
-* SynEdit  - http://synedit.sourceforge.net
-             Note: Use the zip file in the External Libraries/SynEdit folder
-
-* JEDI-VCL  - http://jvcl.sourceforge.net
-              Note: Use version 2.1.  Our source is not yet 3.0 Beta complient
+* JEDI-VCL 
+	http://jvcl.sourceforge.net
+	Note: Use version 2.1.  Our source is not yet 3.0 Beta complient.
+	The JEDI team has dicontinued primary distribution of JVCL 2.1
+	A local copy of JVCL 2.1 can be found in the External Libraries folder
