@@ -21,7 +21,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  windowsspecific, registry, windows,
+  windowsspecific, registry,
   {$ENDIF}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
   QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns, Types,
@@ -1062,22 +1062,13 @@ Description: Start Plugin related to the tag of the menu entry
 Parameter: Fname: path and filename of dll, nr: no. of Info to get
 Return value: None
 ----------------------------------------------------------------------}
-{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
 var
- libHndl:THandle;
- ProcessText:procedure(CompleteText,SelText:PChar; var SelStart, SelLength , cursorow , cursorcolumn:longWORD;myCallback:TLDDPCallBack);stdcall;
  st,libname:string;
  s1,s2,s3,s4:longword;
-{$ENDIF}
 
 begin
 {$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
-  ProcessText:=nil;
   libname:=copy(slplugins[(Sender as TMenuItem).tag],pos(',',slplugins[(Sender as TMenuItem).tag])+1, length(slplugins[(Sender as TMenuItem).tag]));
-  libHndl := LoadLibrary(pchar(libname));
-
-  if libHndl <> 0 then
-    @ProcessText := GetProcAddress(libHndl, 'ProcessText');
 
   with (activeMDICHild as TfrEditorChild) do
   begin
