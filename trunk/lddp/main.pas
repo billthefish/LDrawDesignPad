@@ -28,7 +28,10 @@ uses
   StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
   ActnList, ToolWin, ImgList, HttpProt,
   version, registry,
-  JvStrUtils,
+
+  SynEdit, SynEditHighlighter, SynHighlighterLDraw,
+  SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
+  SynEditTypes,
   {$ENDIF}
 
 // Linux Units
@@ -43,10 +46,8 @@ uses
 
 // Common Units  
   Classes,
-  SynEdit, SynEditHighlighter, SynHighlighterLDraw,
-  SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
-  SynEditTypes,
   IniFiles,
+  JvStrUtils,
   SysUtils, //for TSearchRec & TFileName
   splash;   //splash screen
 
@@ -332,8 +333,9 @@ type
     fSearchFromCaret: boolean;
     procedure AppInitialize;
     procedure CreateMDIChild(const Name: string;new:boolean);
+    {$IFDEF MSWINDOWS}
     procedure FileIsDropped ( VAR Msg : TMessage ) ; Message WM_DropFiles ;
-
+    {$ENDIF}
 
 
   public
@@ -368,8 +370,13 @@ implementation
 
 {$R *.dfm}
 
-uses ChildWin, shellapi, About, options, editoptions, ColorDialog,
-     dlgConfirmReplace, dlgSearchText, dlgReplaceText;
+uses
+  childwin,
+  {$IFDEF MSWINDOWS}
+  shellapi,
+  {$ENDIF}
+  about, options, editoptions, colordialog,
+  dlgconfirmreplace, dlgsearchtext, dlgreplacetext;
 
 var
   gbSearchBackwards: boolean;
