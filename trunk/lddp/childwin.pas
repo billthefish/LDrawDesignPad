@@ -40,8 +40,6 @@ type
     procedure Button1Click(Sender: TObject);
     procedure lbInfoDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure MemoKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure memoClick(Sender: TObject);
     procedure memoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -227,20 +225,6 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   tmpFilename:=frmain.GetTMPFilename+'.tmp';
-end;
-
-procedure TfrEditorChild.MemoKeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-{---------------------------------------------------------------------
-Description: Additional shortcuts for cut, copy and paste
-Parameter: Standard
-Return value: Standard
-----------------------------------------------------------------------}
-begin
- if (ssCtrl in Shift) and (key=vk_insert) then frmain.acEditCopy.execute;
- if (ssShift in Shift) and (key=vk_insert) then frmain.acEditPaste.execute;
- if (ssCtrl in Shift) and (key=vk_delete) then frmain.acEditCut.execute;
- UpdateControls;
 end;
 
 procedure TfrEditorChild.memoClick(Sender: TObject);
