@@ -295,6 +295,9 @@ type
     acECCopy: TAction;
     mnuMeta: TMenuItem;
     mnuMeta2: TMenuItem;
+    acTriangleCombine: TAction;
+    CombineTrianglesIntoQuad1: TMenuItem;
+    CombineTrianglesIntoQuad2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -373,6 +376,7 @@ type
     procedure acAutoRoundExecute(Sender: TObject);
     procedure acECCopyExecute(Sender: TObject);
     procedure MetaMenuClick(Sender: TObject);
+    procedure acTriangleCombineExecute(Sender: TObject);
     
   private
     { Private declarations }
@@ -1228,13 +1232,16 @@ Description: Load all plugins and create menu entries, add names to a stringlist
 Parameter: AppInit:  specified if app is initailizing, default is false
 Return value: None
 ----------------------------------------------------------------------}
-var sr:TSearchRec;
-    i, imgix:integer;
-    newitem:TMenuItem;
-    PluginPath, PluginFile: string;
-    plgBitmap: TBitMap;
+var
+  sr: TSearchRec;
+  i, j, imgix: Integer;
+  newitem:TMenuItem;
+  PluginPath, PluginFile: string;
+  plgBitmap: TBitMap;
+  PluginInfoList: TStringList;
 
 begin
+  PluginInfoList := TStringList.Create;
   PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
   i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
   frOptions.cblPlugins.clear;
@@ -1251,14 +1258,18 @@ begin
   while i=0 do
   begin
     PluginFile := PluginPath + sr.Name;
+    PluginInfoList.Clear;
+    PluginInfoList.Add('');
+    for j := 1 to 6 do
+      PluginInfoList.Add(PluginInfo(PluginFile,j));
     if AppInit then
     begin
       splashscreen.lbState.Caption:='Initializing plugin: '+sr.name;
       splashscreen.update;
     end;
     frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
-                                   ' - ' + PLuginInfo(PluginFile,3));
-    slplugins.Add(PLuginInfo(PluginFile,6)+','+PluginFile);
+                                   ' - ' + PluginInfoList[3]);
+    slplugins.Add(PluginInfoList[6]+','+PluginFile);
 
     if ExtractfileExt(lowercase(sr.name))='.dll' then
     begin
@@ -1274,16 +1285,16 @@ begin
         end;
       NewItem := TMenuItem.Create(Plugins3);
       Newitem.tag:=slplugins.count-1;
-      NewItem.caption:=PLuginInfo(PluginFile,1);
-      NewItem.hint:=PLuginInfo(PluginFile,3);
+      NewItem.caption:= PluginInfoList[1];
+      NewItem.hint:= PluginInfoList[3];
       newItem.onclick:=PluginClick;
       NewItem.ImageIndex := imgix;
       plugins3.Insert(plugins3.count,Newitem);
 
       NewItem := TMenuItem.Create(Plugins1);
       Newitem.tag:=slplugins.count-1;
-      NewItem.caption:=PluginInfo(PluginFile,1);
-      NewItem.hint:=PluginInfo(PluginFile,3);
+      NewItem.caption:= PluginInfoList[1];
+      NewItem.hint:= PluginInfoList[3];
       newItem.onclick:=PluginClick;
       NewItem.ImageIndex := imgix;
       plugins1.Insert(plugins1.count,Newitem);
@@ -1306,6 +1317,7 @@ begin
   end;
   Findclose(sr);
   frOptions.cblPlugins.sorted:=true;
+  PluginInfoList.Free;
 end;
 
 
@@ -2566,6 +2578,74 @@ begin
     BlockBegin := Point(1, BlockBegin.Y);
     BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
     DModel.ModelText := SelText;
+    SelText := DModel.ModelText;
+  end;
+end;
+
+procedure TfrMain.acTriangleCombineExecute(Sender: TObject);
+
+var
+  tmpBlEndY: Integer;
+  DModel: TDATModel;
+  i: Integer;
+
+  procedure ProcessTriangles(tri1, tri2: TDATTriangle);
+
+  var
+    QuadPoints: array of TDATPoint;
+    j, k: Integer;
+    flag: Boolean;
+
+  begin
+    for j := 1 to 3 do
+    begin
+      flag := false;
+      for k := 0 to Length(QuadPoints) do
+        if CheckSamePoint(tri1.Point[j],QuadPoints[k]) then
+          flag := true;
+      if not flag then
+      begin
+        SetLength(QuadPoints, Length(QuadPoints) + 1);
+        QuadPoints[Length(QuadPoints) - 1] := tri1.Point[i];
+      end;
+      flag := false;
+      for k := 0 to Length(QuadPoints) do
+        if CheckSamePoint(tri2.Point[j],QuadPoints[k]) then
+          flag := true;
+      if not flag then
+      begin
+        SetLength(QuadPoints, Length(QuadPoints) + 1);
+        QuadPoints[Length(QuadPoints) - 1] := tri2.Point[i];
+      end;
+    end;
+    if Length(QuadPoints) = 4 then
+      inc(i);
+  end;
+
+begin
+  DModel := TDATModel.Create;
+
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    tmpBlEndY := BlockEnd.Y;
+    BlockBegin := Point(1, BlockBegin.Y);
+    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+
+    DModel.ModelText := SelText;
+
+    i := 0;
+
+    if DModel.Count >= 2 then
+      while i < DModel.Count do
+      begin
+        if (not (DModel[i] is TDATTriangle)) and (not (DModel[i+1] is TDATTriangle)) then
+          while (i < DModel.Count) do
+            if (not (DModel[i] is TDATBlankLine)) then
+              inc(i);
+        if i < DModel.Count - 2 then
+          if (DModel[i] is TDATTriangle) and (DModel[i+1] is TDATTriangle) then
+            ProcessTriangles(DModel[i] as TDATTriangle, DModel[i+1] as TDATTriangle);
+      end;
     SelText := DModel.ModelText;
   end;
 end;

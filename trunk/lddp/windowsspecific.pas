@@ -191,18 +191,19 @@ Return value: None
 var
  libHndl:THandle;
  Plugin_Info:procedure(CaseID:byte;buffer:pchar;maxlength:byte); stdcall;
- sBuff: PChar;
+ sBuff: PAnsiChar;
+
 begin
   GetMem(sBuff, 255);         // allocate buffer
   Plugin_Info:=nil;
-  libHndl := LoadLibrary(pchar(fname));
-
+  libHndl := LoadLibrary(PAnsiChar(fname));
   if libHndl <> 0 then
     @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
 
   if Assigned(Plugin_Info) then Plugin_info(nr, sBuff, 255);
 
   result:=StrPas(sBuff);
+  Plugin_Info := nil;
   FreeLibrary(libHndl);
 end;
 
