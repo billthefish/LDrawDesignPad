@@ -420,7 +420,7 @@ object frMain: TfrMain
   object MainMenu1: TMainMenu
     Images = ilToolBarColor
     Left = 8
-    Top = 272
+    Top = 288
     object N7: TMenuItem
       Caption = ' '
     end
@@ -678,7 +678,7 @@ object frMain: TfrMain
   object ActionList1: TActionList
     Images = ilToolBarColor
     Left = 8
-    Top = 240
+    Top = 256
     object acFileNew: TAction
       Category = 'File'
       Caption = '&New'
@@ -843,6 +843,7 @@ object frMain: TfrMain
     object acInsertUpdateLine: TAction
       Category = 'EditorBlocks'
       Caption = 'Update Header'
+      ShortCut = 16469
       OnExecute = acInsertUpdateLineExecute
     end
     object acCommentBlock: TAction
@@ -877,6 +878,7 @@ object frMain: TfrMain
       Caption = 'I&nline Part'
       Hint = 'Inline a part'
       ImageIndex = 33
+      ShortCut = 16457
       OnExecute = acInlineExecute
     end
     object acUserDefined: TAction
@@ -1019,7 +1021,7 @@ object frMain: TfrMain
   end
   object ilToolBarColor: TImageList
     Left = 40
-    Top = 240
+    Top = 256
     Bitmap = {
       494D474C01000100100000001000000028000000424D367E0000000000003600
       00002800000070000000600000000100180000000000007E0000120B0000120B
@@ -2087,7 +2089,7 @@ object frMain: TfrMain
     AutoHotkeys = maManual
     Images = ilToolBarColor
     Left = 136
-    Top = 272
+    Top = 288
     object Cut1: TMenuItem
       Action = acEditCut
     end
@@ -2156,7 +2158,7 @@ object frMain: TfrMain
   end
   object pmPolling: TPopupMenu
     Left = 104
-    Top = 272
+    Top = 288
     object mnPollL3Lab: TMenuItem
       Caption = 'Poll to L3Lab && LDView'
       GroupIndex = 1
@@ -2195,12 +2197,12 @@ object frMain: TfrMain
     Interval = 3000
     OnTimer = tmPollTimer
     Left = 8
-    Top = 336
+    Top = 352
   end
   object pmL3P: TPopupMenu
     OnPopup = pmL3PPopup
     Left = 72
-    Top = 272
+    Top = 288
     object Fixerror1: TMenuItem
       Caption = 'Autofix error'
       OnClick = Fixerror1Click
@@ -2215,7 +2217,7 @@ object frMain: TfrMain
   end
   object SynLDRSyn: TSynLDRSyn
     Left = 40
-    Top = 304
+    Top = 320
   end
   object SynEditPrint: TSynEditPrint
     Copies = 1
@@ -2253,11 +2255,11 @@ object frMain: TfrMain
     TabWidth = 8
     Color = clWhite
     Left = 9
-    Top = 304
+    Top = 320
   end
   object pmToolbars: TPopupMenu
     Left = 40
-    Top = 272
+    Top = 288
     object Files1: TMenuItem
       Action = acFileToolbar
     end
@@ -2285,7 +2287,7 @@ object frMain: TfrMain
     Title = 'Choose LDraw File...'
     Width = 0
     Left = 8
-    Top = 208
+    Top = 224
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = 'dat'
@@ -2298,16 +2300,16 @@ object frMain: TfrMain
     Title = 'Save File as...'
     Width = 0
     Left = 40
-    Top = 208
+    Top = 224
   end
   object SynPasSyn: TSynPasSyn
     Left = 72
-    Top = 304
+    Top = 320
   end
   object SynCppSyn: TSynCppSyn
     DefaultFilter = 'C++ Files (*.c,*.cpp,*.h,*.hpp)|*.c;*.cpp;*.h;*.hpp'
     Left = 104
-    Top = 304
+    Top = 320
   end
   object http: TIdHTTP
     MaxLineAction = maException
@@ -2325,10 +2327,10 @@ object frMain: TfrMain
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
     HTTPOptions = [hoForceEncodeParams]
     Left = 72
-    Top = 208
+    Top = 224
   end
   object SynEditSearch1: TSynEditSearch
     Left = 136
-    Top = 304
+    Top = 320
   end
 end
