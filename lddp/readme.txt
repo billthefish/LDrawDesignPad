@@ -15,6 +15,8 @@ Contents
 
 The installer will do everything for you. Just install like every other program.
 
+If using the upgrade file, uzip the contents into the directory that LDDP is installed
+
 
 2. Introduction
 ----------------
@@ -46,7 +48,7 @@ Supported File Types:
 Technic Ribbed Hoses (79.dat for endpoints)
 Technic Flexible Axles (stud3a.dat for endpoints)
 Technic Flex-System Hose (76.dat for endpoints)
-
+Hose 12L (Parts not yet official)
 
 Usage:
 Place the endpoints where you want them. Ensure they are listed on adjacent lines
@@ -131,6 +133,11 @@ We especially thank you, the user, for downloading our program
 
 + = New feature  * = Bugfix   - = Removed feature
 
+v1.54 26 February 2004
++ Added customizable META command menu.  Open the metamenu.ini file for details
++ Added Combine 2 triangles into quad feature
++ Added Randomize Colors of Selection feature
++ Added replace color regardless of original color to color replace dialog
 
 v1.53 24 January 2004
 + Updated the colors.pal file (Thanks to Willy Tschager)
