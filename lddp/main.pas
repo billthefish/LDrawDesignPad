@@ -249,16 +249,15 @@ type
     ReverseWinding1: TMenuItem;
     acReverseWinding: TAction;
 
-    {$IFDEF MSWINDOWS}  //NOT IN KYLIX RIGHT NOW
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
-    procedure acL3PCheckExecute(Sender: TObject);
     procedure acLDViewExecute(Sender: TObject);
     procedure acMLCadExecute(Sender: TObject);
     procedure acUserDefinedExecute(Sender: TObject);
     procedure acFilePrintExecute(Sender: TObject);
     procedure PluginClick(Sender: TObject);
-    {$ENDIF}
+    procedure acEditOptionsExecute(Sender: TObject);
+    procedure acOptionsExecute(Sender: TObject);
 
     procedure acInlineExecute(Sender: TObject);
     procedure acCommentBlockExecute(Sender: TObject);
@@ -266,7 +265,6 @@ type
     procedure acEditCopyExecute(Sender: TObject);
     procedure acEditCutExecute(Sender: TObject);
     procedure acEditingToolbarExecute(Sender: TObject);
-    procedure acEditOptionsExecute(Sender: TObject);
     procedure acEditPasteExecute(Sender: TObject);
     procedure acExternalsToolbarExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
@@ -284,8 +282,8 @@ type
     procedure acInsertBFCExecute(Sender: TObject);
     procedure acInsertPartHeaderExecute(Sender: TObject);
     procedure acInsertUpdateLineExecute(Sender: TObject);
+    procedure acL3PCheckExecute(Sender: TObject);
     procedure acMRUListExecute(Sender: TObject);
-    procedure acOptionsExecute(Sender: TObject);
     procedure acRedoExecute(Sender: TObject);
     procedure acReplaceColorExecute(Sender: TObject);
     procedure acReplaceExecute(Sender: TObject);
@@ -334,9 +332,8 @@ type
     strIniName: string;
     LDDPini: TMemIniFile;
 
-    {$IFDEF MSWINDOWS}
+
     procedure LoadPlugins(AppInit:Boolean = false);
-    {$ENDIF}
 
     procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
     function  GetTmpFileName: String;
@@ -766,6 +763,7 @@ begin
   Result:=inttohex(hour,2)+inttohex(Min,2)+inttohex(Sec,2)+inttohex(trunc(MSec/10),2);
 end;
 
+
 procedure TfrMain.acL3PCheckExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Perform L3P Check
@@ -778,6 +776,9 @@ var
   i:integer;
 
 begin
+
+{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
+
   if frOptions.cboDet.Checked then
     DetThreshold := StrToFloat(Trim(frOptions.seDet.Text));
   if frOptions.cboDist.Checked then
@@ -801,6 +802,9 @@ begin
     else
       pnInfo.Height := 1;
   end;
+
+{$ENDIF} //NOT WORKING IN KYLIX YET
+
 end;
 
 procedure TfrMain.acOptionsExecute(Sender: TObject);
@@ -810,6 +814,8 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
+
   frOptions.fstOptions.RestoreFormPlacement;
 
   if frOptions.showmodal=mrOK then
@@ -822,7 +828,10 @@ begin
     frOptions.fstOptions.SaveFormPlacement;
   end
   else frOptions.fstOptions.RestoreFormPlacement;
+
+{$ENDIF} //NOT WORKING IN KYLIX YET
 end;
+
 
 
 procedure TfrMain.acEditOptionsExecute(Sender: TObject);
@@ -832,6 +841,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
   frEditOptions.fstEditOptions.RestoreFormPlacement;
   if frEditOptions.showmodal=mrOK then
   begin
@@ -839,7 +849,9 @@ begin
     SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
   end
   else frEditOptions.fstEditOptions.RestoreFormPlacement;
+{$ENDIF} //NOT WORKING IN KYLIX YET
 end;
+
 
 procedure TfrMain.acUndoExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -861,7 +873,7 @@ begin
   (activeMDICHild as TfrEditorChild).memo.Redo;
 end;
 
-{$IFDEF MSWINDOWS}
+
 procedure TfrMain.acLDViewExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Execute LDView
@@ -870,6 +882,7 @@ Return value: None
 ----------------------------------------------------------------------}
 
 begin
+{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
   if (not FileExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
     MessageDlg('You have to specify a valid path to LDView.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
@@ -881,6 +894,8 @@ begin
   {$ELSEIF LINUX}
 
   {$IFEND}
+
+{$ENDIF}  //NOT IN KYLIX YET
 end;
 
 procedure TfrMain.acMLCadExecute(Sender: TObject);
@@ -914,7 +929,9 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
   OpenInBrowser('http://www.sourceforge.net/projects/lddp');
+{$ENDIF}
 end;
 
 procedure TfrMain.acUserDefinedExecute(Sender: TObject);
@@ -923,7 +940,7 @@ Description: Execute user defined program
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-
+{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
 var opt:byte;
 
     function ParseString(toparse:string):string;
@@ -947,7 +964,10 @@ var opt:byte;
       Result:=toParse;
     end;
 
+{$ENDIF}     //NOT IN KYLIX YET
+
 begin
+{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
   with frOptions do begin
     if not FileExists(edExternal.text) then
     begin
@@ -971,6 +991,8 @@ begin
     {$IFEND}
 
   end;
+
+{$ENDIF}  //NOT IN KYLIX YET
 end;
 
 procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
@@ -986,6 +1008,7 @@ var sr:TSearchRec;
     plgBitmap: TBitMap;
 
 begin
+{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
   PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
   i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
   frOptions.cblPlugins.clear;
@@ -1057,6 +1080,8 @@ begin
   end;
   Findclose(sr);
   frOptions.cblPlugins.sorted:=true;
+
+  {$ENDIF} //NOT IN KYLIX YET
 end;
 
 
@@ -1071,6 +1096,8 @@ var
  s1,s2,s3,s4:longword;
 
 begin
+{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
+
   with (activeMDICHild as TfrEditorChild) do
   begin
      s1:=memo.selstart;
@@ -1111,6 +1138,7 @@ begin
        end;
   end;
 
+{$ENDIF}  //NOT IN KYLIX YET 
 end;
 
 procedure TfrMain.acL3LabExecute(Sender: TObject);
@@ -1133,7 +1161,6 @@ begin
 
   {$IFEND}
 end;
-{$ENDIF}
 
 procedure TfrMain.acincIndentExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1460,10 +1487,13 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
   SynEditPrint.SynEdit := (activeMDICHild as TfrEditorChild).memo;
   SynEditPrint.Title := activeMDICHild.caption;
   SynEditPrint.Print;
+{$ENDIF}
 end;
+
 
 procedure TfrMain.acFindNextExecute(Sender: TObject);
 {---------------------------------------------------------------------
