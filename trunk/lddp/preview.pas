@@ -8,7 +8,7 @@ uses
   QStdCtrls, QExtCtrls, ToolWin, QComCtrls,
   {$ENDIF}
   {$IFDEF LINUX}
-  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  Types, QTypes, Classes, Variants, QGraphics, QControls, QForms,
   QDialogs, QComCtrls, QStdCtrls, QExtCtrls,
   {$ENDIF}
   SysUtils;
