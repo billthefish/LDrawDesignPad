@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterUNIXShellScript.pas,v 1.1 2003-07-03 07:29:40 billthefish Exp $
+$Id: SynHighlighterUNIXShellScript.pas,v 1.2 2003-07-06 11:41:47 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -151,8 +151,6 @@ type
     property VarAttri: TSynHighlighterAttributes read fVarAttri
       write fVarAttri;
   end;
-
-procedure Register;
 
 implementation
 
@@ -280,8 +278,6 @@ end;
 constructor TSynUNIXShellScriptSyn.Create(AOwner: TComponent);
 var
   i: integer;
-resourcestring
-  SYNS_FilterUNIXShellScript = 'UNIX Shell Scripts (*.sh)|*.sh';
 begin
   inherited Create(AOwner);
   fKeyWords := TStringList.Create;
@@ -747,15 +743,8 @@ end;
 
 {$IFNDEF SYN_CPPB_1} class {$ENDIF}
 function TSynUNIXShellScriptSyn.GetLanguageName: string;
-resourcestring
-  LangName = 'UNIX Shell Script';
 begin
-  Result := LangName;
-end;
-
-procedure Register;
-begin
-  RegisterComponents('SynEdit Highlighters', [TSynUNIXShellScriptSyn]);
+  Result := SYNS_LangNameUNIXShellScript;
 end;
 
 initialization

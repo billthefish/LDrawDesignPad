@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: kTextDrawer.pas,v 1.2 2003-07-03 07:24:18 billthefish Exp $
+$Id: kTextDrawer.pas,v 1.3 2003-07-06 11:42:20 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -144,9 +144,7 @@ type
   public
     constructor Create(AParent : TWidgetControl); reintroduce;
     destructor Destroy; override;
-
     procedure Paint; override;
-
     property Active: boolean read fActive  write SetActive;
   end;
 
@@ -238,7 +236,7 @@ end;
 
 procedure ScrollCaret(aControl: TWidgetControl; aDeltaX, aDeltaY: integer);
 var
-  aCaret: TCaret; 
+  aCaret: TCaret;
 begin
   aCaret := FindCaret( aControl );
   if aCaret <> nil then
@@ -256,10 +254,13 @@ begin
   iCaret := CaretManager.CurrentCaret;
   if (iCaret <> nil) and ( (iCaret.Left <> x) or (iCaret.Top <> y) ) then
   begin
-    iCaret.Top := y;
-    iCaret.Left := x;
+    iCaret.Update;
+    iCaret.SetBounds( x, y, iCaret.Width, iCaret.Height );
     if iCaret.Active then
+    begin
       CaretManager.ResetCaret;
+      iCaret.Refresh;
+    end;
   end;
 end;
 

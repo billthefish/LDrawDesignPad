@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterRuby.pas,v 1.1 2003-07-03 07:29:34 billthefish Exp $
+$Id: SynHighlighterRuby.pas,v 1.2 2003-07-06 11:41:47 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -107,8 +107,10 @@ type
     procedure PasStyleProc;
     procedure CStyleProc;
     procedure SetSecondKeys(const Value: TStrings);
+  protected
+    function GetSampleSource: string; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                  
+    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
     function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -146,8 +148,6 @@ type
     property SymbolAttri: TSynHighlighterAttributes read fSymbolAttri
       write fSymbolAttri;
   end;
-
-procedure Register;
 
 implementation
 
@@ -260,8 +260,6 @@ end;
 constructor TSynRubySyn.Create(AOwner: TComponent);
 var
   i: integer;
-resourcestring
-  SYNS_FilterRuby = 'Ruby Files (*.rb,*.rbw)|*.rb;*.rbw';
 begin
   inherited Create(AOwner);
   fKeyWords := TStringList.Create;
@@ -680,15 +678,22 @@ end;
 
 {$IFNDEF SYN_CPPB_1} class {$ENDIF}
 function TSynRubySyn.GetLanguageName: string;
-resourcestring
-  LangName = 'Ruby';
 begin
-  Result := LangName;
+  Result := SYNS_LangRuby;
 end;
 
-procedure Register;
+function TSynRubySyn.GetSampleSource: string;
 begin
-  RegisterComponents('SynEdit Highlighters', [TSynRubySyn]);
+  Result :=
+    '# Factorial'+#13#10+
+    'def fact(n)'+#13#10+
+    '  if n == 0'+#13#10+
+    '    1'+#13#10+
+    '  else'+#13#10+
+    '    n * fact(n-1)'+#13#10+
+    '  end'+#13#10+
+    'end'+#13#10+
+    'print fact(ARGV[0].to_i), "\n"';
 end;
 
 initialization

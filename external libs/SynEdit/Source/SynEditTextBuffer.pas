@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditTextBuffer.pas,v 1.2 2003-07-03 07:23:06 billthefish Exp $
+$Id: SynEditTextBuffer.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -252,7 +252,7 @@ type
     function PopItem: TSynEditUndoItem;
     procedure PushItem(Item: TSynEditUndoItem);
     procedure Unlock;
-    function GetChangeReason: TSynChangeReason;
+    function LastChangeReason: TSynChangeReason;
   public
     procedure Assign(Source: TPersistent); override;
     procedure AddGroupBreak;                                                    //ek 2000-11-04
@@ -1535,7 +1535,7 @@ begin
     Dec(fLockCount);
 end;
 
-function TSynEditUndoList.GetChangeReason: TSynChangeReason;
+function TSynEditUndoList.LastChangeReason: TSynChangeReason;
 begin
   if fItems.Count = 0 then
     result := crNothing
@@ -1546,9 +1546,10 @@ end;
 
 procedure TSynEditUndoList.AddGroupBreak;
 begin
-  if (PeekItem<>nil) and (PeekItem.ChangeReason<>crGroupBreak) then begin
+  //Add the GroupBreak even if ItemCount = 0. Since items are stored in
+  //reverse order in TCustomSynEdit.fRedoList, a GroupBreak could be lost.
+  if LastChangeReason <> crGroupBreak then
     AddChange(crGroupBreak, Point(0,0), Point(0,0), '', smNormal);
-  end;
 end;
 
 procedure TSynEditUndoList.SetInitialState(const Value: boolean);
@@ -1561,10 +1562,13 @@ begin
       fInitialChangeNumber := PeekItem.ChangeNumber;
   end
   else
-    if (ItemCount = 0) or (PeekItem.ChangeNumber = fInitialChangeNumber) then
+    if ItemCount = 0 then
     begin
+      if fInitialChangeNumber = 0 then
+        fInitialChangeNumber := -1;
+    end
+    else if PeekItem.ChangeNumber = fInitialChangeNumber then
       fInitialChangeNumber := -1;
-    end;
 end;
 
 function TSynEditUndoList.GetInitialState: boolean;
