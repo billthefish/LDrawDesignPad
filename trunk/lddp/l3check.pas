@@ -1,6 +1,6 @@
 unit l3check;
 (*
-  Copyright 2003 Orion Pobursky
+  Copyright (C) 2003-2005 Orion Pobursky
 
   This file is derived from:
     L3Input.cpp and L3Math.cpp

@@ -1,6 +1,4 @@
-{-------------------------------------------------------------------------------
-
-These sources are copyrighted (C) by Carsten Schmitz and the LDDP project contributors.
+{These sources are copyright (C) 2003-2005 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,13 +15,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 -------------------------------------------------------------------------------}
-
 unit about;
 
 interface
 
 uses
-  version, Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  Version, Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
   ExtCtrls, SysUtils, Buttons;
   
 type
@@ -50,20 +47,13 @@ implementation
 
 procedure TfrAboutBox.FormShow(Sender: TObject);
 
- {$IFDEF MSWINDOWS}
 var
  ver:Tversion;
- {$ENDIF}
 
 begin
-  {$IFDEF MSWINDOWS}
   ver:=TVersion.Create(Application.ExeName);
   Version.Caption:='Version '+ver.FileVersionStr;
   ver.free;
-  {$ENDIF}
-  {$IFDEF LINUX}
-   Version.Caption:='Version '+ LDDPLINUXVERSION;
-  {$ENDIF}
 end;
 
 end.
