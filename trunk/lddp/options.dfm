@@ -1,6 +1,6 @@
 object frOptions: TfrOptions
-  Left = 862
-  Top = 113
+  Left = 506
+  Top = 128
   Width = 520
   Height = 282
   Caption = 'Misc. Options'
@@ -19,11 +19,12 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 512
-    Height = 211
-    ActivePage = tsExternal
+    Height = 218
+    ActivePage = TabSheet4
     Align = alClient
     Images = ImageList1
     Style = tsFlatButtons
+    TabIndex = 3
     TabOrder = 0
     OnChange = PageControl1Change
     object tsExternal: TTabSheet
@@ -511,7 +512,7 @@ object frOptions: TfrOptions
         PasswordChar = #0
         ReadOnly = False
         TabOrder = 2
-        Value = 0.100000000000000000
+        Value = 0.1
       end
       object seDet: TJvFloatEdit
         Left = 209
@@ -530,7 +531,7 @@ object frOptions: TfrOptions
         PasswordChar = #0
         ReadOnly = False
         TabOrder = 3
-        Value = 0.001000000000000000
+        Value = 0.001
       end
     end
     object TabSheet4: TTabSheet
@@ -698,7 +699,7 @@ object frOptions: TfrOptions
   end
   object Panel1: TPanel
     Left = 0
-    Top = 204
+    Top = 218
     Width = 512
     Height = 37
     Align = alBottom
