@@ -29,12 +29,12 @@ uses
 
 type
   TfrEditorChild = class(TForm)
-    Splitter1: TSplitter;
     pnInfo: TPanel;
     Panel2: TPanel;
     Button1: TButton;
     memo: TSynEdit;
     lbInfo: TListView;
+    Splitter1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormActivate(Sender: TObject);
     procedure MemoChange(Sender: TObject);
@@ -215,7 +215,8 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  pninfo.height:=1;
+  pnInfo.Visible := False;
+  Splitter1.Visible := False;
 end;
 
 procedure TfrEditorChild.lbInfoDblClick(Sender: TObject);

@@ -938,6 +938,8 @@ begin
   with (ActiveMDIChild as TfrEditorChild) do
     if lbInfo.Items.Count > 0 then
     begin
+      pnInfo.Visible := True;
+      Splitter1.Visible := True;
       pnInfo.Height := 91;
       acECFixAllErrors.Enabled := True;
       acECFixAllMarkedErrors.Enabled := True;
@@ -950,7 +952,8 @@ begin
     end
     else
     begin
-      pnInfo.Height := 1;
+      pnInfo.Visible := False;
+      Splitter1.Visible := False;
       acECFixError.Enabled := False;
       acECFixAllErrors.Enabled := False;
       acECFixAllErrorsTyped.Enabled := False;
@@ -1315,7 +1318,7 @@ Return value: None
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
-    Lines.Insert(CaretY-1, '0 //' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
+    Lines.Insert(CaretY-1, '0 // ' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
                            frOptions.edSIG.text + ' Update description');
     Modified := true;
   end;
@@ -1830,7 +1833,8 @@ begin
 
    if lbInfo.Items.Count < 1 then
    begin
-     pnInfo.Height := 1;
+     pnInfo.Visible := False;
+     Splitter1.Visible := False;
      acECFixError.Enabled := False;
      acECFixAllErrors.Enabled := False;
      acECFixAllErrorsTyped.Enabled := False;
