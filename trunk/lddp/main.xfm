@@ -562,7 +562,22 @@ object frMain: TfrMain
           Action = acInsertUpdateLine
         end
         object BFCStatement2: TMenuItem
-          Action = acInsertBFC
+          Caption = 'BFC Statement'
+          object CERTIFY1: TMenuItem
+            Action = acInsertBFCCertifyCW
+          end
+          object CERTIFYCCW1: TMenuItem
+            Action = acInsertBFCCertifyCCW
+          end
+          object INVERNEXT1: TMenuItem
+            Action = acInsertBFCInvertnext
+          end
+          object CLIP1: TMenuItem
+            Action = acInsertBFCClip
+          end
+          object NOCLIP1: TMenuItem
+            Action = acInsertBFCNoClip
+          end
         end
       end
       object ExternalPrograms1: TMenuItem
@@ -917,11 +932,6 @@ object frMain: TfrMain
       ImageIndex = 20
       OnExecute = acL3LabExecute
     end
-    object acInsertBFC: TAction
-      Category = 'EditorBlocks'
-      Caption = 'BFC Statement'
-      OnExecute = acInsertBFCExecute
-    end
     object acFileToolbar: TAction
       Category = 'Toolbars'
       Caption = 'Files'
@@ -1017,6 +1027,31 @@ object frMain: TfrMain
       Category = 'Misc'
       Caption = 'View Model Tree'
       OnExecute = acModelTreeViewExecute
+    end
+    object acInsertBFCCertifyCW: TAction
+      Category = 'EditorBlocks'
+      Caption = 'CERTIFY CW'
+      OnExecute = acInsertBFCCertifyCWExecute
+    end
+    object acInsertBFCCertifyCCW: TAction
+      Category = 'EditorBlocks'
+      Caption = 'CERTIFY CCW'
+      OnExecute = acInsertBFCCertifyCCWExecute
+    end
+    object acInsertBFCInvertnext: TAction
+      Category = 'EditorBlocks'
+      Caption = 'INVERTNEXT'
+      OnExecute = acInsertBFCInvertnextExecute
+    end
+    object acInsertBFCClip: TAction
+      Category = 'EditorBlocks'
+      Caption = 'CLIP'
+      OnExecute = acInsertBFCClipExecute
+    end
+    object acInsertBFCNoClip: TAction
+      Category = 'EditorBlocks'
+      Caption = 'NOCLIP'
+      OnExecute = acInsertBFCNoClipExecute
     end
   end
   object ilToolBarColor: TImageList
@@ -2111,13 +2146,26 @@ object frMain: TfrMain
         Action = acInsertUpdateLine
       end
       object BFCStatement1: TMenuItem
-        Action = acInsertBFC
+        Caption = 'BFC Statement'
+        object CERTIFYCW1: TMenuItem
+          Action = acInsertBFCCertifyCW
+        end
+        object CERTIFYCCW2: TMenuItem
+          Action = acInsertBFCCertifyCCW
+        end
+        object INVERTNEXT1: TMenuItem
+          Action = acInsertBFCInvertnext
+        end
+        object CLIP2: TMenuItem
+          Action = acInsertBFCClip
+        end
+        object NOCLIP2: TMenuItem
+          Action = acInsertBFCNoClip
+        end
       end
     end
     object Plugins3: TMenuItem
       Caption = '&Plugins'
-      object TMenuItem
-      end
     end
     object N5: TMenuItem
       Caption = '-'
