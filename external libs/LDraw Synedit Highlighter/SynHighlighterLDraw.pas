@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterLDraw.pas,v 1.3 2003-06-08 19:45:38 duncan2 Exp $
+$Id: SynHighlighterLDraw.pas,v 1.4 2003-06-09 01:35:07 duncan2 Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -319,6 +319,14 @@ begin
 end;
 
 constructor TSynLDRSyn.Create(AOwner: TComponent);
+
+  {$IFDEF LINUX}
+  function RGB(r, g, b: Byte): LongWord;
+  begin
+    Result := (r or (g shl 8) or (b shl 16));
+  end;
+  {$ENDIF}
+
 begin
   inherited Create(AOwner);
   fColorAttri := TSynHighLighterAttributes.Create(SYNS_AttrColor);
