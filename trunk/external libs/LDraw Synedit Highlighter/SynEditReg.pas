@@ -24,7 +24,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditReg.pas,v 1.1 2003-06-08 10:32:22 c_schmitz Exp $
+$Id: SynEditReg.pas,v 1.2 2003-06-08 19:45:38 duncan2 Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -32,22 +32,98 @@ located at http://SynEdit.SourceForge.net
 Known Issues:
 -------------------------------------------------------------------------------}
 
+{$IFNDEF QSYNEDITREG}
 unit SynEditReg;
+{$ENDIF}
 
 {$I SynEdit.inc}
 
 interface
 
 uses
-  Classes,
-  SynEditStrConst,
-  SynEditPropertyReg,
-// SynEdit components
+{$IFDEF SYN_CLX}
+  // SynEdit components
+  QSynEdit,
+  QSynMemo,
+  {$IFNDEF SYN_DELPHI_PE}
+  QSynDBEdit,
+  {$ENDIF}
+  QSynEditStrConst,
+  QSynEditHighlighter,
+  QSynEditMiscClasses,
+  QSynEditPlugins,
+  QSynEditExport,
+  QSynExportHTML,
+  QSynExportRTF,
+  QSynHighlighterMulti,
+  QSynCompletionProposal,
+  QSynEditPythonBehaviour,
+  QSynEditPrint,
+  QSynEditPrintPreview,
+  QSynMacroRecorder,
+  QSynAutoCorrect,
+  QSynEditSearch,
+  QSynEditRegexSearch,
+  QSynHighlighterManager,
+  QSynEditOptionsDialog,
+  QSynHighlighterADSP21xx,
+  QSynHighlighterAsm,
+  QSynHighlighterAWK,
+  QSynHighlighterBaan,
+  QSynHighlighterBat,
+  QSynHighlighterCAC,
+  QSynHighlighterCache,
+  QSynHighlighterCobol,
+  QSynHighlighterCpp,
+  QSynHighlighterCss,
+  QSynHighlighterDfm,
+  QSynHighlighterDml,
+  QSynHighlighterFortran,
+  QSynHighlighterFoxpro,
+  QSynHighlighterGalaxy,
+  QSynHighlighterGeneral,
+  QSynHighlighterHC11,
+  QSynHighlighterHP48,
+  QSynHighlighterHtml,
+  QSynHighlighterIni,
+  QSynHighlighterInno,
+  QSynHighlighterJava,
+  QSynHighlighterJScript,
+  QSynHighlighterKix,
+  QSynHighlighterModelica,
+  QSynHighlighterM3,
+  QSynHighlighterPas,
+  QSynHighlighterPerl,
+  QSynHighlighterPHP,
+  QSynHighlighterProgress,
+  QSynHighlighterPython,
+  QSynHighlighterSml,
+  QSynHighlighterSQL,
+  QSynHighlighterTclTk,
+  QSynHighlighterTeX,
+  QSynHighlighterVB,
+  QSynHighlighterVBScript,
+  QSynHighlighterGWS,
+  QSynHighlighterCPM,
+  QSynHighlighterSDD,
+  QSynHighlighterXML,
+  QSynHighlighterMsg,
+  QSynHighlighterIDL,
+  QSynHighlighterLDraw,
+  QSynHighlighterUnreal,
+  QSynHighlighterST,
+{$ELSE}
+  // SynEdit components
   SynEdit,
   SynMemo,
-{$IFNDEF SYN_DELPHI_PE}
+  {$IFNDEF SYN_DELPHI_PE}
   SynDBEdit,
-{$ENDIF}  
+  {$ENDIF}
+  SynEditStrConst,
+  SynEditHighlighter,
+  SynEditMiscClasses,
+  SynEditPlugins,
+  SynEditExport,
   SynExportHTML,
   SynExportRTF,
   SynHighlighterMulti,
@@ -57,12 +133,12 @@ uses
   SynEditPrintPreview,
   SynMacroRecorder,
   SynAutoCorrect,
-{$IFDEF SYN_COMPILER_4_UP}
-  {*******************}
-{$IFNDEF SYN_KYLIX}
+  SynEditSearch,
+  SynEditRegexSearch,
+  {$IFDEF SYN_COMPILER_4_UP}
   SynHighlighterManager,
-{$ENDIF}
-{$ENDIF}
+  {$ENDIF}
+  SynEditOptionsDialog,
   SynHighlighterADSP21xx,
   SynHighlighterAsm,
   SynHighlighterAWK,
@@ -70,6 +146,7 @@ uses
   SynHighlighterBat,
   SynHighlighterCAC,
   SynHighlighterCache,
+  SynHighlighterCobol,
   SynHighlighterCpp,
   SynHighlighterCss,
   SynHighlighterDfm,
@@ -94,8 +171,9 @@ uses
   SynHighlighterProgress,
   SynHighlighterPython,
   SynHighlighterSml,
-  SynHighlighterSQL,   //js 06-04-2002  Linux - watch the case ;^)
+  SynHighlighterSQL,
   SynHighlighterTclTk,
+  SynHighlighterTeX,
   SynHighlighterVB,
   SynHighlighterVBScript,
   SynHighlighterGWS,
@@ -105,7 +183,10 @@ uses
   SynHighlighterMsg,
   SynHighlighterIDL,
   SynHighlighterLDraw,
-  SynHighlighterUnreal;
+  SynHighlighterUnreal,
+  SynHighlighterST,
+{$ENDIF}
+  Classes;
 
 procedure Register;
 
@@ -113,24 +194,45 @@ implementation
 
 procedure Register;
 begin
-{$IFNDEF SYN_CLX}//js 07-04-2002 changed to SYN_CLX from SYN_KYLIX
-  SynEditPropertyReg.Register;
+// SynEdit main components
+  RegisterComponents(SYNS_ComponentsPage, [TSynEdit, TSynMemo]);
+
+{$IFNDEF SYN_DELPHI_PE}
+  RegisterComponents(SYNS_ComponentsPage, [TDBSynEdit]);
 {$ENDIF}
 
-// SynEdit components
-  RegisterComponents(SYNS_ComponentsPage, [TSynEdit, TSynMemo,
-{$IFNDEF SYN_DELPHI_PE}
-    TDBSynEdit,
+{$IFDEF SYN_COMPILER_6_UP}
+  GroupDescendentsWith( TSynCustomHighlighter, TSynEdit );
+  GroupDescendentsWith( TSynEditSearchCustom, TSynEdit );
+  GroupDescendentsWith( TSynCustomExporter, TSynEdit );
+  GroupDescendentsWith( TSynMultiSyn, TSynEdit );
+  GroupDescendentsWith( TSynBaseCompletionProposal, TSynEdit );
+  GroupDescendentsWith( TSynAutoComplete, TSynEdit );
+  GroupDescendentsWith( TAbstractSynPlugin, TSynEdit );
+  GroupDescendentsWith( TCustomSynAutoCorrect, TSynEdit );
+  GroupDescendentsWith( TSynEditPrint, TSynEdit );
+  GroupDescendentsWith( TSynEditPrintPreview, TSynEdit );
+  GroupDescendentsWith( TSynEditPythonBehaviour, TSynEdit );
+  GroupDescendentsWith( TSynHighlighterManager, TSynEdit );
+  GroupDescendentsWith( TSynEditOptionsDialog, TSynEdit );
 {$ENDIF}
-    TSynExporterHTML, TSynExporterRTF, TSynEditPythonBehaviour, TSynMultiSyn, 
+
+// SynEdit extra components
+  RegisterComponents(SYNS_ComponentsPage, [TSynExporterHTML, TSynExporterRTF,
+    TSynEditPythonBehaviour, TSynMultiSyn,
     TSynCompletionProposal, TSynAutoComplete, TSynMacroRecorder,
-    TSynEditPrint, TSynEditPrintPreview, TSynAutoCorrect]);
+    TSynEditPrint, TSynEditPrintPreview, TSynAutoCorrect,
+    TSynEditSearch, TSynEditRegexSearch, TSynEditOptionsDialog]);
+
+{$IFDEF SYN_COMPILER_4_UP}
+  RegisterComponents(SYNS_ComponentsPage, [TSynHighlighterManager]);
+{$ENDIF}
 
 // SynEdit highlighters
   RegisterComponents(SYNS_HighlightersPage, [
     //classic
     TSynCppSyn, TSynFortranSyn, TSynGeneralSyn, TSynJavaSyn, TSynM3Syn,
-    TSynPasSyn, TSynVBSyn,
+    TSynPasSyn, TSynVBSyn, TSynCobolSyn,
     // internet
     TSynCssSyn, TSynHTMLSyn, TSynJScriptSyn, TSynPHPSyn, TSynVBScriptSyn,
     TSynXMLSyn,
@@ -140,16 +242,15 @@ begin
     //database
     TSynCACSyn, TSynCacheSyn, TSynFoxproSyn, TSynSQLSyn, TSynSDDSyn,
     //assembler
-    TSynADSP21xxSyn, TSynAsmSyn, TSynHC11Syn, TSynHP48Syn,
+    TSynADSP21xxSyn, TSynAsmSyn, TSynHC11Syn, TSynHP48Syn, TSynSTSyn,
     //data modeling
     TSynDmlSyn, TSynModelicaSyn, TSynSMLSyn,
     //data
     TSynDfmSyn, TSynIniSyn, TSynInnoSyn,
     // other
     TSynBaanSyn, TSynGalaxySyn, TSynProgressSyn, TSynMsgSyn,
-    TSynIdlSyn, TSynUnrealSyn, TSynCPMSyn, TSynLDRSyn
+    TSynIdlSyn, TSynLDRSyn, TSynUnrealSyn, TSynCPMSyn, TSynTeXSyn
   ]);
 end;
 
 end.
-
