@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: frmMain.pas,v 1.2 2003-07-03 07:17:51 billthefish Exp $
+$Id: frmMain.pas,v 1.3 2004-03-01 22:04:57 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -91,7 +91,7 @@ implementation
 {$R *.DFM}
 
 uses
-  dlgSearchText, dlgReplaceText, dlgConfirmReplace, SynEditTypes;
+  dlgSearchText, dlgReplaceText, dlgConfirmReplace, SynEditTypes, SynEditMiscProcs;
 
   // options - to be saved to the registry
 var
@@ -171,7 +171,7 @@ begin
     SearchText := gsSearchText;
     if gbSearchTextAtCaret then begin
       // if something is selected search for that text
-      if SynEditor.SelAvail and (SynEditor.BlockBegin.Y = SynEditor.BlockEnd.Y)
+      if SynEditor.SelAvail and (SynEditor.BlockBegin.Line = SynEditor.BlockEnd.Line)
       then
         SearchText := SynEditor.SelText
       else
@@ -258,8 +258,10 @@ begin
   if ASearch = AReplace then
     Action := raSkip
   else begin
-    APos := Point(Column, Line);
-    APos := SynEditor.ClientToScreen(SynEditor.RowColumnToPixels(APos));
+    APos := SynEditor.ClientToScreen(
+      SynEditor.RowColumnToPixels(
+      SynEditor.BufferToDisplayPos(
+        MakeBufferCoord(Column, Line) ) ) );
     EditRect := ClientRect;
     EditRect.TopLeft := ClientToScreen(EditRect.TopLeft);
     EditRect.BottomRight := ClientToScreen(EditRect.BottomRight);
