@@ -634,6 +634,9 @@ object frMain: TfrMain
       object N22: TMenuItem
         Caption = '-'
       end
+      object AutoRoundSelection1: TMenuItem
+        Action = acAutoRound
+      end
       object ConvertBitmaptoLDraw1: TMenuItem
         Action = acBMP2LDraw
       end
@@ -1113,12 +1116,17 @@ object frMain: TfrMain
       Caption = 'Generate Bendible Object '
       OnExecute = acBendibleObjectExecute
     end
+    object acAutoRound: TAction
+      Category = 'Misc'
+      Caption = 'Auto Round Selection'
+      OnExecute = acAutoRoundExecute
+    end
   end
   object ilToolBarColor: TImageList
     Left = 40
     Top = 232
     Bitmap = {
-      494C010128002C00040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010128002C00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2574,7 +2582,8 @@ object frMain: TfrMain
       FC01FE008000FFFFFC40FE000000FFFFFC40FE000000FFFFFC1980000000FFF7
       F80380000005C1F7F00F80000003C3FBE03F80000003C7FBC07F80050003CBFB
       80FF80030003DCF701FF80070003FF0F03FF81FF0003FFFF87FF80FF8007FFFF
-      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF}
+      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+      000000000000}
   end
   object pmMemo: TPopupMenu
     AutoHotkeys = maManual

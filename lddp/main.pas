@@ -300,6 +300,8 @@ type
     acLSynth: TAction;
     GenrateBendibleObject1: TMenuItem;
     acBendibleObject: TAction;
+    acAutoRound: TAction;
+    AutoRoundSelection1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -380,6 +382,7 @@ type
     procedure acFindNextUpdate(Sender: TObject);
     procedure acLSynthExecute(Sender: TObject);
     procedure acBendibleObjectExecute(Sender: TObject);
+    procedure acAutoRoundExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -2472,13 +2475,37 @@ begin
         frmDATCurve.Line1.DATString := SelectedLines[0];
         frmDATCurve.Line2.DATString := SelectedLines[1];
         if frmDATCurve.ShowModal = mrOk then
+        begin
+          frmDATCurve.HoseDATCode.RotationDecimalPlaces := frOptions.seRotAcc.Value;
+          frmDATCurve.HoseDATCode.PositionDecimalPlaces := frOptions.sePntAcc.Value;
           memo.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
+        end;
       except
         SelectedLines.Free;
         Exit;
       end;
   end;
   SelectedLines.Free;
+end;
+
+procedure TfrMain.acAutoRoundExecute(Sender: TObject);
+
+var
+  DModel: TDATModel;
+  tmpBlEndY: Integer;
+
+begin
+  DModel := TDATModel.Create;
+  DModel.RotationDecimalPlaces := frOptions.seRotAcc.Value;
+  DModel.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    tmpBlEndY := BlockEnd.Y;
+    BlockBegin := Point(1, BlockBegin.Y);
+    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    DModel.ModelText := SelText;
+    SelText := DModel.ModelText;
+  end;
 end;
 
 end.
