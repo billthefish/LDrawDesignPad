@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 274
-  Top = 408
+  Left = 375
+  Top = 558
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -96,10 +96,13 @@ object frMain: TfrMain
         Action = acL3Lab
         PopupMenu = pmMemo
       end
-      object ToolButton24: TToolButton
+      object tbUserDefined: TToolButton
         Left = 74
         Top = 0
-        Action = acUserDefined
+        DropdownMenu = pmExternal
+        ImageIndex = 34
+        PopupMenu = pmExternal
+        OnClick = tbUserDefinedClick
       end
       object ToolButton32: TToolButton
         Left = 97
@@ -634,6 +637,12 @@ object frMain: TfrMain
       object Uncomment1: TMenuItem
         Action = acUncommentBlock
       end
+      object acincIdent1: TMenuItem
+        Action = acincIndent
+      end
+      object UnIndent1: TMenuItem
+        Action = acDecIndent
+      end
       object N24: TMenuItem
         Caption = '-'
       end
@@ -748,8 +757,10 @@ object frMain: TfrMain
         object acL3Lab1: TMenuItem
           Action = acL3Lab
         end
-        object UserDefinedProgram1: TMenuItem
-          Action = acUserDefined
+        object mnuUserDefined: TMenuItem
+          Caption = 'User Defined Program'
+          Hint = 'User Defined Program|Execute User Defined program'
+          ImageIndex = 34
         end
         object N15: TMenuItem
           Caption = '-'
@@ -983,15 +994,15 @@ object frMain: TfrMain
     end
     object acincIndent: TAction
       Category = 'Editor'
-      Caption = 'acincIdent'
-      Hint = 'Indent'
+      Caption = 'Increase Indent'
+      Hint = 'Increase Indent'
       ImageIndex = 26
       OnExecute = acincIndentExecute
     end
     object acDecIndent: TAction
       Category = 'Editor'
-      Caption = 'Un-Indent'
-      Hint = 'Un-Indent'
+      Caption = 'Decrease Indent'
+      Hint = 'Decrease Indent'
       ImageIndex = 27
       OnExecute = acDecIndentExecute
     end
@@ -1048,8 +1059,6 @@ object frMain: TfrMain
     end
     object acUserDefined: TAction
       Category = 'Externals'
-      Caption = 'User Defined Program'
-      Hint = 'User Defined Program|Execute User Defined program'
       ImageIndex = 34
       OnExecute = acUserDefinedExecute
     end
@@ -3025,6 +3034,9 @@ object frMain: TfrMain
     object ExternalPrograms2: TMenuItem
       Action = acExternalsToolbar
     end
+    object ReplaceColorShortcut1: TMenuItem
+      Action = acColorReplaceShortcut
+    end
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'dat'
@@ -3082,5 +3094,9 @@ object frMain: TfrMain
   object SynEditRegexSearch: TSynEditRegexSearch
     Left = 168
     Top = 296
+  end
+  object pmExternal: TPopupMenu
+    Left = 168
+    Top = 264
   end
 end

@@ -859,7 +859,7 @@ end;
 function DATPoint(X,Y,Z: Extended): TDATPoint;
 begin
   Result[1] := X;
-  Resilt[2] := Y;
+  Result[2] := Y;
   Result[3] := Z;
 end;
 

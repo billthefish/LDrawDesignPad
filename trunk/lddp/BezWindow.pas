@@ -26,7 +26,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, DATBase, DATModel, Math, Registry, IniFiles,
-  JvEdit, Mask, JvMaskEdit, JvExStdCtrls, JvValidateEdit;
+  JvEdit, Mask, JvMaskEdit, JvExStdCtrls, JvValidateEdit, Buttons;
 
 type
   TfrmDATCurve = class(TForm)
@@ -44,15 +44,6 @@ type
     lblEnd2: TLabel;
     lblEnd3: TLabel;
     cbxContEnable: TCheckBox;
-    lblContEnable: TLabel;
-    gbxACont1: TGroupBox;
-    lblACont11: TLabel;
-    lblACont13: TLabel;
-    lblACont12: TLabel;
-    gbxACont2: TGroupBox;
-    lblACont21: TLabel;
-    lblACont22: TLabel;
-    lblACont23: TLabel;
     lblMessage: TLabel;
     lblLength: TLabel;
     lblType2: TLabel;
@@ -96,7 +87,8 @@ begin
     end
     else
     begin
-      lblMessage.Caption := 'Distance between the end points is longer than the specified length';
+      lblMessage.Caption := 'Distance between the end points is longer than the ' +
+                            'specified length';
       btnGenerate.Enabled := False;
       cbxContEnable.Enabled := False;
       gbxCont1.Enabled := False;
@@ -125,7 +117,10 @@ begin
   HoseDATCode.StartMatrix := Line1.RotationMatrix;
   HoseDATCode.EndMatrix := Line2.RotationMatrix;
   HoseDATCode.Color := Line1.Color;
-  HoseDATCode.DefinedControlPoints := False;
+
+  HoseDATCode.DefinedControlPoints := cbxContEnable.Checked;
+  feCP1XChange(nil);
+
   if ((Line1.Filename = '750.dat') and (Line2.Filename = '750.dat')) then
   begin
     lblType2.Caption := 'Hose Flexible 8.5L With Tabs';
@@ -186,12 +181,12 @@ end;
 
 procedure TfrmDATCurve.feCP1XChange(Sender: TObject);
 
-var
-  tmpPoint: TDATPoint;
-
 begin
-  HoseDATCode.ControlPoint1 := DATPoint(feCP1X.Value, feCP1Y.Value, feCP1Z.Value);
-  HoseDATCode.ControlPoint2 := DATPoint(feCP2X.Value, feCP2Y.Value, feCP2Z.Value);
+  if cbxContEnable.Checked then
+  begin
+    HoseDATCode.ControlPoint1 := DATPoint(feCP1X.Value, feCP1Y.Value, feCP1Z.Value);
+    HoseDATCode.ControlPoint2 := DATPoint(feCP2X.Value, feCP2Y.Value, feCP2Z.Value);
+  end;
 end;
 
 end.
