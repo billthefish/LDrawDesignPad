@@ -348,8 +348,10 @@ type
     { Public declarations }
     strChangedCompleteText:string;
     strChangedSelText:string;
-    slPlugins:Tstringlist;
+    slPlugins:TStringList;
     lastfind:integer;
+    strIniName: string;
+    LDDPini: TMemIniFile;
     {$IFDEF MSWINDOWS} //NOT IN KYLIX
      function  DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
      function  FileAccessDateToDateTime(FileTime : tFileTime) : tDateTime;
@@ -374,7 +376,6 @@ type
 var
   frMain: TfrMain;
   splashscreen: TfrSplash;
-  strIniName: string;
 
 const
   LDDPLINUXVERSION = '1.0.4'; //hard-coded Linux version, for now
@@ -824,11 +825,13 @@ Description: Initializes Application:
 Parameter: None
 Return value: None
 ----------------------------------------------------------------------}
-var i:integer;
+var
+  i:integer;
+  Windir: string;
+  WDir: PChar;
   {$IFDEF MSWINDOWS}
     regT:Tregistry;
   {$ENDIF}
-
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
@@ -836,31 +839,43 @@ begin
     SplashScreen.show;
     SplashScreen.update;
     screen.cursor:=-11;
-  strIniName := ExtractFilePath(Application.ExeName) + 'LDDP.ini';
 
-  {$IFDEF MSWINDOWS}
-  frOptions.fstOptions.IniFileName := strIniName;
-  frEditOptions.fstEditOptions.IniFileName := strIniName;
-  frOptions.fstOptions.RestoreFormPlacement;
-  frEditOptions.fstEditOptions.RestoreFormPlacement;
-  {$ENDIF}
+    {$IFDEF MSWINDOWS}
+    GetMem(WDir, 144);
+    GetWindowsDirectory(WDir, 144);
+    Windir := StrPas(WDir);
+    strIniName := WinDir + '\LDraw.ini';
+    {$ELSE}
+    strIniName := ExtractFilePath(Application.ExeName) + 'LDraw.ini';
+    {$ENDIF}
 
-  UpdateMRU;
+    LDDPini := TMemIniFile.Create(strIniName);
+    frOptions.edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory','');
+    LDDPini.Free;
 
-  {$IFDEF MSWINDOWS}
-   regT:=Tregistry.create;
-   regt.RootKey:=HKEY_CURRENT_USER;
-   regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
-   regt.WriteString('InstallDir', application.ExeName);
-   regt.free;
-  {$ENDIF}
+    {$IFDEF MSWINDOWS}
+    frOptions.fstOptions.IniFileName := strIniName;
+    frEditOptions.fstEditOptions.IniFileName := strIniName;
+    frOptions.fstOptions.RestoreFormPlacement;
+    frEditOptions.fstEditOptions.RestoreFormPlacement;
+    {$ENDIF}
 
-  SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
-  slPlugins:=TStringlist.create;
-  pmMemo.tag:=pmMemo.items.count;
-  LoadPlugins(true);
-  if paramcount>0 then
-    for i:=1 to paramcount do CreateMDIChild(paramstr(i),false);
+    UpdateMRU;
+
+    {$IFDEF MSWINDOWS}
+     regT:=Tregistry.create;
+     regt.RootKey:=HKEY_CURRENT_USER;
+     regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
+     regt.WriteString('InstallDir', application.ExeName);
+     regt.free;
+    {$ENDIF}
+
+    SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
+    slPlugins:=TStringlist.create;
+    pmMemo.tag:=pmMemo.items.count;
+    LoadPlugins(true);
+    if paramcount>0 then
+      for i:=1 to paramcount do CreateMDIChild(paramstr(i),false);
   finally
     sleep(1500);
     screen.cursor:=0;
@@ -1105,8 +1120,21 @@ Return value: None
 begin
 {$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
   frOptions.fstOptions.RestoreFormPlacement;
-  if frOptions.showmodal=mrOK then frOptions.fstOptions.SaveFormPlacement
-    else frOptions.fstOptions.RestoreFormPlacement;
+{$ENDIF}
+  if frOptions.showmodal=mrOK then
+  begin
+    LDDPini := TMemIniFile.Create(strIniName);
+    if frOptions.edLDrawDir.Text <> '' then
+      LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
+    LDDPini.UpdateFile;
+    LDDPini.Free;  
+{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
+    frOptions.fstOptions.SaveFormPlacement;
+{$ENDIF}
+  end
+{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
+  else
+    frOptions.fstOptions.RestoreFormPlacement;
 {$ENDIF}
 end;
 
@@ -2324,24 +2352,24 @@ Parameter: NewFileName: Full Path and Filename to add, if supplied
 Return value: None
 ----------------------------------------------------------------------}
 var
-  iniLDDP: TMemIniFile;
   MRUSectionList: TStringList;
   i: integer;
   mnuNewItem: TMenuItem;
 
 begin
-  iniLDDP := TMemIniFile.Create(strIniName);
+  LDDPini := TMemIniFile.Create(strIniName);
   MRUSectionList := TStringList.Create;
-  iniLDDP.ReadSection('MRU', MRUSectionList);
+
+  LDDPini.ReadSection('LDDP MRU', MRUSectionList);
   if ((NewFileName <> '') and (MRUSectionList.Indexof(NewFileName) < 0)) then
   begin
     if MRUSectionList.Count >= 10 then
       MRUSectionList.Delete(9);
     MRUSectionList.Insert(0, NewFileName);
-  end;  
+  end;
   while LastOpen1.Count>0 do LastOpen1.items[LastOpen1.Count-1].free;
 
-  iniLDDP.EraseSection('MRU');
+  LDDPini.EraseSection('LDDP MRU');
 
   for i := 0 to MRUsectionList.Count - 1 do
   begin
@@ -2349,15 +2377,14 @@ begin
     mnuNewItem.caption:=MRUSectionList[i];
     mnuNewItem.OnClick := acMRUListExecute;
     LastOpen1.Insert(LastOpen1.Count, mnuNewItem);
-    iniLDDP.WriteString('MRU', MRUSectionList[i], '');
+    LDDPini.WriteString('LDDP MRU', MRUSectionList[i], '');
   end;
 
   if LastOpen1.Count > 0 then LastOpen1.Enabled := True;
-  
-  iniLDDP.UpdateFile;
-  MRUSectionList.Free;
-  iniLDDP.Free;
-end;
 
+  LDDPini.UpdateFile;
+  LDDPini.Free;
+  MRUSectionList.Free;
+end;
 
 end.

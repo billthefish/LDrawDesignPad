@@ -20,7 +20,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 512
     Height = 211
-    ActivePage = TabSheet1
+    ActivePage = tsExternal
     Align = alClient
     Images = ImageList1
     Style = tsFlatButtons
@@ -791,10 +791,10 @@ object frOptions: TfrOptions
   end
   object fstOptions: TJvFormStorage
     Active = False
+    IniSection = 'LDDP Options'
     Options = []
     StoredProps.Strings = (
       'edL3PDir.Text'
-      'edLDrawDir.Text'
       'edLDViewDir.Text'
       'edMLCadDir.Text'
       'cboDist.Checked'

@@ -658,6 +658,7 @@ object frEditOptions: TfrEditOptions
   end
   object fstEditOptions: TJvFormStorage
     Active = False
+    IniSection = 'LDDP Edit Options'
     Options = []
     StoredProps.Strings = (
       'SynLDRSyn1.ColorAttri'
