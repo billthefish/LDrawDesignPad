@@ -142,7 +142,7 @@ begin
   if memo.lines[memo.CaretY-1] <> '' then
   begin
     clr:=Trim(memo.lines[memo.CaretY-1]);
-    frMain.acInline.enabled := clr[1]='1';
+    frMain.acInline.enabled := copy(clr,1,1)='1';
   end
   else
     frMain.acInline.enabled := False;

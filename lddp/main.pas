@@ -1,4 +1,3 @@
-
 {These sources are copyrighted (C) by Carsten Schmitz and the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
@@ -33,12 +32,6 @@ uses
   QSynEditMiscClasses, QSynEditSearch;
 
 
-type TLDrawArray= record
-  typ:integer;
-  color:integer;
-  xyz:array[1..4,1..3] of Extended;
-  partname:string;
-end;
 
 type
   TfrMain = class(TForm)
@@ -221,7 +214,6 @@ type
     StandardPartHeader1: TMenuItem;
     UpdateHeader1: TMenuItem;
     ExternalPrograms1: TMenuItem;
-    L3PCheck1: TMenuItem;
     acLDView1: TMenuItem;
     acMLCad1: TMenuItem;
     acL3Lab1: TMenuItem;
@@ -251,6 +243,9 @@ type
     acCheckforUpdate: TAction;
     N7: TMenuItem;
     SynEditSearch1: TSynEditSearch;
+    N14: TMenuItem;
+    acBMP2LDraw: TAction;
+    ConvertBitmaptoLDraw1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -318,6 +313,7 @@ type
     procedure acReverseWindingExecute(Sender: TObject);
     procedure acCheckforUpdateExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure acBMP2LDrawExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -360,7 +356,7 @@ implementation
 uses
   childwin,
   about, options, editoptions, colordialog,
-  dlgconfirmreplace, dlgsearchreplacetext;
+  dlgconfirmreplace, dlgsearchreplacetext, BMP2LDraw;
 
 resourcestring
   STextNotFound = 'Text not found';
@@ -2076,6 +2072,11 @@ end;
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveFormValues;
+end;
+
+procedure TfrMain.acBMP2LDrawExecute(Sender: TObject);
+begin
+  frBMP2LDrawMain.showmodal;
 end;
 
 end.
