@@ -2,7 +2,7 @@ object frOptions: TfrOptions
   Left = 256
   Top = 126
   Width = 529
-  Height = 331
+  Height = 335
   VertScrollBar.Range = 37
   ActiveControl = BitBtn1
   AutoScroll = False
@@ -20,7 +20,7 @@ object frOptions: TfrOptions
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 267
+    Top = 264
     Width = 521
     Height = 37
     Align = alBottom
@@ -141,13 +141,12 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 521
-    Height = 267
-    ActivePage = tsExternal
+    Height = 264
+    ActivePage = TabSheet2
     Align = alClient
     Images = ImageList1
     MultiLine = True
     Style = tsFlatButtons
-    TabIndex = 0
     TabOrder = 1
     OnChange = PageControl1Change
     object tsExternal: TTabSheet
@@ -156,7 +155,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 210
+        Height = 207
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
@@ -559,7 +558,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 210
+        Height = 207
         Align = alClient
         Caption = 'User Defide Program Configuration'
         TabOrder = 0
@@ -592,7 +591,7 @@ object frOptions: TfrOptions
         end
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 147
+          Top = 144
           Width = 509
           Height = 61
           Align = alBottom
@@ -695,20 +694,20 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 121
+        Height = 137
         Align = alTop
         Caption = 'Error Check Options'
         TabOrder = 0
         object Label6: TLabel
           Left = 73
-          Top = 85
+          Top = 101
           Width = 125
           Height = 13
           Caption = 'Collinear Points Threshold:'
         end
         object cboDet: TCheckBox
           Left = 20
-          Top = 48
+          Top = 56
           Width = 185
           Height = 17
           Caption = 'Det Coplanarity Check Threshold:'
@@ -732,11 +731,12 @@ object frOptions: TfrOptions
           Lines.Strings = (
             'General files (parts, subparts and some '
             'primitives) typically use a value of 0.1.')
+          ReadOnly = True
           TabOrder = 5
         end
         object Memo2: TMemo
           Left = 288
-          Top = 44
+          Top = 52
           Width = 217
           Height = 33
           TabStop = False
@@ -744,11 +744,12 @@ object frOptions: TfrOptions
           Lines.Strings = (
             'Geometric primitives typically use 0.01. '
             'Hi-res primitives typically use 0.001.')
+          ReadOnly = True
           TabOrder = 6
         end
         object Memo3: TMemo
           Left = 288
-          Top = 72
+          Top = 88
           Width = 218
           Height = 41
           TabStop = False
@@ -756,7 +757,8 @@ object frOptions: TfrOptions
           Lines.Strings = (
             'Only adjust this value if you want to change '
             'the pecent deviation used for collinear point '
-            'determination ')
+            'determination. (L3P uses 0.0001 by defualt)')
+          ReadOnly = True
           TabOrder = 7
         end
         object seDist: TJvFloatEdit2
@@ -767,33 +769,33 @@ object frOptions: TfrOptions
           Alignment = taRightJustify
           ReadOnly = False
           TabOrder = 1
-          Value = 0.1
+          Value = 0.100000000000000000
           MaxDecimals = 5
           HasMaxValue = False
           HasMinValue = False
         end
         object seDet: TJvFloatEdit2
           Left = 208
-          Top = 48
+          Top = 56
           Width = 73
           Height = 21
           Alignment = taRightJustify
           ReadOnly = False
           TabOrder = 3
-          Value = 0.01
+          Value = 0.010000000000000000
           MaxDecimals = 5
           HasMaxValue = False
           HasMinValue = False
         end
         object seCollinear: TJvFloatEdit2
           Left = 208
-          Top = 82
+          Top = 98
           Width = 73
           Height = 21
           Alignment = taRightJustify
           ReadOnly = False
           TabOrder = 4
-          Value = 0.0001
+          Value = 0.000100000000000000
           MaxDecimals = 5
           HasMaxValue = False
           HasMinValue = False
@@ -801,9 +803,9 @@ object frOptions: TfrOptions
       end
       object GroupBox5: TGroupBox
         Left = 0
-        Top = 121
+        Top = 137
         Width = 513
-        Height = 89
+        Height = 70
         Align = alClient
         Caption = 'Decimal Accuracy'
         TabOrder = 1
@@ -992,7 +994,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 210
+        Height = 207
         Align = alClient
         Caption = 'Highlighter Options'
         TabOrder = 0
@@ -1139,6 +1141,8 @@ object frOptions: TfrOptions
           Font.Height = -13
           Font.Name = 'Courier New'
           Font.Style = []
+          ParentColor = False
+          ParentFont = False
           TabOrder = 4
           Gutter.Font.Charset = DEFAULT_CHARSET
           Gutter.Font.Color = clWindowText
@@ -1171,7 +1175,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 210
+        Height = 207
         Align = alClient
         Caption = 'Editor Options'
         TabOrder = 0
@@ -1376,7 +1380,6 @@ object frOptions: TfrOptions
     Top = 264
   end
   object ColorDialog1: TColorDialog
-    Ctl3D = True
     Left = 96
     Top = 264
   end
