@@ -23,12 +23,8 @@ unit splash;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows, Messages,
-  {$ENDIF}
-  QTypes, Classes, Variants, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QExtCtrls, SysUtils;
-  
+  QForms,QControls, QStdCtrls, QGraphics, Classes, QExtCtrls;
+
 type
   TfrSplash = class(TForm)
     Image1: TImage;
