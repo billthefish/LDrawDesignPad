@@ -155,18 +155,7 @@ var
 
 begin
   NewHighlighter := TSynLDRSyn.Create(nil);
-  SynLDRSyn1.ColorAttri.Assign(NewHighlighter.ColorAttri);
-  SynLDRSyn1.CommentAttri.Assign(NewHighlighter.CommentAttri);
-  SynLDRSyn1.FirstTriAttri.Assign(NewHighlighter.FirstTriAttri);
-  SynLDRSyn1.SecondTriAttri.Assign(NewHighlighter.SecondTriAttri);
-  SynLDRSyn1.ThirdTriAttri.Assign(NewHighlighter.ThirdTriAttri);
-  SynLDRSyn1.FourthTriAttri.Assign(NewHighlighter.FourthTriAttri);
-  SynLDRSyn1.IdentifierAttri.Assign(NewHighlighter.IdentifierAttri);
-  SynLDRSyn1.KeyAttri.Assign(NewHighlighter.KeyAttri);
-  SynLDRSyn1.LineAttri.Assign(NewHighlighter.LineAttri);
-  SynLDRSyn1.OpLineAttri.Assign(NewHighlighter.OpLineAttri);
-  SynLDRSyn1.TriangleAttri.Assign(NewHighlighter.TriangleAttri);
-  SynLDRSyn1.QuadAttri.Assign(NewHighlighter.QuadAttri);
+  SynLDRSyn1.Assign(NewHighlighter);
   NewHighLighter.Free;
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
