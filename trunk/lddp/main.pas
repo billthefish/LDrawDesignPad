@@ -248,6 +248,7 @@ type
     ErrorCheck1: TMenuItem;
     http: TIdHTTP;
     acCheckforUpdate: TAction;
+    N7: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
