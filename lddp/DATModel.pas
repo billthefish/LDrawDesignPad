@@ -48,7 +48,6 @@ type
       procedure Rotate(w,x,y,z: Extended); virtual;
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; virtual;
       procedure Translate(x,y,z: Extended); virtual;
-      function GetDATType(strLine: string): TDATType;
       procedure Clear; virtual;
 
     public
@@ -185,38 +184,6 @@ begin
     FModelCollection[Idx] := Value;
 end;
 
-function TDATCustomModel.GetDATType(strLine: string): TDATType;
-
-var
-  strCurrentLine: string;
-
-begin
-  strCurrentLine := Trim(strLine);
-
-  if (strCurrentLine = '') or (strCurrentLine = #13#10) or
-     (strCurrentLine = #13) or (strCurrentLine = #10) then
-    Result := TDATBlankLine.Create
-  else
-    if Length(strCurrentLine) > 1 then
-      if strCurrentLine[2] = ' ' then
-        case strCurrentLine[1] of
-          '0': Result := TDATComment.Create;
-          '1': Result := TDATSubPart.Create;
-          '2': Result := TDATLine.Create;
-          '3': Result := TDATTriangle.Create;
-          '4': Result := TDATQuad.Create;
-          '5': Result := TDATOpLine.Create;
-          else Result := TDATBlankLine.Create;
-        end
-      else
-        Result := TDATBlankLine.Create
-    else
-      if strCurrentLine[1] = '0' then
-        Result := TDATComment.Create
-      else
-        Result := TDATBlankLine.Create;
-end;
-
 procedure TDATCustomModel.Add(objLine: TDATType);
 begin
   Insert(GetCount, objLine);
@@ -239,18 +206,8 @@ var
   NewDATType: TDATType;
 
 begin
-  NewDATType := GetDATType(strLine);
-  if Assigned(NewDATType) then
-  begin
-    try
-      NewDATType.DATString :=  strLine;
-    except
-      NewDATType.Free;
-      NewDATType := TDATComment.Create;
-      (NewDATType as TDATComment).Comment := 'Invalid Line: ' + strLine;
-    end;
-    Insert(Index, NewDATType);
-  end;
+  NewDATType := StrToDAT(strLine);
+  Insert(Index, NewDATType)
 end;
 
 procedure TDATCustomModel.Rotate(w,x,y,z: Extended);

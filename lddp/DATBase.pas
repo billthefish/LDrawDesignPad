@@ -255,6 +255,8 @@ type
       property z4: Extended index 12 read GetCoordinate write SetCoordinate;
   end;
 
+  function StrToDAT(strLine: string): TDATType;
+
 var
 {$IFDEF MSWINDOWS}
   LDrawBasePath: string = 'c:\lego\LDRAW\';
@@ -773,6 +775,45 @@ constructor TDATQuad.Create;
 begin
   inherited Create;
   intLineType := 4;
+end;
+
+function StrToDAT(strLine: string): TDATType;
+
+var
+  strCurrentLine: string;
+
+begin
+  strCurrentLine := Trim(strLine);
+
+  if (strCurrentLine = '') or (strCurrentLine = #13#10) or
+     (strCurrentLine = #13) or (strCurrentLine = #10) then
+    Result := TDATBlankLine.Create
+  else
+    if Length(strCurrentLine) > 1 then
+      if strCurrentLine[2] = ' ' then
+        case strCurrentLine[1] of
+          '0': Result := TDATComment.Create;
+          '1': Result := TDATSubPart.Create;
+          '2': Result := TDATLine.Create;
+          '3': Result := TDATTriangle.Create;
+          '4': Result := TDATQuad.Create;
+          '5': Result := TDATOpLine.Create;
+          else Result := TDATBlankLine.Create;
+        end
+      else
+        Result := TDATBlankLine.Create
+    else
+      if strCurrentLine[1] = '0' then
+        Result := TDATComment.Create
+      else
+        Result := TDATBlankLine.Create;
+  try
+    Result.DATString := strLine;
+  except
+    Result.Free;
+    Result := TDATComment.Create;
+    (Result as TDATComment).Comment := 'Invalid Line: ' + strLine;
+  end;
 end;
 
 end.

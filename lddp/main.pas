@@ -1507,8 +1507,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-// ShowMessage( IntToStr( ((activeMDICHild as TfrEditorChild).memo.SearchEngine as TSynEditSearch).Next ));
-  DoSearchReplaceText;//(FALSE, FALSE);
+  DoSearchReplaceText;
 end;
 
 procedure TfrMain.btPollingClick(Sender: TObject);
