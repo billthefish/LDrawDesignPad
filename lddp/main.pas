@@ -315,6 +315,7 @@ type
     procedure acWindowTileExecute(Sender: TObject);
     procedure acReverseWindingExecute(Sender: TObject);
     procedure acCheckforUpdateExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
 
   private
     { Private declarations }
@@ -330,16 +331,17 @@ type
     strChangedSelText:string;
     slPlugins:TStringList;
     lastfind:integer;
-    strIniName: string;
+    IniFileName, IniSection: string;
 
     procedure LoadPlugins(AppInit:Boolean = false);
-
     procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
     function  GetTmpFileName: String;
     procedure LoadFile(fname:string);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateCOntrols(closing:boolean);
     procedure UpdateMRU(NewFileName: TFileName= '');
+    procedure LoadFormValues;
+    procedure SaveFormValues;
   end;
 
 
@@ -630,15 +632,17 @@ begin
     screen.cursor:=-11;
 
     {$IFDEF MSWINDOWS}
-      strIniName := WindowsDir + '\LDraw.ini';
+      IniFileName := WindowsDir + '\LDraw.ini';
     {$ELSE}
-      strIniName := ExtractFilePath(Application.ExeName) + 'LDraw.ini';
+      IniFileName := ExtractFilePath(Application.ExeName) + 'LDraw.ini';
     {$ENDIF}
-
-    frOptions.IniFileName := strIniName;
-    frEditOptions.IniFileName := strIniName;
+    IniSection := 'LDDP Main';
+    frOptions.IniFileName := IniFileName;
+    frEditOptions.IniFileName := IniFileName;
     frOptions.IniSection := 'LDDP Options';
     frEditOptions.IniSection := 'LDDP Edit Options';
+
+    LoadFormValues;
     frOptions.LoadFormValues;
     frEditOptions.LoadFormValues;
 
@@ -1936,7 +1940,7 @@ var
   LDDPini: TMemIniFile;
 
 begin
-  LDDPini := TMemIniFile.Create(strIniName);
+  LDDPini := TMemIniFile.Create(IniFileName);
   MRUSectionList := TStringList.Create;
 
   LDDPini.ReadSection('LDDP MRU', MRUSectionList);
@@ -2064,6 +2068,43 @@ begin
             // To-Do
         {$ENDIF}
      end;
+end;
+
+procedure TfrMain.LoadFormValues;
+
+var
+  LDDPini: TMemIniFile;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFileName);
+  Left := LDDPini.ReadInteger(IniSection, 'frMain_Left', Left);
+  Top := LDDPini.ReadInteger(IniSection, 'frMain_Top', Top);
+  Width := LDDPini.ReadInteger(IniSection, 'frMain_Width', Width);
+  Height := LDDPini.ReadInteger(IniSection, 'frMain_Height', Height);
+  LDDPini.Free;
+end;
+
+procedure TfrMain.SaveFormValues;
+
+var
+  LDDPini: TMemIniFile;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFileName);
+  LDDPini.EraseSection(IniSection);
+  LDDPini.WriteString(IniSection, 'InstallDir', ExtractFilePath(Application.ExeName));
+  LDDPini.WriteInteger(IniSection, 'frMain_Left', Left);
+  LDDPini.WriteInteger(IniSection, 'frMain_Top', Top);
+  LDDPini.WriteInteger(IniSection, 'frMain_Width', Width);
+  LDDPini.WriteInteger(IniSection, 'frMain_Height', Height);
+  LDDPini.UpdateFile;
+  LDDPini.Free;
+end;
+
+
+procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  SaveFormValues;
 end;
 
 end.

@@ -16,6 +16,7 @@ object frMain: TfrMain
   Menu = MainMenu1
   ParentFont = False
   Position = poDefault
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDblClick = FormDblClick
   OnShow = FormShow
@@ -1987,10 +1988,10 @@ object frMain: TfrMain
       60000000010001000000000000060000120B0000120B00000200000002000000
       FFFFFF00000000007FF01C3807E000000000FFFFFFFFFFFF7FF07F7E1FF808FE
       0000FFFFFFFFFFFF7FFFFFFF3FFC0CFE001CFFFFFFFFFFFF7F3FFFFF7FFE3EFE
-      03FEFFFFFFFFFFFF7FFFFFFE7FFE2CFE07FFFFFFFFFFFFFF7FF0FFFFFFFF28FE
-      0FFFFFFFFFFFFFFF5FF87FFFFFFF20FEFFFFFFFFFFFFFFFF5BF83FFFFFFF2000
-      FFFFFFFFFFFFFFFF5FF80FFFFFFF0004FFFFFFFFFFFFFFFF5FF00FFEFFFF7F04
-      FFFFFFFFFFFFFFFF5FFE1FFCFFFF7F14FFFFFFFFFFFFFFFF58FE1FF07FFE7F34
+      03EEFFFFFFFFFFFF7FFFFFFE7FFE2CFE07EFFFFFFFFFFFFF7FF0FFFFFFFF28FE
+      0FEFFFFFFFFFFFFF5FF87FFFFFFF20FEFFEFFFFFFFFFFFFF5BF83FFFFFFF2000
+      FFEFFFFFFFFFFFFF5FF80FFFFFFF0004FFEFFFFFFFFFFFFF5FF00FFEFFFF7F04
+      FFEFFFFFFFFFFFFF5FFE1FFCFFFF7F14FFEFFFFFFFFFFFFF58FE1FF07FFE7F34
       0FFFFFFFFFFFFFFF5FFE3F807FFE7F7C07FFFFFFFFFFFFFF40103F803FFC7F30
       03FEFFFFFFFFFFFF7FF01F001FF87F10001CFFFFFFFFFFFF0000070007E00000
       0000FFFFFFFFFFFF000000000000000007E000000370FFFFB3FC33FC07FEFFFF
@@ -2184,15 +2185,15 @@ object frMain: TfrMain
     Footer.DefaultFont.Pitch = fpVariable
     Footer.DefaultFont.Style = []
     Footer.DefaultFont.Weight = 40
-    Margins.Left = 25
-    Margins.Right = 15
-    Margins.Top = 25
-    Margins.Bottom = 25
-    Margins.Header = 15
-    Margins.Footer = 15
-    Margins.LeftHFTextIndent = 2
-    Margins.RightHFTextIndent = 2
-    Margins.HFInternalMargin = 0.5
+    Margins.Left = 25.000000000000000000
+    Margins.Right = 15.000000000000000000
+    Margins.Top = 25.000000000000000000
+    Margins.Bottom = 25.000000000000000000
+    Margins.Header = 15.000000000000000000
+    Margins.Footer = 15.000000000000000000
+    Margins.LeftHFTextIndent = 2.000000000000000000
+    Margins.RightHFTextIndent = 2.000000000000000000
+    Margins.HFInternalMargin = 0.500000000000000000
     Margins.MirrorMargins = False
     Font.Color = clText
     Font.Height = 11
@@ -2227,28 +2228,28 @@ object frMain: TfrMain
     end
   end
   object OpenDialog1: TOpenDialog
-    Height = 0
-    Width = 0
     DefaultExt = 'dat'
     Filter = 
       'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
       'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
     FilterIndex = 0
     Options = [ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
+    Height = 0
     Title = 'Choose LDraw File...'
+    Width = 0
     Left = 8
     Top = 208
   end
   object SaveDialog1: TSaveDialog
-    Height = 0
-    Width = 0
     DefaultExt = 'dat'
     Filter = 
       'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
       '.*)|*.*'
     FilterIndex = 0
     Options = [ofOverwritePrompt, ofEnableSizing]
+    Height = 0
     Title = 'Save File as...'
+    Width = 0
     Left = 40
     Top = 208
   end
@@ -2262,13 +2263,20 @@ object frMain: TfrMain
     Top = 304
   end
   object http: TIdHTTP
+    MaxLineAction = maException
+    ReadTimeout = 0
+    AllowCookies = True
     ProtocolVersion = pv1_0
-    Request.Accept = 'text/html, */*'
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
     Request.ContentLength = 0
     Request.ContentRangeEnd = 0
     Request.ContentRangeStart = 0
-    Request.ProxyPort = 0
+    Request.ContentType = 'text/html'
+    Request.Accept = 'text/html, */*'
+    Request.BasicAuthentication = False
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    HTTPOptions = [hoForceEncodeParams]
     Left = 72
     Top = 208
   end
