@@ -23,12 +23,12 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  windowsspecific, JvPlacemnt,
+  windowsspecific,
   {$ELSEIF LINUX}
   linuxspecific,
   {$IFEND}
   QDialogs, QForms, QImgList, QExtCtrls, QStdCtrls, QCheckLst, QMask, QButtons,
-  QControls, QComCtrls, QGraphics, Classes, SysUtils;
+  QControls, QComCtrls, QGraphics, Classes, SysUtils, IniFiles;
 type
   TfrOptions = class(TForm)
     PageControl1: TPageControl;
@@ -36,9 +36,6 @@ type
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-    {$IFDEF MSWINDOWS}
-    fstOptions: TJvFormStorage;
-    {$ENDIF}
     Label1: TLabel;
     cboL3P: TCheckBox;
     Bevel1: TBevel;
@@ -115,8 +112,10 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
+    IniFileName, IniSection: string;
     procedure UpdateCOntrols;
+    procedure LoadFormValues;
+    procedure SaveFormValues;
   end;
 
 var
@@ -286,6 +285,60 @@ begin
   strDir:=edL3LabDir.Text;
   if SelectDirectory('Choose LDView Location','',strDir) then edL3LabDir.Text:=strDir;
   UpdateControls;
+end;
+
+procedure TfrOptions.SaveFormValues;
+var
+  LDDPini: TMemIniFile;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFileName);
+  LDDPini.EraseSection(IniSection);
+  LDDPini.WriteString(IniSection, 'edLDVeiwDir_Text', edLDViewDir.Text);
+  LDDPini.WriteString(IniSection, 'edL3PDir_Text', edL3PDir.Text);
+  LDDPini.WriteString(IniSection, 'edMLCadDir_Text', edMLCadDir.Text);
+  LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
+  LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
+  LDDPini.WriteString(IniSection, 'edExternal_Text', edExternal.Text);
+  LDDPini.WriteString(IniSection, 'edParameters_Text', edParameters.Text);
+  LDDPini.WriteString(IniSection, 'edEmail_Text', edEMail.Text);
+  LDDPini.WriteString(IniSection, 'edName_Text', edName.Text);
+  LDDPini.WriteString(IniSection, 'edSig_Text', edSig.Text);
+  LDDPini.WriteString(IniSection, 'edDet_Text', seDet.Text);
+  LDDPini.WriteString(IniSection, 'edDist_Text', seDist.Text);
+  LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
+  LDDPini.WriteBool(IniSection, 'cboDet_Checked', cboDet.Checked);
+  LDDPini.WriteBool(IniSection, 'cboWaitForFinish_Checked', cboWaitForFinish.Checked);
+  LDDPini.WriteBool(IniSection, 'cboShowCommand_Checked', cboShowCommand.Checked);
+  LDDPini.WriteInteger(IniSection, 'rgStyle_ItemIndex', rgStyle.ItemIndex);
+  LDDPini.UpdateFile;
+  LDDPini.Free;
+end;
+
+procedure TfrOptions.LoadFormValues;
+var
+  LDDPini: TMemIniFile;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFileName);
+  edLDViewDir.Text := LDDPini.ReadString(IniSection, 'edLDViewDir_Text', '');
+  edL3PDir.Text := LDDPini.ReadString(IniSection, 'edL3PDir_Text', '');
+  edMLCadDir.Text := LDDPini.ReadString(IniSection, 'edMLCadDir_Text', '');
+  edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
+  edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
+  edExternal.Text := LDDPini.ReadString(IniSection, 'edExternal_Text', '');
+  edParameters.Text := LDDPini.ReadString(IniSection, 'edParameters_Text', '');
+  edEMail.Text := LDDPini.ReadString(IniSection, 'edEmail_Text', '');
+  edName.Text := LDDPini.ReadString(IniSection, 'edName_Text', '');
+  edSig.Text := LDDPini.ReadString(IniSection, 'edSig_Text', '');
+  seDet.Text := LDDPini.ReadString(IniSection, 'edDet_Text', '');
+  seDist.Text := LDDPini.ReadString(IniSection, 'edDist_Text', '');
+  cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
+  cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
+  cboWaitForFinish.Checked := LDDPini.ReadBool(IniSection, 'cboWaitForFinish_Checked', false);
+  cboShowCommand.Checked := LDDPini.ReadBool(IniSection, 'cboShowCommand_Checked', false);
+  rgStyle.ItemIndex := LDDPini.ReadInteger(IniSection, 'rgStyle_ItemIndex', 0);
+  LDDPini.Free;
 end;
 
 end.
