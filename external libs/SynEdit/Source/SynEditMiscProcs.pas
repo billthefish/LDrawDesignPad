@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditMiscProcs.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
+$Id: SynEditMiscProcs.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -48,9 +48,15 @@ uses
   Types,
   kTextDrawer,
   QSynEditTypes,
+  {$IFDEF SYN_KYLIX}
+  QGraphics,
+  {$ENDIF}
 {$ELSE}
   Windows,
   SynEditTypes,
+{$ENDIF}
+{$IFDEF SYN_COMPILER_4_UP}
+  Math,
 {$ENDIF}
   Classes;
 
@@ -58,8 +64,10 @@ type
   PIntArray = ^TIntArray;
   TIntArray = array[0..MaxListSize - 1] of integer;
 
+{$IFNDEF SYN_COMPILER_4_UP}
 function Max(x, y: integer): integer;
 function Min(x, y: integer): integer;
+{$ENDIF}
 function MinMax(x, mi, ma: integer): integer;
 procedure SwapInt(var l, r: integer);
 function maxPoint(P1, P2: TPoint): TPoint;
@@ -142,6 +150,12 @@ function StringReplace(const S, OldPattern, NewPattern: string;
   Flags: TReplaceFlags): string;
 {$ENDIF}
 
+{$IFDEF SYN_KYLIX}
+function GetRValue(RGBValue: TColor): byte;
+function GetGValue(RGBValue: TColor): byte;
+function GetBValue(RGBValue: TColor): byte;
+{$ENDIF}
+
 implementation
 
 uses
@@ -149,6 +163,7 @@ uses
 
 {***}
 
+{$IFNDEF SYN_COMPILER_4_UP}
 function Max(x, y: integer): integer;
 begin
   if x > y then Result := x else Result := y;
@@ -158,6 +173,7 @@ function Min(x, y: integer): integer;
 begin
   if x < y then Result := x else Result := y;
 end;
+{$ENDIF}
 
 function MinMax(x, mi, ma: integer): integer;
 begin
@@ -762,6 +778,31 @@ begin
     end;
     SearchStr := Copy(SearchStr, Offset + Length(Patt), MaxInt);
   end;
+end;
+{$ENDIF}
+
+{$IFDEF SYN_KYLIX}
+type
+  TColorRec = packed record
+    Blue: Byte;
+    Green: Byte;
+    Red: Byte;
+    Unused: Byte;
+  end;
+
+function GetRValue(RGBValue: TColor): byte;
+begin
+  Result := TColorRec(RGBValue).Red;
+end;
+
+function GetGValue(RGBValue: TColor): byte;
+begin
+  Result := TColorRec(RGBValue).Green;
+end;
+
+function GetBValue(RGBValue: TColor): byte;
+begin
+  Result := TColorRec(RGBValue).Blue;
 end;
 {$ENDIF}
 

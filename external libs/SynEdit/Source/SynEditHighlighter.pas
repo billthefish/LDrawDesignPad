@@ -17,7 +17,7 @@ All Rights Reserved.
 Contributors to the SynEdit and mwEdit projects are listed in the
 Contributors.txt file.
 
-$Id: SynEditHighlighter.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
+$Id: SynEditHighlighter.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -54,11 +54,6 @@ uses
 {$IFNDEF SYN_CLX}
 type
   TBetterRegistry = SynEditMiscClasses.TBetterRegistry;
-  HKEY = Windows.HKEY;
-  
-const
-  HKEY_CURRENT_USER = Windows.HKEY_CURRENT_USER;
-  HKEY_LOCAL_MACHINE = Windows.HKEY_LOCAL_MACHINE;
 {$ENDIF}
 
 type

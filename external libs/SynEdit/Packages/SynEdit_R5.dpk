@@ -120,6 +120,7 @@ contains
   SynHighlighterUnreal in '..\Source\SynHighlighterUnreal.pas',
   SynHighlighterVB in '..\Source\SynHighlighterVB.pas',
   SynHighlighterVBScript in '..\Source\SynHighlighterVBScript.pas',
-  SynHighlighterXML in '..\Source\SynHighlighterXML.pas';
+  SynHighlighterXML in '..\Source\SynHighlighterXML.pas',
+  SynHighlighterLDraw in '..\Source\SynHighlighterLDraw.pas';
 
 end.

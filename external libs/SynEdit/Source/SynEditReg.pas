@@ -24,7 +24,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditReg.pas,v 1.4 2003-07-07 05:25:44 billthefish Exp $
+$Id: SynEditReg.pas,v 1.5 2003-07-09 16:13:26 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net

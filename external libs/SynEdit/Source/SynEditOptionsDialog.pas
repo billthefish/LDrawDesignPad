@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditOptionsDialog.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
+$Id: SynEditOptionsDialog.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -39,6 +39,8 @@ Known Issues:
 {$IFNDEF QSYNEDITOPTIONSDIALOG}
 unit SynEditOptionsDialog;
 {$ENDIF}
+
+{$I SynEdit.inc}
 
 interface
 
@@ -702,14 +704,12 @@ procedure TfmEditorOptionsDialog.FormCreate(Sender: TObject);
 var I : Integer;
     C : TColor;
     B : TBitmap;
-    R : TRect;
 begin
   InChanging := False;
   B:= TBitmap.Create;
   try
     B.Width:= 16;
     B.Height:= 16;
-    R:= B.Canvas.ClipRect;
     //Loop through and create colored images
     for I:= 0 to ColorPopup.Items.Count-1 do
     begin
@@ -719,9 +719,11 @@ begin
       B.Canvas.Brush.Style:= bsSolid;
       B.Canvas.Pen.Style:= psSolid;
       B.Canvas.Pen.Color:= clBlack;
-      B.Canvas.Rectangle(R);
+      B.Canvas.Rectangle(0,0,16,16);
       ImageList1.Add(B, nil);
+{$IFDEF SYN_COMPILER_4_UP}
       ColorPopup.Items[I].ImageIndex:= ColorPopup.Items[I].Tag;
+{$ENDIF}
     end;
   finally
     B.Free;
@@ -869,7 +871,7 @@ begin
     end;
   end;
 
-  PageControl1.ActivePageIndex:= 0;
+  PageControl1.ActivePage := PageControl1.Pages[0];
 end;
 
 procedure TfmEditorOptionsDialog.KeyListEditing(Sender: TObject;

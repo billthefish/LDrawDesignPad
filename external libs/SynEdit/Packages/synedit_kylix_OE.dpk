@@ -30,7 +30,8 @@ package synedit_kylix_OE;
 requires
   rtl,
   visualclx,
-  designide;
+  designide,
+  vcl;
 
 contains
   QSynEdit in '../Source/QSynEdit.pas',
@@ -117,6 +118,13 @@ contains
   QSynEditExport in '../Source/QSynEditExport.pas',
   QSynHighlighterCobol in '../Source/QSynHighlighterCobol.pas',
   QSynHighlighterTeX in '../Source/QSynHighlighterTeX.pas',
-  QSynHighlighterManager in '../Source/QSynHighlighterManager.pas';
+  QSynHighlighterManager in '../Source/QSynHighlighterManager.pas',
+  QSynEditOptionsDialog in '../Source/QSynEditOptionsDialog.pas',
+  QSynHighlighterLDraw in '../Source/QSynHighlighterLDraw.pas',
+  QSynHighlighterCS in '../Source/QSynHighlighterCS.pas',
+  QSynHighlighterHaskell in '../Source/QSynHighlighterHaskell.pas',
+  QSynHighlighterUNIXShellScript in '../Source/QSynHighlighterUNIXShellScript.pas',
+  QSynHighlighterRuby in '../Source/QSynHighlighterRuby.pas',
+  QSynExportTeX in '../Source/QSynExportTeX.pas';
 
 end.
