@@ -113,7 +113,7 @@ type
       procedure Clear; override;
   end;
 
-  TDATBendibleObjectType = (boHoseTabs, boHoseNoTabs, boRibbedHose, boFlexHose, boFlexAxle);
+  TDATBendibleObjectType = (boHoseTabs, boHoseNoTabs, boHose12, boRibbedHose, boFlexHose, boFlexAxle);
 
   TDATBendibleObject = class(TDATCustomModel)
     private
@@ -722,7 +722,7 @@ var
   BezPoint1, BezPoint2, dummyPoint, lastPoint, pntC1, pntC2: TDATPoint;
   BezIntLen: array of Extended;
   BezIntPos: array of TDATPoint;
-  BezLength, Factor, Distance, Last, rlLength, rlCount: Extended;
+  BezLength, LengthMod, Factor, Distance, Last, rlLength, rlCount: Extended;
   InteEpsilon, BezI, BezILast, I2: Extended;
   i, PointPerSegment, Iterations, MaxIterations: Byte;
   intCount,BezSearch: Word;
@@ -739,7 +739,8 @@ begin
 
   Segments := 0;
   BezLength := 0;
-
+  LengthMod := 0;
+  
   case FObjectType of
     boHoseTabs:
     begin
@@ -764,6 +765,19 @@ begin
       BezLength := 130;
       Segments := 50;
       strFileType := '754.dat';
+    end;
+    boHose12:
+    begin
+      Line1.SubPart := 'x757.dat';
+      Line2.SubPart := 'x760.dat';
+      BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 30.855,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 45,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -22.25,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -25,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      LengthMod := 53.5;
+      BezLength := 171.5;
+      Segments := 33;
+      strFileType := 'x758.dat';
     end;
     boRibbedHose:
     begin
@@ -803,7 +817,7 @@ begin
     end;
   end;
 
-  if EuclidDistance(Line1.Position, Line2.Position) < BezLength then
+  if EuclidDistance(Line1.Position, Line2.Position) < (BezLength + LengthMod) then
   begin
     PointPerSegment:= 12;
     Factor:= 1;
@@ -831,13 +845,26 @@ begin
     begin
       dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '755.dat';
       dummyPart.RotationMatrix := Line1.RotationMatrix;
-      dummyPart.Rotate(180,0,0,1);
+      dummyPart.Position :=  GetBezierCoordinate(dummyPart,[-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, -1, 0,  0, 0, 0, 1], True, True);
       dummyPart.Position := Line1.Position;
       Add(dummyPart.DATString);
 
       dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '755.dat';
       dummyPart.RotationMatrix := Line2.RotationMatrix;
-      dummyPart.Rotate(180,0,0,1);
+      dummyPart.Position :=  GetBezierCoordinate(dummyPart,[-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, -1, 0,  0, 0, 0, 1], True, True);
+      dummyPart.Position := Line2.Position;
+      Add(dummyPart.DATString);
+    end
+    else if strFileType = 'x758.dat' then
+    begin
+      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + 'x759.dat';
+      dummyPart.RotationMatrix := Line1.RotationMatrix;
+      dummyPart.Position := GetBezierCoordinate(dummyPart,[1, 0, 0, 0,  0, 1, 0, 16,  0, 0, 1, 0,  0, 0, 0, 1], True, True);
+      Add(dummyPart.DATString);
+
+      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + 'x759.dat';
+      dummyPart.RotationMatrix := Line2.RotationMatrix;
+      dummyPart.Position :=  GetBezierCoordinate(dummyPart,[-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, -1, 0,  0, 0, 0, 1], True, True);
       dummyPart.Position := Line2.Position;
       Add(dummyPart.DATString);
     end;
@@ -909,6 +936,8 @@ begin
           if rlCount = (Segments -1) then
             dummyPart.SubPart := '756.dat';
         end;
+        boHose12:
+          dummypart.Position := GetBezierCoordinate(dummyPart,[0, 0, -1, 0,  0, -1, 0, 0,  -1, 0, 0, 0,  0, 0, 0, 1], True, True);
         boFlexAxle:
         begin
           if rlCount < 5 then

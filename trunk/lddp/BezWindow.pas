@@ -137,6 +137,12 @@ begin
     HoseDATCode.ObjectType := boHoseNoTabs;
     feLength.Value := 130;
   end
+  else if ((Line1.Filename = 'x757.dat') and (Line2.Filename = 'x760.dat')) then
+  begin
+    lblType2.Caption := 'Hose Flexible 12L';
+    HoseDATCode.ObjectType := boHose12;
+    feLength.Value := 188;
+  end
   else if ((Line1.Filename = '79.dat') and (Line2.Filename = '79.dat')) then
   begin
     lblType2.Caption := 'Technic Ribbed Hose';
