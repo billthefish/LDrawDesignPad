@@ -22,6 +22,7 @@ unit main;
 interface
 
 uses
+// Windows Units
   {$IFDEF MSWINDOWS}
   Windows, Graphics, Forms, Controls, Menus,
   StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
@@ -30,6 +31,7 @@ uses
   JvStrUtils,
   {$ENDIF}
 
+// Linux Units
   {$IFDEF LINUX}
   QTypes, QComCtrls, QControls, Types, Variants, QForms,
   QExtCtrls, QMenus, QImgList, QStdActns, QActnList,
@@ -38,6 +40,8 @@ uses
   QSynHighlighterPas, QSynHighlighterCpp, QSynEditPrint,
   QSynEditHighlighter, QSynHighlighterLDraw,
   {$ENDIF}
+
+// Common Units  
   Classes,
   SynEdit, SynEditHighlighter, SynHighlighterLDraw,
   SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
@@ -71,7 +75,6 @@ type
     acFileClose: TWindowClose;
     acFileExit: TAction;
     acFileNew: TAction;
-    acFilePrint: TPrintDlg;
     acFileRevert: TAction;
     acFileSave: TAction;
     acFileToolbar: TAction;
@@ -260,6 +263,7 @@ type
     SaveDialog1: TSaveDialog;
     acFileOpen: TAction;
     acFileSaveAs: TAction;
+    acFilePrint: TAction;
     procedure acCommentBlockExecute(Sender: TObject);
     procedure acDecIndentExecute(Sender: TObject);
     procedure acEditCopyExecute(Sender: TObject);
@@ -270,7 +274,6 @@ type
     procedure acExternalsToolbarExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
     procedure acFileNewExecute(Sender: TObject);
-    procedure acFilePrintAccept(Sender: TObject);
     procedure acFileRevertExecute(Sender: TObject);
     procedure acFileSaveExecute(Sender: TObject);
     procedure acFileToolbarExecute(Sender: TObject);
@@ -321,6 +324,7 @@ type
     procedure tmPollTimer(Sender: TObject);
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
+    procedure acFilePrintExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -1809,17 +1813,16 @@ begin
     selectall;
 end;
 
-procedure TfrMain.acFilePrintAccept(Sender: TObject);
+procedure TfrMain.acFilePrintExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: print active editor child
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-    SynEditPrint.SynEdit := (activeMDICHild as TfrEditorChild).memo;
-    SynEditPrint.Title := activeMDICHild.caption;
-    SynEditPrint.Copies := acFilePrint.Dialog.Copies;
-    SynEditPrint.Print;
+  SynEditPrint.SynEdit := (activeMDICHild as TfrEditorChild).memo;
+  SynEditPrint.Title := activeMDICHild.caption;
+  SynEditPrint.Print;
 end;
 
 procedure TfrMain.acFindNextExecute(Sender: TObject);
@@ -2278,7 +2281,6 @@ begin
   MRUSectionList.Free;
   iniLDDP.Free;
 end;
-
 
 
 end.
