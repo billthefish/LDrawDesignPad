@@ -172,6 +172,10 @@ object frAboutBox: TfrAboutBox
       Lines.Strings = (
         'LDDP, Copyright (C) 2002 Carsten Schmitz and LDDP Contributors.'
         ''
+        '    Error Check feature derived from L3Check.cpp, L3Math.cpp'
+        '    Part of the L3 project for handling LDraw *.dat files'
+        '    Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)'
+        ''
         'This program is free software; you can redistribute it '
         'and/or modify it under the terms of the GNU General '
         'Public License as published by the Free Software Foundation; '
