@@ -815,13 +815,13 @@ begin
 
     DATModel1.Free;
                          
-    if lbInfo.Items.Count > 0 then
-    begin
-      if pnInfo.Height < 30 then
-        pnInfo.Height := 91;
-    end
+    if (lbInfo.Items.Count > 0) and (pnInfo.Height < 30) then
+      pnInfo.Height := 91
     else
+    begin
       pnInfo.Height := 1;
+      StatusBar.Panels[0].Text := 'No Errors Found!';
+    end;
   end;
 end;
 
@@ -978,9 +978,10 @@ begin
       else
          opt:=SW_SHOWNORMAL;
     end;
-    if cboShowCommand.checked then ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
-    (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-      DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
+    if cboShowCommand.checked then
+      ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
+    (Self.activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((Self.activeMDICHild as TfrEditorChild).tempFileName);
+    DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
   end;
 {$ELSE}
 
