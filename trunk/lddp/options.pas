@@ -107,6 +107,13 @@ type
     Label6: TLabel;
     Memo3: TMemo;
     GroupBox7: TGroupBox;
+    TabSheet6: TTabSheet;
+    cboMarginNumbers: TCheckBox;
+    GroupBox8: TGroupBox;
+    speMarginWidth: TSpinEdit;
+    Label7: TLabel;
+    speRightLine: TSpinEdit;
+    Label8: TLabel;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -374,6 +381,7 @@ begin
   LDDPini.WriteBool(IniSection, 'cboDet_Checked', cboDet.Checked);
   LDDPini.WriteBool(IniSection, 'cboWaitForFinish_Checked', cboWaitForFinish.Checked);
   LDDPini.WriteBool(IniSection, 'cboShowCommand_Checked', cboShowCommand.Checked);
+  LDDPini.WriteBool(IniSection, 'cboMarginNumbers_Checked', cboMarginNumbers.Checked);
   LDDPini.WriteInteger(IniSection, 'rgStyle_ItemIndex', rgStyle.ItemIndex);
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_ColorAttriBackground', SynLDRSyn1.ColorAttri.Background);
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_ColorAttriForeground', SynLDRSyn1.ColorAttri.Foreground);
@@ -399,6 +407,8 @@ begin
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_IdentifierAttriForeground', SynLDRSyn1.IdentifierAttri.Foreground);
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_KeyAttriBackground', SynLDRSyn1.KeyAttri.Background);
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'speRightLine_Value', speRightLine.Value);
+  LDDPini.WriteInteger(IniSection, 'speMarginWidth_Value', speMarginWidth.Value);
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -433,6 +443,7 @@ begin
   cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
   cboWaitForFinish.Checked := LDDPini.ReadBool(IniSection, 'cboWaitForFinish_Checked', false);
   cboShowCommand.Checked := LDDPini.ReadBool(IniSection, 'cboShowCommand_Checked', false);
+  cboMarginNumbers.Checked := LDDPini.ReadBool(IniSection, 'cboMarginNumbers_Checked', false);
   rgStyle.ItemIndex := LDDPini.ReadInteger(IniSection, 'rgStyle_ItemIndex', 0);
   SynLDRSyn1.ColorAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ColorAttriBackground', SynLDRSyn1.ColorAttri.Background);
   SynLDRSyn1.ColorAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ColorAttriForeground', SynLDRSyn1.ColorAttri.Foreground);
@@ -458,6 +469,8 @@ begin
   SynLDRSyn1.IdentifierAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_IdentifierAttriForeground', SynLDRSyn1.IdentifierAttri.Foreground);
   SynLDRSyn1.KeyAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_KeyAttriBackground', SynLDRSyn1.KeyAttri.Background);
   SynLDRSyn1.KeyAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
+  speRightLine.Value := LDDPini.ReadInteger(IniSection, 'speRightLine_Value', 80);
+  speMarginWidth.Value := LDDPini.ReadInteger(IniSection, 'speMarginWidth_Value', 30);
   LDDPini.Free;
 end;
 

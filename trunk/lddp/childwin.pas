@@ -49,6 +49,7 @@ type
     procedure memoClick(Sender: TObject);
     procedure memoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure memoDragDrop(Sender, Source: TObject; X, Y: Integer);
   private
     { Private declarations }
     tmpFilename:string;
@@ -268,6 +269,14 @@ Return value: Standard
 ----------------------------------------------------------------------}
 begin
   UpdateControls;
+end;
+
+procedure TfrEditorChild.memoDragDrop(Sender, Source: TObject; X,
+  Y: Integer);
+begin
+  ShowMessage((Sender as TSynEdit).SelText + #13#10 +
+              (Source as TSynEdit).SelText + #13#10 +
+              IntToStr(X) + ':' + IntToStr(Y));
 end;
 
 end.

@@ -101,6 +101,7 @@ object frEditorChild: TfrEditorChild
     PopupMenu = frMain.pmMemo
     TabOrder = 1
     OnClick = memoClick
+    OnDragDrop = memoDragDrop
     OnKeyDown = MemoKeyDown
     OnKeyUp = MemoKeyDown
     Gutter.Font.Color = clText
@@ -109,6 +110,8 @@ object frEditorChild: TfrEditorChild
     Gutter.Font.Pitch = fpVariable
     Gutter.Font.Style = []
     Gutter.Font.Weight = 40
+    Gutter.LeftOffset = 0
+    Gutter.RightOffset = 0
     Highlighter = frMain.SynLDRSyn
     SearchEngine = frMain.SynEditSearch1
     TabWidth = 2
