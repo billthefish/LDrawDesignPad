@@ -836,7 +836,8 @@ procedure TfrMain.MetaMenuClick(Sender: TObject);
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
-    Lines.Insert(CaretY-1, '0 ' + (Sender as TMenuItem).Hint);
+    CaretX := 1;
+    SelText := '0 ' + (Sender as TMenuItem).Hint + #13#10;
     Modified := true;
   end;
 end;
@@ -1429,7 +1430,11 @@ begin
   HeaderText := HeaderText + #13#10 + '0 Unofficial Element'+#13#10+
                 '0 KEYWORDS your keywords'+#13#10;
   with (activeMDICHild as TfrEditorChild).memo do
-    Text := HeaderText + Text;
+  begin
+    CaretXY := MakeBufferCoord(1,1);
+    SelText := HeaderText;
+    Modified := true;
+  end;
 end;
 
 
@@ -1442,8 +1447,9 @@ Return value: None
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
-    Lines.Insert(CaretY-1, '0 // ' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
-                           frOptions.edSIG.text + ' Update description');
+    CaretX := 1;
+    SelText := '0 // ' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
+                           frOptions.edSIG.text + ' Update description' + #13#10;
     Modified := true;
   end;
 end;
@@ -2301,7 +2307,6 @@ begin
 
       DATModel1.Free;
     end;
-//    Modified := True;
   end;
 end;
 
@@ -2520,26 +2525,30 @@ var
   CommandFile,CommandLine,InputFile,OutputFile:string;
 
 begin
-  if (not FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe')) then begin
+  if (not FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe')) then
+  begin
     MessageDlg('You have to specify a valid path to lsynthcp.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
-    exit;
+  end
+  else
+  begin
+    OutputFile:=GetShortFileName(GetTempDir+GetTmpFileName);
+    TempFile:=TstringList.create;
+    CommandLine:=GetShortFileName(frOptions.edLSynthDir.text)+'\lsynthcp.exe ';
+    InputFile:=GetShortFileName(extractFilePath((activeMDICHild as TfrEditorChild).TempFileName))+ExtractFIleName((activeMDICHild as TfrEditorChild).TempFileName);
+    (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(InputFile);
+    TempFile.add(CommandLine+' '+InputFile+' '+OutputFile);
+    CommandFile:=GetShortFileName(GetTempDir)+GetTMPFIleName+'.bat';
+    TempFile.SaveToFile(CommandFile);
+    DOCommand(GetDOSVar('COMSPEC')+' /C '+ CommandFile,SW_HIDE,true);
+    DeleteFile(CommandFile);
+    TempFile.loadfromfile(OutputFile);
+    (activeMDICHild as TfrEditorChild).memo.SelectAll;
+    (activeMDICHild as TfrEditorChild).memo.SelText := TempFile.Text;
+    TempFile.Free;
+    DeleteFile(OutputFile);
+    DeleteFile(InputFile);
   end;
-  OutputFile:=GetShortFileName(GetTempDir+GetTmpFileName);
-  TempFile:=TstringList.create;
-  CommandLine:=GetShortFileName(frOptions.edLSynthDir.text)+'\lsynthcp.exe ';
-  InputFile:=GetShortFileName(extractFilePath((activeMDICHild as TfrEditorChild).TempFileName))+ExtractFIleName((activeMDICHild as TfrEditorChild).TempFileName);
-  (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(InputFile);
-  TempFile.add(CommandLine+' '+InputFile+' '+OutputFile);
-  CommandFile:=GetShortFileName(GetTempDir)+GetTMPFIleName+'.bat';
-  TempFile.SaveToFile(CommandFile);
-  DOCommand(GetDOSVar('COMSPEC')+' /C '+ CommandFile,SW_HIDE,true);
-  DeleteFile(CommandFile);
-  TempFile.loadfromfile(OutputFile);
-  (activeMDICHild as TfrEditorChild).memo.Text := TempFile.Text;
-  TempFile.Free;
-  DeleteFile(OutputFile);
-  DeleteFile(InputFile);
 end;
 
 procedure TfrMain.acBendableObjectExecute(Sender: TObject);
