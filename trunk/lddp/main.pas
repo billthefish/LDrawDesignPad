@@ -298,6 +298,11 @@ type
     acTriangleCombine: TAction;
     CombineTrianglesIntoQuad1: TMenuItem;
     CombineTrianglesIntoQuad2: TMenuItem;
+    SoortByPosition1: TMenuItem;
+    acRandomizeColors: TAction;
+    Processing1: TMenuItem;
+    RandomizeColorsinSelection1: TMenuItem;
+    RandomizeColorsinSelection2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -377,6 +382,8 @@ type
     procedure acECCopyExecute(Sender: TObject);
     procedure MetaMenuClick(Sender: TObject);
     procedure acTriangleCombineExecute(Sender: TObject);
+    procedure acSortByPositionExecute(Sender: TObject);
+    procedure acRandomizeColorsExecute(Sender: TObject);
     
   private
     { Private declarations }
@@ -1672,6 +1679,7 @@ begin
 
     if ShowModal=mrOK then
     begin
+      // Replace all
       if rgOptions.ItemIndex = 0 then
       begin
         for i:=0 to EditCh.memo.lines.count-1 do
@@ -1679,7 +1687,8 @@ begin
           clr.Clear;
           clr.Add(EditCh.memo.lines[i]);
           if (clr[0] is TDATElement) then
-            if ((clr[0] as TDATElement).Color = btOldColor.tag) then
+            if (((clr[0] as TDATElement).Color = btOldColor.tag) or
+               (cbxReplaceEverything.Checked)) then
             begin
               (clr[0] as TDATElement).Color := btNewColor.Tag;
               EditCh.memo.lines[i]:=clr[0].DATString;;
@@ -1687,6 +1696,7 @@ begin
             end;
         end;
       end
+      //Replace Current Line
       else if rgOptions.Items[rgOptions.ItemIndex] = 'Replace Current Line Only' then
       begin
         (clr[0] as TDATElement).Color := btNewColor.Tag;
@@ -1712,7 +1722,8 @@ begin
 
         for i := 0 to clr.Count-1 do
           if clr[i] is TDATElement then
-            if (clr[i] as TDATElement).Color = btOldColor.Tag then
+            if (((clr[i] as TDATElement).Color = btOldColor.Tag) or
+               (cbxReplaceEverything.Checked)) then
             begin
               (clr[i] as TDATElement).Color := btNewColor.Tag;
               Modified := true;
@@ -2728,6 +2739,68 @@ begin
       end;
     SelText := DModel.ModelText;
   end;
+end;
+
+procedure TfrMain.acSortByPositionExecute(Sender: TObject);
+
+var
+  ValueList: TStringList;
+  DModel1: TDATModel;
+  i, tmpBlEndY: Integer;
+
+begin
+  ValueList := TStringList.Create;
+  DModel1 := TDATModel.Create;
+
+  ValueList.Sorted := True;
+
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    tmpBlEndY := BlockEnd.Y;
+    BlockBegin := Point(1, BlockBegin.Y);
+    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+
+    DModel1.ModelText := SelText;
+
+    for i := 0 to DModel1.Count - 1 do
+      ValueList.Add(DModel1[i].DATString);
+
+    SelText := ValueList.Text;
+  end;
+  DModel1.Free;
+  ValueList.Free;
+end;
+
+procedure TfrMain.acRandomizeColorsExecute(Sender: TObject);
+
+var
+  i, tmpBlEndY, RandColor: Integer;
+  DModel: TDATModel;
+
+begin
+  DModel := TDATModel.Create;
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    tmpBlEndY := BlockEnd.Y;
+    BlockBegin := Point(1, BlockBegin.Y);
+    BlockEnd := Point(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+
+    DModel.ModelText := SelText;
+    for i := 0 to DModel.Count - 1 do
+      if DModel[i] is TDATElement then
+      begin
+        Randomize;
+        if i > 0 then
+          repeat
+            RandColor := Trunc(Random(16));
+          until RandColor <> (DModel[i] as TDATElement).Color
+        else
+          RandColor := Trunc(Random(16));
+        (DModel[i] as TDATElement).Color := RandColor;
+      end;
+    SelText := DModel.ModelText;
+  end;
+  DModel.Free;
 end;
 
 end.

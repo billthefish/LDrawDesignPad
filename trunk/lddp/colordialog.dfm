@@ -24,7 +24,7 @@ object frColorDialog: TfrColorDialog
     Left = 0
     Top = 0
     Width = 415
-    Height = 245
+    Height = 238
     Align = alClient
     Caption = 'Pick your color'
     TabOrder = 0
@@ -245,16 +245,25 @@ object frColorDialog: TfrColorDialog
     object rgOptions: TRadioGroup
       Left = 16
       Top = 144
-      Width = 161
+      Width = 137
       Height = 89
       Items.Strings = (
         'Replace All')
       TabOrder = 3
     end
+    object cbxReplaceEverything: TCheckBox
+      Left = 208
+      Top = 208
+      Width = 193
+      Height = 17
+      Caption = 'Replace Regardless of Original Color'
+      TabOrder = 6
+      OnClick = cbxReplaceEverythingClick
+    end
   end
   object Panel3: TPanel
     Left = 0
-    Top = 245
+    Top = 238
     Width = 415
     Height = 41
     Align = alBottom
