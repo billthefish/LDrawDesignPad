@@ -185,7 +185,6 @@ begin
       '5': Result := TDATOpLine.Create;
       else Result := TDATBlankLine.Create;
   end;
-
 end;
 
 procedure TDATCustomModel.Add(objLine: TDATType);
@@ -211,9 +210,15 @@ var
 
 begin
   NewDATType := GetDATType(strLine);
-  if NewDaTType <> nil then
+  if Assigned(NewDATType) then
   begin
-    NewDATType.DATString :=  strLine;
+    try
+      NewDATType.DATString :=  strLine;
+    except
+      NewDATType.Free;
+      NewDATType := TDATComment.Create;
+      (NewDATType as TDATComment).Comment := 'Invalid Line: ' + strLine;
+    end;
     Insert(Index, NewDATType);
   end;
 end;
