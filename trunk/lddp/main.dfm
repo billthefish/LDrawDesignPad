@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 355
-  Top = 404
+  Left = 220
+  Top = 376
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -574,6 +574,53 @@ object frMain: TfrMain
       object N6: TMenuItem
         Caption = '-'
       end
+      object ErrorCheck1: TMenuItem
+        Caption = 'Error Checking'
+        Hint = 'Check for errors'
+        ImageIndex = 21
+        object E1: TMenuItem
+          Action = acErrorCheck
+        end
+        object N21: TMenuItem
+          Caption = '-'
+        end
+        object MarkAll1: TMenuItem
+          Action = acECMarkAll
+        end
+        object MarkAllofSelectedType1: TMenuItem
+          Action = acECMarkAllTyped
+        end
+        object UnmarkAll2: TMenuItem
+          Action = acECUnMarkAll
+        end
+        object UnmarkAllofSelectedType2: TMenuItem
+          Action = acECUnMarkAllTyped
+        end
+        object N18: TMenuItem
+          Caption = '-'
+        end
+        object AutofixSelectedError1: TMenuItem
+          Action = acECFixError
+        end
+        object N19: TMenuItem
+          Caption = '-'
+        end
+        object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
+          Action = acECFixAllMarkedErrorsTyped
+        end
+        object AutofixAllMarkedErrors1: TMenuItem
+          Action = acECFixAllMarkedErrors
+        end
+        object N20: TMenuItem
+          Caption = '-'
+        end
+        object AutofixAllErrorsofSelectedType1: TMenuItem
+          Action = acECFixAllErrorsTyped
+        end
+        object AutofixAllErrors1: TMenuItem
+          Action = acECFixAllErrors
+        end
+      end
       object TrimLines1: TMenuItem
         Action = acTrimLines
       end
@@ -582,9 +629,6 @@ object frMain: TfrMain
       end
       object ReverseWinding1: TMenuItem
         Action = acReverseWinding
-      end
-      object ErrorCheck1: TMenuItem
-        Action = acErrorCheck
       end
       object N14: TMenuItem
         Caption = '-'
@@ -731,8 +775,8 @@ object frMain: TfrMain
       OnExecute = acReplaceExecute
     end
     object acErrorCheck: TAction
-      Category = 'Editor'
-      Caption = 'Error-Check'
+      Category = 'Error Check'
+      Caption = 'Run Error Check'
       Hint = 'Check for errors'
       ImageIndex = 21
       OnExecute = acErrorCheckExecute
@@ -988,6 +1032,60 @@ object frMain: TfrMain
       Category = 'EditorBlocks'
       Caption = 'NOCLIP'
       OnExecute = acInsertBFCNoClipExecute
+    end
+    object acECFixError: TAction
+      Category = 'Error Check'
+      Caption = 'Autofix Selected Error'
+      Enabled = False
+      OnExecute = acECFixErrorExecute
+    end
+    object acECFixAllErrors: TAction
+      Category = 'Error Check'
+      Caption = 'Autofix All Errors'
+      Enabled = False
+      OnExecute = acECFixAllErrorsExecute
+    end
+    object acECMarkAll: TAction
+      Category = 'Error Check'
+      Caption = 'Mark All'
+      Enabled = False
+      OnExecute = acECMarkAllExecute
+    end
+    object acECUnMarkAll: TAction
+      Category = 'Error Check'
+      Caption = 'Unmark All'
+      Enabled = False
+      OnExecute = acECUnMarkAllExecute
+    end
+    object acECFixAllMarkedErrors: TAction
+      Category = 'Error Check'
+      Caption = 'Autofix All Marked Errors'
+      Enabled = False
+      OnExecute = acECFixAllMarkedErrorsExecute
+    end
+    object acECFixAllMarkedErrorsTyped: TAction
+      Category = 'Error Check'
+      Caption = 'Autofix All Marked Errors of Selected Type'
+      Enabled = False
+      OnExecute = acECFixAllMarkedErrorsTypedExecute
+    end
+    object acECFixAllErrorsTyped: TAction
+      Category = 'Error Check'
+      Caption = 'Autofix All Errors of Selected Type'
+      Enabled = False
+      OnExecute = acECFixAllErrorsTypedExecute
+    end
+    object acECMarkAllTyped: TAction
+      Category = 'Error Check'
+      Caption = 'Mark All of Selected Type'
+      Enabled = False
+      OnExecute = acECMarkAllTypedExecute
+    end
+    object acECUnMarkAllTyped: TAction
+      Category = 'Error Check'
+      Caption = 'Unmark All of Selected Type'
+      Enabled = False
+      OnExecute = acECUnMarkAllTypedExecute
     end
   end
   object ilToolBarColor: TImageList
@@ -2581,19 +2679,43 @@ object frMain: TfrMain
     Top = 328
   end
   object pmL3P: TPopupMenu
-    OnPopup = pmL3PPopup
     Left = 72
     Top = 264
-    object Fixerror1: TMenuItem
-      Caption = 'Autofix error'
-      OnClick = Fixerror1Click
+    object MarkAllForFixing1: TMenuItem
+      Action = acECMarkAll
+    end
+    object MarkAllofSelectedErrorType1: TMenuItem
+      Action = acECMarkAllTyped
+    end
+    object UnmarkAll1: TMenuItem
+      Action = acECUnMarkAll
+    end
+    object UnmarkAllofSelectedType1: TMenuItem
+      Action = acECUnMarkAllTyped
+    end
+    object N17: TMenuItem
+      Caption = '-'
+    end
+    object AutofixSelectedError2: TMenuItem
+      Action = acECFixError
     end
     object N11: TMenuItem
       Caption = '-'
     end
-    object Fixallerrors1: TMenuItem
-      Caption = 'Autofix all errors'
-      OnClick = Fixallerrors1Click
+    object AutofixAllCheckedErrorsofSameType1: TMenuItem
+      Action = acECFixAllMarkedErrorsTyped
+    end
+    object AutofixCheckedErrors1: TMenuItem
+      Action = acECFixAllMarkedErrors
+    end
+    object N12: TMenuItem
+      Caption = '-'
+    end
+    object AutofixAllErrorofSameType1: TMenuItem
+      Action = acECFixAllErrorsTyped
+    end
+    object AutofixAllErrors2: TMenuItem
+      Action = acECFixAllErrors
     end
   end
   object SynLDRSyn: TSynLDRSyn

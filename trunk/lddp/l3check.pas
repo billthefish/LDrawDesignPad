@@ -25,8 +25,9 @@ unit l3check;
 interface
 
 uses
-  DATModel, DATBase, SysUtils, QDialogs;
+  DATModel, DATBase, SysUtils;
 
+function CheckSamePoint(p1,p2: TDATPoint): Boolean;
 function L3CheckLine(Line: string): string;
 
 var
@@ -249,7 +250,7 @@ begin
              det := MatrixDet(TempMatrix);
              if det < 0 then det := -det;
              if det > DetThreshold then
-               Result := 'Vertices not coplanar (' + FloatToStr(det) + ')';
+               Result := 'Vertices not coplaner (' + FloatToStr(det) + ')';
            end;
            if (Result = '') and (DistThreshold > 0)  then
            begin
@@ -288,7 +289,7 @@ begin
                if (dist[i] <> 0) and ((det / dist[i]) > maxdist) then
                  maxdist := det / dist[i];
              if maxdist > DistThreshold then
-               Result := 'Vertices not coplanar (' + FloatToStr(maxdist) + ')';
+               Result := 'Vertices not coplaner (' + FloatToStr(maxdist) + ')';
            end;
          end;
     5: with DLine as TDATOpLine do

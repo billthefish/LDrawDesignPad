@@ -82,8 +82,6 @@ type
     Editing1: TMenuItem;
     ExternalPrograms2: TMenuItem;
     Files1: TMenuItem;
-    Fixallerrors1: TMenuItem;
-    Fixerror1: TMenuItem;
     HelpAbout: TAction;
     Highlighting1: TMenuItem;
     ilToolBarColor: TImageList;
@@ -97,7 +95,6 @@ type
     N8: TMenuItem;
     N9: TMenuItem;
     N10: TMenuItem;
-    N11: TMenuItem;
     Pascal1: TMenuItem;
     Paste1: TMenuItem;
     Plugins3: TMenuItem;
@@ -263,6 +260,41 @@ type
     NOCLIP2: TMenuItem;
     N7: TMenuItem;
     View1: TMenuItem;
+    AutofixCheckedErrors1: TMenuItem;
+    AutofixAllErrorofSameType1: TMenuItem;
+    AutofixAllCheckedErrorsofSameType1: TMenuItem;
+    N11: TMenuItem;
+    N12: TMenuItem;
+    acECFixError: TAction;
+    acECFixAllErrors: TAction;
+    N17: TMenuItem;
+    MarkAllForFixing1: TMenuItem;
+    UnmarkAll1: TMenuItem;
+    MarkAllofSelectedErrorType1: TMenuItem;
+    UnmarkAllofSelectedType1: TMenuItem;
+    MarkAll1: TMenuItem;
+    UnmarkAll2: TMenuItem;
+    MarkAllofSelectedType1: TMenuItem;
+    UnmarkAllofSelectedType2: TMenuItem;
+    N18: TMenuItem;
+    AutofixSelectedError1: TMenuItem;
+    N19: TMenuItem;
+    AutofixAllMarkedErrorsofSelectedType1: TMenuItem;
+    AutofixAllMarkedErrors1: TMenuItem;
+    N20: TMenuItem;
+    AutofixAllErrorsofSelectedType1: TMenuItem;
+    AutofixAllErrors1: TMenuItem;
+    N21: TMenuItem;
+    E1: TMenuItem;
+    acECMarkAll: TAction;
+    acECUnMarkAll: TAction;
+    acECFixAllMarkedErrors: TAction;
+    acECFixAllMarkedErrorsTyped: TAction;
+    acECFixAllErrorsTyped: TAction;
+    acECMarkAllTyped: TAction;
+    acECUnMarkAllTyped: TAction;
+    AutofixSelectedError2: TMenuItem;
+    AutofixAllErrors2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -306,15 +338,12 @@ type
     procedure acUndoExecute(Sender: TObject);
     procedure acWindowsToolbarExecute(Sender: TObject);
     procedure btPollingClick(Sender: TObject);
-    procedure Fixallerrors1Click(Sender: TObject);
-    procedure Fixerror1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDblClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
     procedure mnPollL3LabClick(Sender: TObject);
     procedure mnPollToSelectedClick(Sender: TObject);
-    procedure pmL3PPopup(Sender: TObject);
     procedure Pollevery30secs1Click(Sender: TObject);
     procedure Pollevery3sec1Click(Sender: TObject);
     procedure Pollevery5sec1Click(Sender: TObject);
@@ -334,11 +363,22 @@ type
     procedure acInsertBFCInvertnextExecute(Sender: TObject);
     procedure acInsertBFCClipExecute(Sender: TObject);
     procedure acInsertBFCNoClipExecute(Sender: TObject);
+    procedure acECFixErrorExecute(Sender: TObject);
+    procedure acECFixAllErrorsExecute(Sender: TObject);
+    procedure acECMarkAllExecute(Sender: TObject);
+    procedure acECUnMarkAllExecute(Sender: TObject);
+    procedure acECFixAllMarkedErrorsExecute(Sender: TObject);
+    procedure acECFixAllMarkedErrorsTypedExecute(Sender: TObject);
+    procedure acECFixAllErrorsTypedExecute(Sender: TObject);
+    procedure acECMarkAllTypedExecute(Sender: TObject);
+    procedure acECUnMarkAllTypedExecute(Sender: TObject);
 
   private
     { Private declarations }
     initialized:boolean;
     procedure AppInitialize;
+    procedure SetErrorCheckMarks(State: Boolean; ErrorType: string);
+    procedure ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
 
 
   public
@@ -352,7 +392,7 @@ type
     function  GetTmpFileName: String;
     procedure LoadFile(EditCh: TForm);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
-    procedure UpdateCOntrols(closing:boolean);
+    procedure UpdateControls(closing:boolean);
     procedure UpdateMRU(NewFileName: TFileName= '');
     procedure LoadFormValues;
     procedure SaveFormValues;
@@ -413,7 +453,7 @@ begin
   acTrimLines.Enabled:=mdicount>0;
   acReverseWinding.Enabled := mdicount>0;
 
-  if Assigned(activeMDICHild) then
+  if Assigned(ActiveMDICHild) then
   begin
     acUndo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanUndo;
     acRedo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanRedo;
@@ -633,9 +673,8 @@ Return value: None
 ----------------------------------------------------------------------}
 var
   i:integer;
-  {$IFDEF MSWINDOWS}
   regT:TRegistry;
-  {$ENDIF}
+
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
@@ -644,11 +683,7 @@ begin
     SplashScreen.update;
     screen.cursor:=-11;
 
-    {$IFDEF MSWINDOWS}
-      IniFileName := WindowsDir + '\LDraw.ini';
-    {$ELSE}
-      IniFileName := ExtractFilePath(Application.ExeName) + 'LDraw.ini';
-    {$ENDIF}
+    IniFileName := WindowsDir + '\LDraw.ini';
     IniSection := 'LDDP Main';
     frOptions.IniFileName := IniFileName;
     frOptions.IniSection := 'LDDP Options';
@@ -656,14 +691,12 @@ begin
     LoadFormValues;
     frOptions.LoadFormValues;
 
-    {$IFDEF MSWINDOWS}
-      regT:=Tregistry.create;
-      regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
-      regt.WriteString('InstallDir', application.ExeName);
-      regt.free;
-      slPlugins:=TStringlist.create;
-      LoadPlugins(true);
-    {$ENDIF}
+    regT:=Tregistry.create;
+    regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
+    regt.WriteString('InstallDir', application.ExeName);
+    regt.free;
+    slPlugins:=TStringlist.create;
+    LoadPlugins(true);
 
     UpdateMRU;
 
@@ -790,11 +823,24 @@ Return value: None
 ----------------------------------------------------------------------}
 
 var
-  s:string;
-  i:integer;
-  DatModel1: TDATModel;
+  s: string;
+  i, idx:integer;
+  DATModel1: TDATModel;
+
+  procedure AddError(LineNumber, ErrorType: string);
+
+  var
+    error: TListItem;
+
+  begin
+    error := (ActiveMDIChild as TfrEditorChild).lbInfo.Items.Add;
+    error.Checked := True;
+    error.SubItems.Add(LineNumber);
+    error.SubItems.Add(ErrorType);
+  end;
 
 begin
+  Screen.Cursor := crHourGlass;
   if (frOptions.cboDet.Checked) then
     DetThreshold := frOptions.seDet.Value;
   if frOptions.cboDist.Checked then
@@ -802,42 +848,63 @@ begin
   if frOptions.seCollinear.Text <> '' then
     CollinearPointsThreshold := frOptions.seCollinear.Value;
 
-  with ActiveMDIChild as TfrEditorChild do
-  begin
-    lbInfo.Items.Clear;
+  (ActiveMDIChild as TfrEditorChild).lbInfo.Items.Clear;
 
-    DATModel1 := TDATModel.Create;
-    DATModel1.ModelText := Memo.Lines.Text;
+  DATModel1 := TDATModel.Create;
 
-    for i := 0 to DATModel1.Count - 1 do
-      if DATModel1[i] is TDATElement then
-        if (DATModel1.IndexOfLine(DATModel1[i].DATString) <> i) then
-          lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
-                           'Identical to line ' +
-                           IntToStr(DATModel1.IndexOfLine(DATModel1[i].DATString) + 1) +
-                           ': ' + memo.Lines[i])
-        else if (DATModel1[i] is TDATSubPart) and
-                ((DATModel1[i] as TDATElement).Color = 24) then
-          lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
-                           'Color 24 Illegal for this linetype: ' + memo.Lines[i])
-        else
-        begin
-          s := L3CheckLine(DATModel1[i].DATString);
-          if s <> '' then
-            lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
-                           s + ': ' + memo.Lines[i]);
-        end;
+  DATModel1.ModelText := (ActiveMDIChild as TfrEditorChild).memo.Lines.Text;
 
-    DATModel1.Free;
-                         
-    if (lbInfo.Items.Count > 0) and (pnInfo.Height < 30) then
-      pnInfo.Height := 91
+  for i := 0 to DATModel1.Count - 1 do
+    if DATModel1[i] is TDATElement then
+    begin
+      // Check for Identical Lines
+      idx := DATModel1.IndexOfLine(DATModel1[i].DATString);
+      if idx <> i then
+        AddError(IntToStr(i+1),'Identical to line ' + IntToStr(idx+1))
+      else
+      begin
+        // Check For Illegal Color Number
+        if (DATModel1[i] is TDATSubPart) and
+           ((DATModel1[i] as TDATElement).Color = 24) then
+          AddError(IntToStr(i+1),'Color 24 Illegal for this linetype');
+
+        // Check for All Other L3P Errors
+        s := L3CheckLine(DATModel1[i].DATString);
+        if s <> '' then
+          AddError(IntToStr(i+1),s);
+      end;
+    end;
+
+  DATModel1.Free;
+
+  with (ActiveMDIChild as TfrEditorChild) do
+    if lbInfo.Items.Count > 0 then
+    begin
+      pnInfo.Height := 91;
+      acECFixAllErrors.Enabled := True;
+      acECFixAllMarkedErrors.Enabled := True;
+      acECMarkAll.Enabled := True;
+      acECUnMarkAll.Enabled := True;
+      acECMarkAllTyped.Enabled := True;
+      acECUnMarkAllTyped.Enabled := True;
+      lbInfo.ItemIndex := 0;
+      lbInfo.OnSelectItem(nil, lbInfo.Items[lbInfo.ItemIndex], True);
+    end
     else
     begin
       pnInfo.Height := 1;
+      acECFixError.Enabled := False;
+      acECFixAllErrors.Enabled := False;
+      acECFixAllErrorsTyped.Enabled := False;
+      acECFixAllMarkedErrors.Enabled := False;
+      acECFixAllMarkedErrorsTyped.Enabled := False;
+      acECMarkAll.Enabled := False;
+      acECUnMarkAll.Enabled := False;
+      acECMarkAllTyped.Enabled := False;
+      acECUnMarkAllTyped.Enabled := False;
       StatusBar.Panels[0].Text := 'No Errors Found!';
     end;
-  end;
+  Screen.Cursor := crDefault;
 end;
 
 procedure TfrMain.acOptionsExecute(Sender: TObject);
@@ -896,7 +963,6 @@ Return value: None
 ----------------------------------------------------------------------}
 
 begin
-{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
   if (not FileExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
     MessageDlg('You have to specify a valid path to LDView.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
@@ -904,9 +970,6 @@ begin
   end;
   (activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((activeMDICHild as TfrEditorChild).tempFileName);
   DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-{$ELSE}
-
-{$ENDIF}  //NOT IN KYLIX YET
 end;
 
 procedure TfrMain.acMLCadExecute(Sender: TObject);
@@ -917,8 +980,7 @@ Return value: None
 ----------------------------------------------------------------------}
 
 begin
-{$IFDEF MSWINDOWS}
-  if (activeMDICHild as TfrEditorChild).memo.modified then
+ if (activeMDICHild as TfrEditorChild).memo.modified then
     if MessageDlg('File has been modified. '+#13+#10+'Do you want to save and then view the file in MLCad '+#13+#10+'or cancel the operation?', mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
   acFileSaveExecute(Sender);
   if (not FIleExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
@@ -927,9 +989,6 @@ begin
     exit;
   end;
   DOCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "'+(activeMDICHild as TfrEditorChild).caption+'"',SW_SHOWNA,false);
-{$ELSE}
-
-{$ENDIF}
 end;
 
 
@@ -940,9 +999,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
   OpenInBrowser('http://www.sourceforge.net/projects/lddp');
-{$ENDIF}
 end;
 
 procedure TfrMain.acUserDefinedExecute(Sender: TObject);
@@ -951,7 +1008,6 @@ Description: Execute user defined program
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
 var opt:byte;
 
     function ParseString(toparse:string):string;
@@ -975,10 +1031,7 @@ var opt:byte;
       Result:=toParse;
     end;
 
-{$ENDIF}     //NOT IN KYLIX YET
-
 begin
-{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
   with frOptions do begin
     if not FileExists(edExternal.text) then
     begin
@@ -998,9 +1051,6 @@ begin
     (Self.activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((Self.activeMDICHild as TfrEditorChild).tempFileName);
     DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
   end;
-{$ELSE}
-
-{$ENDIF}  //NOT IN KYLIX YET
 end;
 
 procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
@@ -1016,7 +1066,6 @@ var sr:TSearchRec;
     plgBitmap: TBitMap;
 
 begin
-{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
   PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
   i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
   frOptions.cblPlugins.clear;
@@ -1088,8 +1137,6 @@ begin
   end;
   Findclose(sr);
   frOptions.cblPlugins.sorted:=true;
-
-  {$ENDIF} //NOT IN KYLIX YET
 end;
 
 
@@ -1104,7 +1151,6 @@ var
  s1,s2,s3,s4:longword;
 
 begin
-{$IFDEF MSWINDOWS}  //NOT IN KYLIX YET
   libname:=copy(slplugins[(Sender as TMenuItem).tag],pos(',',slplugins[(Sender as TMenuItem).tag])+1, length(slplugins[(Sender as TMenuItem).tag]));
 
   with (activeMDICHild as TfrEditorChild) do
@@ -1146,8 +1192,6 @@ begin
          memo.selend:=s1+s2;
        end;
   end;
-
-{$ENDIF}  //NOT IN KYLIX YET 
 end;
 
 procedure TfrMain.acL3LabExecute(Sender: TObject);
@@ -1157,7 +1201,6 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  {$IFDEF MSWINDOWS}
   if (not FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
   begin
     MessageDlg('You have to specify a valid path to L3Lab.exe first!', mtError, [mbOK], 0);
@@ -1166,9 +1209,6 @@ begin
   end;
   (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
   DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-  {$ELSE}
-
-  {$ENDIF}
 end;
 
 procedure TfrMain.acincIndentExecute(Sender: TObject);
@@ -1522,11 +1562,9 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //NOT IN KYLIX YET
   SynEditPrint.SynEdit := (activeMDICHild as TfrEditorChild).memo;
   SynEditPrint.Title := activeMDICHild.caption;
   SynEditPrint.Print;
-{$ENDIF}
 end;
 
 
@@ -1628,9 +1666,9 @@ begin
 end;
 
 
-procedure TfrMain.Fixerror1Click(Sender: TObject);
+procedure TfrMain.acECFixErrorExecute(Sender: TObject);
 {---------------------------------------------------------------------
-Description: Fix an L3P Error depdning on the error
+Description: Fix an L3P Error depending on the error
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
@@ -1646,134 +1684,112 @@ begin
    // Set postion to line with error
    lbInfoDblClick(Sender);
 
-   // Set Undo Info
-//   memo.BeginUndoBlock;
-//   memo.Undolist.AddChange(crInsert,memo.BlockBegin,memo.BlockEnd,memo.SelText,memo.SelectionMode);
-//   memo.EndUndoBlock;
-
-   // Get the Dat code from the L3P error
-   strTemp:=copy(lbInfo.Items[lbInfo.ItemIndex],pos(':',lbInfo.Items[lbInfo.ItemIndex])+1, length(lbInfo.Items[lbInfo.ItemIndex]));
-   strTemp:=copy(strTemp,pos(':',strTemp)+2, length(strTemp));
-
    // Fix the error
-   if pos(strTemp,lbInfo.Items[lbInfo.ItemIndex])>0 then
+   if pos('Bad vertex sequence, 0132',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
    begin
-     if pos('Bad vertex sequence, 0132',lbInfo.Items[lbInfo.ItemIndex])>0 then
+     DATElem := TDATQuad.Create;
+     with DATElem as TDATQuad do
      begin
-       DATElem := TDATQuad.Create;
-       with DATElem as TDATQuad do
-       begin
-         DATString := memo.lines[memo.CaretY-1];
-         tx := x4;
-         ty := y4;
-         tz := z4;
-         x4 := x3;
-         y4 := y3;
-         z4 := z3;
-         x3 := tx;
-         y3 := ty;
-         z3 := tz;
-         memo.lines[memo.CaretY-1] := DATString;
-         DATElem.Free;
-       end;
-     end
-
-     else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex])>0 then
-       memo.lines[memo.CaretY-1]:=''
-
-     else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
-     begin
-       DATElem := TDATSubPart.Create;
-       (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-       (DATElem as TDATSubPart).RM[1,2] := 1;
-       memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+       DATString := memo.lines[memo.CaretY-1];
+       tx := x4;
+       ty := y4;
+       tz := z4;
+       x4 := x3;
+       y4 := y3;
+       z4 := z3;
+       x3 := tx;
+       y3 := ty;
+       z3 := tz;
+       memo.lines[memo.CaretY-1] := DATString;
        DATElem.Free;
-     end
+       lbInfo.items.delete(lbInfo.ItemIndex);
+     end;
+   end
 
-     else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
+   else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+   begin
+     memo.lines[memo.CaretY-1]:='';
+     lbInfo.items.delete(lbInfo.ItemIndex);
+   end
+
+   else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+   begin
+     DATElem := TDATSubPart.Create;
+     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+     (DATElem as TDATSubPart).RM[1,2] := 1;
+     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+     DATElem.Free;
+     lbInfo.items.delete(lbInfo.ItemIndex);
+   end
+
+   else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+   begin
+     DATElem := TDATSubPart.Create;
+     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+     (DATElem as TDATSubPart).RM[2,2] := 1;
+     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+     DATElem.Free;
+     lbInfo.items.delete(lbInfo.ItemIndex);
+   end
+
+   else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+   begin
+     DATElem := TDATSubPart.Create;
+     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+     (DATElem as TDATSubPart).RM[3,2] := 1;
+     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+     DATElem.Free;
+     lbInfo.items.delete(lbInfo.ItemIndex);
+   end
+
+   else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+   begin
+     DATElem := TDATQuad.Create;
+     with DATElem as TDATQuad do
      begin
-       DATElem := TDATSubPart.Create;
-       (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-       (DATElem as TDATSubPart).RM[2,2] := 1;
-       memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+       DATString := memo.lines[memo.CaretY-1];
+       tx := x3;
+       ty := y3;
+       tz := z3;
+       x2 := x4;
+       y2 := y4;
+       z2 := z4;
+       x3 := x2;
+       y3 := y2;
+       z3 := z2;
+       x4 := tx;
+       y4 := ty;
+       z4 := tz;
+       memo.lines[memo.CaretY-1] := DATString;
        DATElem.Free;
-     end
-
-     else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
-     begin
-       DATElem := TDATSubPart.Create;
-       (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-       (DATElem as TDATSubPart).RM[3,2] := 1;
-       memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-       DATElem.Free;
-     end
-
-     else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex])>0 then
-     begin
-       DATElem := TDATQuad.Create;
-       with DATElem as TDATQuad do
-       begin
-         DATString := memo.lines[memo.CaretY-1];
-         tx := x3;
-         ty := y3;
-         tz := z3;
-         x2 := x4;
-         y2 := y4;
-         z2 := z4;
-         x3 := x2;
-         y3 := y2;
-         z3 := z2;
-         x4 := tx;
-         y4 := ty;
-         z4 := tz;
-         memo.lines[memo.CaretY-1] := DATString;
-         DATElem.Free;
-       end;
+       lbInfo.Items.Delete(lbInfo.ItemIndex);
      end;
    end;
 
-   lbInfo.items.delete(lbInfo.ItemIndex);
    if lbInfo.Items.Count < 1 then
+   begin
      pnInfo.Height := 1;
+     acECFixError.Enabled := False;
+     acECFixAllErrors.Enabled := False;
+     acECFixAllErrorsTyped.Enabled := False;
+     acECFixAllMarkedErrors.Enabled := False;
+     acECFixAllMarkedErrorsTyped.Enabled := False;
+     acECMarkAll.Enabled := False;
+     acECUnMarkAll.Enabled := False;
+     acECMarkAllTyped.Enabled := False;
+     acECUnMarkAllTyped.Enabled := False;
+   end;
  end;
 end;
 
-
-procedure TfrMain.pmL3PPopup(Sender: TObject);
-{---------------------------------------------------------------------
-Description: updates the fix-error-popupmenu depending if there is an error to fix
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-begin
-  with (activeMDICHild as TfrEditorChild) do
-  begin
-    FixError1.Enabled:=lbInfo.ItemIndex>-1;
-  end;
-end;
-
-
-procedure TfrMain.Fixallerrors1Click(Sender: TObject);
+procedure TfrMain.acECFixAllErrorsExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Fix all errors in L3P error list
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-
-var
-  i: Integer;
-
 begin
-  with (activeMDICHild as TfrEditorChild) do
-  begin
-    if lbInfo.items.count>0 then
-      for I:=lbInfo.items.count-1 downto 0 do
-      begin
-        lbInfo.ItemIndex:=i;
-        Fixerror1Click(Sender);
-      end;
-  end;
+  ErrorCheckErrorFix(False,'');
 end;
 
 procedure TfrMain.mnPollToSelectedClick(Sender: TObject);
@@ -2056,23 +2072,16 @@ Return value: None
 ----------------------------------------------------------------------}
 var strVersionHTTP:string;
     strActualVersion:string;
+
 begin
-  {$IFDEF MSWINDOWS}
-     strActualVersion := GetWindowsVersion;
-  {$ELSE}
-     strActualVersion := LDDPLINUXVERSION;
-  {$ENDIF}
+  strActualVersion := GetWindowsVersion;
   strVersionHTTP := http.Get('http://lddp.sourceforge.net/lddp.ver');
   if trim(strVersionHTTP)=strActualVersion then MessageDlg('There is no newer version available.', mtInformation, [mbOK], 0)
   else
-     begin
-        MessageDlg('There is a newer version available!!!', mtInformation, [mbOK], 0);
-        {$IFDEF MSWINDOWS}
-           OpenInBrowser('http://www.sourceforge.net/projects/lddp');
-        {$ELSE}
-            // To-Do
-        {$ENDIF}
-     end;
+  begin
+    MessageDlg('There is a newer version available!!!', mtInformation, [mbOK], 0);
+    OpenInBrowser('http://www.sourceforge.net/projects/lddp');
+  end;
 end;
 
 procedure TfrMain.LoadFormValues;
@@ -2210,6 +2219,102 @@ begin
     Lines.Insert(CaretY-1, '0 BFC NOCLIP');
     Modified := true;
   end;
+end;
+
+procedure TfrMain.SetErrorCheckMarks(State: Boolean; ErrorType: string);
+
+var
+  i: Integer;
+  errorstring: string;
+
+begin
+  if pos('Identical to line', ErrorType) > 0 then
+    ErrorType := 'Identical to line'
+  else if pos('Vertices not coplaner', ErrorType) > 0 then
+    ErrorType := 'Vertices not coplaner'
+  else if pos('Collinear vertices', ErrorType) > 0 then
+    ErrorType := 'Collinear vertices';
+
+  with ActiveMDIChild as TfrEditorChild do
+    if lbInfo.Items.Count > 0 then
+      for i := 0 to lbInfo.Items.Count - 1 do
+      begin
+        if pos('Identical to line', lbInfo.Items[i].SubItems[1]) > 0 then
+          errorstring := 'Identical to line'
+        else if pos('Vertices not coplaner', lbInfo.Items[i].SubItems[1]) > 0 then
+          errorstring := 'Vertices not coplaner'
+        else if pos('Collinear vertices', lbInfo.Items[i].SubItems[1]) > 0 then
+          errorstring := 'Collinear vertices'
+        else
+          errorstring := lbInfo.Items[i].SubItems[1];
+
+        if (ErrorType = '') or (ErrorType = errorstring) then
+          lbInfo.Items[i].Checked := State;
+      end;
+end;
+
+procedure TfrMain.acECMarkAllExecute(Sender: TObject);
+
+begin
+  SetErrorCheckMarks(True, '');
+end;
+
+procedure TfrMain.acECUnMarkAllExecute(Sender: TObject);
+begin
+  SetErrorCheckMarks(False, '');
+end;
+
+procedure TfrMain.acECMarkAllTypedExecute(Sender: TObject);
+begin
+  with ActiveMDIChild as TfrEditorChild do
+     SetErrorCheckMarks(True, lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
+end;
+
+procedure TfrMain.acECUnMarkAllTypedExecute(Sender: TObject);
+begin
+  with ActiveMDIChild as TfrEditorChild do
+     SetErrorCheckMarks(False, lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
+end;
+
+procedure TfrMain.ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
+
+var
+  i: Integer;
+
+begin
+  if pos('Identical to line', ErrorType) > 0 then
+    ErrorType := 'Identical to line';
+
+  with (ActiveMDIChild as TfrEditorChild) do
+    if lbInfo.Items.Count > 0 then
+      for i:=lbInfo.Items.Count - 1 downto 0 do
+      begin
+        lbInfo.ItemIndex := i;
+        if pos('Identical to line', lbInfo.Items[lbInfo.ItemIndex].SubItems[1]) > 0 then
+          lbInfo.Items[lbInfo.ItemIndex].SubItems[1] := 'Identical to line';
+        if ((not OnlyMarked) and (ErrorType = '')) or
+           ((not OnlyMarked) and (lbInfo.Items[lbInfo.ItemIndex].SubItems[1] = ErrorType)) or
+           ((OnlyMarked and lbInfo.Items[lbInfo.ItemIndex].Checked) and (ErrorType = '')) or
+           ((OnlyMarked and lbInfo.Items[lbInfo.ItemIndex].Checked) and (lbInfo.Items[lbInfo.ItemIndex].SubItems[1] = ErrorType)) then
+          acECFixErrorExecute(nil);
+      end;
+end;
+
+procedure TfrMain.acECFixAllMarkedErrorsExecute(Sender: TObject);
+begin
+  ErrorCheckErrorFix(True,'');
+end;
+
+procedure TfrMain.acECFixAllMarkedErrorsTypedExecute(Sender: TObject);
+begin
+  with ActiveMDIChild as TfrEditorChild do
+   ErrorCheckErrorFix(True,lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
+end;
+
+procedure TfrMain.acECFixAllErrorsTypedExecute(Sender: TObject);
+begin
+  with ActiveMDIChild as TfrEditorChild do
+   ErrorCheckErrorFix(False,lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
 end;
 
 end.

@@ -24,9 +24,7 @@ unit dlgsearchreplacetext;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
   Windows, Messages,
-  {$ENDIF}
   Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
   ExtCtrls, SysUtils, SynEditTypes;
 

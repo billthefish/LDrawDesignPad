@@ -22,11 +22,7 @@ unit childwin;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
   windowsspecific,
-  {$ELSE}
-  linuxspecific,
-  {$ENDIF}
   Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, Synedit,
   SynHighlighterLDraw, ExtCtrls, Classes, Types, ComCtrls, Controls,
   SyneditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch;
@@ -36,9 +32,9 @@ type
     Splitter1: TSplitter;
     pnInfo: TPanel;
     Panel2: TPanel;
-    lbInfo: TListBox;
     Button1: TButton;
     memo: TSynEdit;
+    lbInfo: TListView;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormActivate(Sender: TObject);
     procedure MemoChange(Sender: TObject);
@@ -51,6 +47,8 @@ type
       Shift: TShiftState);
     procedure memoGutterClick(Sender: TObject; Button: TMouseButton; X, Y,
       Line: Integer; Mark: TSynEditMark);
+    procedure lbInfoSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
   private
     { Private declarations }
     tmpFilename:string;
@@ -227,8 +225,7 @@ var
    L3PErrorLine: Integer;
 begin
     // Set current postion to errorline
-    L3PErrorLine := StrToInt( Copy(lbinfo.Items[lbinfo.Itemindex], 15,
-                                   pos(':',lbinfo.Items[lbinfo.Itemindex])-15) );
+    L3PErrorLine := StrToInt(lbinfo.Items[lbinfo.Itemindex].SubItems[0]);
     memo.TopLine := L3PErrorLine;
     memo.CaretXY := Point(1, L3PErrorLine);
     
@@ -280,6 +277,23 @@ begin
     BlockBegin := CaretXY;
     BlockEnd := Point(Length(Lines[Line-1]) + 1 , CaretY);
   end;
+end;
+
+procedure TfrEditorChild.lbInfoSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
+
+var
+  UnFixableError: Boolean;
+
+begin
+  UnFixableError := (Item.SubItems[1] = 'Identical vertices') or
+     (pos('Singular matrix',Item.SubItems[1]) > 0) or
+     (Item.SubItems[1] = 'Y column all zeros') or
+     (pos('Collinear vertices',Item.SubItems[1]) > 0) or
+     (pos('Vertices not coplaner',Item.SubItems[1]) > 0);
+  frMain.acECFixError.Enabled := not UnFixableError;
+  frMain.acECFixAllErrorsTyped.Enabled := not UnFixableError;
+  frMain.acECFixAllMarkedErrorsTyped.Enabled := not UnFixableError;
 end;
 
 end.

@@ -31,7 +31,7 @@ type
 { Base class for all DAT Model type Objects
   Essentially this is a specialized Object list for
   DAT Components }
-  TDATCustomModel=class(TObject)
+  TDATCustomModel=class(TPersistent)
     private
       FModelCollection: TObjectList;
 
