@@ -3,15 +3,15 @@ HOW TO COMPILE LDDP
 
 You'll need:
 
-- Borland Delphi. (Delphi versions 6 and 7 have been used in production, but Delphi 4 or higher should work)
+- Borland Delphi. (Delphi version 6 or up required)
 
 To compile this source successfully, you'll also need to download and install the following component suites:
 
-* Jedi VCL - http://jvcl.sourceforge.net
+
 * SynEdit  - http://synedit.sourceforge.net
             (After extracting the synedit sources copy the files in the LDrawHighlighter.zip
              over the existing files then install it as described in the synedit documentation.)
-* ICS Internet Component Suite - http://overbyte.delphicenter.com/
+
 
 That's all!  Have fun!
 
