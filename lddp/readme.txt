@@ -133,6 +133,14 @@ We especially thank you, the user, for downloading our program
 
 + = New feature  * = Bugfix   - = Removed feature
 
+v1.5.5 29 August 2004
++ Added mirror selected line.
++ Update inline feature to inline multiple line selection
++ Added poll on request
++ Added line numbers to the triangle combine dialog
++ Added a few toolbar icons and keyboard shortcuts
+* Fixed MRU list to include files that are "Save As"
+
 v1.54 26 February 2004
 + Added customizable META command menu.  Open the metamenu.ini file for details
 + Added Combine 2 triangles into quad feature
