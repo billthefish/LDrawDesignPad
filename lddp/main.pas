@@ -20,15 +20,14 @@ unit main;
 interface
 
 uses
-  windows, forms, windowsspecific, registry, messages,
-  Dialogs, SynEditPrint, SynEditHighlighter, SysUtils, Synedit,
-  SynHighlighterLDraw, ExtCtrls, Menus, ImgList, StdActns, Types,
-  SynHighlighterCpp, SynHighlighterPas, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, Classes, ActnList,
-  ComCtrls, Controls, Inifiles, splash, SyneditTypes, Graphics,
-  SyneditKeyCmds, l3check, DATModel, DATBase, StdCtrls, Shellapi, dlgReplaceText,
-  SynEditMiscClasses, SynEditSearch, ToolWin, SynEditTextBuffer, dlgSearchText,
-  SynEditRegexSearch;
+  windows, forms, windowsspecific, registry, messages, Dialogs, SynEditPrint,
+  SynEditHighlighter, SysUtils, Synedit, SynHighlighterLDraw, ExtCtrls, Menus,
+  ImgList, StdActns, Types, SynHighlighterCpp, SynHighlighterPas,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, Classes,
+  ActnList, ComCtrls, Controls, Inifiles, splash, SyneditTypes, Graphics,
+  SyneditKeyCmds, l3check, DATModel, DATBase, StdCtrls, Shellapi,
+  dlgReplaceText, SynEditMiscClasses, SynEditSearch, ToolWin, SynEditTextBuffer,
+  dlgSearchText, SynEditRegexSearch;
 
 type
   TfrMain = class(TForm)

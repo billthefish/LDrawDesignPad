@@ -16,6 +16,7 @@ object frMain: TfrMain
   Menu = MainMenu1
   OldCreateOrder = True
   Position = poDefault
+  WindowMenu = Window1
   OnClose = FormClose
   OnCreate = FormCreate
   OnDblClick = FormDblClick
@@ -30,7 +31,7 @@ object frMain: TfrMain
     AutoHint = True
     Panels = <
       item
-        Width = 200
+        Width = 300
       end
       item
         Width = 50
@@ -707,7 +708,7 @@ object frMain: TfrMain
     object acFileSaveAs: TAction
       Category = 'File'
       Caption = 'Save &As'
-      Hint = 'Save As|Saves the active file with a new name'
+      Hint = 'Save As|Save file under a new filename'
       ImageIndex = 18
       OnExecute = acFileSaveAsExecute
     end
@@ -741,14 +742,14 @@ object frMain: TfrMain
     object acWindowCascade: TWindowCascade
       Category = 'Windows'
       Caption = '&Cascade'
-      Hint = 'Cascade'
+      Hint = 'Cascade|Cascade all open windows'
       ImageIndex = 17
       OnExecute = acWindowCascadeExecute
     end
     object HelpAbout: TAction
       Category = 'Help'
       Caption = '&About...'
-      Hint = 'Info|Show Info about LDDP'
+      Hint = 'Info|Show info about LDDP'
       OnExecute = HelpAboutExecute
     end
     object acFileRevert: TAction
@@ -760,7 +761,7 @@ object frMain: TfrMain
     object acFind: TAction
       Category = 'Search'
       Caption = 'Find...'
-      Hint = 'Find text'
+      Hint = 'Find text|Find specified text'
       ImageIndex = 12
       ShortCut = 16454
       OnExecute = acFindExecute
@@ -768,7 +769,7 @@ object frMain: TfrMain
     object acReplace: TAction
       Category = 'Search'
       Caption = 'Replace...'
-      Hint = 'Find and replace text'
+      Hint = 'Find and replace text|Find and replace text'
       ImageIndex = 19
       ShortCut = 16466
       OnExecute = acReplaceExecute
@@ -776,13 +777,14 @@ object frMain: TfrMain
     object acErrorCheck: TAction
       Category = 'Error Check'
       Caption = 'Run Error Check'
-      Hint = 'Check for errors'
+      Hint = 'Check for errors|Check for errors'
       ImageIndex = 21
       OnExecute = acErrorCheckExecute
     end
     object acOptions: TAction
       Category = 'Misc'
       Caption = 'Options'
+      Hint = 'Options|Options'
       ImageIndex = 31
       ShortCut = 16461
       OnExecute = acOptionsExecute
@@ -797,6 +799,7 @@ object frMain: TfrMain
     object acUndo: TAction
       Category = 'Editor'
       Caption = '&Undo'
+      Hint = 'Undo last action'
       ImageIndex = 23
       ShortCut = 16474
       OnExecute = acUndoExecute
@@ -804,6 +807,7 @@ object frMain: TfrMain
     object acRedo: TAction
       Category = 'Editor'
       Caption = '&Redo'
+      Hint = 'Redo last action'
       ImageIndex = 24
       ShortCut = 24666
       OnExecute = acRedoExecute
@@ -832,11 +836,13 @@ object frMain: TfrMain
     object acInsertPartHeader: TAction
       Category = 'EditorBlocks'
       Caption = 'Standard Part Header'
+      Hint = 'Insert a part header'
       OnExecute = acInsertPartHeaderExecute
     end
     object acInsertUpdateLine: TAction
       Category = 'EditorBlocks'
       Caption = 'Update Header'
+      Hint = 'Insert an update line header'
       ShortCut = 16469
       OnExecute = acInsertUpdateLineExecute
     end
@@ -864,6 +870,7 @@ object frMain: TfrMain
     object acHomepage: TAction
       Category = 'Misc'
       Caption = 'LDDP &Homepage'
+      Hint = 'Go to LDDP homepage'
       ImageIndex = 32
       OnExecute = acHomepageExecute
     end
@@ -892,6 +899,7 @@ object frMain: TfrMain
     object acSelectAll: TAction
       Category = 'Editor'
       Caption = 'Select all'
+      Hint = 'Select all'
       ShortCut = 16449
       OnExecute = acSelectAllExecute
     end
@@ -1001,11 +1009,13 @@ object frMain: TfrMain
     object acBMP2LDraw: TAction
       Category = 'Misc'
       Caption = 'Convert Bitmap to LDraw'
+      Hint = 'Start BMP-2-LDraw Tool'
       OnExecute = acBMP2LDrawExecute
     end
     object acModelTreeView: TAction
       Category = 'Misc'
       Caption = 'View Model Tree'
+      Hint = 'Show a Tree Model of this file including all submodels'
       OnExecute = acModelTreeViewExecute
     end
     object acInsertBFCCertifyCW: TAction
@@ -2824,7 +2834,7 @@ object frMain: TfrMain
     Top = 296
   end
   object SynEditRegexSearch: TSynEditRegexSearch
-    Left = 104
-    Top = 232
+    Left = 168
+    Top = 296
   end
 end
