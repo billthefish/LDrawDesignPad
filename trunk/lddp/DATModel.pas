@@ -1,6 +1,6 @@
 unit DATModel;
 (*
-Copyright 2002,2003 Orion Pobursky
+Copyright 2002,2003,2004 Orion Pobursky
 
 The DATTools Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -62,21 +62,23 @@ type
       property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc;
   end;
 
-{ An Object for holding and manipulating a DAT model }
+{ An Object for holding and manipulating an LDraw model }
 
   TDATModel=class(TDATCustomModel)
     private
       strFilePath: string;
+      strFileName: string;
 
     public
       property FilePath: string read strFilePath write strFilePath;
+      property FileName: string read strFileName write strFileName;
       property ModelText: string read GetModelText write SetModelText;
 
       property Lines; default;{Public redeclare of the inherited Lines property}
       property Count; {Public redeclare of the inherited Count property}
 
       { Load a model from a dat or ldr file.  MPD support not yet added}
-      procedure LoadModel(Filename: string);
+      procedure LoadModel(DATFile: string);
 
       { Save a model to dat or ldr format.  MPD support not yet added}
       procedure SaveModel(Filename: string);
@@ -154,6 +156,36 @@ type
       property ModelText: string read GetModelText;
 
   end;
+
+  // An MPD model is essentially a collection of TDATModels
+  // Many of the class procedures work in a similar manner to TDATModel
+  TDATMPDModel = class(TPersistent)
+    private
+      FModelCollection: TObjectList;
+
+    protected
+      procedure SetModel(Idx: Integer; Value: TDATModel);
+      function GetModel(Idx: Integer): TDATModel;
+      function GetCount: Integer;
+      function GetModelText: string;
+      procedure SetModelText(mText: string);
+
+    public
+      constructor Create;
+      destructor Destroy; override;
+      property Models[Idx:Integer]: TDATModel read GetModel write SetModel; default;
+      property Count:Integer read GetCount;
+      property ModelText: string read GetModelText write SetModelText;
+      procedure Add(objLine: TDATModel);
+      procedure Insert(Index: Integer; objLine: TDATModel);
+      procedure Clear;
+      procedure LoadModel(Filename: string);
+      procedure SaveModel(Filename: string);
+      procedure Delete(Index: Integer);
+      function IndexOfModel(strName: string; StartIndex: Integer = 0): Integer;
+
+  end;
+
 (*
 { Enumerated type for the Minifig rotate commands}
 
@@ -206,8 +238,8 @@ constructor TDATCustomModel.Create;
 begin
   inherited Create;
   FModelCollection := TObjectList.Create;
-  FPntAcc := 2;
-  FRotAcc := 3;
+  FPntAcc := 4;
+  FRotAcc := 4;
 end;
 
 destructor TDATCustomModel.Destroy;
@@ -246,7 +278,7 @@ begin
   Result := '';
   if Count > 0 then
   begin
-    for i := 0 to Count - 1 do
+    for i := 0 to Count - 2 do
       Result := Result + Lines[i].DATString + #13#10;
     Result := Result + Lines[Count-1].DATString;
   end;
@@ -348,7 +380,7 @@ begin
 end;
 
 { TDATModel Code }
-procedure TDATModel.LoadModel(Filename:string);
+procedure TDATModel.LoadModel(DATFile: string);
 
 var
   ModelFile: TStringList;
@@ -356,10 +388,11 @@ var
 begin
   ModelFile := TStringList.Create;
   Clear;
-  if FileExists(Filename) then
+  if FileExists(DATFile) then
   begin
-    ModelFile.LoadFromFile(Filename);
-    strFilePath := ExtractFilePath(Filename);
+    ModelFile.LoadFromFile(DATFile);
+    FilePath := ExtractFilePath(DATFile);
+    FileName := ExtractFileName(DATFile);
   end;
 
   SetModelFromStringlist(ModelFile);
@@ -970,6 +1003,176 @@ begin
   Result := inherited GetModelText;
   Line1.Free;
   Line2.Free;
+end;
+
+// TDATMPDModel
+constructor TDATMPDModel.Create;
+
+begin
+  inherited Create;
+  FModelCollection := TObjectList.Create;
+end;
+
+destructor TDATMPDModel.Destroy;
+begin
+  FModelCollection.Free;
+  inherited Destroy;
+end;
+
+function TDATMPDModel.GetModel(Idx:Integer): TDATModel;
+begin
+  if (Idx >= 0) and (Idx < Count) then
+    Result := (FModelCollection[Idx] as TDATModel)
+  else
+    Result := nil;
+end;
+
+procedure TDATMPDModel.SetModel(Idx:Integer; Value: TDATModel);
+begin
+  if (Idx >= 0) and (Idx < Count) then
+    FModelCollection[Idx] := Value;
+end;
+
+function TDATMPDModel.GetModelText: string;
+
+var
+  i: Integer;
+
+begin
+  Result := '';
+  if Count > 0 then
+  begin
+    for i := 0 to Count - 2 do
+      Result := Result + '0 FILE ' + Models[i].FileName + #13#10 +
+                Models[i].ModelText + #13#10;
+    Result := Result + '0 FILE ' + Models[Count - 1].FileName + #13#10 +
+              Models[Count - 1].ModelText;
+  end;
+end;
+
+procedure TDATMPDModel.SetModelText(mText: string);
+
+var
+  ModelTxt, Parse: TStringList;
+  ModelIndexList: array of Integer;
+  i,j: Integer;
+  DModel: TDATModel;
+
+  procedure AddModel(AModel: TDATModel);
+
+  var
+    TempModel: TDATModel;
+
+  begin
+    TempModel := TDATModel.Create;
+    TempModel.FileName := AModel.FileName;
+    TempModel.ModelText := AModel.ModelText;
+    Self.Add(TempModel);
+  end;
+
+begin
+  ModelTxt := TSTringList.Create;
+  DModel := TDATModel.Create;
+
+  ModelTxt.Text := mText;
+
+  for i := 0 to ModelTxt.Count - 1 do
+    if Pos('0 FILE', ModelTxt[i]) > 0 then
+    begin
+      SetLength(ModelIndexList, Length(ModelIndexList) + 1);
+      ModelIndexList[Length(ModelIndexList) - 1] := i;
+    end;
+
+  if Length(ModelIndexList) > 0 then
+  begin
+    Parse := TStringList.Create;
+
+    SetLength(ModelIndexList, Length(ModelIndexList) + 1);
+    ModelIndexList[Length(ModelIndexList) - 1] := ModelTxt.Count;
+
+    for i := 0 to Length(ModelIndexList) - 2 do
+    begin
+      Parse.Clear;
+      DModel.Clear;
+      for j := ModelIndexList[i] + 1 to ModelIndexList[i+1] - 1 do
+        DModel.Add(ModelTxt[j]);
+      ExtractStrings([#9,#32],[#9,#32],PChar(ModelTxt[ModelIndexList[i]]), Parse);
+      DModel.FileName := Parse[2];
+
+      if IndexOfModel(DModel.FileName) < 0 then
+        AddModel(DModel);
+    end;
+
+    Parse.Free;
+  end;
+
+  DModel.Clear;
+  ModelTxt.Free;
+end;
+
+procedure TDATMPDModel.Add(objLine: TDATModel);
+begin
+  Insert(GetCount, objLine);
+end;
+
+procedure TDATMPDModel.Insert(Index: Integer; objLine: TDATModel);
+begin
+  FModelCollection.Insert(Index, objLine);
+end;
+
+function TDATMPDModel.GetCount: Integer;
+begin
+  Result := FModelCollection.Count;
+end;
+
+procedure TDATMPDModel.Clear;
+
+begin
+  FModelCollection.Clear;
+end;
+
+procedure TDATMPDModel.Delete(Index: Integer);
+begin
+  FModelCollection.Delete(Index);
+end;
+
+function TDATMPDModel.IndexOfModel(strName: string; StartIndex: Integer = 0): Integer;
+
+begin
+  Result := StartIndex;
+  while Result < Count do
+  begin
+    if Models[Result].FileName = strName then
+      Break;
+    inc(Result);
+  end;
+  if Result = Count then Result := -1;
+end;
+
+procedure TDATMPDModel.LoadModel(Filename: string);
+
+var
+  ModelFile: TStringList;
+
+begin
+  ModelFile := TStringList.Create;
+  Clear;
+  if FileExists(Filename) then
+    ModelFile.LoadFromFile(Filename);
+  ModelText := ModelFile.Text;
+  ModelFile.Free;
+end;
+
+procedure TDATMPDModel.SaveModel(Filename:string);
+
+var
+  ModelFile: TStringList;
+
+begin
+  ModelFile := TStringList.Create;
+  ModelFile.Text := ModelText;
+  ModelFile.SaveToFile(Filename);
+  ModelFile.Free;
 end;
 
 {

@@ -1,6 +1,6 @@
 unit DATBase;
 (*
-Copyright 2002,2003 Orion Pobursky
+Copyright 2002,2003,2004 Orion Pobursky
 
 The DATTools Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -127,8 +127,8 @@ type
 
     published
       property Color: Integer read intColor write intColor default 0;
-      property RotationDecimalPlaces: ShortInt read RotAcc write RotAcc default 3;
-      property PositionDecimalPlaces: ShortInt read PntAcc write PntAcc default 2;
+      property RotationDecimalPlaces: ShortInt read RotAcc write RotAcc default 4;
+      property PositionDecimalPlaces: ShortInt read PntAcc write PntAcc default 4;
   end;
 
   TDATSubPart=class(TDATElement)
@@ -176,12 +176,19 @@ type
       procedure ProcessDATLine(strText:string); override;
       function GetPoint(idx: Integer): TDATPoint;
       procedure SetPoint(idx: Integer; Value: TDATPoint);
+      function GetExtremeValue(Index: Integer): Extended;
 
     public
       (* Use this property to get or set the individual points of the Line,
          Triangle, Quad or Optional Line as a TDATPoint type.  To set individual
          values (e.g. x1 only) use the RM property *)
       property Point[idx: Integer]: TDATPoint read GetPoint write SetPoint;
+      property MaxX: Extended index 1 read GetExtremeValue;
+      property MinX: Extended index 2 read GetExtremeValue;
+      property MaxY: Extended index 3 read GetExtremeValue;
+      property MinY: Extended index 4 read GetExtremeValue;
+      property MaxZ: Extended index 5 read GetExtremeValue;
+      property MinZ: Extended index 6 read GetExtremeValue;
 
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); override;
   end;
@@ -419,7 +426,7 @@ procedure TDATElement.Rotate(w,x,y,z: Extended);
 var
  R: TDATMatrix;
  t: Extended;
- 
+
 begin
   R := FDATIdentityMatrix;
 
@@ -588,64 +595,49 @@ end;
 procedure TDATSubPart.ProcessDATLine(strText:string);
 
 var
-  i,j,k:Byte;
-  TempList: TStrings;
-  tmpstr: string;
-  
+  TmpMatrix: TDATRotationMatrix;
+  TmpPosit: TDATPoint;
+  TmpLnType, TmpColor: Integer;
+  TempList: TStringList;
+  TmpSubpart: string;
+
 begin
   TempList:= TStringList.Create;
+  TmpMatrix := FDATIdentityRotationMatrix;
+  TmpPosit := FDATOriginPoint;
+
   try
-    i := 1;
-    tmpstr := '';
-    while i <= Length(strText) do
-    begin
-      if ((strText[i] = #32) or (strText[i] = #9)) or
-         ((strText[i] = #13) or (strText[i] = #10)) then
+    ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
+
+    try
+      TmpLnType := StrToInt(TempList[0]);
+      if TmpLnType = 1 then
       begin
-        if tmpstr <> '' then
-        begin
-          TempList.Add(tmpstr);
-          tmpstr := ''
-        end;
-      end
-      else
-      begin
-        tmpstr := tmpstr + strText[i];
+        TmpColor := StrToInt(TempList[1]);
+
+        TmpPosit[1] := StrToFloat(TempList[2]);
+        TmpPosit[2] := StrToFloat(TempList[3]);
+        TmpPosit[3] := StrToFloat(TempList[4]);
+
+        TmpMatrix[1,1] := StrToFloat(TempList[5]);
+        TmpMatrix[1,2] := StrToFloat(TempList[6]);
+        TmpMatrix[1,3] := StrToFloat(TempList[7]);
+        TmpMatrix[2,1] := StrToFloat(TempList[8]);
+        TmpMatrix[2,2] := StrToFloat(TempList[9]);
+        TmpMatrix[2,3] := StrToFloat(TempList[10]);
+        TmpMatrix[3,1] := StrToFloat(TempList[11]);
+        TmpMatrix[3,2] := StrToFloat(TempList[12]);
+        TmpMatrix[3,3] := StrToFloat(TempList[13]);
+
+        TmpSubpart := TempList[14];
+
+        intLineType := TmpLnType;
+        Color := TmpColor;
+        RMatrix := TmpMatrix;
+        Position := TmpPosit;
+        SubPart := TmpSubpart;
       end;
-      inc(i);
-    end;
-    if tmpstr <> '' then TempList.Add(tmpstr);
-    if ((TempList.Count >= 14) and (TempList.Count <= 15)) then
-    begin
-      intLineType := StrToInt(Trim(TempList[0]));
-      Self.Color := StrToInt(Trim(TempList[1]));
-
-      FDATMatrix[1,4] := StrToFloat(Trim(TempList[2]));
-      FDATMatrix[2,4] := StrToFloat(Trim(TempList[3]));
-      FDATMatrix[3,4] := StrToFloat(Trim(TempList[4]));
-
-      k:=5;
-
-      for i:=1 to 3 do
-      begin
-        for j:=1 to 3 do
-        begin
-          FDATMatrix[i,j] :=  StrToFloat(Trim(TempList[k]));
-          inc(k);
-        end;
-      end;
-
-      if tempList.Count = 15 then
-      begin
-        strFileExt := LowerCase(ExtractFileExt(Trim(TempList[14])));
-        if strFileExt = '' then strFileExt := '.dat';
-        strSubPartFile := LowerCase(ChangeFileExt(Trim(TempList[14]),''));
-      end;
-
-      FDATMatrix[4,1] := 0;
-      FDATMatrix[4,2] := 0;
-      FDATMatrix[4,3] := 0;
-      FDATMatrix[4,4] := 1;
+    except
     end;
   finally
     TempList.Free;
@@ -664,6 +656,33 @@ begin
   FDATMatrix[idx,1] := Value[1];
   FDATMatrix[idx,2] := Value[2];
   FDATMatrix[idx,3] := Value[3];
+end;
+
+function TDATGeometric.GetExtremeValue(Index: Integer): Extended;
+
+var
+  coord, i, j: Integer;
+
+begin
+  case Index of
+    1,2: coord := 1;
+    3,4: coord := 2;
+    5,6: coord := 3;
+    else
+      coord := 1;
+  end;
+
+  j := LineType;
+
+  if j = 5 then j := 4;
+
+  Result := RM[1, coord];
+
+  for i := 1 to j do
+    case Index of
+      1,3,5: if RM[i, coord] > Result then Result := RM[i, coord];
+      2,4,6: if RM[i, coord] < Result then Result := RM[i, coord];
+    end;
 end;
 
 procedure TDATGeometric.Transform(M: TDATMatrix; Reverse: Boolean = false);
@@ -719,48 +738,49 @@ end;
 procedure TDATGeometric.ProcessDATLine(strText:string);
 
 var
-  i,j,k:Byte;
+  TmpMatrix: TDATMatrix;
+  TmpLnType, TmpColor: Integer;
   TempList: TStringList;
-  tmpstr: string;
 
 begin
   TempList:= TStringList.Create;
-  try
-    i := 1;
-    tmpstr := '';
-    while i <= Length(strText) do
-    begin
-      if ((strText[i] = #32) or (strText[i] = #9)) or
-         ((strText[i] = #13) or (strText[i] = #10)) then
-      begin
-        if tmpstr <> '' then
-        begin
-          TempList.Add(tmpstr);
-          tmpstr := ''
-        end;
-      end
-      else
-      begin
-        tmpstr := tmpstr + strText[i];
-      end;
-      inc(i);
-    end;
-    if tmpstr <> '' then TempList.Add(tmpstr);
-    if ((TempList.Count >= 8) and (TempList.Count <= 14)) then
-    begin
-      intLineType := StrToInt(Trim(TempList[0]));
-      intColor := StrToInt(Trim(TempList[1]));
+  TmpMatrix := FDATIdentityMatrix;
 
-      k := 2;
-      j := intLineType;
-      if j = 5 then j := 4;
-      for i := 1 to j do
+  try
+    ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
+
+    try
+      TmpLnType := StrToInt(TempList[0]);
+      if (TmpLnType >= 2) and (TmpLnType <= 5) then
       begin
-          FDATMatrix[i,1] :=  StrToFloat(Trim(TempList[k]));
-          FDATMatrix[i,2] :=  StrToFloat(Trim(TempList[k+1]));
-          FDATMatrix[i,3] :=  StrToFloat(Trim(TempList[k+2]));
-          Inc(k,3);
+        TmpColor := StrToInt(TempList[1]);
+
+        TmpMatrix[1,1] := StrToFloat(TempList[2]);
+        TmpMatrix[1,2] := StrToFloat(TempList[3]);
+        TmpMatrix[1,3] := StrToFloat(TempList[4]);
+        TmpMatrix[2,1] := StrToFloat(TempList[5]);
+        TmpMatrix[2,2] := StrToFloat(TempList[6]);
+        TmpMatrix[2,3] := StrToFloat(TempList[7]);
+
+        if TmpLnType = 3 then
+        begin
+          TmpMatrix[3,1] := StrToFloat(TempList[8]);
+          TmpMatrix[3,2] := StrToFloat(TempList[9]);
+          TmpMatrix[3,3] := StrToFloat(TempList[10]);
+        end;
+
+        if TmpLnType > 4 then
+        begin
+          TmpMatrix[4,1] := StrToFloat(TempList[11]);
+          TmpMatrix[4,2] := StrToFloat(TempList[12]);
+          TmpMatrix[4,3] := StrToFloat(TempList[13]);
+        end;
+
+        intLineType := TmpLnType;
+        Color := TmpColor;
+        RotationMatrix := TmpMatrix;
       end;
+    except
     end;
   finally
     TempList.Free;
