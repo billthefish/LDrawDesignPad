@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 260
-    ActivePage = tsExternal
+    ActivePage = TabSheet2
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -801,7 +801,7 @@ object frOptions: TfrOptions
         Width = 513
         Height = 82
         Align = alClient
-        Caption = 'Inline Options'
+        Caption = 'Decimal Accuracy'
         TabOrder = 1
         object lbPntAcc: TLabel
           Left = 8
