@@ -79,7 +79,7 @@ var
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 procedure TfrColorDialog.FormShow(Sender: TObject);
 var i:integer;

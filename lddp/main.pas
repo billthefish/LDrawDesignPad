@@ -333,7 +333,7 @@ var
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 uses ChildWin, shellapi, About, options, editoptions, ColorDialog,
      dlgConfirmReplace, dlgSearchText, dlgReplaceText;

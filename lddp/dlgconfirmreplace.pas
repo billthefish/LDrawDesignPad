@@ -45,7 +45,7 @@ var
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 resourcestring
   SAskReplaceText = 'Replace this occurence of "%s"?';
