@@ -336,7 +336,7 @@ type
     procedure LoadPlugins(AppInit:Boolean = false);
     procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
     function  GetTmpFileName: String;
-    procedure LoadFile(fname:string);
+    procedure LoadFile(fname:string; EditCh: TForm);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateCOntrols(closing:boolean);
     procedure UpdateMRU(NewFileName: TFileName= '');
@@ -414,15 +414,30 @@ begin
   acDecIndent.Enabled:=mdicount>0;
   acTrimLines.Enabled:=mdicount>0;
   acReverseWinding.Enabled := mdicount>0;
-  acUndo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanUndo;
-  acRedo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanRedo;
+
+  if Assigned(activeMDICHild) then
+  begin
+    acUndo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanUndo;
+    acRedo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanRedo;
+  end
+  else if mdicount > 0 then
+  begin
+    acUndo.Enabled:=(mdicount>0) and (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanUndo;
+    acRedo.Enabled:=(mdicount>0) and (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanRedo;
+  end
+  else
+  begin
+    acUndo.Enabled:= false;
+    acRedo.Enabled:= false;
+  end;
+
   acUserDefined.Enabled:=mdicount>0;
   if mdicount=0 then acInline.enabled:=false;
   acReplaceColor.enabled:=mdicount>0;
   acWindowTile.enabled:=mdicount>0;
 end;
 
-procedure tfrMain.LoadFile(fname:string);
+procedure tfrMain.LoadFile(fname:string; EditCh: TForm);
 {---------------------------------------------------------------------
 Description: Loads given Filename into the active MDI editor child
 Parameter: fname: Filename
@@ -433,11 +448,9 @@ var
 
 begin
   if FileExists(fName) then
-    with (activeMDICHild as TfrEditorChild) do
+    with (EditCh as TfrEditorChild) do
     begin
-      FindFirst(fname, faAnyFile, SR);
-      filedatetime:=FileDateToDateTime(SR.time);
-      FindClose(sr);
+      filedatetime:=FileDateToDateTime(FileAge(fname));
       Memo.Lines.LoadFromFile(fName);
       Memo.modified:=false;
       updatecontrols;
@@ -475,7 +488,7 @@ begin
         Memo.Highlighter:=SynCppSyn
       else if (FileExt = '.pas') or (FileExt = '.dpr') then
         Memo.Highlighter:=SynPasSyn;
-      LoadFile(CaptionName);
+      LoadFile(CaptionName, Child);
     end;
   end;
   UpdateControls(false);
@@ -665,13 +678,18 @@ begin
 
     SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
     pmMemo.tag:=pmMemo.items.count;
+
     if paramcount>0 then
-      for i:=1 to paramcount do CreateMDIChild(paramstr(i),false);
+      for i:=1 to paramcount do
+        CreateMDIChild(paramstr(i),false);
+
   finally
     sleep(1500);
     screen.cursor:=0;
-    SplashScreen.free;
+    SplashScreen.Close;
+    SplashScreen.Release;
   end;
+    ShowMessage('ping');
 end;
 
 procedure TfrMain.acFileRevertExecute(Sender: TObject);
@@ -682,7 +700,7 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   if MessageDlg('Reload last saved version?'+#13+#10+'All changes will be lost!', mtConfirmation, [mbYes, mbNo], 0)=mrYes
-    then LoadFile(activeMDICHild.caption);
+    then LoadFile(activeMDICHild.caption, ActiveMDIChild);
 end;
 
 procedure TfrMain.FormCreate(Sender: TObject);
