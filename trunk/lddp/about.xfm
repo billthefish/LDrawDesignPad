@@ -31,8 +31,8 @@ object frAboutBox: TfrAboutBox
     object ProgramIcon: TImage
       Left = 8
       Top = 12
-      Width = 117
-      Height = 57
+      Width = 48
+      Height = 48
       Picture.Data = {
         055449636F6E0000010002002020000001000800A80800002600000010100000
         0100080068050000CE0800002800000020000000400000000100080000000000
