@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterMulti.pas,v 1.4 2003-07-09 16:13:27 c_schmitz Exp $
+$Id: SynHighlighterMulti.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -63,7 +63,7 @@ uses
 type
   //GBN 31/01/2002
   TOnCheckMarker = procedure (Sender: TObject; var StartPos, MarkerLen: Integer;
-    var MarkerText: String) of object;
+    var MarkerText: String; Line: Integer) of object;
 
   TScheme = class(TCollectionItem)
   private
@@ -203,7 +203,7 @@ type
     property Markers[aIndex: integer]: TMarker read GetMarkers;
     //GBN 31/01/2002 - Start
     procedure DoCheckMarker(Scheme:TScheme; StartPos, MarkerLen: Integer;
-      const MarkerText: String; Start: Boolean);
+      const MarkerText: String; Start: Boolean; Line: Integer);
     //GBN 31/01/2002 - End
     procedure SetOnCustomRange(const Value: TCustomRangeEvent);
   protected
@@ -648,7 +648,7 @@ end;
 
 //GBN 31/01/2002 - Start
 procedure TSynMultiSyn.DoCheckMarker(Scheme:TScheme; StartPos, MarkerLen: Integer;
-  const MarkerText: String; Start: Boolean);
+  const MarkerText: String; Start: Boolean; Line: Integer);
 var
   aStartPos: Integer;
   aMarkerLen: Integer;
@@ -658,9 +658,9 @@ begin
   aMarkerLen:=MarkerLen;
   aMarkerText:=MarkerText;
   if (Start) and Assigned(Scheme.OnCheckStartMarker) then
-    Scheme.OnCheckStartMarker(Self,aStartPos,aMarkerLen,aMarkerText)
+    Scheme.OnCheckStartMarker(Self,aStartPos,aMarkerLen,aMarkerText,Line)
   else if (not Start) and Assigned(Scheme.OnCheckEndMarker) then
-    Scheme.OnCheckEndMarker(Self,aStartPos,aMarkerLen,aMarkerText);
+    Scheme.OnCheckEndMarker(Self,aStartPos,aMarkerLen,aMarkerText,Line);
   if (aMarkerText<>'') and (aMarkerLen>0) then
     begin
     fMarkers.Add(TMarker.Create(Scheme.Index, aStartPos, aMarkerLen,Start,aMarkerText));
@@ -695,7 +695,7 @@ begin
         if iParser.Exec( iLine ) then begin
           iExpr := Copy( NewValue, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0] );
           //GBN 31/01/2002 - Start
-          DoCheckMarker(iScheme, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0],iExpr,False);
+          DoCheckMarker(iScheme, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0],iExpr,False, LineNumber);
           //fMarkers.Add( TMarker.Create( iScheme.Index, iParser.MatchPos[0] + iEaten,
           //  iParser.MatchLen[0], False, iExpr ) );
           //GBN 31/01/2002 - End
@@ -717,7 +717,7 @@ begin
           if iParser.Exec( iLine ) then begin
             iExpr := Copy( NewValue, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0] );
             //GBN 31/01/2002 - Start
-            DoCheckMarker(iScheme, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0],iExpr,True);
+            DoCheckMarker(iScheme, iParser.MatchPos[0] + iEaten, iParser.MatchLen[0],iExpr,True, LineNumber);
             //fMarkers.Add( TMarker.Create( cScheme, iParser.MatchPos[0] + iEaten,
             //  iParser.MatchLen[0], True, iExpr ) );
             //GBN 31/01/2002 - End

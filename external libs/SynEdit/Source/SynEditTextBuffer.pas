@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditTextBuffer.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynEditTextBuffer.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -239,6 +239,8 @@ type
     procedure SetMaxUndoActions(Value: integer);
     procedure SetInitialState(const Value: boolean);
     function GetInitialState: boolean;
+    function GetItems(Index: Integer): TSynEditUndoItem;
+    procedure SetItems(Index: Integer; const Value: TSynEditUndoItem);    
   public
     constructor Create;
     destructor Destroy; override;
@@ -261,6 +263,7 @@ type
     property CanUndo: boolean read GetCanUndo;
     property FullUndoImpossible: boolean read fFullUndoImposible;               //mh 2000-10-03
     property InitialState: boolean read GetInitialState write SetInitialState;
+    property Items[Index: Integer]: TSynEditUndoItem read GetItems write SetItems; 
     property ItemCount: integer read GetItemCount;
     property BlockCount: integer read fBlockCount;
     property MaxUndoActions: integer read fMaxUndoActions
@@ -1156,31 +1159,64 @@ end;
 { InputString is cutted from left side, cuted part is returned as Result}
 function TSynEditStringList.WrapString(var InputString: String): String;
 const
-  WrapableChars = [' ',#9,';','>',','];
+  WrapableChars =   [#32, #9,';','>',','];
+  WhiteSpaceChars = [#32, #9];
 var
-  i : Integer;
+  i, j, k : Integer;
+  TabString : String;
+  addedChars : Integer;
 begin
   if not fWordWrap then begin
     Result := InputString;
     InputString := '';
     Exit;
   end;
-  if Length(InputString) > fWordWrapWidth then begin
+
+//need to compensate for tab characters
+  TabString := InputString;
+  Addedchars := 0;
+  i := pos(#9, TabString);
+  while (i <> 0) and (i < fWordWrapWidth) do
+  begin
+    j := i mod fTabWidth;
+    if j = 0 then j := 1
+    else j := fTabWidth - j + 1;
+    System.Delete(TabString, i, 1);
+    for k := 1 to j do
+      System.Insert(#32, TabString, i);
+    addedChars := addedchars + j - 1;
+    i := pos(#9, TabString);
+  end;
+
+  if Length(TabString) > fWordWrapWidth then begin
     i := fWordWrapWidth;
     { trying find WrapableChars to the left }
     while i > 0 do begin
-      if InputString[i] in WrapableChars
+      if TabString[i] in WrapableChars
         then Break;
       Dec(i);
     end;
-    { on the left is one long word. Try to find on the right side }
-    if i = 0 then begin
+
+    //if we can't wrap, then we just cut the word at WordWrapWidth.  The same way that
+    //MS Word does.
+    if i = 0 then
+    begin
       i := fWordWrapWidth;
-      while i < Length(InputString) do begin
-        if InputString[i] in WrapableChars
-          then Break;
-        Inc(i);
-      end;
+      i := i - addedChars;  //take the tabs back out;
+    end else begin
+    //I'm not sure what the correct behavior for this should be, actually.  For
+    //the time being I am making the assumption that all whitespace should stay
+    //together on the line above.  this might wreck havoc with scrollbars, but
+    //I think it looks cleaner than having it on the line below.
+
+      i := i - addedChars;  //take the tabs back out;
+
+      //make sure all the white space is on the current line that is possible
+      if (i + 1 < length(InputString)) and (InputString[i + 1] in WhitespaceChars) then
+              while i < length(InputString) do
+          if InputString[i + 1] in WhitespaceChars then
+            inc(i)
+          else break;
     end;
   end
   else i:= Length(InputString);
@@ -1577,6 +1613,17 @@ begin
     Result := fInitialChangeNumber = 0
   else
     Result := PeekItem.ChangeNumber = fInitialChangeNumber;
+end;
+
+function TSynEditUndoList.GetItems(Index: Integer): TSynEditUndoItem;
+begin
+  Result := TSynEditUndoItem(fItems[Index]);
+end;
+
+procedure TSynEditUndoList.SetItems(Index: Integer;
+  const Value: TSynEditUndoItem);
+begin
+  fItems[Index] := Value;
 end;
 
 end.

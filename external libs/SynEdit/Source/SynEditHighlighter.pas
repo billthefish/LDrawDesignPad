@@ -17,7 +17,7 @@ All Rights Reserved.
 Contributors to the SynEdit and mwEdit projects are listed in the
 Contributors.txt file.
 
-$Id: SynEditHighlighter.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynEditHighlighter.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -485,18 +485,18 @@ const
         with reg do begin
           if OpenKeyReadOnly(attrKey+'\'+attrName) then begin
             try
-              fgColor := clNone;
-              bgColor := clNone;
               if ValueExists('Foreground Color')
                 then fgColor := Pal16[ReadInteger('Foreground Color')]
-              else if not ValueExists('Foreground Color New') or
-                not IdentToColor( ReadString('Foreground Color New'), fgColor )
-                then Exit;
+              else if ValueExists('Foreground Color New') then
+                fgColor := StringToColor( ReadString('Foreground Color New') )
+              else
+                Exit;
               if ValueExists('Background Color')
                 then bgColor := Pal16[ReadInteger('Background Color')]
-              else if not ValueExists('Background Color New') or
-                not IdentToColor( ReadString('Background Color New'), bgColor )
-                then Exit;
+              else if ValueExists('Background Color New') then
+                bgColor := StringToColor( ReadString('Background Color New') )
+              else
+                Exit;
               if ValueExists('Bold')
                 then fontBold := ReadString('Bold')
                 else Exit;

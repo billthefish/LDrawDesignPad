@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditMiscProcs.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynEditMiscProcs.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -48,7 +48,7 @@ uses
   Types,
   kTextDrawer,
   QSynEditTypes,
-  {$IFDEF SYN_KYLIX}
+  {$IFDEF SYN_CLX}
   QGraphics,
   {$ENDIF}
 {$ELSE}
@@ -72,6 +72,9 @@ function MinMax(x, mi, ma: integer): integer;
 procedure SwapInt(var l, r: integer);
 function maxPoint(P1, P2: TPoint): TPoint;
 function minPoint(P1, P2: TPoint): TPoint;
+
+procedure IncrementPoint(var aPoint: TPoint; const aInc: TPoint);
+procedure DecrementPoint(var aPoint: TPoint; const aDec: TPoint);
 
 function GetIntArray(Count: Cardinal; InitialValue: integer): PIntArray;
 
@@ -99,6 +102,8 @@ function GetBestConvertTabsProcEx(TabWidth: integer): TConvertTabsProcEx;
 function ConvertTabsEx(const Line: AnsiString; TabWidth: integer;
   var HasTabs: boolean): AnsiString;
 {end}                                                                           //mh 2000-10-19
+
+function GetExpandedLength(const aStr: string; aTabWidth: integer): integer;
 
 function CharIndex2CaretPos(Index, TabWidth: integer;
   const Line: string): integer;
@@ -150,7 +155,7 @@ function StringReplace(const S, OldPattern, NewPattern: string;
   Flags: TReplaceFlags): string;
 {$ENDIF}
 
-{$IFDEF SYN_KYLIX}
+{$IFDEF SYN_CLX}
 function GetRValue(RGBValue: TColor): byte;
 function GetGValue(RGBValue: TColor): byte;
 function GetBValue(RGBValue: TColor): byte;
@@ -202,6 +207,18 @@ begin
   Result := P1;
   if (P2.y < P1.y) or ((P2.y = P1.y) and (P2.x < P1.x)) then
     Result := P2;
+end;
+
+procedure IncrementPoint(var aPoint: TPoint; const aInc: TPoint);
+begin
+  Inc( aPoint.X, aInc.X );
+  Inc( aPoint.Y, aInc.Y );
+end;
+
+procedure DecrementPoint(var aPoint: TPoint; const aDec: TPoint);
+begin
+  Dec( aPoint.X, aDec.X );
+  Dec( aPoint.Y, aDec.Y );
 end;
 
 {***}
@@ -307,6 +324,7 @@ begin
       if (pSrc^ = #9) then begin
         i := TabWidth - (DestLen and TabMask);
         Inc(DestLen, i);
+        //This is used for both drawing and other stuff and is meant to be #9 and not #32
         repeat
           pDest^ := #9;
           Inc(pDest);
@@ -432,6 +450,22 @@ begin
       Result := TConvertTabsProcEx(@ConvertTabsEx);
 end;
 {end}                                                                           //mh 2000-10-19
+
+function GetExpandedLength(const aStr: string; aTabWidth: integer): integer;
+var
+  iRun: PChar;
+begin
+  Result := 0;
+  iRun := PChar(aStr);
+  while iRun^ <> #0 do
+  begin
+    if iRun^ = #9 then
+      Inc( Result, aTabWidth - (Result mod aTabWidth) )
+    else
+      Inc( Result );
+    Inc( iRun );
+  end;
+end;
 
 {***}
 
@@ -781,7 +815,7 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF SYN_KYLIX}
+{$IFDEF SYN_CLX}
 type
   TColorRec = packed record
     Blue: Byte;

@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterAsm.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynHighlighterAsm.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -340,7 +340,7 @@ begin
   MakeMethodTables;
   EnumerateKeywords(Ord(tkKey), OpCodes, IdentChars, DoAddKeyword);
   SetAttributesOnChange(DefHighlightChange);
-  fDefaultFilter      := SYNS_FilterX86Asm;
+  fDefaultFilter      := SYNS_FilterX86Assembly;
 end;
 
 destructor TSynAsmSyn.Destroy;
@@ -554,7 +554,7 @@ end;
 
 function TSynAsmSyn.IsFilterStored: Boolean;
 begin
-  Result := fDefaultFilter <> SYNS_FilterX86Asm;
+  Result := fDefaultFilter <> SYNS_FilterX86Assembly;
 end;
 
 function TSynAsmSyn.GetSampleSource: string;

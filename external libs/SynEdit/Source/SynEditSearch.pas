@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditSearch.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynEditSearch.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -45,11 +45,9 @@ interface
 
 uses
 {$IFDEF SYN_CLX}
-  QSynEdit,
   QSynEditTypes,
   QSynEditMiscClasses,
 {$ELSE}
-  SynEdit,
   SynEditTypes,
   SynEditMiscClasses,
 {$ENDIF}
@@ -92,7 +90,7 @@ type
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
     function FindAll(const NewText: string): integer; override;
-    procedure Replace(Replacement: string; ASynEdit :TObject); override;        //slm 11/29/02    
+    function Replace(const aOccurrence, aReplacement: string): string; override;
     function FindFirst(const NewText: string): Integer;
     procedure FixResults(First, Delta: integer);
     function Next: Integer;
@@ -289,10 +287,10 @@ begin
   Result := fResults.Count;
 end;
 
-procedure TSynEditSearch.Replace(Replacement: string; ASynEdit :TObject);       //slm 11/29/02 begin
+function TSynEditSearch.Replace(const aOccurrence, aReplacement: string): string;
 begin
-    TSynEdit(ASynEdit).SelText:=Replacement;
-end;                                                                            //slm 11/29/02 end
+  Result := aReplacement;
+end;                     
 
 function TSynEditSearch.FindFirst(const NewText: string): Integer;
 begin
