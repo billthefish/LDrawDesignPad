@@ -1695,16 +1695,14 @@ begin
     else
       BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 2]) + 1, tmpBlEnd.Line - 1);
 
+    DATModel1.RotationDecimalPlaces := frOptions.seRotAcc.Value;
+    DATModel1.PositionDecimalPlaces := frOptions.sePntAcc.Value;
     DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
     DATModel1.ModelText := SelText;
 
     for i := DATModel1.Count - 1 downto 0 do
       if DATModel1[i] is TDATSubPart then
       begin
-        (DATModel1[i] as TDATSubPart).RotationDecimalPlaces :=
-          frOptions.seRotAcc.Value;
-        (DATModel1[i] as TDATSubPart).PositionDecimalPlaces :=
-          frOptions.sePntAcc.Value;
          DATModel1.Insert(i,'');
          DATModel1.Insert(i,'0 Original Line: ' + DATModel1[i+1].DATString );
          DATModel1.Insert(i,'0 Inlined by LDDesignPad');
@@ -1712,9 +1710,6 @@ begin
          DATModel1.Insert(i+5, '');
          DATModel1.InlinePart(i+3);
       end;
-
-    DATModel1.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-    DATModel1.PositionDecimalPlaces := frOptions.sePntAcc.Value;
 
     SelText := DATModel1.ModelText;
     Modified := true;
