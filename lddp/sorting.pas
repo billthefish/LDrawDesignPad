@@ -9,7 +9,7 @@ uses
 type
   TfmSort = class(TForm)
     rgScope: TRadioGroup;
-    cbSort1: TComboBox;
+    cbSort: TComboBox;
     Label1: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
