@@ -24,11 +24,11 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls, version,
+  Windows, Classes, QGraphics, QForms, QControls, QStdCtrls,
+  QButtons, QExtCtrls, version,
   {$ENDIF}
   {$IFDEF LINUX}
-  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QStdCtrls, QExtCtrls,
   {$ENDIF}
   main,
@@ -54,7 +54,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 procedure TfrAboutBox.FormShow(Sender: TObject);
 

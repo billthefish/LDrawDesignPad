@@ -1,11 +1,7 @@
 *.dcu
 *.dof
-*.~dfm
-*.~pas
 *.dsk
-*.~dsk
 *.ddp
-*.~ddp
-*.~dpr
 *.cfg
 *.ini
+*.~*

@@ -3,23 +3,27 @@ object frColorDialog: TfrColorDialog
   Top = 303
   Width = 423
   Height = 294
+  VertScrollBar.Range = 41
+  ActiveControl = ScrollBar
   Caption = 'Change Color'
-  Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
+  Color = clButton
+  Font.Color = clText
+  Font.Height = 11
   Font.Name = 'MS Sans Serif'
+  Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = False
+  Font.Weight = 40
+  ParentFont = False
   Position = poDesktopCenter
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  TextWidth = 6
   object GroupBox1: TGroupBox
     Left = 0
     Top = 0
-    Width = 415
-    Height = 226
+    Width = 423
+    Height = 253
     Align = alClient
     Caption = 'Pick your color'
     TabOrder = 0
@@ -44,152 +48,6 @@ object frColorDialog: TfrColorDialog
       Height = 13
       Caption = 'Custom Colornr:'
     end
-    object JvColorSquare1: TJvColorSquare
-      Left = 216
-      Top = 24
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare2: TJvColorSquare
-      Left = 256
-      Top = 24
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare3: TJvColorSquare
-      Left = 296
-      Top = 24
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare4: TJvColorSquare
-      Left = 336
-      Top = 24
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare5: TJvColorSquare
-      Left = 216
-      Top = 64
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare6: TJvColorSquare
-      Left = 256
-      Top = 64
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare7: TJvColorSquare
-      Left = 296
-      Top = 64
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare8: TJvColorSquare
-      Left = 336
-      Top = 64
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare9: TJvColorSquare
-      Left = 216
-      Top = 104
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare10: TJvColorSquare
-      Left = 256
-      Top = 104
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare11: TJvColorSquare
-      Left = 296
-      Top = 104
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare12: TJvColorSquare
-      Left = 336
-      Top = 104
-      Width = 41
-      Height = 41
-      HelpType = htKeyword
-      HelpKeyword = 'dfgh'
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare13: TJvColorSquare
-      Left = 216
-      Top = 144
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare14: TJvColorSquare
-      Left = 256
-      Top = 144
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare15: TJvColorSquare
-      Left = 296
-      Top = 144
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
-    object JvColorSquare16: TJvColorSquare
-      Left = 336
-      Top = 144
-      Width = 41
-      Height = 41
-      BorderStyle = bsSingle
-      OnColorClick = JvColorSquare1ColorClick
-      OnMouseMove = JvColorSquare1MouseMove
-    end
     object btOldColor: TPanel
       Left = 96
       Top = 24
@@ -198,10 +56,10 @@ object frColorDialog: TfrColorDialog
       BevelOuter = bvLowered
       BevelWidth = 3
       Caption = 'Unknown'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
+      Font.Color = clText
+      Font.Height = 11
       Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpVariable
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 6
@@ -215,11 +73,12 @@ object frColorDialog: TfrColorDialog
       BevelWidth = 3
       Caption = '0 - Black'
       Color = clBlack
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clSilver
-      Font.Height = -11
+      Font.Height = 11
       Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpVariable
       Font.Style = [fsBold]
+      ParentColor = False
       ParentFont = False
       TabOrder = 7
       OnClick = btNewColorClick
@@ -232,7 +91,6 @@ object frColorDialog: TfrColorDialog
       Kind = sbVertical
       LargeChange = 4
       Max = 10
-      PageSize = 0
       TabOrder = 0
       OnChange = FormShow
     end
@@ -272,11 +130,11 @@ object frColorDialog: TfrColorDialog
       Top = 184
       Width = 177
       Height = 21
-      Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
+      Color = clButton
+      Font.Color = clText
+      Font.Height = 11
       Font.Name = 'MS Sans Serif'
+      Font.Pitch = fpVariable
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 5
@@ -284,14 +142,11 @@ object frColorDialog: TfrColorDialog
   end
   object Panel3: TPanel
     Left = 0
-    Top = 226
-    Width = 415
+    Top = 253
+    Width = 423
     Height = 41
     Align = alBottom
     TabOrder = 1
-    DesignSize = (
-      415
-      41)
     object BitBtn1: TBitBtn
       Left = 244
       Top = 8
@@ -303,7 +158,7 @@ object frColorDialog: TfrColorDialog
       ModalResult = 1
       TabOrder = 0
       Glyph.Data = {
-        36050000424D3605000000000000360400002800000010000000100000000100
+        3A050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
         80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
         A6000020400000206000002080000020A0000020C0000020E000004000000040
@@ -357,7 +212,7 @@ object frColorDialog: TfrColorDialog
       ModalResult = 2
       TabOrder = 1
       Glyph.Data = {
-        36050000424D3605000000000000360400002800000010000000100000000100
+        3A050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
         80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
         A6000020400000206000002080000020A0000020C0000020E000004000000040

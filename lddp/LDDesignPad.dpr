@@ -3,12 +3,7 @@ program LDDesignPad;
 {%File 'readme.txt'}
 
 uses
-  {$IFDEF MSWINDOWS}
-  Forms,
-  {$ENDIF}
-  {$IFDEF LINUX}
   QForms,
-  {$ENDIF}
   main in 'main.pas' {frMain},
   childwin in 'childwin.pas' {frEditorChild},
   about in 'about.pas' {frAboutBox},
@@ -18,7 +13,9 @@ uses
   dlgsearchtext in 'dlgsearchtext.pas' {frTextSearchDialog},
   dlgreplacetext in 'dlgreplacetext.pas' {frTextReplaceDialog},
   dlgconfirmreplace in 'dlgconfirmreplace.pas' {frConfirmReplaceDialog},
-  editoptions in 'editoptions.pas' {frEditOptions};
+  editoptions in 'editoptions.pas' {frEditOptions},
+  windowsspecific in 'windowsspecific.pas',
+  linuxspecific in 'linuxspecific.pas';
 
 {$R *.res}
 
@@ -28,10 +25,10 @@ begin
     Application.Initialize;
     Application.Title := 'LDraw DesignPad';
     Application.CreateForm(TfrMain, frMain);
-    Application.CreateForm(TfrAboutBox, frAboutBox);
-    Application.CreateForm(TfrOptions, frOptions);
-    Application.CreateForm(TfrColorDialog, frColorDialog);
-    Application.CreateForm(TfrEditOptions, frEditOptions);
+  Application.CreateForm(TfrAboutBox, frAboutBox);
+  Application.CreateForm(TfrOptions, frOptions);
+  Application.CreateForm(TfrColorDialog, frColorDialog);
+  Application.CreateForm(TfrEditOptions, frEditOptions);
   finally
     screen.cursor:=0;
   end;

@@ -1,21 +1,25 @@
 object frSplash: TfrSplash
   Left = 378
   Top = 232
+  Width = 341
+  Height = 154
+  VertScrollBar.Range = 141
+  HorzScrollBar.Range = 328
   BorderIcons = []
-  BorderStyle = bsNone
+  BorderStyle = fbsNone
   Caption = 'frSplash'
-  ClientHeight = 154
-  ClientWidth = 341
-  Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
+  Color = clButton
+  Font.Color = clText
+  Font.Height = 11
   Font.Name = 'MS Sans Serif'
+  Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = False
+  Font.Weight = 40
+  ParentFont = False
   Position = poMainFormCenter
   PixelsPerInch = 96
   TextHeight = 13
+  TextWidth = 6
   object Image1: TImage
     Left = 0
     Top = 0
@@ -24,7 +28,7 @@ object frSplash: TfrSplash
     Align = alClient
     AutoSize = True
     Picture.Data = {
-      07544269746D617096660000424D966600000000000076000000280000005401
+      07544269746D61709A660000424D966600000000000076000000280000005401
       0000980000000100040000000000206600000000000000000000100000001000
       00006D4E2E002424FF00866A4E00A1816D008181FF00C2AC9600D9D9D900D5D5
       F000EEDEDA00F2E8DB00EEEEE500F5F6EE00FFFFFF00F8F9F400FEDDDE00DFCF
@@ -854,6 +858,7 @@ object frSplash: TfrSplash
     Height = 13
     Alignment = taRightJustify
     Caption = 'Loading...'
+    Masked = True
     Transparent = True
   end
 end

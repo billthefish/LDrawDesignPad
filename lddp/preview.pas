@@ -4,11 +4,11 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, ToolWin, ComCtrls,
+  Windows, Messages, Classes, QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls, QExtCtrls, ToolWin, QComCtrls,
   {$ENDIF}
   {$IFDEF LINUX}
-  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QComCtrls, QStdCtrls, QExtCtrls,
   {$ENDIF}
   SysUtils;
@@ -21,7 +21,7 @@ type
     PaintBox1: TPaintBox;
     ScrollBar: TScrollBar;
     {$IFDEF MSWINDOWS}
-    PrintDialog: TPrintDialog;
+//    PrintDialog: TPrintDialog;
     {$ENDIF}
   private
     { Private declarations }
@@ -34,6 +34,6 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 end.

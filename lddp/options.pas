@@ -23,17 +23,15 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
-  ImgList, ExtCtrls, StdCtrls, Buttons, CheckLst, ComCtrls, Mask,
-  JvToolEdit, JvPlacemnt,
-  {$ENDIF}
-  {$IFDEF LINUX}
-  QForms, QImgList, QExtCtrls, QStdCtrls, QButtons,
-  QDialogs, QCheckLst, QControls, QComCtrls,
-  {$ENDIF}
-  JvFloatEdit,
-  JvEdit,
-  SysUtils;
+  windowsspecific, registry, JvPlacemnt, QStdCtrls, QButtons, QCheckLst,
+  {$ELSEIF LINUX}
+  linuxspecific,
+  {$IFEND}
+  QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
+  QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
+  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
+  QSyneditTypes, IdBaseComponent, IdComponent, QGraphics, QSyneditKeyCmds,
+  QSynHighlighterCpp, QSynHighlighterPas,  IdHTTP, QMask ;
 
 type
   TfrOptions = class(TForm)
@@ -42,17 +40,7 @@ type
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-
-    {$IFDEF MSWINDOWS} //Missing from Kylix right now
-    edL3PDir: TJvDirectoryEdit;
     fstOptions: TJvFormStorage;
-    edLDrawDir: TJvDirectoryEdit;
-    edLDViewDir: TJvDirectoryEdit;
-    edMLCadDir: TJvDirectoryEdit;
-    edExternal: TJvFilenameEdit;
-    edParameters: TJvComboEdit;
-    edL3LabDir: TJvDirectoryEdit;
-    {$ENDIF}
 
     Label1: TLabel;
     cboL3P: TCheckBox;
@@ -82,7 +70,6 @@ type
     Button1: TBitBtn;
     ImageList1: TImageList;
     TabSheet1: TTabSheet;
-    Bevel4: TBevel;
     Label11: TLabel;
     cboExternal: TCheckBox;
     lbExternal: TLabel;
@@ -101,9 +88,17 @@ type
     Label17: TLabel;
     lbL3Lab: TLabel;
     cboL3Lab: TCheckBox;
-    seDist: TJvFloatEdit;
-    seDet: TJvFloatEdit;
     rgStyle: TRadioGroup;
+    edLdrawDir: TEdit;
+    edLDViewDir: TEdit;
+    edL3PDir: TEdit;
+    edMLCadDir: TEdit;
+    edL3LabDir: TEdit;
+    seDist: TMaskEdit;
+    seDet: TMaskEdit;
+    edExternal: TEdit;
+    Bevel4: TBevel;
+    edParameters: TEdit;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure edL3PDirExit(Sender: TObject);
@@ -127,11 +122,10 @@ implementation
 
 uses main;
 
-{$R *.dfm}
+{$R *.xfm}
 
 procedure TfrOptions.UpdateCOntrols;
-begin     //PLATFORM SPECIFIC - NEED TO FINISH FOR KYLIX
-  {$IFDEF MSWINDOWS}
+begin
   if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
     cboLDraw.checked:=true;
     lbLDraw.font.Color:=clGreen;
@@ -200,8 +194,6 @@ begin     //PLATFORM SPECIFIC - NEED TO FINISH FOR KYLIX
           lbExternal.font.Color:=clRed;
           lbExternal.Caption:='Not found!';
         end;
-
-  {$ENDIF}
 end;
 
 procedure TfrOptions.FormShow(Sender: TObject);

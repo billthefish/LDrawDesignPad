@@ -25,11 +25,11 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls,
+  Windows, Messages, Classes, QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls, QExtCtrls,
   {$ENDIF}
   {$IFDEF LINUX}
-  Types, Classes, Variants,
+  Types, QTypes, Classes, Variants,
   QTypes, QGraphics, QControls, QForms, QDialogs, QStdCtrls, QExtCtrls,
   {$ENDIF}
   SysUtils;
@@ -80,7 +80,7 @@ type
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 { TTextSearchDialog }
 
