@@ -36,11 +36,6 @@ type
     SynLDRSyn1: TSynLDRSyn;
     Label2: TLabel;
     Label3: TLabel;
-    gbStyleOptions: TGroupBox;
-    cbxBold: TCheckBox;
-    cbxItalic: TCheckBox;
-    cbxUnderline: TCheckBox;
-    cbxStrikeOut: TCheckBox;
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
@@ -54,10 +49,6 @@ type
     procedure lstElementClick(Sender: TObject);
     procedure btnForegroundClick(Sender: TObject);
     procedure btnBackgroundClick(Sender: TObject);
-    procedure cbxBoldClick(Sender: TObject);
-    procedure cbxItalicClick(Sender: TObject);
-    procedure cbxUnderlineClick(Sender: TObject);
-    procedure cbxStrikeOutClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -102,11 +93,6 @@ begin
     shBackground.Color := SelectedElement.Background;
     btnForeGround.Enabled := True;
     btnBackground.Enabled := True;
-    gbStyleOptions.Enabled := True;
-    if fsBold in SelectedElement.Style then cbxBold.Checked := True;
-    if fsItalic in SelectedElement.Style then cbxItalic.Checked := True;
-    if fsUnderline in SelectedElement.Style then cbxUnderline.Checked := True;
-    if fsStrikeout in SelectedElement.Style then cbxStrikeout.Checked := True;
   end;
 end;
 
@@ -128,42 +114,6 @@ begin
       SelectedElement.Background := ColorDialog1.Color;
       shBackground.Color := ColorDialog1.Color;
     end;
-end;
-
-procedure TfrEditOptions.cbxBoldClick(Sender: TObject);
-begin
-  if Assigned(SelectedElement) then
-    if cbxBold.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsBold]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsBold];
-end;
-
-procedure TfrEditOptions.cbxItalicClick(Sender: TObject);
-begin
-  if Assigned(SelectedElement) then
-    if cbxItalic.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsItalic]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsItalic];
-end;
-
-procedure TfrEditOptions.cbxUnderlineClick(Sender: TObject);
-begin
-  if Assigned(SelectedElement) then
-    if cbxUnderline.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsUnderline]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsUnderline];
-end;
-
-procedure TfrEditOptions.cbxStrikeOutClick(Sender: TObject);
-begin
-  if Assigned(SelectedElement) then
-    if cbxStrikeout.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsStrikeout]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsStrikeout];
 end;
 
 procedure TfrEditOptions.Button1Click(Sender: TObject);
