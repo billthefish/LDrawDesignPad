@@ -132,6 +132,12 @@ We especially thank you, the user, for downloading our program
 + = New feature  * = Bugfix   - = Removed feature
 
 
+v1.52 5 December 2003
++ Added ability to process current text through LSynth
++ Integrated the Bendible Object Generator
++ Added Auto Rounding feature
+* Fixed problem with Error Check incorrectly fixing some Bad Vertex Sequences
+
 v1.51 14 November 2003
 * Drag and Drop from files onto LDDP is working now again
 * Fixed window menu showing active windows
