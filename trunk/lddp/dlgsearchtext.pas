@@ -25,14 +25,10 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls, QExtCtrls,
+  Windows, Messages,
   {$ENDIF}
-  {$IFDEF LINUX}
-  Types, QTypes, Classes, Variants,
-  QTypes, QGraphics, QControls, QForms, QDialogs, QStdCtrls, QExtCtrls,
-  {$ENDIF}
-  SysUtils;
+  QTypes, Classes, Variants, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
+  QExtCtrls, SysUtils;
 
 type
   TfrTextSearchDialog = class(TForm)
