@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 {%File 'readme.txt'}
 
 uses
-  QForms,
+  Forms,
   main in 'main.pas' {frMain},
   childwin in 'childwin.pas' {frEditorChild},
   about in 'about.pas' {frAboutBox},
@@ -50,6 +50,7 @@ begin
   Application.CreateForm(TfrColorDialog, frColorDialog);
   Application.CreateForm(TfrTextSearchReplaceDialog, frTextSearchReplaceDialog);
   Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
+  Application.CreateForm(TfrModelTreeView, frModelTreeView);
   Application.CreateForm(TfrModelTreeView, frModelTreeView);
   finally
     screen.cursor:=0;

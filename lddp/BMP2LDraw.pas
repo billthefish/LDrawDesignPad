@@ -22,9 +22,9 @@ unit BMP2LDraw;
 interface
 
 uses
-  SysUtils, QGraphics, QControls, QForms, JvMemDS, QMenus,
-  QTypes, QDialogs, QStdCtrls, QButtons, QExtCtrls, QComCtrls,
-  Classes, childwin, datbase;
+  SysUtils, Graphics, Controls, Forms, Menus,
+  Types, Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls,
+  Classes, childwin, DatBase;
 
 type
   TfrBMP2LDrawMain = class(TForm)
@@ -91,7 +91,7 @@ implementation
 uses main;
 
 
-{$R *.xfm}
+{$R *.dfm}
 
 
 function TfrBMP2LDrawMain.BGRtoRGB(clr:TColor):TColor;

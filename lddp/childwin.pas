@@ -27,9 +27,9 @@ uses
   {$ELSE}
   linuxspecific,
   {$ENDIF}
-  QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, Classes, QTypes, QComCtrls, QControls,
-  QSyneditTypes, QStdCtrls, QSynEditMiscClasses, QSynEditSearch;
+  Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, Synedit,
+  SynHighlighterLDraw, ExtCtrls, Classes, Types, ComCtrls, Controls,
+  SyneditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch;
 
 type
   TfrEditorChild = class(TForm)
@@ -65,7 +65,7 @@ implementation
 
 uses main, preview;
 
-{$R *.xfm}
+{$R *.dfm}
 
 function TfrEditorChild.tempFileName:string;
 {---------------------------------------------------------------------

@@ -27,8 +27,8 @@ uses
   {$IFDEF MSWINDOWS}
   Windows, Messages,
   {$ENDIF}
-  QTypes, Classes, Variants, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QExtCtrls, SysUtils, QSynEditTypes;
+  Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  ExtCtrls, SysUtils, SynEditTypes;
 
 type
   TfrTextSearchReplaceDialog = class(TForm)
@@ -58,7 +58,7 @@ var
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 procedure TfrTextSearchReplaceDialog.FormClose(Sender: TObject;
   var Action: TCloseAction);

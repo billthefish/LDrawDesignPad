@@ -1,5 +1,5 @@
-HOW TO COMPILE LDDP
--------------------
+HOW TO COMPILE UNOFFICIAL LDDP VCL
+----------------------------------
 
 You'll need:
 
@@ -9,10 +9,10 @@ To compile this source successfully, you'll also need to download and install th
 
 
 * SynEdit  - http://synedit.sourceforge.net
-             Note: you will need the newest released CVS snapshot and will need to install the CLX version
-                   not the VCL version
+             Note: you will need the newest released CVS snapshot
 
-That's all!  Have fun!
+* JEDI-VCL  - http://jvcl.sourceforge.net
 
-The LDDP project is looking forward to your contribution ;) !
-
+Note:  This is a unofficial side project.  This mean that the most current features of the
+       Official version of LDDP may not be implemented in this unofficial version.  Please
+       email me complaining about this.  -Orion

@@ -23,11 +23,8 @@ unit about;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  version,
-  {$ENDIF}
-  QTypes, Classes, Variants, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QExtCtrls, SysUtils, main, QButtons;
+  version, Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  ExtCtrls, SysUtils, Buttons;
   
 type
   TfrAboutBox = class(TForm)
@@ -49,7 +46,7 @@ var
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 procedure TfrAboutBox.FormShow(Sender: TObject);
 

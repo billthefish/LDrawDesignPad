@@ -3,20 +3,19 @@ unit modeltreeview;
 interface
 
 uses
-  SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms, 
-  QDialogs, QStdCtrls, QComCtrls, QButtons, QExtCtrls;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ComCtrls, ExtCtrls;
 
 type
   TfrModelTreeView = class(TForm)
     Panel1: TPanel;
-    BitBtn1: TBitBtn;
     tvModel: TTreeView;
+    BitBtn1: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure tvModelDblClick(Sender: TObject);
   private
-    procedure AddNodes(ANode: TTreeNode; AString: string);
   public
-    { Public declarations }
+    procedure AddNodes(ANode: TTreeNode; AString: string);
   end;
 
 var
@@ -24,7 +23,7 @@ var
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 uses
   main, childwin, DATModel, DATBase;
