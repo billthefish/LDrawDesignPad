@@ -658,7 +658,10 @@ begin
 
     if paramcount>0 then
       for i:=1 to paramcount do
+      begin
         CreateMDIChild(paramstr(i),false);
+        UpdateMRU(paramstr(i));
+      end;
 
   finally
     sleep(1500);
@@ -1219,7 +1222,10 @@ begin
      if seltext<>'' then
      begin
        startcol := CharIndexToRowCol(SelStart).Y - 1;
-       endcol := CharIndexToRowCol(SelEnd).Y - 1;
+       if CharIndexToRowCol(SelEnd).X = 1 then
+         endcol := CharIndexToRowCol(SelEnd).Y - 2
+       else
+         endcol := CharIndexToRowCol(SelEnd).Y - 1;
        for j := startcol to endcol do
         if (Lines[j] <> '') and (Lines[j] <> #13#10) and
            (Lines[j] <> #13) and (Lines[j] <> #10) then
@@ -1252,7 +1258,10 @@ begin
      if seltext<>'' then
      begin
        startcol := CharIndexToRowCol(SelStart).Y - 1;
-       endcol := CharIndexToRowCol(SelEnd).Y - 1;
+       if CharIndexToRowCol(SelEnd).X = 1 then
+         endcol := CharIndexToRowCol(SelEnd).Y - 2
+       else
+         endcol := CharIndexToRowCol(SelEnd).Y - 1;
 
        DModel := TDATModel.Create;
        for j := startcol to endcol do
@@ -1449,7 +1458,10 @@ begin
         clr.Clear;
 
         startcol := CharIndexToRowCol(SelStart).Y - 1;
-        endcol := CharIndexToRowCol(SelEnd).Y - 1;
+        if CharIndexToRowCol(SelEnd).X = 1 then
+          endcol := CharIndexToRowCol(SelEnd).Y - 2
+        else
+          endcol := CharIndexToRowCol(SelEnd).Y - 1;
 
         tmpPoint.X := 1;
         tmpPoint.Y := startcol+1;
@@ -1990,7 +2002,11 @@ begin
     DATModel1 := TDATModel.Create;
 
     startcol := CharIndexToRowCol(SelStart).Y - 1;
-    endcol := CharIndexToRowCol(SelEnd).Y - 1;
+
+    if CharIndexToRowCol(SelEnd).X = 1 then
+      endcol := CharIndexToRowCol(SelEnd).Y - 2
+    else
+      endcol := CharIndexToRowCol(SelEnd).Y - 1;
 
     tmpPoint.X := 1;
     tmpPoint.Y := startcol+1;
@@ -2015,6 +2031,7 @@ begin
 
       DATModel1.Free;
     end;
+    Modified := True;
   end;
 end;
 
