@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 301
-  Top = 439
+  Left = 299
+  Top = 551
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'
@@ -433,6 +433,15 @@ object frMain: TfrMain
       object SelectAll1: TMenuItem
         Action = acSelectAll
       end
+      object N13: TMenuItem
+        Caption = '-'
+      end
+      object Comment1: TMenuItem
+        Action = acCommentBlock
+      end
+      object Uncomment1: TMenuItem
+        Action = acUncommentBlock
+      end
       object N12: TMenuItem
         Caption = '-'
       end
@@ -523,6 +532,18 @@ object frMain: TfrMain
           Action = acUserDefined
         end
       end
+      object SyntaxHighlighting1: TMenuItem
+        Caption = 'Syntax Highlighting'
+        object Ldraw2: TMenuItem
+          Action = acHighlightLdraw
+        end
+        object C2: TMenuItem
+          Action = acHighlightCpp
+        end
+        object Pascal2: TMenuItem
+          Action = acHighlightPascal
+        end
+      end
       object N6: TMenuItem
         Caption = '-'
       end
@@ -531,6 +552,7 @@ object frMain: TfrMain
       end
       object InlinePart2: TMenuItem
         Action = acInline
+        ShortCut = 16457
       end
     end
     object Window1: TMenuItem
@@ -883,6 +905,18 @@ object frMain: TfrMain
       ShortCut = 16464
       OnAccept = acFilePrintAccept
     end
+    object acHighlightLdraw: TAction
+      Caption = 'LDraw'
+      OnExecute = acHighlightLdrawExecute
+    end
+    object acHighlightPascal: TAction
+      Caption = 'Pascal'
+      OnExecute = acHighlightPascalExecute
+    end
+    object acHighlightCpp: TAction
+      Caption = 'C++'
+      OnExecute = acHighlightCppExecute
+    end
   end
   object MRUManager: TJvMRUManager
     Duplicates = dupIgnore
@@ -909,7 +943,7 @@ object frMain: TfrMain
     Left = 136
     Top = 336
     Bitmap = {
-      494C010126002700040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010126002700040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000004221
       2100422121004221210000000000000000000000000000000000424242004242
@@ -2233,7 +2267,8 @@ object frMain: TfrMain
       FC01FE008000FFFFFC40FE000000FFFFFC40FE000000FFFFFC1980000000FFF7
       F80380000001C1F7F00F80000003C3FBE03F80000003C7FBC07F80010003CBFB
       80FF80030003DCF701FF80070003FF0F03FF807F0003FFFF87FF80FF8007FFFF
-      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF}
+      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+      000000000000}
   end
   object pmMemo: TPopupMenu
     AutoHotkeys = maManual
@@ -2294,16 +2329,13 @@ object frMain: TfrMain
     object Highlighting1: TMenuItem
       Caption = 'Syntax Highlighting'
       object Ldraw1: TMenuItem
-        Caption = 'LDraw'
-        OnClick = Ldraw1Click
+        Action = acHighlightLdraw
       end
       object C1: TMenuItem
-        Caption = 'C++'
-        OnClick = C1Click
+        Action = acHighlightCpp
       end
       object Pascal1: TMenuItem
-        Caption = 'Pascal'
-        OnClick = Pascal1Click
+        Action = acHighlightPascal
       end
     end
   end
@@ -2383,10 +2415,6 @@ object frMain: TfrMain
   object SynLDRSyn: TSynLDRSyn
     Left = 8
     Top = 304
-  end
-  object PrinterSetupDialog: TPrinterSetupDialog
-    Left = 393
-    Top = 335
   end
   object SynEditPrint: TSynEditPrint
     Copies = 1

@@ -205,7 +205,6 @@ type
     acL3Lab1: TMenuItem;
     UserDefinedProgram1: TMenuItem;
     SynLDRSyn: TSynLDRSyn;
-    PrinterSetupDialog: TPrinterSetupDialog;
     SynEditPrint: TSynEditPrint;
     SynCppSyn: TSynCppSyn;
     SynPasSyn: TSynPasSyn;
@@ -232,6 +231,16 @@ type
     acFileOpen: TFileOpen;
     acFileSaveAs: TFileSaveAs;
     acFilePrint: TPrintDlg;
+    Uncomment1: TMenuItem;
+    Comment1: TMenuItem;
+    N13: TMenuItem;
+    SyntaxHighlighting1: TMenuItem;
+    Ldraw2: TMenuItem;
+    Pascal2: TMenuItem;
+    C2: TMenuItem;
+    acHighlightLdraw: TAction;
+    acHighlightPascal: TAction;
+    acHighlightCpp: TAction;
     procedure acFileNewExecute(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
@@ -275,9 +284,6 @@ type
     procedure Pollevery30secs1Click(Sender: TObject);
     procedure tmPollTimer(Sender: TObject);
     procedure mnPollL3LabClick(Sender: TObject);
-    procedure Ldraw1Click(Sender: TObject);
-    procedure C1Click(Sender: TObject);
-    procedure Pascal1Click(Sender: TObject);
     procedure Fixerror1Click(Sender: TObject);
     procedure pmL3PPopup(Sender: TObject);
     procedure Fixallerrors1Click(Sender: TObject);
@@ -295,6 +301,9 @@ type
     procedure acFileSaveAsBeforeExecute(Sender: TObject);
     procedure acFileSaveAsAccept(Sender: TObject);
     procedure acFilePrintAccept(Sender: TObject);
+    procedure acHighlightLdrawExecute(Sender: TObject);
+    procedure acHighlightPascalExecute(Sender: TObject);
+    procedure acHighlightCppExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -1869,36 +1878,6 @@ begin
   mnPollL3Lab.checked:= not mnPollL3Lab.checked;
 end;
 
-procedure TfrMain.Ldraw1Click(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set highlighting to LDraw
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynLDRSyn;
-end;
-
-procedure TfrMain.C1Click(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set highlighting to C++
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynCPPSyn;
-end;
-
-procedure TfrMain.Pascal1Click(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set highlighting to Pascal
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynPasSyn;
-end;
-
 procedure TfrMain.Fixerror1Click(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Fix an L3P Error depdning on the error
@@ -2180,9 +2159,34 @@ begin
 end;
 {---------------------------------------------------------------------}
 
+procedure TfrMain.acHighlightLdrawExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Set highlighting to LDraw
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+begin
+  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynLDRSyn;
+end;
 
+procedure TfrMain.acHighlightPascalExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Set highlighting to Pascal
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+begin
+  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynPasSyn;
+end;
 
-
-
+procedure TfrMain.acHighlightCppExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Set highlighting to Pascal
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+begin
+  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynCPPSyn;
+end;
 
 end.
