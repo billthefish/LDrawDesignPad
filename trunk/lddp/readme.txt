@@ -84,26 +84,36 @@ suggestions for features.
 Note to all plugin authors:
   As of Version 1.5, LDDP no longer uses the Registry. It now uses the LDraw INI 
   file for it's configuration settings.  If you used settings other than the 
-  InstallDir in the Registry, your plugin will have to be updated to work.
+  InstallDir in the Registry, your plugins will have to be updated to work.
 
 
 
 Remarks:
 
 - The palette file (colors.pal) isn't complete.
-  Some colors are missing, some have to be renamed. Use normal texteditor
+  Some colors are missing, some have to be renamed. Use normal text editor
   or LDDP to edit this file. Feel free to do this and please send us any updates
   to this file so we can include it in the next release.
 
 - If you wrote a plugin for LDDP we will be happy to a put a link or the
   plugin itself on the LDDP website!
 
-- Search and Replace works but it's still not perfect (e.g. replace doesn't prompt)
+- Search and Replace seems to be broken.  This problem doesn't appear to be our code
+  bur we're currently looking in the cause.
 
 5. Version History
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
+
+v1.50 08 October 2003
++ Ability to insert BFC Statements 
++ Overhauled Error Check. Many new features available
++ Auto error fix now fixes 'Row N All Zeros' errors
++ Added some editor customization options.
++ Line is now selected if you click next to it in the left margin
+* Changed code to more Windows friendly style (Drag and Drop works now)
+* Fixed a problen with Error Check not finding all Bad Vertex Sequences
 
 v1.5b 31 July 2003
 + Entire program overhauled and rewritten.
@@ -117,7 +127,6 @@ v1.5b 31 July 2003
 + Ability to change default decimal places when Inlining
 + Ability to define icons for plugins
  
-
 v1.5a 05/22/2003  
 
 + Published LDDP under open source license. Feel free to contribute to this project
