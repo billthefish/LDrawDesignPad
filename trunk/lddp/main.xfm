@@ -1969,14 +1969,14 @@ object frMain: TfrMain
       FFFFFFFCFFEEFFFFC8004800F800FFFFFFFFFFF8FFDCFFFF6BFC4BFC07FEFFFF
       7FFEFFF87DFCFFFF780048000000FFFF7FFEFFF87DF8FFFF5BFC4BFC07FEFFFF
       3FFCFFF87CF0FFFF3C0030000000FFFF1FF8FFF87C60FFFF040000000000FFFF
-      07E000003800FFFF7FFF018000000000002000000100FFFF7FFF07E000000000
-      00F802000000FFFF7FFF1FF800300C0003FE00003D80FFFF7FFF3FFC00781E00
-      0FFF3B000000FFFF7FFF3FFC007C3E003FFF00003DFFFFFFFFFF3FFC3F3E7CFC
-      FFFF3BFE0000FFFF3FFF3FFC7E1E787EFFFF200021F8FFFF7FFF1FF87E1E787E
-      FFFE33F061F8FFFFFFFF0FF07E1E787EFFF8F800F800FFFFFFFF07E07F1E78FE
-      FFE033FC61FFFFFFFFFFFFFF7FFE7FFE3F8023FC21FFFFFFFFFFFFFF47FE7FE2
-      0E0000000000FFFFFFFFFFFF03FC3FC001173BFC3DFFFFFF7FFFFFFF01F81F80
-      015400000000FFFF3FFEFFFF0000000001B402000100FFFFFFFFFFFF00000000
+      07E000003800FFFF55B5018000000000002000000100FFFF152507E000000000
+      00F802000000FFFF1DA61FF800300C0003FE00003D80FFFF15253FFC00781E00
+      0FFF3B000000FFFF55B53FFC007C3E003FFF00003DFFFFFF00003FFC3F3E7CFC
+      FFFF3BFE0000FFFF33983FFC7E1E787EFFFF200021F8FFFF76D81FF87E1E787E
+      FFFE33F061F8FFFFC0D80FF07E1E787EFFF8F800F800FFFFC0DF07E07F1E78FE
+      FFE033FC61FFFFFFC399FFFF7FFE7FFE3F8023FC21FFFFFFC0D9FFFF47FE7FE2
+      0E0000000000FFFFC0D9FFFF03FC3FC001173BFC3DFFFFFF46D9FFFF01F81F80
+      015400000000FFFF039EFFFF0000000001B402000100FFFF0000FFFF00000000
       011400000000FFFF00000000000003FF7FFC003C0000FFFF3FF87FFC7FFC03FF
       FFFE00660EEEFFFF7FF87FFC7FFC03FFFFFE066308AAFFFFFFFE7FFC7FFC03FF
       FFFE7F630456FFFFFFFE7FFC7FFC1FFFFFFEFF630604FFFFFFFE7FFC7FFC1FFD
@@ -2149,15 +2149,15 @@ object frMain: TfrMain
     Footer.DefaultFont.Pitch = fpVariable
     Footer.DefaultFont.Style = []
     Footer.DefaultFont.Weight = 40
-    Margins.Left = 25
-    Margins.Right = 15
-    Margins.Top = 25
-    Margins.Bottom = 25
-    Margins.Header = 15
-    Margins.Footer = 15
-    Margins.LeftHFTextIndent = 2
-    Margins.RightHFTextIndent = 2
-    Margins.HFInternalMargin = 0.5
+    Margins.Left = 25.000000000000000000
+    Margins.Right = 15.000000000000000000
+    Margins.Top = 25.000000000000000000
+    Margins.Bottom = 25.000000000000000000
+    Margins.Header = 15.000000000000000000
+    Margins.Footer = 15.000000000000000000
+    Margins.LeftHFTextIndent = 2.000000000000000000
+    Margins.RightHFTextIndent = 2.000000000000000000
+    Margins.HFInternalMargin = 0.500000000000000000
     Margins.MirrorMargins = False
     Font.Color = clText
     Font.Height = 11
@@ -2192,40 +2192,46 @@ object frMain: TfrMain
     end
   end
   object OpenDialog1: TOpenDialog
-    Height = 0
-    Width = 0
     DefaultExt = 'dat'
     Filter = 
       'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
       'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
     FilterIndex = 0
     Options = [ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
+    Height = 0
     Title = 'Choose LDraw File...'
+    Width = 0
     Left = 8
     Top = 208
   end
   object SaveDialog1: TSaveDialog
-    Height = 0
-    Width = 0
     DefaultExt = 'dat'
     Filter = 
       'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
       '.*)|*.*'
     FilterIndex = 0
     Options = [ofOverwritePrompt, ofEnableSizing]
+    Height = 0
     Title = 'Save File as...'
+    Width = 0
     Left = 40
     Top = 208
   end
   object http: TIdHTTP
+    MaxLineAction = maException
+    ReadTimeout = 0
     Host = 'home.arcor.de'
-    Request.Accept = 'text/html, */*'
+    AllowCookies = True
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
     Request.ContentLength = 0
     Request.ContentRangeEnd = 0
     Request.ContentRangeStart = 0
     Request.ContentType = 'text/html'
-    Request.ProxyPort = 0
+    Request.Accept = 'text/html, */*'
+    Request.BasicAuthentication = False
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    HTTPOptions = [hoForceEncodeParams]
     Left = 72
     Top = 208
   end
