@@ -3,14 +3,8 @@ unit preview;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls, QExtCtrls, ToolWin, QComCtrls,
-  {$ENDIF}
-  {$IFDEF LINUX}
-  Types, QTypes, Classes, Variants, QGraphics, QControls, QForms,
-  QDialogs, QComCtrls, QStdCtrls, QExtCtrls,
-  {$ENDIF}
+  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ToolWin, ComCtrls,
   SysUtils;
 
 type
