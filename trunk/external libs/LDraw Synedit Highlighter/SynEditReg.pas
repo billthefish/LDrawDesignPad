@@ -24,7 +24,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditReg.pas,v 1.2 2003-06-08 19:45:38 duncan2 Exp $
+$Id: SynEditReg.pas,v 1.3 2003-07-03 07:05:31 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -109,9 +109,9 @@ uses
   QSynHighlighterXML,
   QSynHighlighterMsg,
   QSynHighlighterIDL,
-  QSynHighlighterLDraw,
   QSynHighlighterUnreal,
   QSynHighlighterST,
+  QSynHighlighterLDraw
 {$ELSE}
   // SynEdit components
   SynEdit,
@@ -182,9 +182,9 @@ uses
   SynHighlighterXML,
   SynHighlighterMsg,
   SynHighlighterIDL,
-  SynHighlighterLDraw,
   SynHighlighterUnreal,
   SynHighlighterST,
+  SynHighlighterLDraw,
 {$ENDIF}
   Classes;
 
@@ -249,7 +249,7 @@ begin
     TSynDfmSyn, TSynIniSyn, TSynInnoSyn,
     // other
     TSynBaanSyn, TSynGalaxySyn, TSynProgressSyn, TSynMsgSyn,
-    TSynIdlSyn, TSynLDRSyn, TSynUnrealSyn, TSynCPMSyn, TSynTeXSyn
+    TSynIdlSyn, TSynUnrealSyn, TSynCPMSyn, TSynTeXSyn, TSynLDRSyn
   ]);
 end;
 
