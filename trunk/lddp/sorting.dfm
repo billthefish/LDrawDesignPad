@@ -172,7 +172,7 @@ object fmSort: TfmSort
         'Decending')
       TabOrder = 1
     end
-    object cbSort1: TComboBox
+    object cbSort: TComboBox
       Left = 9
       Top = 16
       Width = 145
