@@ -244,6 +244,14 @@ type
     ConvertBitmaptoLDraw1: TMenuItem;
     acModelTreeView: TAction;
     ViewModelTree1: TMenuItem;
+    N15: TMenuItem;
+    Polling1: TMenuItem;
+    PolltoL3LabLDView1: TMenuItem;
+    Polltoselectedlineonly1: TMenuItem;
+    N16: TMenuItem;
+    Pollevery1sec1: TMenuItem;
+    Pollevery2sec1: TMenuItem;
+    Pollevery5sec: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -896,7 +904,7 @@ Return value: None
 begin
 {$IFDEF MSWINDOWS}
   if (activeMDICHild as TfrEditorChild).memo.modified then
-    if MessageDlg('File has been modified. '+#13+#10+'Do you want to save and view the file in LDView '+#13+#10+'or cancel the operation?', mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
+    if MessageDlg('File has been modified. '+#13+#10+'Do you want to save and then view the file in MLCad '+#13+#10+'or cancel the operation?', mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
   acFileSaveExecute(Sender);
   if (not FIleExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
     MessageDlg('You have to specify a valid path to MLCad.exe first!', mtError, [mbOK], 0);
@@ -1538,11 +1546,13 @@ end;
 
 procedure TfrMain.Pollevery3sec1Click(Sender: TObject);
 {---------------------------------------------------------------------
-Description: Set polling interval to 3 secs
+Description: Set polling interval to 1 sec
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+ Pollevery1sec1.Checked := true;
+ Pollevery3sec1.Checked := true;
  tmPoll.Enabled:=false;
  tmPoll.Interval:=1000;
  tmPoll.Enabled:=true;
@@ -1551,11 +1561,13 @@ end;
 
 procedure TfrMain.Pollevery5sec1Click(Sender: TObject);
 {---------------------------------------------------------------------
-Description: Set polling interval to 5 secs
+Description: Set polling interval to 2 secs
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+ Pollevery2sec1.Checked := true;
+ Pollevery5sec1.Checked := true;
  tmPoll.Enabled:=false;
  tmPoll.Interval:=2000;
  tmPoll.Enabled:=true;
@@ -1569,6 +1581,8 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+ Pollevery5sec.Checked := true;
+ Pollevery30secs1.Checked := true;
  tmPoll.Enabled:=false;
  tmPoll.Interval:=5000;
  tmPoll.Enabled:=true;
@@ -1604,6 +1618,7 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   mnPollL3Lab.checked:= not mnPollL3Lab.checked;
+  PolltoL3LabLDView1.Checked := not PolltoL3LabLDView1.Checked;
 end;
 
 
@@ -1776,6 +1791,7 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   mnPollToSelected.Checked:=not mnPollToSelected.Checked;
+  Polltoselectedlineonly1.Checked := not Polltoselectedlineonly1.Checked;
 end;
 
 
