@@ -30,7 +30,7 @@ uses
   QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
   Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
   QSyneditTypes, IdBaseComponent, IdComponent, IdTCPConnection, QGraphics, QSyneditKeyCmds,
-  QSynHighlighterCpp, QSynHighlighterPas, IdTCPClient, IdHTTP ;
+  QSynHighlighterCpp, QSynHighlighterPas, IdTCPClient, IdHTTP, l3check, DATModel, DATBase;
 
 
 type TLDrawArray= record
@@ -834,72 +834,39 @@ end;
 
 procedure TfrMain.acL3PCheckExecute(Sender: TObject);
 {---------------------------------------------------------------------
-Description: Start L3P
+Description: Perform L3P Check
 Parameter: None
-Return value: Windows Temp dir
+Return value: None
 ----------------------------------------------------------------------}
 
-var st:TStringlist;
-    s,cmd,u,Zieldatei:string;
-    i:integer;
-begin
-  if (not FIleExists(frOptions.edLDrawDir.text+'\parts.lst')) then begin
-    MessageDlg('You have to specify a valid path to LDraw (parts.lst) first!', mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
-  end;
-  if (not FIleExists(frOptions.edL3PDir.text+'\L3P.exe')) then begin
-    MessageDlg('You have to specify a valid path to L3P.exe first!', mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
-  end;
-  Zieldatei:=GetShortFileName(GetTempDir+GettmpFileName);
-  st:=Tstringlist.create;
-  st.add('set PATH=%PATH%;'+extractFIledir(Paramstr(0)));
-  st.add('set LDRAWDIR='+GetShortFileName(frOptions.edLdrawDir.text));
-  cmd:=GetShortFileName(frOptions.edL3PDir.text)+'\L3P.exe -check';
-  if frOptions.cboDist.Checked then cmd:=cmd+' -dist'+froptions.seDist.text;
-  if frOptions.cboDet.Checked then cmd:=cmd+' -det'+froptions.seDet.text;
-  u:=GetShortFileName(extractFilePath((activeMDICHild as TfrEditorChild).TempFileName))+ExtractFIleName((activeMDICHild as TfrEditorChild).TempFileName);
-  (activeMDICHild as TfrEditorChild).memo.lines.savetofile(u);
-  st.add(cmd+' '+u+' >'+Zieldatei);
-  s:=GetShortFileName(GetTempDir)+GetTMPFIleName+'.bat';
-  st.SaveToFile(s);
-  {$IFDEF MSWINDOWS}
-    DOCommand(GetDOSVar('COMSPEC')+' /C '+ s,SW_HIDE,true);
-  {$ELSEIF LINUX}
+var
+  s:string;
+  i:integer;
 
-  {$IFEND}
-  DeleteFile(s);
-  st.loadfromfile(Zieldatei);
-  if st.count=0 then begin
-    MessageDlg('An unknown error occured while trying '+#13+#10+'to execute L3P.', mtError, [mbOK], 0);
-    exit;
+begin
+  if frOptions.cboDet.Checked then
+    DetThreshold := StrToFloat(Trim(frOptions.seDet.Text));
+  if frOptions.cboDist.Checked then
+    DistThreshold := StrToFloat(Trim(frOptions.seDist.Text));
+
+  with ActiveMDIChild as TfrEditorChild do
+  begin
+    lbInfo.Items.Clear;
+    for i := 0 to memo.Lines.Count - 1 do
+    begin
+      s := L3CheckLine(memo.Lines[i]);
+      if s <> '' then
+        lbInfo.Items.Add('[L3P-Warning] Line ' + IntToStr(i+1) + ': ' +
+                         s + ': ' + memo.Lines[i]);
+    end;
+    if lbInfo.Items.Count > 0 then
+    begin
+      if pnInfo.Height < 30 then
+        pnInfo.Height := 91;
+    end
+    else
+      pnInfo.Height := 1;
   end;
-  DeleteFile(Zieldatei);
-  DeleteFile(u);
-  (activeMDICHild as TfrEditorChild).lbInfo.clear;
-  if st.count>3 then begin
-    if (activeMDICHild as TfrEditorChild).pnInfo.height<30 then (activeMDICHild as TfrEditorChild).pnInfo.height:=60;
-    for I:=3 to st.count-1 do begin
-      if pos('WARNING',st[i])>0 then begin
-        st[i]:=copy(st[i],pos(' ',st[i])+1,length(st[i]));
-        st[i]:=copy(st[i],pos(' ',st[i])+1,length(st[i]));
-        st[i]:='[L3P-Warning] '+ st[i];
-      end;
-      if pos('SKIPPING',st[i])>0 then begin
-        st[i]:=copy(st[i],pos(' ',st[i])+1,length(st[i]));
-        st[i]:=copy(st[i],pos(' ',st[i])+1,length(st[i]));
-        st[i]:='[L3P-Warning] '+ st[i];
-      end;
-     (activeMDICHild as TfrEditorChild).lbInfo.items.add(st[i]);
-    end;
-  end
-    else begin
-      (activeMDICHild as TfrEditorChild).pnInfo.height:=1;
-      MessageDlg('No L3P errors found!', mtInformation, [mbOK], 0);
-    end;
-  st.free;
 end;
 
 
@@ -1328,87 +1295,34 @@ Description: Inline - Transform a sub-file command into an expanded list of the 
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var part,spart,zielpart:TLDrawArray;
-    x,y,z:real;
-    j,jt,k,m:integer;
-    subpart:Textfile;
-    inlined:TStringlist;
-    sr:string;
+var
+  k, m: Integer;
+  DATModel1: TDATModel;
+
 begin
- inlined:=TStringlist.create;
+ DATModel1 := TDATModel.Create;
 
- with (activeMDICHild as TfrEditorChild).memo do begin
-   try
-     inlined.add('0 Inlined by LDDesignPad');
-     inlined.add('0 Original Line: '+lines[carety-1]);
-     inlined.add('');
-     part:=LDrawParse(lines[carety-1]);
-     if FIleExists(frOptions.edLDrawDir.text+'\parts\'+part.partname) then part.partname:=frOptions.edLDrawDir.text+'\parts\'+part.partname
-        else if FIleExists(frOptions.edLDrawDir.text+'\p\'+part.partname) then part.partname:=frOptions.edLDrawDir.text+'\p\'+part.partname
-          else part.partname:=ExtractFilePath((activeMDICHild as TfrEditorChild).caption)+part.partname;
-     if FileExists(part.partname) then
-     begin
-       AssignFIle(subpart,part.partname);
-       reset(subpart);
-       while not eof(subpart) do
-       begin
-         Readln(subpart,sr);
-         spart:=LDrawParse(sr);
-         case spart.typ of
-          -1: inlined.add('');
-           0: inlined.add(' '+sr);
-   1,2,3,4,5: begin
-               m:=spart.typ;
-               zielpart.typ:=spart.typ;
-               if m=5 then m:=4;
-               for j:=1 to m do
-               begin
-                 x := part.xyz[2,1]*spart.xyz[j,1]+part.xyz[2,2]*spart.xyz[j,2]+part.xyz[2,3]*spart.xyz[j,3]+part.xyz[1,1];
-                 y := part.xyz[3,1]*spart.xyz[j,1]+part.xyz[3,2]*spart.xyz[j,2]+part.xyz[3,3]*spart.xyz[j,3]+part.xyz[1,2];
-                 z := part.xyz[4,1]*spart.xyz[j,1]+part.xyz[4,2]*spart.xyz[j,2]+part.xyz[4,3]*spart.xyz[j,3]+part.xyz[1,3];
-                 zielpart.xyz[j,1]:=x;
-                 zielpart.xyz[j,2]:=y;
-                 zielpart.xyz[j,3]:=z;
-               end;
-               // Type 1 lines receive special treatment . Thanks to Tore Erikkson!
-               if spart.typ=1 then
-                 for jt:=2 to 4 do
-                 begin
-                   x := part.xyz[jt,1]*spart.xyz[2,1] + part.xyz[jt,2]*spart.xyz[3,1] + part.xyz[jt,3]*spart.xyz[4,1];
-                   y := part.xyz[jt,1]*spart.xyz[2,2] + part.xyz[jt,2]*spart.xyz[3,2] + part.xyz[jt,3]*spart.xyz[4,2];
-                   z := part.xyz[jt,1]*spart.xyz[2,3] + part.xyz[jt,2]*spart.xyz[3,3] + part.xyz[jt,3]*spart.xyz[4,3];
-                   zielpart.xyz[jt,1]:=x;
-                   zielpart.xyz[jt,2]:=y;
-                   zielpart.xyz[jt,3]:=z;
-                 end;
+ with (activeMDICHild as TfrEditorChild).memo do
+ begin
+   LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
+   DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
+   DATModel1.Add(Lines[carety-1]);
+   DATModel1.InlinePart(0);
 
-               if spart.color = 16 then zielpart.color:=part.color
-                 else zielpart.color:=spart.color;
-               inlined.add(LDrawConstruct(zielpart));
+   DATModel1.Insert(0,'');
+   DATModel1.Insert(0,'0 Original Line: '+lines[carety-1]);
+   DATModel1.Insert(0,'0 Inlined by LDDesignPad');
+   DATModel1.Add('0 End of Inlined Part');
+   DATModel1.Add('');
 
-             end;
-         end;
-       end;
-       CloseFIle(subpart);
-     end
-       else begin
-         MessageDlg('Cannot inline because I can''t find the subpart.', mtError, [mbOK], 0);
-         exit;
-       end;
-
-   except
-     MessageDlg('Cannot inline because of invalid line. Check the line carefully.', mtError, [mbOK], 0);
-     exit
-   end;
-   inlined.add('');
-   inlined.add('0 End of Inlined Part');
    k:=carety;
    lines.Delete(carety-1);
-   for m := inlined.Count - 1 downto 0 do
-     lines.Insert(carety-1,inlined[m]);
+   for m := DATModel1.Count - 1 downto 0 do
+     lines.Insert(carety-1,DATModel1[m].DATString);
    carety:=k;
+   Modified := true;
  end;
- inlined.free;
+ DATModel1.Free;
 end;
 
 
@@ -1731,14 +1645,14 @@ Return value: None
 ----------------------------------------------------------------------}
 
 var
-  line: TLDrawArray;
-  x4,y4,z4: Extended;
+  tx,ty,tz: Extended;
   strTemp: string;
+  DATElem: TDATElement;
 
 begin
  with (activeMDICHild as TfrEditorChild) do
  begin
-   // Set postion to line with error 
+   // Set postion to line with error
    lbInfoDblClick(Sender);
 
    // Get the Dat code from the L3P error
@@ -1750,17 +1664,22 @@ begin
    begin
      if pos('Bad vertex sequence, 0132',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
-       line:=LDrawParse(memo.lines[memo.CaretY-1]);
-       x4:=line.xyz[3,1];
-       y4:=line.xyz[3,2];
-       z4:=line.xyz[3,3];
-       line.xyz[3,1]:=line.xyz[4,1];
-       line.xyz[3,2]:=line.xyz[4,2];
-       line.xyz[3,3]:=line.xyz[4,3];
-       line.xyz[4,1]:=x4;
-       line.xyz[4,2]:=y4;
-       line.xyz[4,3]:=z4;
-       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
+       DATElem := TDATQuad.Create;
+       with DATElem as TDATQuad do
+       begin
+         DATString := memo.lines[memo.CaretY-1];
+         tx := x4;
+         ty := y4;
+         tz := z4;
+         x4 := x3;
+         y4 := y3;
+         z4 := z3;
+         x3 := tx;
+         y3 := ty;
+         z3 := tz;
+         memo.lines[memo.CaretY-1] := DATString;
+       end;
+       DATElem.Free;
        lbInfo.items.delete(lbInfo.ItemIndex);
        exit;
      end
@@ -1772,53 +1691,55 @@ begin
      end
      else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
-       line:=LDrawParse(memo.lines[memo.CaretY-1]);
-       line.xyz[2,2] := 1;
-       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
-
+       DATElem := TDATSubPart.Create;
+       (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+       (DATElem as TDATSubPart).RM[1,2] := 1;
+       memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+       DATElem.Free;
        lbInfo.items.delete(lbInfo.ItemIndex);
        exit;
      end
      else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
-       line:=LDrawParse(memo.lines[memo.CaretY-1]);
-       line.xyz[3,2] := 1;
-       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
-
+       DATElem := TDATSubPart.Create;
+       (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+       (DATElem as TDATSubPart).RM[2,2] := 1;
+       memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+       DATElem.Free;
        lbInfo.items.delete(lbInfo.ItemIndex);
        exit;
      end
      else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
-       line:=LDrawParse(memo.lines[memo.CaretY-1]);
-       line.xyz[4,2] := 1;
-       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
-
+       DATElem := TDATSubPart.Create;
+       (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+       (DATElem as TDATSubPart).RM[3,2] := 1;
+       memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+       DATElem.Free;
        lbInfo.items.delete(lbInfo.ItemIndex);
        exit;
      end
      else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
-       line:=LDrawParse(memo.lines[memo.CaretY-1]);
-       x4:=line.xyz[2,1];
-       y4:=line.xyz[2,2];
-       z4:=line.xyz[2,3];
-       line.xyz[2,1]:=line.xyz[3,1];
-       line.xyz[2,2]:=line.xyz[3,2];
-       line.xyz[2,3]:=line.xyz[3,3];
-       line.xyz[3,1]:=x4;
-       line.xyz[3,2]:=y4;
-       line.xyz[3,3]:=z4;
-       x4:=line.xyz[3,1];
-       y4:=line.xyz[3,2];
-       z4:=line.xyz[3,3];
-       line.xyz[3,1]:=line.xyz[4,1];
-       line.xyz[3,2]:=line.xyz[4,2];
-       line.xyz[3,3]:=line.xyz[4,3];
-       line.xyz[4,1]:=x4;
-       line.xyz[4,2]:=y4;
-       line.xyz[4,3]:=z4;
-       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
+       DATElem := TDATQuad.Create;
+       with DATElem as TDATQuad do
+       begin
+         DATString := memo.lines[memo.CaretY-1];
+         tx := x3;
+         ty := y3;
+         tz := z3;
+         x2 := x4;
+         y2 := y4;
+         z2 := z4;
+         x3 := x2;
+         y3 := y2;
+         z3 := z2;
+         x4 := tx;
+         y4 := ty;
+         z4 := tz;
+         memo.lines[memo.CaretY-1] := DATString;
+       end;
+       DATElem.Free;
        lbInfo.items.delete(lbInfo.ItemIndex);
        exit;
      end;
