@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 244
-  Top = 443
+  Left = 380
+  Top = 350
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -628,6 +628,9 @@ object frMain: TfrMain
       object AutoRoundSelection1: TMenuItem
         Action = acAutoRound
       end
+      object CombineTrianglesIntoQuad1: TMenuItem
+        Action = acTriangleCombine
+      end
       object ConvertBitmaptoLDraw1: TMenuItem
         Action = acBMP2LDraw
       end
@@ -1099,6 +1102,11 @@ object frMain: TfrMain
       Caption = 'Copy Error List To Clipboard'
       Enabled = False
       OnExecute = acECCopyExecute
+    end
+    object acTriangleCombine: TAction
+      Category = 'Editor'
+      Caption = 'Combine Triangles Into Quad'
+      OnExecute = acTriangleCombineExecute
     end
   end
   object ilToolBarColor: TImageList
@@ -2619,6 +2627,9 @@ object frMain: TfrMain
     end
     object AutoRoundSelection2: TMenuItem
       Action = acAutoRound
+    end
+    object CombineTrianglesIntoQuad2: TMenuItem
+      Action = acTriangleCombine
     end
     object GenerateBendibleObject1: TMenuItem
       Action = acBendableObject
