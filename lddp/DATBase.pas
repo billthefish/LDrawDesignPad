@@ -352,7 +352,8 @@ begin
     13: Result := FDATMatrix[1,4];
     14: Result := FDATMatrix[2,4];
     15: Result := FDATMatrix[3,4];
-  end;
+    else Result:=0;
+  end
 end;
 
 procedure TDATElement.SetCoordinate(Index: Integer; Value: Extended);

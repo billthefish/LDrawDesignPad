@@ -36,10 +36,7 @@ type
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-    Label1: TLabel;
-    cboL3P: TCheckBox;
     Bevel1: TBevel;
-    lbL3P: TLabel;
     Label3: TLabel;
     cboLDraw: TCheckBox;
     lbLdraw: TLabel;
@@ -85,7 +82,6 @@ type
     rgStyle: TRadioGroup;
     edLdrawDir: TEdit;
     edLDViewDir: TEdit;
-    edL3PDir: TEdit;
     edMLCadDir: TEdit;
     edL3LabDir: TEdit;
     seDist: TMaskEdit;
@@ -95,7 +91,6 @@ type
     edParameters: TEdit;
     btLDraw: TBitBtn;
     btLDView: TBitBtn;
-    btL3P: TBitBtn;
     btMLCad: TBitBtn;
     btL3Lab: TBitBtn;
     OpenDialog: TOpenDialog;
@@ -106,7 +101,6 @@ type
     procedure cblPluginsClickCheck(Sender: TObject);
     procedure btLDrawClick(Sender: TObject);
     procedure btLDViewClick(Sender: TObject);
-    procedure btL3PClick(Sender: TObject);
     procedure btMLCadClick(Sender: TObject);
     procedure btL3LabClick(Sender: TObject);
   private
@@ -138,17 +132,6 @@ begin
       cboLDraw.checked:=false;
       lbLDraw.font.Color:=clRed;
       lbldraw.Caption:='Not found!';
-    end;
-
-  if FileExists(frOptions.edL3PDir.text+'\L3P.exe') then begin
-    cboL3P.checked:=true;
-    lbL3P.font.Color:=clGreen;
-    lbL3P.Caption:='Found!';
-  end
-    else begin
-      cboL3P.checked:=false;
-      lbL3P.font.Color:=clRed;
-      lbL3P.Caption:='Not found!';
     end;
 
   if FileExists(frOptions.edLDViewDir.text+'\LDView.exe') then begin
@@ -262,15 +245,6 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.btL3PClick(Sender: TObject);
-var strDir:Widestring;
-begin
-  strDir:=edL3PDir.Text;
-  if SelectDirectory('Choose LDView Location','',strDir) then edL3PDir.Text:=strDir;
-  UpdateControls;
-end;
-
-
 procedure TfrOptions.btMLCadClick(Sender: TObject);
 var strDir:Widestring;
 begin
@@ -297,7 +271,6 @@ begin
   if frOptions.edLDrawDir.Text <> '' then
     LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
   LDDPini.WriteString(IniSection, 'edLDViewDir_Text', edLDViewDir.Text);
-  LDDPini.WriteString(IniSection, 'edL3PDir_Text', edL3PDir.Text);
   LDDPini.WriteString(IniSection, 'edMLCadDir_Text', edMLCadDir.Text);
   LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
   LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
@@ -325,7 +298,6 @@ begin
   LDDPini := TMemIniFile.Create(IniFileName);
   edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory', '');
   edLDViewDir.Text := LDDPini.ReadString(IniSection, 'edLDViewDir_Text', '');
-  edL3PDir.Text := LDDPini.ReadString(IniSection, 'edL3PDir_Text', '');
   edMLCadDir.Text := LDDPini.ReadString(IniSection, 'edMLCadDir_Text', '');
   edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
   edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
