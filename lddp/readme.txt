@@ -115,7 +115,7 @@ Fredrik Glöckner
 
   Bendible Object Generator feature derived from 
    Emacs LDraw Major-Mode
-  Copyright (C) 1999-2002  Fredrik Gl'#246'ckner (fredrigl@math.uio.no)
+  Copyright (C) 1999-2002  Fredrik Glöckner (fredrigl@math.uio.no)
 
 We especially thank you, the user, for downloading our program
 
