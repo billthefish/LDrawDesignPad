@@ -678,7 +678,7 @@ object frMain: TfrMain
     object acFileNew: TAction
       Category = 'File'
       Caption = '&New'
-      Hint = 'Neu|Neue Datei erstellen'
+      Hint = 'New|Create a new file'
       ImageIndex = 6
       ShortCut = 16462
       OnExecute = acFileNewExecute
@@ -748,9 +748,7 @@ object frMain: TfrMain
     object HelpAbout: TAction
       Category = 'Help'
       Caption = '&About...'
-      Hint = 
-        'Info|Anzeige von Informationen, Versionsnummer und Copyright-Ver' +
-        'merk'
+      Hint = 'Info|Show Info about LDDP'
       OnExecute = HelpAboutExecute
     end
     object acFileRevert: TAction
@@ -905,6 +903,7 @@ object frMain: TfrMain
       ImageIndex = 13
       ShortCut = 114
       OnExecute = acFindNextExecute
+      OnUpdate = acFindNextUpdate
     end
     object acL3Lab: TAction
       Category = 'Externals'
@@ -2820,8 +2819,12 @@ object frMain: TfrMain
     Left = 72
     Top = 200
   end
-  object SynEditSearch1: TSynEditSearch
+  object SynEditSearch: TSynEditSearch
     Left = 136
     Top = 296
+  end
+  object SynEditRegexSearch: TSynEditRegexSearch
+    Left = 104
+    Top = 232
   end
 end

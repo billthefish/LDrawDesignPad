@@ -24,7 +24,7 @@ object frEditorChild: TfrEditorChild
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 281
+    Top = 288
     Width = 620
     Height = 7
     Cursor = crVSplit
@@ -33,7 +33,7 @@ object frEditorChild: TfrEditorChild
   end
   object pnInfo: TPanel
     Left = 0
-    Top = 288
+    Top = 295
     Width = 620
     Height = 71
     Align = alBottom
@@ -101,15 +101,13 @@ object frEditorChild: TfrEditorChild
     Left = 0
     Top = 0
     Width = 620
-    Height = 281
+    Height = 288
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Style = []
-    ParentColor = False
-    ParentFont = False
     PopupMenu = frMain.pmMemo
     TabOrder = 1
     OnClick = memoClick
@@ -123,10 +121,10 @@ object frEditorChild: TfrEditorChild
     Gutter.LeftOffset = 0
     Gutter.RightOffset = 0
     Highlighter = frMain.SynLDRSyn
-    SearchEngine = frMain.SynEditSearch1
     TabWidth = 2
     OnChange = MemoChange
     OnGutterClick = memoGutterClick
+    OnReplaceText = memoReplaceText
     RemovedKeystrokes = <>
     AddedKeystrokes = <
       item
