@@ -24,15 +24,10 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Classes, QGraphics, QForms, QControls, QStdCtrls,
-  QButtons, QExtCtrls, version,
+  version,
   {$ENDIF}
-  {$IFDEF LINUX}
-  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
-  QStdCtrls, QExtCtrls,
-  {$ENDIF}
-  main,
-  SysUtils;
+  QTypes, Classes, Variants, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
+  QExtCtrls, SysUtils, main;
   
 type
   TfrAboutBox = class(TForm)

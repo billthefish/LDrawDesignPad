@@ -36,6 +36,7 @@ type
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
+
     fstOptions: TJvFormStorage;
 
     Label1: TLabel;

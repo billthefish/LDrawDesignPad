@@ -22,7 +22,10 @@ unit editoptions;
 interface
 
 uses
-  QForms, QSynEditHighlighter, QSynHighlighterLDraw, JvPlacemnt, QStdCtrls,
+  {$IFDEF MSWINDOWS}
+  JvPlacemnt,
+  {$ENDIF}
+  QForms, QSynEditHighlighter, QSynHighlighterLDraw, QStdCtrls,
   QButtons, QExtCtrls, QSynEdit, QSynMemo, QControls, QComCtrls, Classes,
   QActnList, QSyneditTypes, SysUtils, QDialogs, QGraphics;
 
