@@ -26,7 +26,7 @@ uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
   ActnList, ToolWin, ImgList, JvMRUList, JvPlacemnt,  HttpProt,
   version, registry, splash, SynEdit, SynEditHighlighter, SynHighlighterLDraw,
   SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
-  SynEditTypes, jvStrUtils;
+  SynEditTypes, jvStrUtils, IniFiles;
 
 type TLDrawArray= record
   typ:integer;
@@ -73,10 +73,8 @@ type
     acFileClose: TWindowClose;
     WindowTileVertical1: TWindowTileVertical;
     WindowTileItem2: TMenuItem;
-    MRUManager: TJvMRUManager;
     N2: TMenuItem;
     LastOpen1: TMenuItem;
-    fstMain: TJvFormStorage;
     ControlBar1: TControlBar;
     ToolBar2: TToolBar;
     ToolButton9: TToolButton;
@@ -241,11 +239,10 @@ type
     acHighlightLdraw: TAction;
     acHighlightPascal: TAction;
     acHighlightCpp: TAction;
+    acMRUList: TAction;
     procedure acFileNewExecute(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
-    procedure MRUManagerClick(Sender: TObject; const RecentName,
-      Caption: String; UserData: Integer);
     procedure acFileSaveExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure acFileRevertExecute(Sender: TObject);
@@ -304,6 +301,7 @@ type
     procedure acHighlightLdrawExecute(Sender: TObject);
     procedure acHighlightPascalExecute(Sender: TObject);
     procedure acHighlightCppExecute(Sender: TObject);
+    procedure acMRUListExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -333,12 +331,14 @@ type
     function  PluginInfo(fname:string; nr:integer):string;
     procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateCOntrols(closing:boolean);
+    procedure UpdateMRU(NewFileName: TFileName= '');
   end;
 
 
 var
   frMain: TfrMain;
   splashscreen: TfrSplash;
+  strIniName: string;
 
 implementation
 
@@ -645,6 +645,7 @@ begin
     begin
       CreateMDIChild(acFileOpen.Dialog.Files[i], false);
       ActiveMDIChild.Tag := 0;
+      UpdateMRU(acFileOpen.Dialog.Files[i]);
     end;
 end;
 
@@ -668,16 +669,17 @@ begin
   Close;
 end;
 
-procedure TfrMain.MRUManagerClick(Sender: TObject; const RecentName,
-  Caption: String; UserData: Integer);
+procedure TfrMain.acMRUListExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Opens a file from the MRU Manager
-Parameter: Standard , component MRUManager is used
+Parameter: Standard
 Return value: none
 ----------------------------------------------------------------------}
 begin
-  if FIleExists(Recentname) then CreateMDIChild(Recentname,false)
-    else MessageDlg('File '''+RecentName+''' not found!', mtError, [mbOK], 0);
+  if FIleExists((Sender as TMenuItem).Caption) then
+    CreateMDIChild((Sender as TMenuItem).Caption , false)
+  else
+    MessageDlg('File '''+ (Sender as TMenuItem).Caption +''' not found!', mtError, [mbOK], 0);
 end;
 
 
@@ -732,6 +734,8 @@ end;
 procedure TfrMain.acFileSaveAsAccept(Sender: TObject);
 begin
     ActiveMDIChild.caption:=acFileSaveAs.Dialog.filename;
+    if ActiveMDIChild.Tag > 0 then
+      UpdateMRU(acFileSaveAs.Dialog.filename);
     ActiveMDIChild.Tag := 0;
     acFileSaveExecute(Sender);
 end;
@@ -764,8 +768,8 @@ Parameter: None
 Return value: None
 ----------------------------------------------------------------------}
 var i:integer;
-    regT:Tregistry;
-    strIniFileName: string;
+    iniLDDP:TMemIniFile;
+
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
@@ -773,18 +777,16 @@ begin
     SplashScreen.show;
     SplashScreen.update;
     screen.cursor:=-11;
-  strIniFileName := ExtractFilePath(Application.ExeName) + 'LDDP.ini';
-  frMain.fstMain.IniFileName := strIniFileName;
-  frOptions.fstOptions.IniFileName := strIniFileName;
-  frEditOptions.fstEditOptions.IniFileName := strIniFileName;
-  regT:=Tregistry.create;
-  regt.RootKey:=HKEY_CURRENT_USER;
-  regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
-  regt.WriteString('InstallDir', application.ExeName);
-  regt.free;
-//  fstMain.RestoreFormPlacement;
+  strIniName := ExtractFilePath(Application.ExeName) + 'LDDP.ini';
+  frOptions.fstOptions.IniFileName := strIniName;
+  frEditOptions.fstEditOptions.IniFileName := strIniName;
   frOptions.fstOptions.RestoreFormPlacement;
   frEditOptions.fstEditOptions.RestoreFormPlacement;
+  iniLDDP:=TMemIniFile.Create(strIniName);
+  iniLDDP.WriteString('InstallDir', ExtractFilePath(Application.ExeName), '');
+  iniLDDP.UpdateFile;
+  iniLDDP.free;
+  UpdateMRU;
   SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
   slPlugins:=TStringlist.create;
   pmMemo.tag:=pmMemo.items.count;
@@ -2191,6 +2193,48 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynCPPSyn;
+end;
+
+procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
+{---------------------------------------------------------------------
+Description: Update the Most Recently Used list
+Parameter: NewFileName: Full Path and Filename to add, if supplied
+Return value: None
+----------------------------------------------------------------------}
+var
+  iniLDDP: TMemIniFile;
+  MRUSectionList: TStringList;
+  i: integer;
+  mnuNewItem: TMenuItem;
+
+begin
+  iniLDDP := TMemIniFile.Create(strIniName);
+  MRUSectionList := TStringList.Create;
+  iniLDDP.ReadSection('MRU', MRUSectionList);
+  if ((NewFileName <> '') and (MRUSectionList.Indexof(NewFileName) < 0)) then
+  begin
+    if MRUSectionList.Count >= 10 then
+      MRUSectionList.Delete(9);
+    MRUSectionList.Insert(0, NewFileName);
+  end;  
+  while LastOpen1.Count>0 do LastOpen1.items[LastOpen1.Count-1].free;
+
+  iniLDDP.EraseSection('MRU');
+
+  for i := 0 to MRUsectionList.Count - 1 do
+  begin
+    mnuNewItem := TMenuItem.Create(LastOpen1);
+    mnuNewItem.caption:=MRUSectionList[i];
+    mnuNewItem.OnClick := acMRUListExecute;
+    LastOpen1.Insert(LastOpen1.Count, mnuNewItem);
+    iniLDDP.WriteString('MRU', MRUSectionList[i], '');
+  end;
+
+  if LastOpen1.Count > 0 then LastOpen1.Enabled := True;
+  
+  iniLDDP.UpdateFile;
+  MRUSectionList.Free;
+  iniLDDP.Free;
 end;
 
 end.

@@ -189,11 +189,8 @@ begin
     end;
   end
     else canclose:=true;
-  if canclose=true then
-  begin
-     if FileExists(self.caption) then frMain.MRUManager.Strings.Insert(0,Self.Caption);
-     if FileExists(tempFilename) then DeleteFile(tempFilename);
-  end;
+  if ((canclose=true) and (FileExists(tempFilename))) then
+    DeleteFile(tempFilename);
 end;
 
 procedure TfrEditorChild.Button1Click(Sender: TObject);
