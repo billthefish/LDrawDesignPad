@@ -195,14 +195,14 @@ var
 
 begin
   GetMem(sBuff, 255);         // allocate buffer
-  Plugin_Info:=nil;
+  Plugin_Info := nil;
   libHndl := LoadLibrary(PAnsiChar(fname));
   if libHndl <> 0 then
     @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
 
   if Assigned(Plugin_Info) then Plugin_info(nr, sBuff, 255);
 
-  result:=StrPas(sBuff);
+  result := StrPas(sBuff);
   Plugin_Info := nil;
   FreeLibrary(libHndl);
 end;
