@@ -28,7 +28,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynExportTeX.pas,v 1.2 2003-07-06 11:41:46 c_schmitz Exp $
+$Id: SynExportTeX.pas,v 1.3 2003-07-09 16:13:26 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -63,10 +63,8 @@ type
   private
     fMargin: integer;
     fLastToken: TSynHighlighterAttributes;
-    function ColorToTeX(AColor: TColor): string;
     function GetNewCommands: string;
     function AttriStyleName(const AName: string): string;
-    function ReplaceDecSep(const AIn: string): string;
   protected
     fCreateTeXFragment: boolean;
     fTabWidth: integer;
@@ -106,6 +104,7 @@ implementation
 
 uses
 {$IFDEF SYN_CLX}
+  QSynEditMiscProcs,
   QSynEditStrConst,
   QSynHighlighterMulti,
 {$ELSE}
@@ -113,6 +112,36 @@ uses
   SynHighlighterMulti,
 {$ENDIF}
   SysUtils;
+
+function ReplaceDecSep(const AIn: string): string;
+var
+  p: PChar;
+begin
+  // LaTeX uses a Dot as Deciaml Separator, in some languages a Comma is used.
+  p := PChar(AIn);
+  while p^ <> #0 do begin
+    if p^ = #44 then
+      Result := Result + #46
+    else
+      Result := Result + p^;
+    Inc(p);
+  end;
+end;
+
+function ColorToTeX(AColor: TColor): string;
+const
+  f = '%1.2g';
+  f2 = '%s,%s,%s';
+var
+  RGBColor: longint;
+  RValue, GValue, BValue: string;
+begin
+  RGBColor := ColorToRGB(AColor);
+  RValue := ReplaceDecSep(Format(f, [GetRValue(RGBColor) / 255]));
+  GValue := ReplaceDecSep(Format(f, [GetGValue(RGBColor) / 255]));
+  BValue := ReplaceDecSep(Format(f, [GetBValue(RGBColor) / 255]));
+  Result := Format(f2, [RValue, GValue, BValue]);
+end;
 
 { TSynExporterTeX }
 
@@ -140,38 +169,6 @@ begin
   fReplaceReserved['_'] := '\_';
   fReplaceReserved['#'] := '\#';
   fReplaceReserved['%'] := '\%';
-end;
-
-function TSynExporterTeX.ReplaceDecSep(const AIn: string): string;
-var
-  p: PChar;
-begin
-  // LaTeX uses a Dot as Deciaml Separator, in some languages a Comma is used.
-  p := PChar(AIn);
-  while p^ <> #0 do begin
-    if p^ = #44 then
-      Result := Result + #46
-    else
-      Result := Result + p^;
-    Inc(p);
-  end;
-end;
-
-function TSynExporterTeX.ColorToTeX(AColor: TColor): string;
-const
-  f = '%1.2g';
-  f2 = '%s,%s,%s';
-var
-  RGBColor: longint;
-  RValue, GValue, BValue: string;
-begin
-  RGBColor := ColorToRGB(AColor);
-{$IFNDEF SYN_CLX}
-  RValue := ReplaceDecSep(Format(f, [GetRValue(RGBColor) / 255]));
-  GValue := ReplaceDecSep(Format(f, [GetGValue(RGBColor) / 255]));
-  BValue := ReplaceDecSep(Format(f, [GetBValue(RGBColor) / 255]));
-  Result := Format(f2, [RValue, GValue, BValue]);
-{$ENDIF}
 end;
 
 procedure TSynExporterTeX.SetTokenAttribute(IsSpace: Boolean; Attri: TSynHighlighterAttributes);

@@ -123,7 +123,6 @@ contains
   SynMacroRecorder in '..\Source\SynMacroRecorder.pas',
   SynMemo in '..\Source\SynMemo.pas',
   SynRegExpr in '..\Source\SynRegExpr.pas',
-  SynHighlighterCSS in '..\Source\SynHighlighterCss.pas',
-  SynHighlighterLDraw in '..\Source\SynHighlighterLDraw.pas';
+  SynHighlighterCSS in '..\Source\SynHighlighterCss.pas';
 
 end.

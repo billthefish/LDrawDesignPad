@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterLDraw.pas,v 1.1 2003-07-07 05:25:44 billthefish Exp $
+$Id: SynHighlighterLDraw.pas,v 1.2 2003-07-09 16:13:27 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -177,8 +177,8 @@ resourcestring
 {$ELSE}
 const
 {$ENDIF}
-  SYNS_Filter = 'All files (*.*)|*.*';
-  SYNS_Lang = '';
+  SYNS_FilterLDraw = 'LEGO LDraw Files (*.ldr)|*.ldr';
+  SYNS_LangLDraw = 'LEGO LDraw';
   SYNS_AttrColor = 'Color';
   SYNS_AttrFirstTri = 'FirstTri';
   SYNS_AttrFourthTri = 'FourthTri';
@@ -387,7 +387,7 @@ begin
   SetAttributesOnChange(DefHighlightChange);
   InitIdent;
   MakeMethodTables;
-  fDefaultFilter := SYNS_Filter;
+  fDefaultFilter := SYNS_FilterLDraw;
   fRange := rsUnknown;
 end;
 
@@ -585,13 +585,13 @@ end;
 
 function TSynLDRSyn.IsFilterStored: Boolean;
 begin
-  Result := fDefaultFilter <> SYNS_Filter;
+  Result := fDefaultFilter <> SYNS_FilterLDraw;
 end;
 
 {$IFNDEF SYN_CPPB_1} class {$ENDIF}
 function TSynLDRSyn.GetLanguageName: string;
 begin
-  Result := SYNS_Lang;
+  Result := SYNS_LangLDraw;
 end;
 
 procedure TSynLDRSyn.ResetRange;

@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEdit.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
+$Id: SynEdit.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
 
 
 You may retrieve the latest version of this file at the SynEdit home page,
@@ -496,7 +496,6 @@ type
     function LeftSpacesEx(const Line: string; WantTabs: Boolean): Integer;
     function GetLeftSpacing(CharCount: Integer; WantTabs: Boolean): String;
     procedure LinesChanging(Sender: TObject);
-    procedure LinesChanged(Sender: TObject);
     procedure LockUndo;
     procedure MoveCaretAndSelection(ptBefore, ptAfter: TPoint;
       SelectionCommand: boolean);
@@ -570,7 +569,7 @@ type
     procedure CreateParams(var Params: TCreateParams); override;
     procedure CreateWnd; override;
     procedure DestroyWnd; override;
-    procedure InvalidateRect(const aRect: TRect; aErase: boolean);
+    procedure InvalidateRect(const aRect: TRect; aErase: boolean); virtual;
 {$ENDIF}
     procedure DblClick; override;
     procedure DecPaintLock;
@@ -586,6 +585,7 @@ type
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure KeyPress(var Key: Char); override;
+    procedure LinesChanged(Sender: TObject); virtual;
     procedure ListAdded(Index: integer; const S: String);                       // mh 2000-10-10
     procedure ListCleared(Sender: TObject);
     procedure ListDeleted(Index: integer);
@@ -7614,7 +7614,10 @@ end;
 
 function TCustomSynEdit.GetSelEnd: integer;
 begin
-  Result := RowColToCharIndex( Blockend );
+  if GetSelAvail then
+    Result := RowColToCharIndex( Blockend )
+  else
+    Result := RowColToCharIndex( CaretXY );
 end;
 
 procedure TCustomSynEdit.SetSelEnd(const Value: integer);
@@ -9765,11 +9768,7 @@ begin
       iKey := iDelKeys[cKey];
       iToDelete := Keystrokes.FindShortcut2( iKey.ShortCut, iKey.ShortCut2 );
       if (iToDelete >= 0) and (Keystrokes[iToDelete].Command = iKey.Command) then
-{$IFDEF SYN_COMPILER_4_UP}
-        Keystrokes.Delete( iToDelete );
-{$ELSE}
         Keystrokes[iToDelete].Free;
-{$ENDIF}
     end;
   finally
     iDelKeys.Free;

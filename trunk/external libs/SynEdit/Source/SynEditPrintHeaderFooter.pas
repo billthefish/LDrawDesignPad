@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditPrintHeaderFooter.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
+$Id: SynEditPrintHeaderFooter.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -241,6 +241,9 @@ type
 implementation
 
 uses
+{$IFDEF SYN_COMPILER_4_UP}
+  Math,
+{$ENDIF}
 {$IFDEF SYN_CLX}
   QSynEditMiscProcs;
 {$ELSE}

@@ -227,6 +227,7 @@ uses
 {$IFDEF SYN_CLX}
   QSynEditStrConst;
 {$ELSE}
+  Windows,
   SynEditStrConst;
 {$ENDIF}
 

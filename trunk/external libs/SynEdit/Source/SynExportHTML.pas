@@ -29,7 +29,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynExportHTML.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
+$Id: SynExportHTML.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -98,6 +98,7 @@ implementation
 uses
 {$IFDEF SYN_CLX}
   QSynEditStrConst,
+  QSynEditMiscProcs,
 {$ELSE}
   SynEditStrConst,
 {$ENDIF}
@@ -217,31 +218,6 @@ begin
   fReplaceReserved['÷'] := '&divide';
   fReplaceReserved['€'] := '&euro;';
 end;
-
-{$IFDEF SYN_CLX}
-type
-  TColorRec = packed record
-    Blue: Byte;
-    Green: Byte;
-    Red: Byte;
-    Unused: Byte;
-  end;
-
-function GetRValue(RGBValue: TColor): byte;
-begin
-  Result := TColorRec(RGBValue).Red;
-end;
-
-function GetGValue(RGBValue: TColor): byte;
-begin
-  Result := TColorRec(RGBValue).Green;
-end;
-
-function GetBValue(RGBValue: TColor): byte;
-begin
-  Result := TColorRec(RGBValue).Blue;
-end;
-{$ENDIF}
 
 { TSynExporterHTML }
 
