@@ -321,7 +321,7 @@ type
     function  LDrawConstruct(line:TLDrawArray):string;
     function  LDrawParse(line:String): TLDrawArray;
     procedure LoadFile(fname:string);
-    procedure LoadPlugins;
+    procedure LoadPlugins(AppInit:Boolean = false);
     function  PluginInfo(fname:string; nr:integer):string;
     procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateCOntrols(closing:boolean);
@@ -1087,10 +1087,10 @@ begin
   FreeLibrary(libHndl);
 end;
 
-procedure Tfrmain.LoadPlugins;
+procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
 {---------------------------------------------------------------------
 Description: Load all plugins and create menu entries, add names to a stringlist and enumerate entries by tag
-Parameter: None
+Parameter: AppInit:  specified if app is initailizing, default is false
 Return value: None
 ----------------------------------------------------------------------}
 var sr:TSearchRec;
@@ -1107,24 +1107,36 @@ begin
   slPlugins.clear;
   frOptions.cblPlugins.sorted:=false;
   while Plugins1.Count>0 do plugins1.items[Plugins1.Count-1].free;
-  while plugins3.Count>0 do plugins3.items[Plugins3.Count-1].free;
+  while plugins3.Count>0 do
+  begin
+    if plugins3.items[Plugins3.Count-1].ImageIndex <> -1 then
+      ilToolBarColor.Delete(plugins3.items[Plugins3.Count-1].ImageIndex);
+    plugins3.items[Plugins3.Count-1].free;
+  end;
+  
   while i=0 do
   begin
     PluginFile := PluginPath + sr.Name;
-    splashscreen.lbState.Caption:='Initializing plugin: '+sr.name;
-    splashscreen.update;
+    if AppInit then
+    begin
+      splashscreen.lbState.Caption:='Initializing plugin: '+sr.name;
+      splashscreen.update;
+    end;
     frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
                                    ' - ' + frMain.PLuginInfo(PluginFile,3));
     slplugins.add(frMain.PLuginInfo(PluginFile,6)+','+PluginFile);
 
     if ExtractfileExt(lowercase(sr.name))='.dll' then
     begin
-      try
-        plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
-        imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
-      except
-        imgix := -1;
-      end;  
+      imgix := -1;
+      if FileExists(ChangeFileExt(PluginFile, '.bmp')) then
+        try
+          plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
+          imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
+          plgBitmap.Free;
+        except
+          imgix := -1;
+        end;
       NewItem := TMenuItem.Create(Plugins3);
       Newitem.tag:=slplugins.count-1;
       NewItem.caption:=frMain.PLuginInfo(PluginFile,1);
