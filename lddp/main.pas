@@ -689,7 +689,6 @@ begin
     SplashScreen.Close;
     SplashScreen.Release;
   end;
-    ShowMessage('ping');
 end;
 
 procedure TfrMain.acFileRevertExecute(Sender: TObject);
