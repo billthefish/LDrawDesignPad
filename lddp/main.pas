@@ -29,7 +29,7 @@ uses
   IdTCPConnection, IdTCPClient, IdHTTP, Classes, QActnList, QTypes,
   QComCtrls, QControls, Inifiles, splash, QSyneditTypes, QGraphics,
   QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls,
-  QSynEditMiscClasses, QSynEditSearch;
+  QSynEditMiscClasses, QSynEditSearch, QSynEditTextBuffer;
 
 type
   TfrMain = class(TForm)
@@ -1187,8 +1187,11 @@ begin
                 '0 KEYWORDS your keywords'+#13#10;
   with (activeMDICHild as TfrEditorChild).memo do
   begin
+//    BeginUndoBlock;
     Lines.Text := HeaderText + Lines.Text;
+//    UndoList.AddChange(crInsert,Point(1,1),CharIndexToRowCol(Length(HeaderText)), HeaderText, SelectionMode);
     Modified := true;
+//    EndUndoBlock;
   end;
 end;
 
@@ -1217,27 +1220,24 @@ Return value: None
 var
   j:integer;
   startcol,endcol: Integer;
-  tmpPoint: TPoint;
 
 begin
    with (activeMDICHild as TfrEditorChild).memo do
    begin
      if seltext<>'' then
      begin
-       startcol := CharIndexToRowCol(SelStart).Y - 1;
-       if CharIndexToRowCol(SelEnd).X = 1 then
-         endcol := CharIndexToRowCol(SelEnd).Y - 2
+       startcol := BlockBegin.Y - 1;
+       if BlockEnd.X = 1 then
+         endcol := BlockEnd.Y - 2
        else
-         endcol := CharIndexToRowCol(SelEnd).Y - 1;
+         endcol := BlockEnd.y - 1;
+
        for j := startcol to endcol do
         if (Lines[j] <> '') and (Lines[j] <> #13#10) and
            (Lines[j] <> #13) and (Lines[j] <> #10) then
           Lines[j] := '0 ' + Lines[j];
-       tmpPoint.X := 1;
-       tmpPoint.Y := startcol+1;
-       SelStart := RowColToCharIndex(tmpPoint);
-       tmpPoint.Y := endcol+2;
-       SelEnd := RowColToCharIndex(tmpPoint) - 1;
+       BlockBegin := Point(1,startcol + 1);
+       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1)
      end;
    end;
 end;
@@ -1252,7 +1252,6 @@ Return value: None
 var
   j:integer;
   startcol,endcol: Integer;
-  tmpPoint: TPoint;
   DModel: TDATModel;
 
 begin
@@ -1260,11 +1259,11 @@ begin
    begin
      if seltext<>'' then
      begin
-       startcol := CharIndexToRowCol(SelStart).Y - 1;
-       if CharIndexToRowCol(SelEnd).X = 1 then
-         endcol := CharIndexToRowCol(SelEnd).Y - 2
+       startcol := BlockBegin.Y - 1;
+       if BlockEnd.X = 1 then
+         endcol := BlockEnd.Y - 2
        else
-         endcol := CharIndexToRowCol(SelEnd).Y - 1;
+         endcol := BlockEnd.y - 1;
 
        DModel := TDATModel.Create;
        for j := startcol to endcol do
@@ -1276,11 +1275,8 @@ begin
        end;
        DModel.Free;
 
-       tmpPoint.X := 1;
-       tmpPoint.Y := startcol+1;
-       SelStart := RowColToCharIndex(tmpPoint);
-       tmpPoint.Y := endcol+2;
-       SelEnd := RowColToCharIndex(tmpPoint) - 1;
+       BlockBegin := Point(1,startcol + 1);
+       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1)
      end;
    end;
 end;
@@ -1464,17 +1460,14 @@ begin
       begin
         clr.Clear;
 
-        startcol := CharIndexToRowCol(SelStart).Y - 1;
-        if CharIndexToRowCol(SelEnd).X = 1 then
-          endcol := CharIndexToRowCol(SelEnd).Y - 2
+        startcol := BlockBegin.Y - 1;
+        if BlockEnd.X = 1 then
+          endcol := BlockEnd.Y - 2
         else
-          endcol := CharIndexToRowCol(SelEnd).Y - 1;
+          endcol := BlockEnd.y - 1;
 
-        tmpPoint.X := 1;
-        tmpPoint.Y := startcol+1;
-        SelStart := RowColToCharIndex(tmpPoint);
-        tmpPoint.Y := endcol+2;
-        SelEnd := RowColToCharIndex(tmpPoint);
+        BlockBegin := Point(1,startcol + 1);
+        BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
 
         clr.ModelText := SelText;
 
@@ -1488,10 +1481,8 @@ begin
 
         SelText := clr.ModelText;
 
-        tmpPoint.Y := startcol+1;
-        SelStart := RowColToCharIndex(tmpPoint);
-        tmpPoint.Y := endcol+2;
-        SelEnd := RowColToCharIndex(tmpPoint)-1;
+        BlockBegin := Point(1,startcol + 1);
+        BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
       end;
     end;
   end;
@@ -2015,18 +2006,15 @@ begin
   begin
     DATModel1 := TDATModel.Create;
 
-    startcol := CharIndexToRowCol(SelStart).Y - 1;
+    startcol := BlockBegin.Y - 1;
 
-    if CharIndexToRowCol(SelEnd).X = 1 then
-      endcol := CharIndexToRowCol(SelEnd).Y - 2
+    if BlockEnd.X = 1 then
+      endcol := BlockEnd.Y - 2
     else
-      endcol := CharIndexToRowCol(SelEnd).Y - 1;
+      endcol := BlockEnd.y - 1;
 
-    tmpPoint.X := 1;
-    tmpPoint.Y := startcol+1;
-    SelStart := RowColToCharIndex(tmpPoint);
-    tmpPoint.Y := endcol+2;
-    SelEnd := RowColToCharIndex(tmpPoint);
+    BlockBegin := Point(1,startcol + 1);
+    BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
 
     if SelLength <> 0 then
     begin
@@ -2038,10 +2026,8 @@ begin
 
       SelText := DATModel1.ModelText;
 
-      tmpPoint.Y := startcol+1;
-      SelStart := RowColToCharIndex(tmpPoint);
-      tmpPoint.Y := endcol+2;
-      SelEnd := RowColToCharIndex(tmpPoint)-1;
+      BlockBegin := Point(1,startcol + 1);
+      BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
 
       DATModel1.Free;
     end;

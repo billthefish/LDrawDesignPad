@@ -49,7 +49,8 @@ type
     procedure memoClick(Sender: TObject);
     procedure memoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure memoDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure memoGutterClick(Sender: TObject; Button: TMouseButton; X, Y,
+      Line: Integer; Mark: TSynEditMark);
   private
     { Private declarations }
     tmpFilename:string;
@@ -271,12 +272,14 @@ begin
   UpdateControls;
 end;
 
-procedure TfrEditorChild.memoDragDrop(Sender, Source: TObject; X,
-  Y: Integer);
+procedure TfrEditorChild.memoGutterClick(Sender: TObject;
+  Button: TMouseButton; X, Y, Line: Integer; Mark: TSynEditMark);
 begin
-  ShowMessage((Sender as TSynEdit).SelText + #13#10 +
-              (Source as TSynEdit).SelText + #13#10 +
-              IntToStr(X) + ':' + IntToStr(Y));
+  with memo do
+  begin
+    BlockBegin := CaretXY;
+    BlockEnd := Point(Length(Lines[Line-1]) + 1 , CaretY);
+  end;
 end;
 
 end.
