@@ -1,6 +1,6 @@
 object frOptions: TfrOptions
-  Left = 256
-  Top = 126
+  Left = 360
+  Top = 236
   Width = 529
   Height = 368
   VertScrollBar.Range = 37
@@ -711,7 +711,7 @@ object frOptions: TfrOptions
           Width = 185
           Height = 17
           Caption = 'Det Coplanarity Check Threshold:'
-          TabOrder = 2
+          TabOrder = 1
         end
         object cboDist: TCheckBox
           Left = 20
@@ -733,7 +733,7 @@ object frOptions: TfrOptions
             'General files (parts, subparts and some '
             'primitives) typically use a value of 0.1.')
           ReadOnly = True
-          TabOrder = 5
+          TabOrder = 4
         end
         object Memo2: TMemo
           Left = 288
@@ -762,46 +762,7 @@ object frOptions: TfrOptions
             'the pecent deviation used for collinear point '
             'determination. (L3P uses 0.0001 by defualt)')
           ReadOnly = True
-          TabOrder = 7
-        end
-        object seDist: TJvFloatEdit2
-          Left = 208
-          Top = 22
-          Width = 73
-          Height = 21
-          Alignment = taRightJustify
-          ReadOnly = False
-          TabOrder = 1
-          Value = 0.100000000000000000
-          MaxDecimals = 5
-          HasMaxValue = False
-          HasMinValue = False
-        end
-        object seDet: TJvFloatEdit2
-          Left = 208
-          Top = 56
-          Width = 73
-          Height = 21
-          Alignment = taRightJustify
-          ReadOnly = False
-          TabOrder = 3
-          Value = 0.010000000000000000
-          MaxDecimals = 5
-          HasMaxValue = False
-          HasMinValue = False
-        end
-        object seCollinear: TJvFloatEdit2
-          Left = 208
-          Top = 130
-          Width = 73
-          Height = 21
-          Alignment = taRightJustify
-          ReadOnly = False
-          TabOrder = 4
-          Value = 0.000100000000000000
-          MaxDecimals = 5
-          HasMaxValue = False
-          HasMinValue = False
+          TabOrder = 2
         end
         object cboUnitDet: TCheckBox
           Left = 20
@@ -809,20 +770,7 @@ object frOptions: TfrOptions
           Width = 205
           Height = 17
           Caption = 'Unit Det Coplanarity Check Threshold:'
-          TabOrder = 8
-        end
-        object seUnitDet: TJvFloatEdit2
-          Left = 224
-          Top = 88
-          Width = 57
-          Height = 21
-          Alignment = taRightJustify
-          ReadOnly = False
-          TabOrder = 9
-          Value = 0.010000000000000000
-          MaxDecimals = 5
-          HasMaxValue = False
-          HasMinValue = False
+          TabOrder = 3
         end
         object Memo4: TMemo
           Left = 288
@@ -836,7 +784,75 @@ object frOptions: TfrOptions
             'Geometric primitives typically use 0.01. '
             'Hi-res primitives typically use 0.001.')
           ReadOnly = True
+          TabOrder = 5
+        end
+        object seDist: TJvValidateEdit
+          Left = 200
+          Top = 20
+          Width = 81
+          Height = 21
+          CheckChars = '0123456789.'
+          CriticalPoints.CheckPoints = cpNone
+          CriticalPoints.ColorAbove = clBlue
+          CriticalPoints.ColorBelow = clRed
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '0.1'
+          TabOrder = 7
+          Text = '0.1'
+          Value = 0.100000000000000000
+        end
+        object seDet: TJvValidateEdit
+          Left = 200
+          Top = 53
+          Width = 81
+          Height = 21
+          CheckChars = '0123456789.'
+          CriticalPoints.CheckPoints = cpNone
+          CriticalPoints.ColorAbove = clBlue
+          CriticalPoints.ColorBelow = clRed
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '0.001'
+          TabOrder = 8
+          Text = '0.001'
+          Value = 0.001000000000000000
+        end
+        object seUnitDet: TJvValidateEdit
+          Left = 224
+          Top = 86
+          Width = 57
+          Height = 21
+          CheckChars = '0123456789.'
+          CriticalPoints.CheckPoints = cpNone
+          CriticalPoints.ColorAbove = clBlue
+          CriticalPoints.ColorBelow = clRed
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '0.0001'
+          TabOrder = 9
+          Text = '0.0001'
+          Value = 0.000100000000000000
+        end
+        object seCollinear: TJvValidateEdit
+          Left = 200
+          Top = 130
+          Width = 81
+          Height = 21
+          CheckChars = '0123456789.'
+          CriticalPoints.CheckPoints = cpNone
+          CriticalPoints.ColorAbove = clBlue
+          CriticalPoints.ColorBelow = clRed
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '0.0001'
           TabOrder = 10
+          Text = '0.0001'
+          Value = 0.000100000000000000
         end
       end
       object GroupBox5: TGroupBox
@@ -861,33 +877,33 @@ object frOptions: TfrOptions
           Height = 13
           Caption = 'Rotation Matrix Decimal Accuracy'
         end
-        object sePntAcc: TJvIntegerEdit
+        object sePntAcc: TJvValidateEdit
           Left = 184
-          Top = 16
-          Width = 41
+          Top = 18
+          Width = 81
           Height = 21
-          Alignment = taRightJustify
-          ReadOnly = False
+          CheckChars = '0123456789'
+          CriticalPoints.CheckPoints = cpNone
+          CriticalPoints.ColorAbove = clBlue
+          CriticalPoints.ColorBelow = clRed
+          EditText = '3'
           TabOrder = 0
-          Value = 4
-          MaxValue = 0
-          MinValue = 0
-          HasMaxValue = False
-          HasMinValue = False
+          Text = '3'
+          Value = 3
         end
-        object seRotAcc: TJvIntegerEdit
+        object seRotAcc: TJvValidateEdit
           Left = 184
-          Top = 40
-          Width = 41
+          Top = 42
+          Width = 81
           Height = 21
-          Alignment = taRightJustify
-          ReadOnly = False
+          CheckChars = '0123456789'
+          CriticalPoints.CheckPoints = cpNone
+          CriticalPoints.ColorAbove = clBlue
+          CriticalPoints.ColorBelow = clRed
+          EditText = '3'
           TabOrder = 1
-          Value = 4
-          MaxValue = 0
-          MinValue = 0
-          HasMaxValue = False
-          HasMinValue = False
+          Text = '3'
+          Value = 3
         end
       end
     end
@@ -1244,8 +1260,10 @@ object frOptions: TfrOptions
           Height = 21
           CheckOptions = [coCheckOnChange]
           CheckMinValue = True
+          BeepOnError = False
           ButtonKind = bkStandard
           TabOrder = 0
+          ClipboardCommands = []
         end
         object speRightLine: TJvSpinEdit
           Left = 8
@@ -1254,8 +1272,10 @@ object frOptions: TfrOptions
           Height = 21
           CheckOptions = [coCheckOnChange]
           CheckMinValue = True
+          BeepOnError = False
           ButtonKind = bkStandard
           TabOrder = 2
+          ClipboardCommands = []
         end
       end
     end

@@ -26,7 +26,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, DATBase, DATModel, Math, Registry, IniFiles,
-  JvEdit, JvTypedEdit, Mask, JvMaskEdit;
+  JvEdit, Mask, JvMaskEdit, JvExStdCtrls, JvValidateEdit;
 
 type
   TfrmDATCurve = class(TForm)
@@ -54,15 +54,15 @@ type
     lblACont22: TLabel;
     lblACont23: TLabel;
     lblMessage: TLabel;
-    feCP2X: TJvFloatEdit2;
-    feCP2Y: TJvFloatEdit2;
-    feCP2Z: TJvFloatEdit2;
-    feCP1X: TJvFloatEdit2;
-    feCP1Z: TJvFloatEdit2;
-    feCP1Y: TJvFloatEdit2;
-    feLength: TJvFloatEdit2;
     lblLength: TLabel;
     lblType2: TLabel;
+    feCP1X: TJvValidateEdit;
+    feCP1Y: TJvValidateEdit;
+    feCP1Z: TJvValidateEdit;
+    feCP2X: TJvValidateEdit;
+    feCP2Y: TJvValidateEdit;
+    feCP2Z: TJvValidateEdit;
+    feLength: TJvValidateEdit;
     procedure feLengthChange(Sender: TObject);
     procedure cbxContEnableClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);

@@ -24,7 +24,8 @@ interface
 uses
   Dialogs, Forms, sysutils, graphics, windowsspecific, SynEditHighlighter, SynHighlighterLDraw,
   ImgList, Controls, Mask, JvMaskEdit, JvSpin, SynEdit, SynMemo, StdCtrls, Inifiles,
-  ExtCtrls, CheckLst, JvTypedEdit, JvEdit, ComCtrls, Buttons, Classes , FileCtrl;
+  ExtCtrls, CheckLst, JvEdit, ComCtrls, Buttons, Classes , FileCtrl,
+  JvExMask, JvExStdCtrls, JvValidateEdit;
 
 type
   TfrOptions = class(TForm)
@@ -107,18 +108,18 @@ type
     Label8: TLabel;
     speMarginWidth: TJvSpinEdit;
     speRightLine: TJvSpinEdit;
-    seDist: TJvFloatEdit2;
-    seDet: TJvFloatEdit2;
-    seCollinear: TJvFloatEdit2;
-    sePntAcc: TJvIntegerEdit;
-    seRotAcc: TJvIntegerEdit;
     Label12: TLabel;
     edLSynthDir: TEdit;
     btLSynth: TBitBtn;
     lbLSynth: TLabel;
     cboUnitDet: TCheckBox;
-    seUnitDet: TJvFloatEdit2;
     Memo4: TMemo;
+    seDist: TJvValidateEdit;
+    seDet: TJvValidateEdit;
+    seUnitDet: TJvValidateEdit;
+    seCollinear: TJvValidateEdit;
+    sePntAcc: TJvValidateEdit;
+    seRotAcc: TJvValidateEdit;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
