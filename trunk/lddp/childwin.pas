@@ -22,7 +22,7 @@ unit childwin;
 interface
 
 uses QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
+  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns,
   Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
   QSyneditTypes, QStdCtrls
   {$IFDEF MSWINDOWS}
@@ -126,7 +126,7 @@ Description: Update all controls on the action list depeding on the type of line
 Parameter: none
 Return value: none
 ----------------------------------------------------------------------}
-var clr:TLDrawArray;
+var clr: string;
     i:integer;
 begin
   If Memo.modified then
@@ -137,10 +137,15 @@ begin
   frMain.acUndo.Enabled:=Memo.CanUndo;
   frMain.acRedo.Enabled:=Memo.CanRedo;
   frMain.StatusBar.Panels[1].text:=inttostr(memo.CaretY)+':'+inttostr(memo.CaretX);
-  clr:=frMain.LDrawparse(memo.lines[memo.CaretY-1]);
 
-  frMain.acInline.enabled:= clr.typ=1;
-
+  if memo.lines[memo.CaretY-1] <> '' then
+  begin
+    clr:=Trim(memo.lines[memo.CaretY-1]);
+    frMain.acInline.enabled := clr[1]='1';
+  end
+  else
+    frMain.acInline.enabled := False;
+    
   if frMain.slPlugins.Count > 0 then
   for i:=0 to frMain.plugins3.Count-1 do
     begin
