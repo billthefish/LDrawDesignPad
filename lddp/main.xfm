@@ -122,6 +122,7 @@ object frMain: TfrMain
         Caption = 'acPolling'
         DropDownMenu = pmPolling
         ImageIndex = 37
+        PopupMenu = pmPolling
         OnClick = btPollingClick
       end
     end

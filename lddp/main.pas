@@ -464,6 +464,9 @@ begin
         Memo.Highlighter:=SynPasSyn;
       LoadFile(Child);
     end;
+    memo.Gutter.ShowLineNumbers := frOptions.cboMarginNumbers.Checked;
+    memo.Gutter.Width := frOptions.speMarginWidth.Value;
+    memo.RightEdge := frOptions.speRightLine.Value;
   end;
   UpdateControls(false);
 end;
@@ -820,6 +823,9 @@ Description: Show modal option window
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
+var
+  i: Integer;
+
 begin
   frOptions.LoadFormValues;
 
@@ -827,6 +833,13 @@ begin
   begin
     frOptions.SaveFormValues;
     SynLDRSyn.Assign(frOptions.SynLDRSyn1);
+    for i := 0 to MDIChildCount - 1 do
+      with (MDIChildren[i] as TfrEditorChild).memo do
+      begin
+        Gutter.ShowLineNumbers := frOptions.cboMarginNumbers.Checked;
+        Gutter.Width := frOptions.speMarginWidth.Value;
+        RightEdge := frOptions.speRightLine.Value;
+      end;
   end
   else frOptions.LoadFormValues;
 end;

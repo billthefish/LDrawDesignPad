@@ -140,7 +140,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 516
     Height = 249
-    ActivePage = TabSheet2
+    ActivePage = TabSheet6
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -608,7 +608,7 @@ object frOptions: TfrOptions
       end
     end
     object TabSheet2: TTabSheet
-      Caption = 'Configuration Values'
+      Caption = 'Configuration &Values'
       ImageIndex = -1
       object GroupBox2: TGroupBox
         Left = 0
@@ -888,7 +888,7 @@ object frOptions: TfrOptions
       end
     end
     object TabSheet5: TTabSheet
-      Caption = 'LDraw Highlighting'
+      Caption = 'LDraw &Highlighting'
       ImageIndex = 5
       object GroupBox6: TGroupBox
         Left = 0
@@ -1429,6 +1429,59 @@ object frOptions: TfrOptions
         end
       end
     end
+    object TabSheet6: TTabSheet
+      Caption = 'Editor &Options'
+      ImageIndex = 6
+      object GroupBox8: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 508
+        Height = 190
+        Align = alClient
+        Caption = 'Editor Options'
+        TabOrder = 0
+        object cboMarginNumbers: TCheckBox
+          Left = 8
+          Top = 48
+          Width = 185
+          Height = 17
+          Caption = 'Show Line Numbers in Left Margin'
+          TabOrder = 0
+        end
+        object speMarginWidth: TSpinEdit
+          Left = 8
+          Top = 24
+          Width = 57
+          Height = 20
+          TabOrder = 1
+          Value = 30
+        end
+        object Label7: TLabel
+          Left = 72
+          Top = 25
+          Width = 84
+          Height = 13
+          Caption = 'Left Margin Width'
+        end
+        object speRightLine: TSpinEdit
+          Left = 8
+          Top = 72
+          Width = 57
+          Height = 21
+          Max = 1024
+          Min = 1
+          TabOrder = 3
+          Value = 80
+        end
+        object Label8: TLabel
+          Left = 72
+          Top = 75
+          Width = 88
+          Height = 13
+          Caption = 'Right Line Position'
+        end
+      end
+    end
   end
   object ImageList1: TImageList
     Left = 36
@@ -1536,7 +1589,7 @@ object frOptions: TfrOptions
       20000000010001000000000080000000120B0000120B00000200000002000000
       FFFFFF00000000000000FFFF0000FFFF001CFFFF03EEFFFF07EFFFFF0FEFFFFF
       FFEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFFFEFFFFF0FFFFFFF07FFFFFF03FEFFFF
-      001CFFFF0000EF3B00000000FFF80000FFF801C0FFF801C0FFF801C0FFF801C0
+      001CFFFF0000FFFF00000000FFF80000FFF801C0FFF801C0FFF801C0FFF801C0
       FFF803E0FFF803E0FE0003E0FEFE03E0FEFE0000FEFE01C0FEFE01C0FEFE01C0
       00FE000000FE0000}
   end
