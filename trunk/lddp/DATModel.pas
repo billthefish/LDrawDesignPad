@@ -92,6 +92,8 @@ type
       {Inline all parts (linetype 1) in the model}
       procedure InlineAll;
 
+      {Strts lines +x -> -x, -y -> +y, +z -> -z }
+      procedure SortByPosition;
       {Finds the first instance of the supplied line starting from the supplied
        index (default 0)}
       function IndexOfLine(strLine: string; StartIndex: Integer = 0): Integer;
@@ -479,6 +481,12 @@ begin
     else
       inc(i);
 end;
+
+procedure TDATModel.SortByPosition;
+begin
+
+end;
+
 
 function TDATModel.IndexOfLine(strLine: string; StartIndex: Integer = 0): Integer;
 

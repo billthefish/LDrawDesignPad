@@ -621,6 +621,12 @@ object frMain: TfrMain
         object AutofixAllErrors1: TMenuItem
           Action = acECFixAllErrors
         end
+        object N14: TMenuItem
+          Caption = '-'
+        end
+        object CopyErrorListToClipboard1: TMenuItem
+          Action = acECCopy
+        end
       end
       object TrimLines1: TMenuItem
         Action = acTrimLines
@@ -641,8 +647,7 @@ object frMain: TfrMain
         Action = acBMP2LDraw
       end
       object GenrateBendibleObject1: TMenuItem
-        Action = acBendibleObject
-        Caption = 'Generate Bendable Object '
+        Action = acBendableObject
       end
       object ProcessthroughLSynth1: TMenuItem
         Action = acLSynth
@@ -1008,7 +1013,7 @@ object frMain: TfrMain
       ImageIndex = 38
       ShortCut = 16471
       SecondaryShortCuts.Strings = (
-        'F11')
+        'F12')
       OnExecute = acReverseWindingExecute
     end
     object acCheckforUpdate: TAction
@@ -1114,15 +1119,26 @@ object frMain: TfrMain
       Hint = 'Run Current Text Though LSynth'
       OnExecute = acLSynthExecute
     end
-    object acBendibleObject: TAction
+    object acBendableObject: TAction
       Category = 'Misc'
-      Caption = 'Generate Bendible Object '
-      OnExecute = acBendibleObjectExecute
+      Caption = 'Generate Bendable Object '
+      ShortCut = 16456
+      OnExecute = acBendableObjectExecute
     end
     object acAutoRound: TAction
       Category = 'Misc'
       Caption = 'Auto Round Selection'
       OnExecute = acAutoRoundExecute
+    end
+    object acSortByPosition: TAction
+      Category = 'Misc'
+      Caption = 'acSortByPosition'
+    end
+    object acECCopy: TAction
+      Category = 'Error Check'
+      Caption = 'Copy Error List To Clipboard'
+      Enabled = False
+      OnExecute = acECCopyExecute
     end
   end
   object ilToolBarColor: TImageList
@@ -2660,7 +2676,7 @@ object frMain: TfrMain
       Action = acAutoRound
     end
     object GenerateBendibleObject1: TMenuItem
-      Action = acBendibleObject
+      Action = acBendableObject
     end
     object N9: TMenuItem
       Caption = '-'
@@ -2759,6 +2775,12 @@ object frMain: TfrMain
     end
     object AutofixAllErrors2: TMenuItem
       Action = acECFixAllErrors
+    end
+    object N23: TMenuItem
+      Caption = '-'
+    end
+    object CopyErrorListToClipboard2: TMenuItem
+      Action = acECCopy
     end
   end
   object SynLDRSyn: TSynLDRSyn

@@ -37,6 +37,9 @@ var
 
 implementation
 
+uses
+  Math;
+  
 var
   Debug: Boolean = False;
 
