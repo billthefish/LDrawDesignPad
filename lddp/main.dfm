@@ -378,6 +378,9 @@ object frMain: TfrMain
         Action = acFileClose
         Hint = 'Close|Close current file'
       end
+      object CloseAll1: TMenuItem
+        Action = acFileCloseAll
+      end
       object FileSaveItem: TMenuItem
         Action = acFileSave
       end
@@ -906,6 +909,11 @@ object frMain: TfrMain
       ImageIndex = 36
       ShortCut = 16464
       OnExecute = acFilePrintExecute
+    end
+    object acFileCloseAll: TAction
+      Category = 'File'
+      Caption = 'Close A&ll'
+      OnExecute = acFileCloseAllExecute
     end
   end
   object ilToolBarColor: TImageList
