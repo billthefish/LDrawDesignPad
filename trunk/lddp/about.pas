@@ -45,7 +45,7 @@ var
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 procedure TfrAboutBox.FormShow(Sender: TObject);
 var ver:Tversion;

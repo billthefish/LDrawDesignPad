@@ -55,9 +55,9 @@ type
 
 implementation
 
-uses Main, Preview;
+uses main, preview;
 
-{$R *.DFM}
+{$R *.dfm}
 
 function TfrEditorChild.tempFileName:string;
 {---------------------------------------------------------------------

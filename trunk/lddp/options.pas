@@ -116,9 +116,9 @@ var
 
 implementation
 
-uses Main;
+uses main;
 
-{$R *.DFM}
+{$R *.dfm}
 
 procedure TfrOptions.UpdateCOntrols;
 begin

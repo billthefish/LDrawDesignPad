@@ -15,7 +15,7 @@ uses
   dlgconfirmreplace in 'dlgconfirmreplace.pas' {frConfirmReplaceDialog},
   editoptions in 'editoptions.pas' {frEditOptions};
 
-{$R *.RES}
+{$R *.res}
 
 begin
   try
