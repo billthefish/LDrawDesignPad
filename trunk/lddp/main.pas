@@ -27,10 +27,11 @@ uses
   linuxspecific,
   {$IFEND}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns,
-  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash,
-  QSyneditTypes, IdBaseComponent, IdComponent, IdTCPConnection, QGraphics, QSyneditKeyCmds,
-  QSynHighlighterCpp, QSynHighlighterPas, IdTCPClient, IdHTTP, l3check, DATModel, DATBase;
+  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns, Types,
+  QSynHighlighterCpp, QSynHighlighterPas, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, Classes, QActnList, QTypes,
+  QComCtrls, QControls, Inifiles, splash, QSyneditTypes, QGraphics,
+  QSyneditKeyCmds, l3check, DATModel, DATBase;
 
 
 type TLDrawArray= record
@@ -1184,18 +1185,26 @@ Description: Comment a block using zero's
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var j:integer;
-    tmp:string;
+var
+  j:integer;
+  startcol,endcol: Integer;
+  tmpPoint: TPoint;
+
 begin
    with (activeMDICHild as TfrEditorChild).memo do
    begin
      if seltext<>'' then
      begin
-        j:=selstart;
-        tmp:='0 '+StringReplace(seltext,#13#10,#13#10+'0 ', [rfReplaceAll]);
-        seltext:=tmp;
-        selstart:=j;
-        selend:=j+length(tmp);
+       startcol := CharIndexToRowCol(SelStart).Y - 1;
+       endcol := CharIndexToRowCol(SelEnd).Y - 1;
+       for j := startcol to endcol do
+         Lines[j] := '0 ' + Lines[j];
+
+       tmpPoint.X := 1;
+       tmpPoint.Y := startcol+1;
+       SelStart := RowColToCharIndex(tmpPoint);
+       tmpPoint.Y := endcol+2;
+       SelEnd := RowColToCharIndex(tmpPoint) - 1;
      end;
    end;
 end;
