@@ -1,6 +1,6 @@
 object frEditOptions: TfrEditOptions
-  Left = 704
-  Top = 368
+  Left = 765
+  Top = 180
   Width = 387
   Height = 400
   VertScrollBar.Range = 37
@@ -30,6 +30,18 @@ object frEditOptions: TfrEditOptions
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'LDraw Highlighting'
+      object shForeground: TShape
+        Left = 112
+        Top = 40
+        Width = 97
+        Height = 17
+      end
+      object shBackground: TShape
+        Left = 112
+        Top = 88
+        Width = 97
+        Height = 17
+      end
       object Label1: TLabel
         Left = 0
         Top = 0
@@ -462,12 +474,13 @@ object frEditOptions: TfrEditOptions
             ShortCut = 16496
           end>
       end
-      object GroupBox1: TGroupBox
+      object gbStyleOptions: TGroupBox
         Left = 272
         Top = 16
         Width = 105
         Height = 113
         Caption = 'Style'
+        Enabled = False
         TabOrder = 4
         object cbxBold: TCheckBox
           Left = 8
@@ -505,6 +518,38 @@ object frEditOptions: TfrEditOptions
           TabOrder = 3
           OnClick = cbxStrikeOutClick
         end
+      end
+      object btnForeground: TButton
+        Left = 216
+        Top = 40
+        Width = 25
+        Height = 17
+        Caption = '...'
+        Enabled = False
+        Font.Color = clText
+        Font.Height = 11
+        Font.Name = 'MS Sans Serif'
+        Font.Pitch = fpVariable
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 6
+        OnClick = btnForegroundClick
+      end
+      object btnBackground: TButton
+        Left = 216
+        Top = 88
+        Width = 25
+        Height = 17
+        Caption = '...'
+        Enabled = False
+        Font.Color = clBlack
+        Font.Height = 11
+        Font.Name = 'MS Sans Serif'
+        Font.Pitch = fpVariable
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 7
+        OnClick = btnBackgroundClick
       end
     end
   end
@@ -696,5 +741,9 @@ object frEditOptions: TfrEditOptions
   object SynLDRSyn1: TSynLDRSyn
     Left = 41
     Top = 336
+  end
+  object ColorDialog1: TColorDialog
+    Left = 76
+    Top = 334
   end
 end
