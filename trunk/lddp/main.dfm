@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 375
-  Top = 558
+  Left = 405
+  Top = 530
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -25,7 +25,7 @@ object frMain: TfrMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 361
+    Top = 369
     Width = 784
     Height = 19
     AutoHint = True
@@ -42,6 +42,7 @@ object frMain: TfrMain
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -3009,15 +3010,15 @@ object frMain: TfrMain
     Footer.DefaultFont.Height = -13
     Footer.DefaultFont.Name = 'Arial'
     Footer.DefaultFont.Style = []
-    Margins.Left = 25.000000000000000000
-    Margins.Right = 15.000000000000000000
-    Margins.Top = 25.000000000000000000
-    Margins.Bottom = 25.000000000000000000
-    Margins.Header = 15.000000000000000000
-    Margins.Footer = 15.000000000000000000
-    Margins.LeftHFTextIndent = 2.000000000000000000
-    Margins.RightHFTextIndent = 2.000000000000000000
-    Margins.HFInternalMargin = 0.500000000000000000
+    Margins.Left = 25
+    Margins.Right = 15
+    Margins.Top = 25
+    Margins.Bottom = 25
+    Margins.Header = 15
+    Margins.Footer = 15
+    Margins.LeftHFTextIndent = 2
+    Margins.RightHFTextIndent = 2
+    Margins.HFInternalMargin = 0.5
     Margins.MirrorMargins = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3050,7 +3051,7 @@ object frMain: TfrMain
       Action = acExternalsToolbar
     end
     object ReplaceColorShortcut1: TMenuItem
-      Action = acColorReplaceShortcut
+      Action = acColorToolbar
     end
   end
   object OpenDialog1: TOpenDialog
@@ -3086,7 +3087,6 @@ object frMain: TfrMain
   end
   object http: TIdHTTP
     MaxLineAction = maException
-    ReadTimeout = 0
     AllowCookies = True
     ProtocolVersion = pv1_0
     ProxyParams.BasicAuthentication = False

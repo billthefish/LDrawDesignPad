@@ -203,7 +203,6 @@ begin
   if Assigned(Plugin_Info) then Plugin_info(nr, sBuff, 255);
 
   result := StrPas(sBuff);
-  Plugin_Info := nil;
   FreeLibrary(libHndl);
 end;
 
