@@ -48,7 +48,7 @@ begin
         AddNodes(RootNode, (DModel[i] as TDATSubPart).FileName);
     RootNode.Expanded := True;
   end;
-  DModel.Free
+  DModel.Free;
 end;
 
 procedure TfrModelTreeView.AddNodes(ANode: TTreeNode; AString: string);
