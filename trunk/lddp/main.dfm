@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 195
-  Top = 165
+  Left = 204
+  Top = 161
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'
@@ -481,7 +481,7 @@ object frMain: TfrMain
         Hint = 'Options|Change Program Settings'
       end
     end
-    object N7: TMenuItem
+    object Search1: TMenuItem
       Caption = '&Search'
       object Find1: TMenuItem
         Action = acFind

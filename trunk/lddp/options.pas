@@ -24,7 +24,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
  ImgList, JvEdit, JvFloatEdit, JvPlacemnt, ExtCtrls, StdCtrls, Buttons,
-  CheckLst, JvToolEdit, Mask, ComCtrls;
+  CheckLst, JvToolEdit, ComCtrls, Mask;
 
 type
   TfrOptions = class(TForm)
@@ -73,11 +73,6 @@ type
     edExternal: TJvFilenameEdit;
     Label10: TLabel;
     cboWaitForFinish: TCheckBox;
-    rbWindowHidden: TRadioButton;
-    rbWindowNormalRemain: TRadioButton;
-    rbWindowNormal: TRadioButton;
-    rbWindowMaximized: TRadioButton;
-    Label12: TLabel;
     edParameters: TJvComboEdit;
     cboShowCommand: TCheckBox;
     TabSheet4: TTabSheet;
@@ -95,6 +90,7 @@ type
     cboL3Lab: TCheckBox;
     seDist: TJvFloatEdit;
     seDet: TJvFloatEdit;
+    rgStyle: TRadioGroup;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure edL3PDirExit(Sender: TObject);
@@ -238,12 +234,14 @@ begin
 end;
 
 procedure TfrOptions.cblPluginsClickCheck(Sender: TObject);
+
 var pth:string;
+
 begin
   if frOptions.cblPlugins.checked[frOptions.cblPlugins.Itemindex] then
-    pth:=ExtractFIlePath(paramstr(0))+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dld'
+    pth:=ExtractFilePath(Application.ExeName)+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dld'
   else
-    pth:=ExtractFIlePath(paramstr(0))+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dll';
+    pth:=ExtractFIlePath(Application.ExeName)+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dll';
   if (ExtractfileExt(pth)='.dll') then begin
     RenameFile(pth,copy(pth,1,length(pth)-length(extractFileExt(pth)))+'.dld');
     frOptions.cblPlugins.checked[frOptions.cblPlugins.Itemindex]:=false;

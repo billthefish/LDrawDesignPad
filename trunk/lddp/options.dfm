@@ -20,7 +20,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 512
     Height = 211
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     Align = alClient
     Images = ImageList1
     Style = tsFlatButtons
@@ -270,7 +270,7 @@ object frOptions: TfrOptions
         Left = 2
         Top = 8
         Width = 499
-        Height = 130
+        Height = 153
         Shape = bsFrame
       end
       object Label11: TLabel
@@ -299,13 +299,6 @@ object frOptions: TfrOptions
         Width = 56
         Height = 13
         Caption = 'Parameters:'
-      end
-      object Label12: TLabel
-        Left = 16
-        Top = 96
-        Width = 26
-        Height = 13
-        Caption = 'Style:'
       end
       object cboExternal: TCheckBox
         Left = 416
@@ -341,40 +334,6 @@ object frOptions: TfrOptions
         Height = 17
         Caption = 'Wait until program is finished'
         TabOrder = 2
-      end
-      object rbWindowHidden: TRadioButton
-        Left = 104
-        Top = 112
-        Width = 113
-        Height = 17
-        Caption = 'Hidden'
-        TabOrder = 3
-      end
-      object rbWindowNormalRemain: TRadioButton
-        Left = 224
-        Top = 96
-        Width = 209
-        Height = 17
-        Caption = 'Normal but focus remains on LDDP'
-        TabOrder = 4
-      end
-      object rbWindowNormal: TRadioButton
-        Left = 104
-        Top = 96
-        Width = 113
-        Height = 17
-        Caption = 'Normal'
-        Checked = True
-        TabOrder = 5
-        TabStop = True
-      end
-      object rbWindowMaximized: TRadioButton
-        Left = 224
-        Top = 112
-        Width = 113
-        Height = 17
-        Caption = 'Maximized'
-        TabOrder = 6
       end
       object edParameters: TJvComboEdit
         Left = 104
@@ -426,7 +385,7 @@ object frOptions: TfrOptions
           0909090909F6F600FDFDFDFDFDFD0000FFFFFFFFFF0000FDFDFDFDFDFDFDFDFD
           0000000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
         NumGlyphs = 1
-        TabOrder = 7
+        TabOrder = 3
         OnButtonClick = edParametersButtonClick
       end
       object cboShowCommand: TCheckBox
@@ -435,7 +394,22 @@ object frOptions: TfrOptions
         Width = 209
         Height = 17
         Caption = 'Show command line before execution'
-        TabOrder = 8
+        TabOrder = 4
+      end
+      object rgStyle: TRadioGroup
+        Left = 8
+        Top = 96
+        Width = 481
+        Height = 57
+        Caption = 'Style'
+        Columns = 2
+        ItemIndex = 0
+        Items.Strings = (
+          'Normal'
+          'Hidden'
+          'Normal but focus remains on LDDP'
+          'Maximized')
+        TabOrder = 5
       end
     end
     object TabSheet2: TTabSheet
@@ -827,10 +801,6 @@ object frOptions: TfrOptions
       'cboDet.Checked'
       'edExternal.Text'
       'cboWaitForFinish.Checked'
-      'rbWindowHidden.Checked'
-      'rbWindowMaximized.Checked'
-      'rbWindowNormal.Checked'
-      'rbWindowNormalRemain.Checked'
       'edParameters.Text'
       'cboShowCommand.Checked'
       'edEmail.Text'
@@ -838,7 +808,8 @@ object frOptions: TfrOptions
       'edSig.Text'
       'edL3LabDir.Text'
       'seDet.Value'
-      'seDist.Value')
+      'seDist.Value'
+      'rgStyle.ItemIndex')
     StoredValues = <>
     Left = 10
     Top = 216
