@@ -31,9 +31,6 @@ type
     PageControl1: TPageControl;
     fstEditOptions: TJvFormStorage;
     TabSheet1: TTabSheet;
-    Panel1: TPanel;
-    BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
     lstElement: TListBox;
     Label1: TLabel;
     SynMemo1: TSynMemo;
@@ -47,7 +44,10 @@ type
     cbxItalic: TCheckBox;
     cbxUnderline: TCheckBox;
     cbxStrikeOut: TCheckBox;
-    Button1: TButton;
+    Panel1: TPanel;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    BitBtn3: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure lstElementClick(Sender: TObject);
     procedure clbForegroundChange(Sender: TObject);
