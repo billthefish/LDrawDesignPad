@@ -100,7 +100,7 @@ end;
 function L3CheckLine(Line: string): string;
 
 var
-  DATModel1: TDATModel;
+  DLine: TDATType;
   det,dp, maxdist: Extended;
   i,j: Integer;
   A,B,C: Boolean;
@@ -109,12 +109,11 @@ var
   dist: array[1..4] of Extended;
 
 begin
-  DATModel1 := TDATModel.Create;
-  DATModel1.Add(Line);
+  DLine := StrToDAT(Line);
   Result := '';
 
-  case DATModel1[0].LineType of
-    1: with DATModel1[0] as TDATSubPart do
+  case DLine.LineType of
+    1: with DLine as TDATSubPart do
        begin
          det := MatrixDet(RotationMatrix);
          if (det = 0) then
@@ -148,11 +147,11 @@ begin
            Result := 'Singular matrix';
        end;
 
-    2: with DATModel1[0] as TDATLine do
+    2: with DLine as TDATLine do
          if CheckSamePoint(Point[1],Point[2]) then
            Result := 'Identical vertices';
 
-    3: with DATModel1[0] as TDATTriangle do
+    3: with DLine as TDATTriangle do
          if CheckSamePoint(Point[1],Point[2]) or
             CheckSamePoint(Point[2],Point[3]) or
             CheckSamePoint(Point[3],Point[1]) then
@@ -164,7 +163,7 @@ begin
              Result := 'Collinear vertices (' + FloatToStr(dp) + ')';
          end;
 
-    4: with DATModel1[0] as TDATQuad do
+    4: with DLine as TDATQuad do
          if CheckSamePoint(Point[1],Point[2]) or
             CheckSamePoint(Point[2],Point[3]) or
             CheckSamePoint(Point[3],Point[4]) or
@@ -269,11 +268,12 @@ begin
                Result := 'Vertices not coplanar (' + FloatToStr(maxdist) + ')';
            end;
          end;
-    5: with DATModel1[0] as TDATOpLine do
+    5: with DLine as TDATOpLine do
          if CheckSamePoint(Point[1],Point[2]) or CheckSamePoint(Point[3],Point[4]) then
            Result := 'Identical vertices';
 
   end;
+  DLine.Free;
 end;
 
 end.
