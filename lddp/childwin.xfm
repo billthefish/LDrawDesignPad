@@ -10,7 +10,6 @@ object frEditorChild: TfrEditorChild
   FormStyle = fsMDIChild
   Position = poDefault
   Visible = True
-  OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
