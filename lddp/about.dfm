@@ -150,7 +150,7 @@ object frAboutBox: TfrAboutBox
       Stretch = True
     end
     object ProductName: TLabel
-      Left = 32
+      Left = 48
       Top = 13
       Width = 115
       Height = 13
@@ -163,7 +163,7 @@ object frAboutBox: TfrAboutBox
       ParentFont = False
     end
     object Version: TLabel
-      Left = 33
+      Left = 49
       Top = 29
       Width = 35
       Height = 13
@@ -183,7 +183,7 @@ object frAboutBox: TfrAboutBox
       Lines.Strings = (
         'LDraw DesignPad'
         ''
-        'Copyright (C) 2002 by the LDDP contributors'
+        'Copyright (C) 2002-2005 by the LDDP contributors'
         ''
         '- Orion Pobursky'
         '- Stephan Schonberg'
