@@ -120,6 +120,16 @@ type
     seCollinear: TJvValidateEdit;
     sePntAcc: TJvValidateEdit;
     seRotAcc: TJvValidateEdit;
+    TabSheet7: TTabSheet;
+    GroupBox9: TGroupBox;
+    lbxColors: TListBox;
+    shpColor: TShape;
+    Label15: TLabel;
+    btnColorSelect: TButton;
+    edColorName: TLabeledEdit;
+    edColorNumber: TJvValidateEdit;
+    Label18: TLabel;
+    btnColorRestore: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -135,12 +145,18 @@ type
     procedure btnBackgroundClick(Sender: TObject);
     procedure btnResetClick(Sender: TObject);
     procedure btLSynthClick(Sender: TObject);
+    procedure btnColorSelectClick(Sender: TObject);
+    procedure lbxColorsClick(Sender: TObject);
+    procedure edColorNameChange(Sender: TObject);
   private
     SelectedElement: TSynHighlighterAttributes;
+    ColorBarList: TStringList;
+    procedure ColorButtonChange(ImageColor: TColor; Name, Number: string; Index: Integer);
+
   public
     IniFileName: string;
     IniSection: string;
-    procedure UpdateCOntrols;
+    procedure UpdateControls;
     procedure LoadFormValues;
     procedure SaveFormValues;
   end;
@@ -155,6 +171,7 @@ uses main;
 {$R *.dfm}
 
 procedure TfrOptions.UpdateCOntrols;
+
 begin
   if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
     lbLDraw.font.Color:=clGreen;
@@ -221,13 +238,13 @@ begin
   SelectedElement := nil;
   shForeground.Brush.Color := clBtnFace;
   shBackground.Brush.Color := clBtnFace;
-  UpdateCOntrols;
+  UpdateControls;
   PageControl1.ActivePage:=tsExternal;
 end;
 
 procedure TfrOptions.PageControl1Change(Sender: TObject);
 begin
-  UpdateCOntrols;
+  UpdateControls;
 end;
 
 procedure TfrOptions.Button1Click(Sender: TObject);
@@ -375,8 +392,10 @@ begin
 end;
 
 procedure TfrOptions.SaveFormValues;
+
 var
   LDDPini: TMemIniFile;
+  i: Integer;
 
 begin
   LDDPini := TMemIniFile.Create(IniFileName);
@@ -432,15 +451,22 @@ begin
   LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
   LDDPini.WriteInteger(IniSection, 'speRightLine_Value', speRightLine.AsInteger);
   LDDPini.WriteInteger(IniSection, 'speMarginWidth_Value', speMarginWidth.AsInteger);
+
+  for i := 0 to 15 do
+    LDDPini.WriteString(IniSection, 'lbxColors_Item' + IntToStr(i), ColorBarList[i]);
+
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
 
 procedure TfrOptions.LoadFormValues;
 var
+  i: Integer;
+  SelectedColor: TStringList;
   LDDPini: TMemIniFile;
 
 begin
+  ColorBarList := TStringList.Create;
   LDDPini := TMemIniFile.Create(IniFileName);
   edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory', '');
   edLDViewDir.Text := LDDPini.ReadString(IniSection, 'edLDViewDir_Text', '');
@@ -498,9 +524,113 @@ begin
   SynLDRSyn1.KeyAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
   speRightLine.AsInteger  := LDDPini.ReadInteger(IniSection, 'speRightLine_Value', 80);
   speMarginWidth.AsInteger := LDDPini.ReadInteger(IniSection, 'speMarginWidth_Value', 30);
+
+  if LDDPini.ReadString(IniSection, 'lbxColors_Item1', 'none') = 'none' then
+    ColorBarList.Text := 'Black,0,$00212121' + #13#10 +
+                         'Blue,1,$00B23300' + #13#10 +
+                         'Green,2,$00148C00' + #13#10 +
+                         'Teal,3,$009F9900' + #13#10 +
+                         'Red,4,$002600C4' + #13#10 +
+                         'Dark_Pink,5,$009566DF' + #13#10 +
+                         'Brown,6,$0000205C' + #13#10 +
+                         'Gray,7,$00C1C2C1' + #13#10 +
+                         'Dark_Gray,8,$00525F63' + #13#10 +
+                         'Light_Blue,9,$00DCAB6B' + #13#10 +
+                         'Bright_Green,10,$0090EE6B' + #13#10 +
+                         'Turquiose,11,$00A7A633' + #13#10 +
+                         'Light_Red,12,$007A85FF' + #13#10 +
+                         'Pink,13,$00C6A4F9' + #13#10 +
+                         'Yellow,14,$0000DCFF' + #13#10 +
+                         'White,15,$00FFFFFF'
+  else
+    for i := 0 to 15 do
+      ColorBarList.Add(LDDPini.ReadString(IniSection, 'lbxColors_Item' + IntToStr(i), 'none'));
+
+  SelectedColor := TStringList.Create;
+  for i := 0 to 15 do
+  begin
+    SelectedColor.CommaText := StringReplace(ColorBarList[i], ' ', '_', [rfReplaceAll]);
+    if lbxColors.Items.Count < 16 then
+      lbxColors.Items.Add(StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]));
+    ColorButtonChange(StrToInt(SelectedColor[2]),
+                      StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]),
+                      SelectedColor[1], i);
+  end;
+  SelectedColor.Free;
+
   LDDPini.Free;
 end;
 
 
+
+procedure TfrOptions.btnColorSelectClick(Sender: TObject);
+begin
+  if lbxColors.ItemIndex >= 0 then
+    if ColorDialog1.Execute then
+    begin
+      shpColor.Brush.Color := ColorDialog1.Color;
+      ColorButtonChange(shpColor.Brush.Color, edColorName.Text,
+                        IntToStr(edColorNumber.Value), lbxColors.ItemIndex);
+    end;
+end;
+
+procedure TfrOptions.lbxColorsClick(Sender: TObject);
+
+var
+  SelectedColor: TStringList;
+
+begin
+  if lbxColors.ItemIndex >= 0 then
+    begin
+      SelectedColor := TStringList.Create;
+      SelectedColor.CommaText := StringReplace(ColorBarList[lbxColors.ItemIndex], ' ', '_', [rfReplaceAll]);
+      shpColor.Brush.Color := StrToInt(SelectedColor[2]);
+      edColorName.Text := StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]);
+      edColorNumber.Value := StrToInt(SelectedColor[1]);
+      SelectedColor.Free;
+    end;
+end;
+
+procedure TfrOptions.ColorButtonChange(ImageColor: TColor; Name, Number: string; Index: Integer);
+
+var
+  ColorButtonBitmap: TBitmap;
+
+begin
+  ColorButtonBitmap := TBitmap.Create;
+  ColorButtonBitmap.Width := 16;
+  ColorButtonBitmap.Height := 16;
+  ColorButtonBitmap.PixelFormat := pf24bit;
+
+  with ColorButtonBitmap.Canvas do
+  begin
+    Pen.Color := $00000000;
+    Brush.Color := clFuchsia;
+    FillRect(Rect(0,0,16,16));
+    Brush.Color := ImageColor;
+    FillRect(Rect(2,2,14,14));
+    Polygon([Point(1,1), Point(1,14), Point (14,14), Point(14,1)]);
+  end;
+
+  with frMain.tbrColorReplace.Buttons[Index] do
+  begin
+    ImageIndex := frMain.ilToolBarColor.AddMasked(ColorButtonBitmap, clFuchsia);
+    Hint := Name + ' ' + Number;
+  end;
+  ColorButtonBitmap.Free;
+end;
+
+procedure TfrOptions.edColorNameChange(Sender: TObject);
+begin
+  if lbxColors.ItemIndex >= 0 then
+  begin
+    ColorBarList[lbxColors.ItemIndex] := edColorName.Text + ',' +
+                                         IntToStr(edColorNumber.Value) + ',' +
+                                         IntToStr(shpColor.Brush.Color);
+    ColorButtonChange(shpColor.Brush.Color, edColorName.Text,
+                      IntToStr(edColorNumber.Value), lbxColors.ItemIndex);
+    lbxColors.Items[lbxColors.ItemIndex] := edColorName.Text
+  end;
+end;
 
 end.
