@@ -5,6 +5,7 @@ object frModelTreeView: TfrModelTreeView
   Height = 313
   VertScrollBar.Range = 41
   ActiveControl = BitBtn1
+  BorderStyle = fbsDialog
   Caption = 'frModelTreeView'
   Color = clBackground
   OnShow = FormShow
