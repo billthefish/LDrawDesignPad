@@ -911,14 +911,17 @@ var
 
   var
     i,j, samecount: Integer;
-
+    samepoints: set of 1..4;
   begin
     samecount := 0;
+    samepoints := [];
     for i := 0 to numpoints - 1 do
       for j := 0 to numpoints - 1 do
-        if CheckSamePoint(points1[i], points2[j]) then
+        if (CheckSamePoint(points1[i], points2[j])) and
+           (not (j in samepoints)) then
         begin
           inc(samecount);
+          samepoints := samepoints + [j];
           Break;
         end;
      Result := (samecount = numpoints);
