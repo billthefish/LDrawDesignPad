@@ -73,7 +73,6 @@ type
     acUndo: TAction;
     acUserDefined: TAction;
     acWindowsToolbar: TAction;
-    BFCStatement1: TMenuItem;
     btPolling: TToolButton;
     C1: TMenuItem;
     ChangeColor1: TMenuItem;
@@ -223,7 +222,6 @@ type
     ToolButton7: TToolButton;
     ReverseWinding1: TMenuItem;
     acReverseWinding: TAction;
-    BFCStatement2: TMenuItem;
     ReverseWinding2: TMenuItem;
     ToolButton9: TToolButton;
     ErrorCheck1: TMenuItem;
@@ -242,21 +240,6 @@ type
     Pollevery1sec1: TMenuItem;
     Pollevery2sec1: TMenuItem;
     Pollevery5sec: TMenuItem;
-    CERTIFY1: TMenuItem;
-    INVERNEXT1: TMenuItem;
-    CERTIFYCCW1: TMenuItem;
-    CLIP1: TMenuItem;
-    NOCLIP1: TMenuItem;
-    acInsertBFCCertifyCW: TAction;
-    acInsertBFCCertifyCCW: TAction;
-    acInsertBFCInvertnext: TAction;
-    acInsertBFCClip: TAction;
-    acInsertBFCNoClip: TAction;
-    CERTIFYCW1: TMenuItem;
-    CERTIFYCCW2: TMenuItem;
-    INVERTNEXT1: TMenuItem;
-    CLIP2: TMenuItem;
-    NOCLIP2: TMenuItem;
     N7: TMenuItem;
     View1: TMenuItem;
     AutofixCheckedErrors1: TMenuItem;
@@ -310,6 +293,8 @@ type
     N23: TMenuItem;
     CopyErrorListToClipboard2: TMenuItem;
     acECCopy: TAction;
+    mnuMeta: TMenuItem;
+    mnuMeta2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -370,14 +355,9 @@ type
     procedure acWindowTileExecute(Sender: TObject);
     procedure acReverseWindingExecute(Sender: TObject);
     procedure acCheckforUpdateExecute(Sender: TObject);
+    procedure acModelTreeViewExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure acBMP2LDrawExecute(Sender: TObject);
-    procedure acModelTreeViewExecute(Sender: TObject);
-    procedure acInsertBFCCertifyCWExecute(Sender: TObject);
-    procedure acInsertBFCCertifyCCWExecute(Sender: TObject);
-    procedure acInsertBFCInvertnextExecute(Sender: TObject);
-    procedure acInsertBFCClipExecute(Sender: TObject);
-    procedure acInsertBFCNoClipExecute(Sender: TObject);
     procedure acECFixErrorExecute(Sender: TObject);
     procedure acECFixAllErrorsExecute(Sender: TObject);
     procedure acECMarkAllExecute(Sender: TObject);
@@ -392,7 +372,8 @@ type
     procedure acBendableObjectExecute(Sender: TObject);
     procedure acAutoRoundExecute(Sender: TObject);
     procedure acECCopyExecute(Sender: TObject);
-
+    procedure MetaMenuClick(Sender: TObject);
+    
   private
     { Private declarations }
     fSearchFromCaret: boolean;
@@ -401,7 +382,7 @@ type
     procedure SetErrorCheckMarks(State: Boolean; ErrorType: string);
     procedure ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
     PROCEDURE FileIsDropped ( VAR Msg : TMessage ) ; Message WM_DropFiles ;
-
+    procedure BuildMetaMenu;
 
   public
     { Public declarations }
@@ -763,6 +744,8 @@ begin
     slPlugins:=TStringlist.create;
     LoadPlugins(true);
 
+    BuildMetaMenu;
+
     UpdateMRU;
 
     // Set initial directory to that of the last opened file
@@ -785,6 +768,65 @@ begin
     sleep(1500);
     screen.cursor:=0;
     SplashScreen.Free;
+  end;
+end;
+
+procedure TfrMain.BuildMetaMenu;
+
+var
+  MetaMenuIni: TInifile;
+  ParentMenuItem, ParentMenuItem2, ChildMenuItem: TMenuItem;
+  MetaSections, CurrentSection: TStringList;
+  i,j: Integer;
+
+begin
+  MetaSections := TStringList.Create;
+  CurrentSection := TStringList.Create;
+  MetaMenuIni := TInifile.Create(ExtractFileDir(Application.ExeName) + '\metamenu.ini');
+
+  MetaMenuIni.ReadSections(MetaSections);
+
+  if MetaSections.Count > 0 then
+    for i := 0 to MetaSections.Count - 1 do
+    begin
+      MetaMenuIni.ReadSection(MetaSections[i],CurrentSection);
+      if CurrentSection.Count > 0 then
+      begin
+        ParentMenuItem := TMenuItem.Create(mnuMeta);
+        ParentMenuItem.Caption := MetaSections[i];
+        ParentMenuItem2 := TMenuItem.Create(mnuMeta2);
+        ParentMenuItem2.Caption := MetaSections[i];
+        mnuMeta.Add(ParentMenuItem);
+        mnuMeta2.Add(ParentMenuItem2);
+        for j := 0 to CurrentSection.Count - 1 do
+        begin
+          ChildMenuItem := TMenuItem.Create(ParentMenuItem);
+          ChildMenuItem.Caption := CurrentSection[j];
+          ChildMenuItem.Hint := MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],'');
+          ChildMenuItem.OnClick := MetaMenuClick;
+          ParentMenuItem.Add(ChildMenuItem);
+          ChildMenuItem := TMenuItem.Create(ParentMenuItem2);
+          ChildMenuItem.Caption := CurrentSection[j];
+          ChildMenuItem.Hint := MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],'');
+          ChildMenuItem.OnClick := MetaMenuClick;
+          ParentMenuItem2.Add(ChildMenuItem);
+        end;
+      end;
+    end
+  else
+    mnuMeta.Enabled := False;
+
+  CurrentSection.Free;
+  MetaSections.Free;
+  MetaMenuIni.Free;
+end;
+
+procedure TfrMain.MetaMenuClick(Sender: TObject);
+begin
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Insert(CaretY-1, '0 ' + (Sender as TMenuItem).Hint);
+    Modified := true;
   end;
 end;
 
@@ -2330,76 +2372,6 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   frModelTreeView.ShowModal;
-end;
-
-procedure TfrMain.acInsertBFCCertifyCWExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Inserts BFC Text
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    Lines.Insert(CaretY-1, '0 BFC CERTIFY CW');
-    Modified := true;
-  end;
-end;
-
-procedure TfrMain.acInsertBFCCertifyCCWExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Inserts BFC Text
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    Lines.Insert(CaretY-1, '0 BFC CERTIFY CCW');
-    Modified := true;
-  end;
-end;
-
-procedure TfrMain.acInsertBFCInvertnextExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Inserts BFC Text
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    Lines.Insert(CaretY-1, '0 BFC INVERTNEXT');
-    Modified := true;
-  end;
-end;
-
-procedure TfrMain.acInsertBFCClipExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Inserts BFC Text
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    Lines.Insert(CaretY-1, '0 BFC CLIP');
-    Modified := true;
-  end;
-end;
-
-procedure TfrMain.acInsertBFCNoClipExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Inserts BFC Text
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    Lines.Insert(CaretY-1, '0 BFC NOCLIP');
-    Modified := true;
-  end;
 end;
 
 procedure TfrMain.SetErrorCheckMarks(State: Boolean; ErrorType: string);

@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 220
-  Top = 376
+  Left = 244
+  Top = 443
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -482,23 +482,8 @@ object frMain: TfrMain
       object UpdateHeader1: TMenuItem
         Action = acInsertUpdateLine
       end
-      object BFCStatement2: TMenuItem
-        Caption = 'BFC Statement'
-        object CERTIFY1: TMenuItem
-          Action = acInsertBFCCertifyCW
-        end
-        object CERTIFYCCW1: TMenuItem
-          Action = acInsertBFCCertifyCCW
-        end
-        object INVERNEXT1: TMenuItem
-          Action = acInsertBFCInvertnext
-        end
-        object CLIP1: TMenuItem
-          Action = acInsertBFCClip
-        end
-        object NOCLIP1: TMenuItem
-          Action = acInsertBFCNoClip
-        end
+      object mnuMeta: TMenuItem
+        Caption = 'META Statement'
       end
     end
     object Tools1: TMenuItem
@@ -1033,31 +1018,6 @@ object frMain: TfrMain
       Caption = 'View Model Tree...'
       Hint = 'Show a Tree Model of this file including all submodels'
       OnExecute = acModelTreeViewExecute
-    end
-    object acInsertBFCCertifyCW: TAction
-      Category = 'EditorBlocks'
-      Caption = 'CERTIFY CW'
-      OnExecute = acInsertBFCCertifyCWExecute
-    end
-    object acInsertBFCCertifyCCW: TAction
-      Category = 'EditorBlocks'
-      Caption = 'CERTIFY CCW'
-      OnExecute = acInsertBFCCertifyCCWExecute
-    end
-    object acInsertBFCInvertnext: TAction
-      Category = 'EditorBlocks'
-      Caption = 'INVERTNEXT'
-      OnExecute = acInsertBFCInvertnextExecute
-    end
-    object acInsertBFCClip: TAction
-      Category = 'EditorBlocks'
-      Caption = 'CLIP'
-      OnExecute = acInsertBFCClipExecute
-    end
-    object acInsertBFCNoClip: TAction
-      Category = 'EditorBlocks'
-      Caption = 'NOCLIP'
-      OnExecute = acInsertBFCNoClipExecute
     end
     object acECFixError: TAction
       Category = 'Error Check'
@@ -2629,23 +2589,8 @@ object frMain: TfrMain
       object UpdateHeader2: TMenuItem
         Action = acInsertUpdateLine
       end
-      object BFCStatement1: TMenuItem
-        Caption = 'BFC Statement'
-        object CERTIFYCW1: TMenuItem
-          Action = acInsertBFCCertifyCW
-        end
-        object CERTIFYCCW2: TMenuItem
-          Action = acInsertBFCCertifyCCW
-        end
-        object INVERTNEXT1: TMenuItem
-          Action = acInsertBFCInvertnext
-        end
-        object CLIP2: TMenuItem
-          Action = acInsertBFCClip
-        end
-        object NOCLIP2: TMenuItem
-          Action = acInsertBFCNoClip
-        end
+      object mnuMeta2: TMenuItem
+        Caption = 'META Statement'
       end
     end
     object Plugins3: TMenuItem

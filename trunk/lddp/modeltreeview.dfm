@@ -1,6 +1,6 @@
 object frModelTreeView: TfrModelTreeView
-  Left = 502
-  Top = 358
+  Left = 688
+  Top = 149
   BorderStyle = bsDialog
   Caption = 'Model Tree View'
   ClientHeight = 342

@@ -62,7 +62,7 @@ function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
 function GetShortFileName(Const FileName : String) : String;
 function WindowsDir:string;
 function GetTempDir:string;
-function PluginInfo(fname:string; nr:integer):string;
+function PluginInfo(fname:string; nr: Byte):string;
 procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
 procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
 procedure OpenInBrowser(url:string);
@@ -182,7 +182,7 @@ begin
   Result:=tempDir;
 end;
 
-function PluginInfo(fname:string; nr:integer):string;
+function PluginInfo(fname:string; nr: Byte):string;
 {---------------------------------------------------------------------
 Description: Get Info from plugin DLL
 Parameter: Fname: path and filename of dll, nr: no. of Info to get
@@ -191,19 +191,18 @@ Return value: None
 var
  libHndl:THandle;
  Plugin_Info:procedure(CaseID:byte;buffer:pchar;maxlength:byte); stdcall;
- sBuff:string;
+ sBuff: PChar;
 begin
-  SetLength(sBuff, 255);         // allocate buffer
+  GetMem(sBuff, 255);         // allocate buffer
   Plugin_Info:=nil;
   libHndl := LoadLibrary(pchar(fname));
 
   if libHndl <> 0 then
     @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
 
-  if Assigned(Plugin_Info) then Plugin_info(nr,PChar(sBuff), 255);
+  if Assigned(Plugin_Info) then Plugin_info(nr, sBuff, 255);
 
-  SetLength(sBuff, Length(PChar(sBuff)));
-  result:=sBuff;
+  result:=StrPas(sBuff);
   FreeLibrary(libHndl);
 end;
 
