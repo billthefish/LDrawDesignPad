@@ -83,14 +83,14 @@ Remarks:
 
 5. Version History
 ------------------
-
+MM/DD/YYYY
 + = New feature  * = Bugfix   - = Removed feature
 
 v1.5
 + Added initializiation display for plugins while startup (some plugins require time to init)
 
 
-v1.4 01/16/2002
+v1.4 01/16/2003
 * Fixed some L3P problems with long filenames or -paths
 * Fixed list of recently used files
 * Fixed a problem with wrong Z-Order of replace window
@@ -126,7 +126,7 @@ v1.19b 08/08/2002
 * Revised plugin code (again)
 
 
-v1.1 2002/08/03
+v1.1 08/03/2002
 
 * Fixed shortcuts for Cut, Copy, Paste
 + Redid the search options / added 'search' menu
@@ -134,7 +134,7 @@ v1.1 2002/08/03
 + Undo now possible after plugins that affect the whole text
 
 
-v1.0 2002/07/27
+v1.0 07/27/2002
 
 + 'Select All' command
 + Print command
@@ -142,7 +142,7 @@ v1.0 2002/07/27
 * Fixed / Expanded Example Plugin-Code. Plugins should work now properly
 * Fixed bmall bug in find-window
 
-v0.9 2002/03/05
+v0.9 03/05/2002
 
 + Added Change/Replace Color dialog (added palette file)
 + Undo now possible even after save
@@ -154,7 +154,7 @@ v0.9 2002/03/05
 * Code templates are saved now (templates.bin)
 * Fixed ML-CAD starting and loading long filenames with spaces
 
-v0.4 2002/02/27
+v0.4 02/27/2002
 
 + Added self-defined program feature
 + Added syntax-highlighting for optional lines
@@ -171,6 +171,6 @@ v0.4 2002/02/27
 * Fixed homepage menu entry
 
 
-v0.3 2002/02/25
+v0.3 02/25/2002
 
 - First version
