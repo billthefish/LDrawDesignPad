@@ -555,7 +555,7 @@ begin
   acRedo.Enabled:=mdicount>0;
   acUserDefined.Enabled:=mdicount>0;
   if mdicount=0 then acInline.enabled:=false;
-  if mdicount=0 then acReplaceColor.enabled:=false;
+  acReplaceColor.enabled:=mdicount>0;
 end;
 
 procedure tfrMain.LoadFile(fname:string);
@@ -1641,6 +1641,16 @@ begin
         frColorDialog.rbreplaceSelection.checked:=true;
       end;
     clr:=LDrawParse((activeMDICHild as TfrEditorChild).memo.lines[(activeMDICHild as TfrEditorChild).memo.CaretY-1]);
+    if clr.color=-1 then
+    begin
+      frColorDialog.rbReplaceAll.checked:=true;
+      frColorDialog.rbReplaceLine.enabled:=false;
+      clr.color:=0;
+    end
+     else begin
+       frColorDialog.rbReplaceLine.checked:=true;
+       frColorDialog.rbReplaceAll.enabled:=false;
+     end;
     try
       tmp:=frColorDialog.strholder1.Strings[frColorDialog.strholder1.Strings.IndexOfName(inttostr(clr.color))];
     except
@@ -1659,11 +1669,13 @@ begin
      else frColorDialog.btOldColor.Font.Color:=$FFFFFF;
     if frColorDialog.showmodal=mrOK then
     begin
-      if frColorDialog.rbReplaceLine.checked then begin
+      if frColorDialog.rbReplaceLine.checked then
+      begin
         tmp:=(activeMDICHild as TfrEditorChild).memo.lines[(activeMDICHild as TfrEditorChild).memo.CaretY-1];
         ExtractWordPos(2,tmp,[' '],l);
         tmp:=copy(tmp,1,l-1)+inttostr(frColorDialog.btNewColor.tag)+copy(tmp,l+length(inttostr(clr.color)),length(tmp));
         (activeMDICHild as TfrEditorChild).memo.lines[(activeMDICHild as TfrEditorChild).memo.CaretY-1]:=tmp;
+        (activeMDICHild as TfrEditorChild).memo.Modified:=true;
       end;
       if frColorDialog.rbReplaceAll.checked then
       begin
@@ -1676,6 +1688,7 @@ begin
             ExtractWordPos(2,tmp,[' '],l);
             tmp:=copy(tmp,1,l-1)+inttostr(frColorDialog.btNewColor.tag)+copy(tmp,l+length(inttostr(clr.color)),length(tmp));
             (activeMDICHild as TfrEditorChild).memo.lines[i]:=tmp;
+            (activeMDICHild as TfrEditorChild).memo.Modified:=true;
           end;
         end;
       end;
