@@ -26,7 +26,7 @@ uses Windows, SysUtils, Classes, Graphics, Forms, Controls, Menus,
   ActnList, ToolWin, ImgList, JvMRUList, JvPlacemnt,  HttpProt,
   version, registry, splash, SynEdit, SynEditHighlighter, SynHighlighterLDraw,
   SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
-  jvStrUtils;
+  SynEditTypes, jvStrUtils;
 
 type TLDrawArray= record
   typ:integer;
@@ -53,7 +53,6 @@ type
     WindowCascadeItem: TMenuItem;
     WindowTileItem: TMenuItem;
     HelpAboutItem: TMenuItem;
-    OpenDialog: TOpenDialog;
     FileSaveItem: TMenuItem;
     FileSaveAsItem: TMenuItem;
     Edit1: TMenuItem;
@@ -68,8 +67,6 @@ type
     acFileNew: TAction;
     acFileSave: TAction;
     acFileExit: TAction;
-    acFileOpen: TAction;
-    acFileSaveAs: TAction;
     WindowCascade1: TWindowCascade;
     WindowTileHorizontal1: TWindowTileHorizontal;
     HelpAbout: TAction;
@@ -87,7 +84,6 @@ type
     acFileRevert: TAction;
     Revert1: TMenuItem;
     N3: TMenuItem;
-    SaveDialog: TSaveDialog;
     acFind: TAction;
     acReplace: TAction;
     ToolBar1: TToolBar;
@@ -169,7 +165,6 @@ type
     ToolButton27: TToolButton;
     acSelectAll: TAction;
     SelectAll1: TMenuItem;
-    acPrint: TAction;
     ToolButton28: TToolButton;
     Print1: TMenuItem;
     acFindNext: TAction;
@@ -211,7 +206,6 @@ type
     UserDefinedProgram1: TMenuItem;
     SynLDRSyn: TSynLDRSyn;
     PrinterSetupDialog: TPrinterSetupDialog;
-    PrintDialog: TPrintDialog;
     SynEditPrint: TSynEditPrint;
     SynCppSyn: TSynCppSyn;
     SynPasSyn: TSynPasSyn;
@@ -235,14 +229,15 @@ type
     acSearchToolbar: TAction;
     acWindowsToolbar: TAction;
     acExternalsToolbar: TAction;
+    acFileOpen: TFileOpen;
+    acFileSaveAs: TFileSaveAs;
+    acFilePrint: TPrintDlg;
     procedure acFileNewExecute(Sender: TObject);
-    procedure acFileOpenExecute(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
     procedure MRUManagerClick(Sender: TObject; const RecentName,
       Caption: String; UserData: Integer);
     procedure acFileSaveExecute(Sender: TObject);
-    procedure acFileSaveAsExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure acFileRevertExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -272,7 +267,6 @@ type
     procedure acHomepageExecute(Sender: TObject);
     procedure acReplaceColorExecute(Sender: TObject);
     procedure acSelectAllExecute(Sender: TObject);
-    procedure acPrintExecute(Sender: TObject);
     procedure acFindNextExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
     procedure btPollingClick(Sender: TObject);
@@ -296,6 +290,11 @@ type
     procedure acWindowsToolbarExecute(Sender: TObject);
     procedure acExternalsToolbarExecute(Sender: TObject);
     procedure acToolbarUpdate(Sender: TObject);
+    procedure acFileOpenAccept(Sender: TObject);
+    procedure FormDblClick(Sender: TObject);
+    procedure acFileSaveAsBeforeExecute(Sender: TObject);
+    procedure acFileSaveAsAccept(Sender: TObject);
+    procedure acFilePrintAccept(Sender: TObject);
 
   private
     { Private declarations }
@@ -530,7 +529,7 @@ begin
   mdicount:=mdiChildcount;
   if closing then mdicount:=mdicount-1;
   acFileSaveAs.Enabled:=mdicount>0;
-  acPrint.Enabled:=mdicount>0;
+  acFilePrint.Enabled:=mdicount>0;
   acFileSave.Enabled:=mdicount>0;
   acFileRevert.Enabled:=mdicount>0;
   acl3pcheck.Enabled:=mdicount>0;
@@ -608,6 +607,11 @@ begin
   UpdateControls(false);
 end;
 
+procedure TfrMain.FormDblClick(Sender: TObject);
+begin
+  acFileOpen.Execute;
+end;
+
 procedure TfrMain.acFileNewExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Creates a new untitled Editor child window
@@ -618,21 +622,19 @@ begin
   CreateMDIChild('Untitled' + IntToStr(MDIChildCount + 1),true);
 end;
 
-procedure TfrMain.acFileOpenExecute(Sender: TObject);
+procedure TfrMain.acFileOpenAccept(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Opens chosen existing filenames in a new editor child windows
 Parameter: Standard
 Return value: none
 ----------------------------------------------------------------------}
-var i:integer;
+var
+  i: Integer;
 begin
-  if OpenDialog.Execute then
-  begin
-    for i:=0 to OpenDialog.files.Count-1 do
+    for i:=0 to acFileOpen.Dialog.Files.Count -1 do
     begin
-      CreateMDIChild(OpenDialog.files[i], false);
+      CreateMDIChild(acFileOpen.Dialog.Files[i], false);
     end;
-  end;
 end;
 
 procedure TfrMain.HelpAboutExecute(Sender: TObject);
@@ -692,7 +694,7 @@ Return value: None
 ----------------------------------------------------------------------}
 var sr:TsearchRec;
 begin
-  if pos('Untitled',activeMDIChild.caption)>0 then acFileSaveAsExecute(Sender)
+  if pos('Untitled',activeMDIChild.caption)>0 then acFileSaveAs.Execute
     else
     begin
       (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(activeMDICHild.caption);
@@ -706,18 +708,20 @@ begin
     end;
 end;
 
-procedure TfrMain.acFileSaveAsExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Saves a file to disk after asking for filename
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
+procedure TfrMain.acFileSaveAsBeforeExecute(Sender: TObject);
 begin
-  SaveDialog.filename:=activeMDIChild.caption;
-  if SaveDialog.execute then begin
-    activeMDIChild.caption:=SaveDialog.filename;
+  acFileSaveAs.Dialog.filename:=activeMDIChild.caption;
+end;
+
+procedure TfrMain.acFileSaveAsAccept(Sender: TObject);
+begin
+    activeMDIChild.caption:=acFileSaveAs.Dialog.filename;
     acFileSaveExecute(Sender);
-  end;
 end;
 
 procedure TfrMain.FormShow(Sender: TObject);
@@ -749,6 +753,7 @@ Return value: None
 ----------------------------------------------------------------------}
 var i:integer;
     regT:Tregistry;
+    strIniFileName: string;
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
@@ -756,12 +761,16 @@ begin
     SplashScreen.show;
     SplashScreen.update;
     screen.cursor:=-11;
-
+  strIniFileName := ExtractFilePath(Application.ExeName) + 'LDDP.ini';
+  frMain.fstMain.IniFileName := strIniFileName;
+  frOptions.fstOptions.IniFileName := strIniFileName;
+  frEditOptions.fstEditOptions.IniFileName := strIniFileName;
   regT:=Tregistry.create;
   regt.RootKey:=HKEY_CURRENT_USER;
   regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
   regt.WriteString('InstallDir', application.ExeName);
   regt.free;
+//  fstMain.RestoreFormPlacement;
   frOptions.fstOptions.RestoreFormPlacement;
   frEditOptions.fstEditOptions.RestoreFormPlacement;
   SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
@@ -1743,19 +1752,17 @@ begin
     selectall;
 end;
 
-procedure TfrMain.acPrintExecute(Sender: TObject);
+procedure TfrMain.acFilePrintAccept(Sender: TObject);
 {---------------------------------------------------------------------
 Description: print active editor child
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  if PrintDialog.Execute then
-  begin
     SynEditPrint.SynEdit := (activeMDICHild as TfrEditorChild).memo;
     SynEditPrint.Title := activeMDICHild.caption;
+    SynEditPrint.Copies := acFilePrint.Dialog.Copies;
     SynEditPrint.Print;
-  end;
 end;
 
 procedure TfrMain.acFindNextExecute(Sender: TObject);
@@ -2172,4 +2179,10 @@ begin
   acExternalsToolBar.Checked := Toolbar2.visible;
 end;
 {---------------------------------------------------------------------}
+
+
+
+
+
+
 end.

@@ -1,6 +1,6 @@
 object frEditOptions: TfrEditOptions
-  Left = 231
-  Top = 332
+  Left = 956
+  Top = 174
   BorderStyle = bsDialog
   Caption = 'Editor Options'
   ClientHeight = 400
@@ -24,7 +24,6 @@ object frEditOptions: TfrEditOptions
     ActivePage = TabSheet1
     Align = alClient
     Style = tsFlatButtons
-    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'LDraw Highlighting'
@@ -658,9 +657,7 @@ object frEditOptions: TfrEditOptions
   end
   object fstEditOptions: TJvFormStorage
     Active = False
-    IniFileName = 'Software\Waterproof Productions\LDDesignPad'
     Options = []
-    UseRegistry = True
     StoredProps.Strings = (
       'SynLDRSyn1.ColorAttri'
       'SynLDRSyn1.CommentAttri'
