@@ -302,6 +302,8 @@ type
     acBendibleObject: TAction;
     acAutoRound: TAction;
     AutoRoundSelection1: TMenuItem;
+    AutoRoundSelection2: TMenuItem;
+    GenerateBendibleObject1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);

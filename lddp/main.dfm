@@ -642,6 +642,7 @@ object frMain: TfrMain
       end
       object GenrateBendibleObject1: TMenuItem
         Action = acBendibleObject
+        Caption = 'Generate Bendable Object '
       end
       object ProcessthroughLSynth1: TMenuItem
         Action = acLSynth
@@ -1006,6 +1007,8 @@ object frMain: TfrMain
       Caption = 'Reverse Winding'
       ImageIndex = 38
       ShortCut = 16471
+      SecondaryShortCuts.Strings = (
+        'F11')
       OnExecute = acReverseWindingExecute
     end
     object acCheckforUpdate: TAction
@@ -2652,6 +2655,12 @@ object frMain: TfrMain
     end
     object ReverseWinding2: TMenuItem
       Action = acReverseWinding
+    end
+    object AutoRoundSelection2: TMenuItem
+      Action = acAutoRound
+    end
+    object GenerateBendibleObject1: TMenuItem
+      Action = acBendibleObject
     end
     object N9: TMenuItem
       Caption = '-'
