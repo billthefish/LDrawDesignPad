@@ -28,14 +28,15 @@ uses
   splash in 'splash.pas' {frSplash},
   colordialog in 'colordialog.pas' {frColorDialog},
   dlgsearchreplacetext in 'dlgsearchreplacetext.pas' {frTextReplaceDialog},
-  dlgconfirmreplace in 'dlgconfirmreplace.pas' {frConfirmReplaceDialog},
-  editoptions in 'editoptions.pas',
+  BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
+  editoptions in 'editoptions.pas' {frEditOptions},
+  {$IFDEF MSWINDOWS}
   windowsspecific in 'windowsspecific.pas',
+  {$ENDIF}
   linuxspecific in 'linuxspecific.pas',
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
-  DATModel in 'DATModel.pas',
-  BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain};
+  DATModel in 'DATModel.pas';
 
 {$R *.res}
 
@@ -44,13 +45,14 @@ begin
     screen.cursor:=-11;
     Application.Initialize;
     Application.Title := 'LDraw DesignPad';
+
     Application.CreateForm(TfrMain, frMain);
-  Application.CreateForm(TfrAboutBox, frAboutBox);
-  Application.CreateForm(TfrOptions, frOptions);
-  Application.CreateForm(TfrColorDialog, frColorDialog);
-  Application.CreateForm(TfrEditOptions, frEditOptions);
-  Application.CreateForm(TfrTextSearchReplaceDialog, frTextSearchReplaceDialog);
-  Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
+    Application.CreateForm(TfrAboutBox, frAboutBox);
+    Application.CreateForm(TfrOptions, frOptions);
+    Application.CreateForm(TfrColorDialog, frColorDialog);
+    Application.CreateForm(TfrEditOptions, frEditOptions);
+    Application.CreateForm(TfrTextSearchReplaceDialog, frTextSearchReplaceDialog);
+    Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
   finally
     screen.cursor:=0;
   end;
