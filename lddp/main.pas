@@ -773,6 +773,8 @@ begin
     DetThreshold := StrToFloat(Trim(frOptions.seDet.Text));
   if frOptions.cboDist.Checked then
     DistThreshold := StrToFloat(Trim(frOptions.seDist.Text));
+  if frOptions.seCollinear.Text <> '' then
+    CollinearPointsThreshold := StrToFloat(Trim(frOptions.seCollinear.Text));
 
   with ActiveMDIChild as TfrEditorChild do
   begin
