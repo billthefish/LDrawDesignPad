@@ -103,7 +103,7 @@ begin
     for j := 1 to 4 do
     begin
       if (((ScrollBar1.Position + i) - 1)*4) + (j-1) <= slColors.Count-1 then
-        tmp := slColors.ValueFromIndex[(((ScrollBar1.Position + i) - 1)*4) + (j-1)]
+        tmp := slColors.Values[slColors.Names[(((ScrollBar1.Position + i) - 1)*4) + (j-1)]]
       else
         tmp := '';  
       name := copy(tmp,1,pos(' ',tmp)-1);
@@ -153,7 +153,7 @@ var
 
 begin
   nr:=slColors.Names[(Sender as TShape).tag+scrollbar1.position*4];
-  tmp:=slColors.ValueFromIndex[(Sender as TShape).tag+scrollbar1.position*4];
+  tmp:=slColors.Values[nr];
   cname:=copy(tmp,1,pos(' ',tmp)-1);
 
   if btnewColor.BevelOuter=bvLowered then
