@@ -297,7 +297,6 @@ type
     procedure acExternalsToolbarExecute(Sender: TObject);
     procedure acToolbarUpdate(Sender: TObject);
 
-
   private
     { Private declarations }
     initialized:boolean;
@@ -1142,8 +1141,21 @@ begin
       NewItem.ImageIndex := imgix;
       plugins1.Insert(plugins1.count,Newitem);
     end;
-    frOptions.cblPlugins.checked[frOptions.cblPlugins.Items.count-1]:= (ExtractfileExt(lowercase(sr.name))='.dll');
+    frOptions.cblPlugins.checked[frOptions.cblPlugins.Items.count-1] :=
+      (ExtractfileExt(lowercase(sr.name))='.dll');
     i:=FindNext(sr);
+  end;
+  if (Plugins1.Count = 0) and (Plugins3.Count = 0) then
+  begin
+    NewItem := TMenuItem.Create(Plugins3);
+    NewItem.caption:='None Found';
+    NewItem.Enabled := false;
+    plugins3.Insert(plugins3.count,Newitem);
+
+    NewItem := TMenuItem.Create(Plugins1);
+    NewItem.caption:='None Found';
+    NewItem.Enabled := false;
+    plugins1.Insert(plugins1.count,Newitem);
   end;
   Findclose(sr);
   frOptions.cblPlugins.sorted:=true;
