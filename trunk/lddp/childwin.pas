@@ -24,9 +24,9 @@ interface
 uses
   {$IFDEF MSWINDOWS}
   windowsspecific,
-  {$ELSEIF LINUX}
+  {$ELSE}
   linuxspecific,
-  {$IFEND}
+  {$ENDIF}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
   QSynHighlighterLDraw, QExtCtrls, Classes, QTypes, QComCtrls, QControls,
   QSyneditTypes, QStdCtrls;
@@ -146,7 +146,8 @@ begin
   end
   else
     frMain.acInline.enabled := False;
-    
+
+  {$IFDEF MSWINDOWS}
   if frMain.slPlugins.Count > 0 then
   for i:=0 to frMain.plugins3.Count-1 do
     begin
@@ -165,6 +166,7 @@ begin
           end;
       end;
     end;
+  {$ENDIF}  
 end;
 
 procedure TfrEditorChild.MemoChange(Sender: TObject);
