@@ -24,11 +24,11 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls,
+  Windows, Messages, Classes, QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls, QExtCtrls,
   {$ENDIF}
   {$IFDEF LINUX}
-  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QStdCtrls, QExtCtrls,
   {$ENDIF}
   dlgsearchtext,
@@ -52,7 +52,7 @@ type
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 { TTextReplaceDialog }
 

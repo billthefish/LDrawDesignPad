@@ -1,0 +1,114 @@
+object frEditorChild: TfrEditorChild
+  Left = 385
+  Top = 152
+  Width = 628
+  Height = 380
+  VertScrollBar.Range = 53
+  ActiveControl = Button1
+  Caption = 'Editor MDI Child'
+  Color = clButton
+  FormStyle = fsMDIChild
+  Position = poDefault
+  Visible = True
+  OnActivate = FormActivate
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  TextWidth = 6
+  object Splitter1: TSplitter
+    Left = 0
+    Top = 327
+    Width = 628
+    Height = 7
+    Cursor = crVSplit
+    Align = alBottom
+    Beveled = True
+  end
+  object pnInfo: TPanel
+    Left = 0
+    Top = 334
+    Width = 628
+    Height = 46
+    Align = alBottom
+    BevelOuter = bvNone
+    Caption = 'pnInfo'
+    TabOrder = 0
+    object Panel2: TPanel
+      Left = 0
+      Top = 0
+      Width = 13
+      Height = 46
+      Align = alLeft
+      BevelOuter = bvNone
+      TabOrder = 0
+      object Button1: TButton
+        Left = 0
+        Top = 0
+        Width = 12
+        Height = 12
+        Caption = 'X'
+        Font.CharSet = fcsLatin1
+        Font.Color = clText
+        Font.Height = 11
+        Font.Name = 'Arial'
+        Font.Pitch = fpVariable
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        OnClick = Button1Click
+      end
+    end
+    object lbInfo: TListBox
+      Left = 13
+      Top = 0
+      Width = 615
+      Height = 46
+      Hint = 
+        'Doublecklick on a L3P error message to jump to the error'#39's posit' +
+        'ion.'
+      Align = alClient
+      ParentShowHint = False
+      PopupMenu = frMain.pmL3P
+      ShowHint = True
+      TabOrder = 1
+      OnDblClick = lbInfoDblClick
+    end
+  end
+  object memo: TSynEdit
+    Left = 0
+    Top = 0
+    Width = 628
+    Height = 327
+    Align = alClient
+    Font.Color = clText
+    Font.Height = 13
+    Font.Name = 'Courier New'
+    Font.Pitch = fpVariable
+    Font.Style = []
+    Font.Weight = 40
+    ParentColor = False
+    ParentFont = False
+    PopupMenu = frMain.pmMemo
+    TabOrder = 1
+    OnClick = memoClick
+    OnKeyDown = MemoKeyDown
+    OnKeyUp = MemoKeyDown
+    Gutter.Font.Color = clText
+    Gutter.Font.Height = 11
+    Gutter.Font.Name = 'Terminal'
+    Gutter.Font.Pitch = fpVariable
+    Gutter.Font.Style = []
+    Gutter.Font.Weight = 40
+    Highlighter = frMain.SynLDRSyn
+    TabWidth = 2
+    OnChange = MemoChange
+    RemovedKeystrokes = <>
+    AddedKeystrokes = <
+      item
+        Command = ecContextHelp
+        ShortCut = 16496
+      end>
+  end
+end

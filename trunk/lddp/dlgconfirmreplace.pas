@@ -23,11 +23,11 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls,
+  Windows, Messages, Classes, QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls, QExtCtrls,
   {$ENDIF}
   {$IFDEF LINUX}
-  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QStdCtrls, QExtCtrls,
   {$ENDIF}
   SysUtils;
@@ -39,7 +39,6 @@ type
     btnSkip: TButton;
     btnCancel: TButton;
     btnReplaceAll: TButton;
-    Image1: TImage;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   public
@@ -52,7 +51,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 resourcestring
   SAskReplaceText = 'Replace this occurence of "%s"?';
@@ -61,9 +60,9 @@ resourcestring
 
 procedure TfrConfirmReplaceDialog.FormCreate(Sender: TObject);
 begin
-  {$IFDEF MSWINDOWS} //KYLIX VERSION POSSIBLE?
-  Image1.Picture.Icon.Handle := LoadIcon(0, IDI_QUESTION);
-  {$ENDIF}
+//  {$IFDEF MSWINDOWS} //KYLIX VERSION POSSIBLE?
+//  Image1.Picture.Icon.Handle := LoadIcon(0, IDI_QUESTION);
+//  {$ENDIF}
 end;
 
 procedure TfrConfirmReplaceDialog.FormDestroy(Sender: TObject);

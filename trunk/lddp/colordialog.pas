@@ -24,11 +24,11 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, Graphics, Controls, Forms,
-  StdCtrls, Buttons, ExtCtrls,
+  Windows, Messages, Classes, QGraphics, QControls, QForms,
+  QStdCtrls, QButtons, QExtCtrls,
   {$ENDIF}
   {$IFDEF LINUX}
-  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QStdCtrls, QExtCtrls, QButtons,
   {$ENDIF}
   JvColorBox,
@@ -52,22 +52,6 @@ type
     edDescription: TEdit;
     btOldColor: TPanel;
     btNewColor: TPanel;
-    JvColorSquare1: TJvColorSquare;
-    JvColorSquare2: TJvColorSquare;
-    JvColorSquare3: TJvColorSquare;
-    JvColorSquare4: TJvColorSquare;
-    JvColorSquare5: TJvColorSquare;
-    JvColorSquare6: TJvColorSquare;
-    JvColorSquare7: TJvColorSquare;
-    JvColorSquare8: TJvColorSquare;
-    JvColorSquare9: TJvColorSquare;
-    JvColorSquare10: TJvColorSquare;
-    JvColorSquare11: TJvColorSquare;
-    JvColorSquare12: TJvColorSquare;
-    JvColorSquare13: TJvColorSquare;
-    JvColorSquare14: TJvColorSquare;
-    JvColorSquare15: TJvColorSquare;
-    JvColorSquare16: TJvColorSquare;
     procedure FormShow(Sender: TObject);
     procedure btOldCOlorClick(Sender: TObject);
     procedure btNewColorClick(Sender: TObject);
@@ -87,7 +71,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 procedure TfrColorDialog.FormShow(Sender: TObject);
 var i:integer;

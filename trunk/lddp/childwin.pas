@@ -21,16 +21,14 @@ unit childwin;
 
 interface
 
-uses
+uses QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
+  QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
+  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
+  QSyneditTypes, QStdCtrls
   {$IFDEF MSWINDOWS}
-  Windows, Classes, Graphics, Forms, Controls, StdCtrls, dialogs,
-  Menus, ExtCtrls,
+  ,windowsspecific, registry
   {$ENDIF}
-  {$IFDEF LINUX}
-  QForms, QSynEdit, QControls, QStdCtrls, QExtCtrls, QDialogs, Classes,
-  {$ENDIF}
-  SynMemo, SynEdit, SynEditHighlighter, SynHighlighterLDraw,
-  SysUtils;
+;
 
 type
   TfrEditorChild = class(TForm)
@@ -64,7 +62,7 @@ implementation
 
 uses main, preview;
 
-{$R *.dfm}
+{$R *.xfm}
 
 function TfrEditorChild.tempFileName:string;
 {---------------------------------------------------------------------
@@ -74,7 +72,7 @@ Return value: Path & Filename of the temporary filename
 ---------------------------------------------------------------------}
 begin
   if ExtractFilePath(self.Caption)<>'' then tempFileName:=ExtractFilePath(self.Caption)+tmpFileName
-    else tempFileName:=frMain.GetTempDir+tmpFileName;
+    else tempFileName:=GetTempDir+tmpFileName;
 end;
 
 
@@ -98,31 +96,26 @@ Description: Checks if form has been changed outside the editor by
              comparing filedate time
 Parameter: Standard
 Return value: Standard
-FILEDATE CHECK IS PLATFORM SPECIFIC - WINDOWS ONLY
 ----------------------------------------------------------------------}
 var r : integer;
     SR : tSearchRec;
 
 begin
-  {$IFDEF MSWINDOWS}
   r := FindFirst(self.caption, faAnyFile, SR);
   if r = 0 then
   begin
-    if (frMain.FileAccessDateToDateTime(SR.FindData.ftLastWriteTime)<>filedatetime) and
+    if (FileDateToDateTime(SR.Time)<>filedatetime) and
        (MessageDlg('File has been changed outside the editor!'+#13+#10+'Reload and loose all changes?', mtWarning, [mbYes, mbNo], 0)=mrYes) then
         begin
           Memo.Lines.LoadFromFile(caption);
           FindFirst(caption, faAnyFile, SR);
-          {$ifdef MSWINDOWS}
-          filedatetime:=frMain.FileAccessDateToDateTime(SR.FindData.ftLastWriteTime);
-          {$endif}
+          filedatetime:=FileDateToDateTime(SR.Time);
           FindClose(sr);
           Memo.modified:=false;
           updatecontrols;
         end;
   end;
   FindClose(SR);
-  {$ENDIF}
 
   UpdateControls;
 end;
@@ -221,21 +214,22 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 var
-  L3PErrorLine: Integer;
+   L3PErrorLine: Integer;
 begin
-   // Set current postion to errorline
-   L3PErrorLine := StrToInt( Copy(lbinfo.Items[lbinfo.Itemindex], 19,
-                                  pos(':',lbinfo.Items[lbinfo.Itemindex])-19) );
-   memo.TopLine := L3PErrorLine;
-   memo.CaretXY := Point(1, L3PErrorLine);
+    // Set current postion to errorline
+    L3PErrorLine := StrToInt( Copy(lbinfo.Items[lbinfo.Itemindex], 19,
+                                   pos(':',lbinfo.Items[lbinfo.Itemindex])-19) );
+    memo.TopLine := L3PErrorLine;
+    memo.CaretXY := Point(1, L3PErrorLine);
 
-   // Highlight errorline
-   memo.selstart:=memo.selstart+length(memo.lines[memo.CaretY-1]);
-   memo.selend:=memo.selstart-length(memo.lines[memo.CaretY-1]);
+    // Highlight errorline
+    memo.selstart:=memo.selstart+length(memo.lines[memo.CaretY-1]);
+    memo.selend:=memo.selstart-length(memo.lines[memo.CaretY-1]);
 
-   // Change focus from L3P error pane to editor pane
-   memo.setfocus;
+    // Change focus from L3P error pane to editor pane
+    memo.setfocus;
 end;
+
 
 procedure TfrEditorChild.FormCreate(Sender: TObject);
 {---------------------------------------------------------------------

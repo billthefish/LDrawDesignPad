@@ -21,18 +21,10 @@ unit editoptions;
 
 interface
 
-uses
-  {$IFDEF MSWINDOWS}
-  Windows, Messages, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, JvPlacemnt, ActnList, StdActns,
-  SynEditHighlighter, SynHighlighterLDraw, SynEdit, SynMemo,
-  {$ENDIF}
-  {$IFDEF LINUX}
-  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
-  QDialogs, QStdCtrls, QSynEditHighlighter, QSynHighlighterLDraw, QButtons,
-  QExtCtrls, QSynEdit, QSynMemo, QComCtrls,
-  {$ENDIF}
-  JvColorBox,
+uses QFOrms, QSynEditHighlighter, QSynHighlighterLDraw, JvPlacemnt, QStdCtrls,
+  QButtons, QExtCtrls, QSynEdit, QSynMemo, QControls, QComCtrls, Classes, QActnList, QTypes,
+  Inifiles, splash, jvstrutils,
+  QSyneditTypes, JvColorBox,
   SysUtils;
 
 type
@@ -40,8 +32,8 @@ type
     PageControl1: TPageControl;
     {$IFDEF MSWINDOWS}
     fstEditOptions: TJvFormStorage;
-    clbForeground: TColorBox;
-    clbBackground: TColorBox;
+//    clbForeground: TColorBox;
+//    clbBackground: TColorBox;
     {$ENDIF}
 
     TabSheet1: TTabSheet;
@@ -81,7 +73,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 procedure TfrEditOptions.FormCreate(Sender: TObject);
 begin
@@ -104,66 +96,66 @@ begin
     10: SelectedElement := SynLDRSyn1.OpLineAttri;
     else SelectedElement := nil;
   end;
-{$IFDEF MSWINDOWS}
-  clbForeground.Selected := SelectedElement.Foreground;
-  clbBackground.Selected := SelectedElement.Background;
+{$IFNDEF CLX}
+//  clbForeground.Selected := SelectedElement.Foreground;
+//  clbBackground.Selected := SelectedElement.Background;
 {$ENDIF}
-  if fsBold in SelectedElement.Style then cbxBold.Checked := True;
-  if fsItalic in SelectedElement.Style then cbxItalic.Checked := True;
-  if fsUnderline in SelectedElement.Style then cbxUnderline.Checked := True;
-  if fsStrikeout in SelectedElement.Style then cbxStrikeout.Checked := True;
+//  if fsBold in SelectedElement.Style then cbxBold.Checked := True;
+//  if fsItalic in SelectedElement.Style then cbxItalic.Checked := True;
+//  if fsUnderline in SelectedElement.Style then cbxUnderline.Checked := True;
+//  if fsStrikeout in SelectedElement.Style then cbxStrikeout.Checked := True;
 end;
 
 procedure TfrEditOptions.clbForegroundChange(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
-  if SelectedElement <> nil then
-  SelectedElement.Foreground := clbForeground.Selected;
-{$ENDIF}
+//{$IFDEF MSWINDOWS}
+//  if SelectedElement <> nil then
+//  SelectedElement.Foreground := clbForeground.Selected;
+//{$ENDIF}
 end;
 
 procedure TfrEditOptions.clbBackgroundChange(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
-  if SelectedElement <> nil then
-  SelectedElement.Background := clbBackground.Selected;
-{$ENDIF}
+//{$IFDEF MSWINDOWS}
+//  if SelectedElement <> nil then
+//  SelectedElement.Background := clbBackground.Selected;
+//{$ENDIF}
 end;
 
 procedure TfrEditOptions.cbxBoldClick(Sender: TObject);
 begin
-  if SelectedElement <> nil then
-    if cbxBold.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsBold]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsBold];
+//  if SelectedElement <> nil then
+//    if cbxBold.Checked then
+//      SelectedElement.Style := SelectedElement.Style + [fsBold]
+//    else
+//      SelectedElement.Style := SelectedElement.Style - [fsBold];
 end;
 
 procedure TfrEditOptions.cbxItalicClick(Sender: TObject);
 begin
-  if SelectedElement <> nil then
-    if cbxItalic.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsItalic]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsItalic];
+//  if SelectedElement <> nil then
+//    if cbxItalic.Checked then
+//      SelectedElement.Style := SelectedElement.Style + [fsItalic]
+//    else
+//      SelectedElement.Style := SelectedElement.Style - [fsItalic];
 end;
 
 procedure TfrEditOptions.cbxUnderlineClick(Sender: TObject);
 begin
-  if SelectedElement <> nil then
-    if cbxUnderline.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsUnderline]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsUnderline];
+//  if SelectedElement <> nil then
+//    if cbxUnderline.Checked then
+//      SelectedElement.Style := SelectedElement.Style + [fsUnderline]
+//    else
+//      SelectedElement.Style := SelectedElement.Style - [fsUnderline];
 end;
 
 procedure TfrEditOptions.cbxStrikeOutClick(Sender: TObject);
 begin
-  if SelectedElement <> nil then
-    if cbxStrikeout.Checked then
-      SelectedElement.Style := SelectedElement.Style + [fsStrikeout]
-    else
-      SelectedElement.Style := SelectedElement.Style - [fsStrikeout];
+//  if SelectedElement <> nil then
+//    if cbxStrikeout.Checked then
+//      SelectedElement.Style := SelectedElement.Style + [fsStrikeout]
+//    else
+//      SelectedElement.Style := SelectedElement.Style - [fsStrikeout];
 end;
 
 procedure TfrEditOptions.Button1Click(Sender: TObject);
@@ -178,8 +170,8 @@ begin
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
   {$IFDEF MSWINDOWS}
-  clbForeground.Selected := clNone;
-  clbBackground.Selected := clNone;
+//  clbForeground.Selected := clNone;
+//  clbBackground.Selected := clNone;
   {$ENDIF}
 
 end;
@@ -190,8 +182,8 @@ begin
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
   {$IFDEF MSWINDOWS}
-  clbForeground.Selected := clNone;
-  clbBackground.Selected := clNone;
+//  clbForeground.Selected := clNone;
+//  clbBackground.Selected := clNone;
   {$ENDIF}
 
 end;

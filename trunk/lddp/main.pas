@@ -1,6 +1,5 @@
-{-------------------------------------------------------------------------------
 
-These sources are copyrighted (C) by Carsten Schmitz and the LDDP project contributors.
+{These sources are copyrighted (C) by Carsten Schmitz and the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,54 +21,29 @@ unit main;
 interface
 
 uses
-// Windows Units
   {$IFDEF MSWINDOWS}
-  Windows, Graphics, Forms, Controls, Menus,
-  StdCtrls, Dialogs, Buttons, Messages, ExtCtrls, ComCtrls, StdActns,
-  ActnList, ToolWin, ImgList, HttpProt,
-  version, registry,
+  windowsspecific, registry,
+  {$ELSEIF LINUX}
+  linuxspecific,
+  {$IFEND}
+  QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
+  QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
+  Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
+  QSyneditTypes, IdBaseComponent, IdComponent, IdTCPConnection, QGraphics, QSyneditKeyCmds,
+  QSynHighlighterCpp, QSynHighlighterPas, IdTCPClient, IdHTTP ;
 
-  SynEdit, SynEditHighlighter, SynHighlighterLDraw,
-  SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
-  SynEditTypes, SynEditMiscClasses, SynEditSearch,
-  {$ENDIF}
-
-// Linux Units
-  {$IFDEF LINUX}
-  QTypes, QComCtrls, QControls, Types, Variants, QForms,
-  QExtCtrls, QMenus, QImgList, QStdActns, QActnList,
-  QDialogs, QGraphics,
-
-  QSynHighlighterPas, QSynHighlighterCpp, QSynEditPrint,
-  QSynEditHighlighter, QSynHighlighterLDraw, QSynEditTypes,
-  QSynEditMiscClasses, QSynEditSearch,
-  {$ENDIF}
-
-// Common Units
-  Classes,
-  IniFiles,
-  JvStrUtils,
-  SysUtils, //for TSearchRec & TFileName
-  splash;   //splash screen
 
 type TLDrawArray= record
-  typ: Integer;
-  color: Integer;
-  xyz: array[1..4,1..3] of Extended;
-  partname: string;
+  typ:integer;
+  color:integer;
+  xyz:array[1..4,1..3] of Extended;
+  partname:string;
 end;
 
-type
-  TLDDPCallBack = procedure(strCBText : PChar );
 
 
 type
   TfrMain = class(TForm)
-    {$IFDEF MSWINDOWS} //THESE AREN'T IN KYLIX YET
-      HttpCli1: THttpCli;
-      WindowTileHorizontal1: TWindowTileHorizontal;
-      WindowTileVertical1: TWindowTileVertical;
-    {$ENDIF}
     acCommentBlock: TAction;
     acCommentBlock1: TMenuItem;
     acDecIndent: TAction;
@@ -205,10 +179,8 @@ type
     StandardPartHeader1: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
-    SynCppSyn: TSynCppSyn;
     SynEditPrint: TSynEditPrint;
     SynLDRSyn: TSynLDRSyn;
-    SynPasSyn: TSynPasSyn;
     SyntaxHighlighting1: TMenuItem;
     tmPoll: TTimer;
     ToolBar1: TToolBar;
@@ -245,7 +217,6 @@ type
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
-    ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     Tools1: TMenuItem;
@@ -257,20 +228,23 @@ type
     UpdateHeader2: TMenuItem;
     UserDefinedProgram1: TMenuItem;
     Window1: TMenuItem;
-    WindowCascade1: TWindowCascade;
+    acWindowCascade: TWindowCascade;
     WindowCascadeItem: TMenuItem;
     Windows1: TMenuItem;
     Windows2: TMenuItem;
     WindowTileItem: TMenuItem;
-    WindowTileItem2: TMenuItem;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
     acFileOpen: TAction;
     acFileSaveAs: TAction;
     acFilePrint: TAction;
-    SynEditSearch1: TSynEditSearch;
     CloseAll1: TMenuItem;
     acFileCloseAll: TAction;
+    acWindowTile: TAction;
+    http: TIdHTTP;
+    acCheckUpdate: TAction;
+    SynPasSyn: TSynPasSyn;
+    SynCppSyn: TSynCppSyn;
 
     {$IFDEF MSWINDOWS}  //NOT IN KYLIX RIGHT NOW
     procedure acHomepageExecute(Sender: TObject);
@@ -280,7 +254,6 @@ type
     procedure acLDViewExecute(Sender: TObject);
     procedure acMLCadExecute(Sender: TObject);
     procedure acUserDefinedExecute(Sender: TObject);
-    procedure CheckforUpdate1Click(Sender: TObject);
     procedure acFilePrintExecute(Sender: TObject);
     {$ENDIF}
 
@@ -337,6 +310,8 @@ type
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
     procedure acFileCloseAllExecute(Sender: TObject);
+    procedure acWindowCascadeExecute(Sender: TObject);
+    procedure acWindowTileExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -344,9 +319,6 @@ type
     fSearchFromCaret: boolean;
     procedure AppInitialize;
     procedure CreateMDIChild(const Name: string;new:boolean);
-    {$IFDEF MSWINDOWS}
-    procedure FileIsDropped ( VAR Msg : TMessage ) ; Message WM_DropFiles ;
-    {$ENDIF}
 
 
   public
@@ -357,21 +329,13 @@ type
     lastfind:integer;
     strIniName: string;
     LDDPini: TMemIniFile;
-    {$IFDEF MSWINDOWS} //NOT IN KYLIX
-     function  DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
-     function  FileAccessDateToDateTime(FileTime : tFileTime) : tDateTime;
-     function  GetShortFileName(Const FileName : String) : String;
-    {$ENDIF}
+
     procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
-
-
-    function  GetTempDir:string;
     Function  GetTMPFileName: String;
     function  LDrawConstruct(line:TLDrawArray):string;
     function  LDrawParse(line:String): TLDrawArray;
     procedure LoadFile(fname:string);
     procedure LoadPlugins(AppInit:Boolean = false);
-    function  PluginInfo(fname:string; nr:integer):string;
     procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateCOntrols(closing:boolean);
     procedure UpdateMRU(NewFileName: TFileName= '');
@@ -387,13 +351,10 @@ const
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
 uses
   childwin,
-  {$IFDEF MSWINDOWS}
-  shellapi,
-  {$ENDIF}
   about, options, editoptions, colordialog,
   dlgconfirmreplace, dlgsearchtext, dlgreplacetext;
 
@@ -435,16 +396,7 @@ begin
 end;
 
 
-procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
-{---------------------------------------------------------------------
-Description: Accepts the (changed) Text and SelText from the plugin DLLs
-Parameter: strCBCompleteText,strCBSelText
-Return value: none
-----------------------------------------------------------------------}
-begin
-  frMain.strChangedCompleteText:=String(strCBCompleteText);
-  frMain.strChangedSelText:=String(strCBSelText);
-end;
+
 
 function ExtractWordPos(N: Integer; const S: string; const WordDelims: TSysCharSet; var Pos: Integer): string;
 {---------------------------------------------------------------------
@@ -497,87 +449,6 @@ begin
 end;
 
 
-{$IFDEF MSWINDOWS}
-function TfrMain.DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
-{---------------------------------------------------------------------
-Description: Executes an external program
-Parameter: command: Command to execute; flg: see below;
-           wait: wait for completion of called program until program continues
-Return value: none
-
----
-
-Flag-Value		Meaning
-----------------------------------------
-SW_HIDE			Hides the window and activates another window.
-SW_MAXIMIZE		Maximizes the specified window.
-SW_MINIMIZE		Minimizes the specified window and activates the next top-level window in the Z order.
-SW_RESTORE		Activates and displays the window. If the window is minimized or
-                        maximized, Windows restores it to its original size and position.
-                        An application should specify this flag when restoring a minimized window.
-SW_SHOW			Activates the window and displays it in its current size and position.
-SW_SHOWDEFAULT		Sets the show state based on the SW_ flag specified in the STARTUPINFO
-                        structure passed to the CreateProcess function by the program that started the application. An application should call ShowWindow with this flag to set the initial show state of its main window.
-SW_SHOWMAXIMIZED	Activates the window and displays it as a maximized window.
-SW_SHOWMINIMIZED	Activates the window and displays it as a minimized window.
-SW_SHOWMINNOACTIVE	Displays the window as a minimized window. The active window remains active.
-SW_SHOWNA		Displays the window in its current state. The active window remains active.
-SW_SHOWNOACTIVATE	Displays a window in its most recent size and position. The active window remains active.
-SW_SHOWNORMAL		Activates and displays a window. If the window is minimized or maximized, Windows restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
-
-----------------------------------------------------------------------}
-var
-  StartupInfo: TStartupInfo;
-  ProcessInfo: TProcessInformation;
-
-begin
-  FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
-  with StartupInfo do
-  begin
-    cb := SizeOf(TStartupInfo);
-    dwFlags:= STARTF_USESHOWWINDOW;
-    wShowWindow := Flg;
-  end;
-  Result := CreateProcess(nil, PChar(Command), nil, nil, False,
-  NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo);
-  if Result then
-    with ProcessInfo do
-    begin
-      if wait then
-        WaitForSingleObject(hProcess, INFINITE);
-      CloseHandle(hThread);
-      CloseHandle(hProcess);
-    end;
-end;
-{$ENDIF}
-
-{$IFDEF MSWINDOWS}
-procedure TfrMain.FileIsDropped ( VAR Msg : TMessage ) ;
-{---------------------------------------------------------------------
-Description: Accepts files dropped from explorer
-Parameter: msg:TMessage : not needed
-Return value: msg:TMessage : not needed
-----------------------------------------------------------------------}
-VAR
-   hDrop : THandle ;
-   fName : string ;
-   NumberOfFiles : INTEGER ;
-   fCounter : INTEGER ;
-BEGIN
-   hDrop := Msg.WParam ;
-   NumberOfFiles := DragQueryFile(hDrop,$FFFFFFFF, nil, 0);
-   FOR fCounter := 1 TO NumberOfFiles DO
-   BEGIN
-     SetLength(fname, MAX_PATH); // Anticipate largest string size
-     SetLength(fname, DragQueryFile(HDrop, fCounter-1, PChar(fname),MAX_PATH));
-     if (lowercase(extractFIleExt(fname)) <> '.exe') and
-        (lowercase(extractFIleExt(fname)) <> '.com') then
-       CreateMDIChild(fName,false);
-   END ;
-   DragFinish ( hDrop);
-END ;
-{$ENDIF}
-
 
 procedure TfrMain.UpdateControls(closing:boolean);
 {---------------------------------------------------------------------
@@ -620,6 +491,7 @@ begin
   acUserDefined.Enabled:=mdicount>0;
   if mdicount=0 then acInline.enabled:=false;
   acReplaceColor.enabled:=mdicount>0;
+  acWindowTile.enabled:=mdicount>0;
 end;
 
 procedure tfrMain.LoadFile(fname:string);
@@ -635,9 +507,7 @@ begin
     (activeMDICHild as TfrEditorChild).Memo.Lines.LoadFromFile(fName);
     (activeMDICHild as TfrEditorChild).Memo.modified:=false;
     FindFirst(fname, faAnyFile, SR);
-    {$ifdef MSWINDOWS}
-    (activeMDICHild as TfrEditorChild).filedatetime:=frMain.FileAccessDateToDateTime(SR.FindData.ftLastWriteTime);
-    {$endif}
+    (activeMDICHild as TfrEditorChild).filedatetime:=FileDateToDateTime(SR.time);
     FindClose(sr);
     (activeMDICHild as TfrEditorChild).updatecontrols;
   end
@@ -746,22 +616,6 @@ begin
     MessageDlg('File '''+ (Sender as TMenuItem).Caption +''' not found!', mtError, [mbOK], 0);
 end;
 
-{$IFDEF MSWINDOWS}
-function TfrMain.FileAccessDateToDateTime(FileTime : tFileTime) : tDateTime;
-{---------------------------------------------------------------------
-Description: Convert DOS Filetime to tDatetime value
-Parameter: FileTime : tFileTime
-Return value: tDateTime
-----------------------------------------------------------------------}
-var LocalTime : tFileTime;
-    DOSFileTime : DWord;
-begin
-  FileTimeToLocalFileTime(FileTime, LocalTime); // Compensate for time zone
-  FileTimeToDosDateTime(LocalTime,  LongRec(DOSFileTime).Hi,
-     LongRec(DOSFileTime).Lo);
-  Result := FileDateToDateTime(DOSFileTime);
-end;
-{$ENDIF}
 
 procedure TfrMain.acFileSaveExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -778,10 +632,7 @@ begin
       (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(activeMDICHild.caption);
       (activeMDICHild as TfrEditorChild).memo.Modified:=false;
       FindFirst(activeMDICHild.caption, faAnyFile, SR);
-    {$ifdef MSWINDOWS}
-      (activeMDICHild as TfrEditorChild).filedatetime:=frMain.FileAccessDateToDateTime(SR.FindData.ftLastWriteTime);
-    {$endif}
-
+      (activeMDICHild as TfrEditorChild).filedatetime:=FileDateToDateTime(SR.Time);
       FindClose(sr);
     end;
 end;
@@ -797,8 +648,7 @@ begin
   if SaveDialog1.Execute then
   begin
     ActiveMDIChild.caption := SaveDialog1.FileName;
-    if ActiveMDIChild.Tag > 0 then
-      UpdateMRU(SaveDialog1.FileName);
+    if ActiveMDIChild.Tag > 0 then UpdateMRU(SaveDialog1.FileName);
     ActiveMDIChild.Tag := 0;
     acFileSaveExecute(Sender);
   end;
@@ -833,11 +683,7 @@ Return value: None
 ----------------------------------------------------------------------}
 var
   i:integer;
-  Windir: string;
-  WDir: PChar;
-  {$IFDEF MSWINDOWS}
-    regT:Tregistry;
-  {$ENDIF}
+  regT:TRegistry;
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
@@ -847,12 +693,9 @@ begin
     screen.cursor:=-11;
 
     {$IFDEF MSWINDOWS}
-    GetMem(WDir, 144);
-    GetWindowsDirectory(WDir, 144);
-    Windir := StrPas(WDir);
-    strIniName := WinDir + '\LDraw.ini';
+      strIniName := WindowsDir + '\LDraw.ini';
     {$ELSE}
-    strIniName := ExtractFilePath(Application.ExeName) + 'LDraw.ini';
+      strIniName := ExtractFilePath(Application.ExeName) + 'LDraw.ini';
     {$ENDIF}
 
     LDDPini := TMemIniFile.Create(strIniName);
@@ -870,7 +713,6 @@ begin
 
     {$IFDEF MSWINDOWS}
      regT:=Tregistry.create;
-     regt.RootKey:=HKEY_CURRENT_USER;
      regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
      regt.WriteString('InstallDir', application.ExeName);
      regt.free;
@@ -908,12 +750,8 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-   {$IFDEF MSWINDOWS}
-   Application.updateformatsettings:=false;
-   DragAcceptFiles( Handle,True ) ;
-   {$ENDIF}
-   DecimalSeparator:='.';
-   ThousandSeparator:=',';
+  DecimalSeparator:='.';
+  ThousandSeparator:=',';
 end;
 
 procedure TfrMain.acEditCutExecute(Sender: TObject);
@@ -968,31 +806,6 @@ begin
   ShowSearchReplaceDialog(TRUE);
 end;
 
-function tfrMain.GetTempDir:string;
-{---------------------------------------------------------------------
-Description: Find out windows temp path
-Parameter: None
-Return value: Windows Temp dir
-----------------------------------------------------------------------}
-  var
-  tempDir: string;
-  lng:     DWORD;
-begin
-  {$IFDEF MSWINDOWS}
-  lng := GetTempPath(0, nil);
-  if lng > 0 then
-  begin
-    SetLength(tempDir, lng - 1);
-    GetTempPath(lng, PChar(tempDir));
-  end;
-  if copy(tempdir,length(tempdir),1)<>'\' then tempdir:=tempdir+'\';
-  {$ENDIF}
-  {$IFDEF LINUX}
-  tempDir := '~/'; //use the user's home directory, for now
-  {$ENDIF}
-  Result:=tempDir;
-
-end;
 
 Function TfrMain.GetTMPFileName: String;
 {---------------------------------------------------------------------
@@ -1009,7 +822,6 @@ begin
   Result:=inttohex(hour,2)+inttohex(Min,2)+inttohex(Sec,2)+inttohex(trunc(MSec/10),2);
 end;
 
-{$IFDEF MSWINDOWS}
 procedure TfrMain.acL3PCheckExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Start L3P
@@ -1020,27 +832,6 @@ Return value: Windows Temp dir
 var st:TStringlist;
     s,cmd,u,Zieldatei:string;
     i:integer;
-
-  function GetDOSVar (VarName: string): string;
-  {---------------------------------------------------------------------
-  Description: Find out DOS var settings (path etc.)
-  Parameter: name of DOS var
-  Return value: value of dos var
-  ----------------------------------------------------------------------}
-
-  const StrSize = 250    ;
-  var PName,PBuff : PChar ;
-      DataSize    : byte  ;
-  begin
-   Getmem  (PName,StrSize) ;
-   Getmem  (PBuff,StrSize) ;
-   StrCopy (PName,pchar(VarName)) ;
-   Datasize := GetEnvironmentVariable (PName,PBuff,StrSize) ;
-   Result := copy(string(PBuff),1,Datasize) ;
-   FreeMem (PName) ;
-   FreeMem (PBuff) ;
-  end;
-
 begin
   if (not FIleExists(frOptions.edLDrawDir.text+'\parts.lst')) then begin
     MessageDlg('You have to specify a valid path to LDraw (parts.lst) first!', mtError, [mbOK], 0);
@@ -1057,14 +848,18 @@ begin
   st.add('set PATH=%PATH%;'+extractFIledir(Paramstr(0)));
   st.add('set LDRAWDIR='+GetShortFileName(frOptions.edLdrawDir.text));
   cmd:=GetShortFileName(frOptions.edL3PDir.text)+'\L3P.exe -check';
-  if frOptions.cboDist.Checked then cmd:=cmd+' -dist'+floattostr(froptions.seDist.Value);
-  if frOptions.cboDet.Checked then cmd:=cmd+' -det'+floattostr(froptions.seDet.Value);
+  if frOptions.cboDist.Checked then cmd:=cmd+' -dist'+froptions.seDist.text;
+  if frOptions.cboDet.Checked then cmd:=cmd+' -det'+froptions.seDet.text;
   u:=GetShortFileName(extractFilePath((activeMDICHild as TfrEditorChild).TempFileName))+ExtractFIleName((activeMDICHild as TfrEditorChild).TempFileName);
   (activeMDICHild as TfrEditorChild).memo.lines.savetofile(u);
   st.add(cmd+' '+u+' >'+Zieldatei);
   s:=GetShortFileName(GetTempDir)+GetTMPFIleName+'.bat';
   st.SaveToFile(s);
-  DOCommand(GetDOSVar('COMSPEC')+' /C '+ s,SW_HIDE,true);
+  {$IFDEF WINDOWS}
+    DOCommand(GetDOSVar('COMSPEC')+' /C '+ s,SW_HIDE,true);
+  {$ELSEIF LINUX}
+
+  {$IFEND}
   DeleteFile(s);
   st.loadfromfile(Zieldatei);
   if st.count=0 then begin
@@ -1096,9 +891,8 @@ begin
     end;
   st.free;
 end;
-{$ENDIF}
 
-{$IFDEF MSWINDOWS}
+
 procedure TfrMain.acLDViewExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Execute LDView
@@ -1113,9 +907,12 @@ begin
     exit;
   end;
   (activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((activeMDICHild as TfrEditorChild).tempFileName);
+  {$IFDEF WINDOWS}
   DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
+  {$ELSEIF LINUX}
+
+  {$IFEND}
 end;
-{$ENDIF}
 
 procedure TfrMain.acOptionsExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1124,24 +921,18 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
   frOptions.fstOptions.RestoreFormPlacement;
-{$ENDIF}
+
   if frOptions.showmodal=mrOK then
   begin
     LDDPini := TMemIniFile.Create(strIniName);
     if frOptions.edLDrawDir.Text <> '' then
       LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
     LDDPini.UpdateFile;
-    LDDPini.Free;  
-{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
+    LDDPini.Free;
     frOptions.fstOptions.SaveFormPlacement;
-{$ENDIF}
   end
-{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
-  else
-    frOptions.fstOptions.RestoreFormPlacement;
-{$ENDIF}
+  else frOptions.fstOptions.RestoreFormPlacement;
 end;
 
 
@@ -1152,19 +943,13 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
   frEditOptions.fstEditOptions.RestoreFormPlacement;
-{$ENDIF}
   if frEditOptions.showmodal=mrOK then
   begin
-{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
     frEditOptions.fstEditOptions.SaveFormPlacement;
-{$ENDIF}
     SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
   end
-{$IFDEF MSWINDOWS} //THIS CAN BE REMOVED ONCE JVPLACEMENT WORKS IN KYLIX
   else frEditOptions.fstEditOptions.RestoreFormPlacement;
-{$ENDIF}
 end;
 
 procedure TfrMain.acUndoExecute(Sender: TObject);
@@ -1187,7 +972,7 @@ begin
   (activeMDICHild as TfrEditorChild).memo.Redo;
 end;
 
-{$IFDEF MSWINDOWS}
+
 procedure TfrMain.acMLCadExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Execute ML-Cad with active MDI-Child file
@@ -1204,35 +989,13 @@ begin
     acOptionsExecute(Sender);
     exit;
   end;
+  {$IFDEF WINDOWS}
   DOCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "'+(activeMDICHild as TfrEditorChild).caption+'"',SW_SHOWNA,false);
+  {$ELSEIF LINUX}
 
+  {$IFEND}
 end;
-{$ENDIF}
 
-function TfrMain.PluginInfo(fname:string; nr:integer):string;
-{---------------------------------------------------------------------
-Description: Get Info from plugin DLL
-Parameter: Fname: path and filename of dll, nr: no. of Info to get
-Return value: None
-----------------------------------------------------------------------}
-var
- libHndl:THandle;
- Plugin_Info:procedure(CaseID:byte;buffer:pchar;maxlength:byte); stdcall;
- sBuff:string;
-begin
-  SetLength(sBuff, 255);         // allocate buffer
-  Plugin_Info:=nil;
-  libHndl := LoadLibrary(pchar(fname));
-
-  if libHndl <> 0 then
-    @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
-
-  if Assigned(Plugin_Info) then Plugin_info(nr,PChar(sBuff), 255);
-  
-  SetLength(sBuff, Length(PChar(sBuff)));
-  result:=sBuff;
-  FreeLibrary(libHndl);
-end;
 
 procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
 {---------------------------------------------------------------------
@@ -1260,7 +1023,7 @@ begin
       ilToolBarColor.Delete(plugins3.items[Plugins3.Count-1].ImageIndex);
     plugins3.items[Plugins3.Count-1].free;
   end;
-  
+
   while i=0 do
   begin
     PluginFile := PluginPath + sr.Name;
@@ -1270,8 +1033,8 @@ begin
       splashscreen.update;
     end;
     frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
-                                   ' - ' + frMain.PLuginInfo(PluginFile,3));
-    slplugins.add(frMain.PLuginInfo(PluginFile,6)+','+PluginFile);
+                                   ' - ' + PLuginInfo(PluginFile,3));
+    slplugins.Add(PLuginInfo(PluginFile,6)+','+PluginFile);
 
     if ExtractfileExt(lowercase(sr.name))='.dll' then
     begin
@@ -1287,16 +1050,16 @@ begin
         end;
       NewItem := TMenuItem.Create(Plugins3);
       Newitem.tag:=slplugins.count-1;
-      NewItem.caption:=frMain.PLuginInfo(PluginFile,1);
-      NewItem.hint:=frMain.PLuginInfo(PluginFile,3);
+      NewItem.caption:=PLuginInfo(PluginFile,1);
+      NewItem.hint:=PLuginInfo(PluginFile,3);
       newItem.onclick:=PluginClick;
       NewItem.ImageIndex := imgix;
       plugins3.Insert(plugins3.count,Newitem);
 
       NewItem := TMenuItem.Create(Plugins1);
       Newitem.tag:=slplugins.count-1;
-      NewItem.caption:=frMain.PluginInfo(PluginFile,1);
-      NewItem.hint:=frMain.PluginInfo(PluginFile,3);
+      NewItem.caption:=PluginInfo(PluginFile,1);
+      NewItem.hint:=PluginInfo(PluginFile,3);
       newItem.onclick:=PluginClick;
       NewItem.ImageIndex := imgix;
       plugins1.Insert(plugins1.count,Newitem);
@@ -1330,19 +1093,11 @@ Return value: None
 ----------------------------------------------------------------------}
 var
  libHndl:THandle;
- ProcessText:procedure(CompleteText,SelText:PChar; var SelStart, SelLength , cursorow , cursorcolumn:longWORD;myCallback:TLDDPCallBack);stdcall;
  st,libname:string;
  s1,s2,s3,s4:longword;
 
 begin
-  ProcessText:=nil;
-  libname:=copy(slplugins[(Sender as TMenuItem).tag],pos(',',slplugins[(Sender as TMenuItem).tag])+1, length(slplugins[(Sender as TMenuItem).tag]));
-  libHndl := LoadLibrary(pchar(libname));
-
-  if libHndl <> 0 then
-    @ProcessText := GetProcAddress(libHndl, 'ProcessText');
-
-  if Assigned(ProcessText) then with (activeMDICHild as TfrEditorChild) do
+  with (activeMDICHild as TfrEditorChild) do
   begin
      s1:=memo.selstart;
      s2:=memo.selend-memo.selstart;
@@ -1350,29 +1105,25 @@ begin
      s4:=memo.caretX;
      if memo.seltext<>'' then
      begin
-        ProcessText(PChar(memo.Text),PChar(memo.seltext),s1,s2,s3,s4,@LDDPCallBack);
-
-        if strChangedSelText<>'' then memo.SelText:=frMain.strChangedSelText
+       CallPlugin(libname, PChar(memo.Text),PChar(memo.seltext),s1,s2,s3,s4);
+       if strChangedSelText<>'' then memo.SelText:=frMain.strChangedSelText
           else
           begin
             memo.SelectAll;
             memo.SelText:=frMain.strChangedCompleteText;
           end;
-
-
      end
         else
         begin
-             st:=memo.text;
-             ProcessText(PChar(memo.Text),PChar(memo.seltext),s1,s2,s3,s4,@LDDPCallBack);
+           st:=memo.text;
+           CallPlugin(libname, PChar(memo.Text),PChar(memo.seltext),s1,s2,s3,s4);
 
-             if strChangedSelText<>'' then memo.SelText:=frMain.strChangedSelText
-              else
-              begin
-                memo.SelectAll;
-                memo.SelText:=frMain.strChangedCompleteText;
-              end;
-
+           if strChangedSelText<>'' then memo.SelText:=frMain.strChangedSelText
+            else
+            begin
+              memo.SelectAll;
+              memo.SelText:=frMain.strChangedCompleteText;
+            end;
         end;
      if (s1=0) and (S2=0) then
      begin
@@ -1386,7 +1137,6 @@ begin
        end;
   end;
 
-  FreeLibrary(libHndl);
 end;
 
 procedure TfrMain.acincIndentExecute(Sender: TObject);
@@ -1396,10 +1146,9 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //THIS NEEDS TO BE FIXED TO WORK IN KYLIX
   (activeMDICHild as TfrEditorChild).memo.ExecuteCommand(ecBlockIndent,' ',nil);
-{$ENDIF}
 end;
+
 
 procedure TfrMain.acInsertPartHeaderExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1419,6 +1168,7 @@ begin
 
 end;
 
+
 procedure TfrMain.acInsertUpdateLineExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Insert update line
@@ -1432,47 +1182,6 @@ begin
  end;
 end;
 
-{$IFDEF MSWINDOWS}
-procedure TfrMain.CheckforUpdate1Click(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Check for update on lddp website
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var st:TStringList;
-    ver:Tversion;
-    vers:string;
-begin
-  ver:=TVersion.Create(Application.ExeName);
-  Vers:=IntToStr (ver.HauptVersion) + '.' +
-              IntToStr (ver.NebenVersion);
-  ver.free;
-  HttpCli1.RcvdStream := TMemoryStream.Create;
-  try
-    try
-      HttpCli1.Get;
-      st:=TStringList.Create;
-      HttpCli1.RcvdStream.Position:=0;
-      st.LoadFromStream(HttpCli1.RcvdStream);
-      if trim(st.Text)=vers then MessageDlg('There is no newer version available.', mtInformation, [mbOK], 0)
-        else begin
-          MessageDlg('There is a newer version available!!!', mtInformation, [mbOK], 0);
-          ShellExecute( Application.Handle, 'open', PChar( 'http://www.m8laune.de' ), nil, nil, SW_NORMAL );
-        end;
-      st.Free;
-    except
-        on E: EHttpException do
-        begin
-          MessageDlg('Check Failed: ' + IntToStr(HttpCli1.StatusCode) + ' ' + HttpCli1.ReasonPhrase, mtError, [mbOK], 0);
-        end
-          else MessageDlg('Check Failed: An unknown error occured', mtError, [mbOK], 0);
-    end;
-  finally
-    HttpCli1.RcvdStream.Destroy;
-    HttpCli1.RcvdStream := nil;
-  end;
-end;
-{$ENDIF}
 
 Function TfrMain.LDrawParse(line:String): TLDrawArray;
 {---------------------------------------------------------------------
@@ -1526,10 +1235,6 @@ Return value: None
 var j:integer;
     tmp:string;
 begin
-{$IFDEF MSWINDOWS}
- LockWindowUpdate(frMain.handle);
- try
-{$ENDIF}
    with (activeMDICHild as TfrEditorChild).memo do
    begin
      if seltext<>'' then
@@ -1541,13 +1246,8 @@ begin
         selend:=j+length(tmp);
      end;
    end;
-{$IFDEF MSWINDOWS}
- finally
-   LockWindowUpdate(0);
- end;
-{$ENDIF}
-
 end;
+
 
 procedure TfrMain.acUncommentBlockExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1558,10 +1258,6 @@ Return value: None
 var j:integer;
     tmp:string;
 begin
-{$IFDEF MSWINDOWS}
- LockWindowUpdate(frMain.handle);
- try
-{$ENDIF}
    with (activeMDICHild as TfrEditorChild).memo do
    begin
      if seltext<>'' then
@@ -1573,12 +1269,8 @@ begin
         selend:=j+length(tmp);
      end;
    end;
-{$IFDEF MSWINDOWS}
- finally
-   LockWindowUpdate(0);
- end;
-{$ENDIF}
 end;
+
 
 procedure TfrMain.acDecIndentExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1587,10 +1279,9 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-{$IFDEF MSWINDOWS} //THIS NEEDS TO BE FIXED FOR KYLIX
   (activeMDICHild as TfrEditorChild).memo.ExecuteCommand(ecBlockUnIndent,' ',nil);
-{$ENDIF}  
 end;
+
 
 procedure TfrMain.acTrimLinesExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1603,10 +1294,6 @@ var i,j,k:integer;
     st:TStringlist;
     bCR:boolean;
 begin
-{$IFDEF MSWINDOWS}
- LockWindowUpdate(frMain.handle);
- try
-{$ENDIF}
    with (activeMDICHild as TfrEditorChild).memo do
    begin
      if seltext<>'' then begin
@@ -1624,14 +1311,9 @@ begin
         selend:=selstart-k;
      end;
    end;
-{$IFDEF MSWINDOWS}
- finally
-   LockWindowUpdate(0);
- end;
-{$ENDIF}
 end;
 
-{$IFDEF MSWINDOWS}
+
 procedure TfrMain.acInlineExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Inline - Transform a sub-file command into an expanded list of the sub-files contents
@@ -1720,26 +1402,8 @@ begin
  end;
  inlined.free;
 end;
-{$ENDIF}
 
-{$IFDEF MSWINDOWS}
-Function TfrMain.GetShortFileName(Const FileName : String) : String;
-{---------------------------------------------------------------------
-Description: Get a short 8.3 version of a long filename - needed for dos programs
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var
-  aTmp: array[0..255] of char;
-begin
-  if GetShortPathName(PChar(FileName),aTmp,Sizeof(aTmp)-1)=0 then
-     Result:= FileName
-  else
-     Result:=StrPas(aTmp);
-end;
-{$ENDIF}
 
-{$IFDEF MSWINDOWS}
 procedure TfrMain.acUserDefinedExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Execute user defined program
@@ -1787,12 +1451,16 @@ begin
     end;
     if cboShowCommand.checked then ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
     (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-    DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
+    {$IFDEF WINDOWS}
+      DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
+    {$ELSEIF LINUX}
+
+    {$IFEND}
+
   end;
 end;
-{$ENDIF}
 
-{$IFDEF MSWINDOWS}
+
 procedure TfrMain.acHomepageExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Open LDDP project homepage
@@ -1800,9 +1468,9 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  ShellExecute( Application.Handle, 'open', PChar( 'http://www.sourceforge.net/projects/lddp' ), nil, nil, SW_NORMAL );
+  OpenInBrowser('http://www.sourceforge.net/projects/lddp');
 end;
-{$ENDIF}
+
 
 procedure TfrMain.acReplaceColorExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1909,6 +1577,7 @@ begin
     end;
 end;
 
+
 procedure TfrMain.acSelectAllExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Select all text in active editor child
@@ -1920,7 +1589,7 @@ begin
     selectall;
 end;
 
-{$IFDEF MSWINDOWS}
+
 procedure TfrMain.acFilePrintExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: print active editor child
@@ -1932,7 +1601,6 @@ begin
   SynEditPrint.Title := activeMDICHild.caption;
   SynEditPrint.Print;
 end;
-{$ENDIF}
 
 procedure TfrMain.acFindNextExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1944,7 +1612,6 @@ begin
   DoSearchReplaceText(FALSE, FALSE);
 end;
 
-{$IFDEF MSWINDOWS}
 procedure TfrMain.acL3LabExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Execute L3Lab
@@ -1959,13 +1626,17 @@ begin
     exit;
   end;
   (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
+  {$IFDEF WINDOWS}
   DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
+  {$ELSEIF LINUX}
+
+  {$IFEND}
 end;
-{$ENDIF}
+
 
 procedure TfrMain.btPollingClick(Sender: TObject);
 {---------------------------------------------------------------------
-Description: Do nothing.. needed so the polling button isnt deactivated
+Description: Does nothing.. but needed so the polling button isn't deactivated
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
@@ -1984,6 +1655,7 @@ begin
  tmPoll.Interval:=1000;
  tmPoll.Enabled:=true;
 end;
+
 
 procedure TfrMain.Pollevery5sec1Click(Sender: TObject);
 {---------------------------------------------------------------------
@@ -2010,6 +1682,7 @@ begin
  tmPoll.Enabled:=true;
 end;
 
+
 procedure TfrMain.tmPollTimer(Sender: TObject);
 {---------------------------------------------------------------------
 Description: if polling time triggers the actual editor window is written to its firm assigned temp filename
@@ -2030,6 +1703,7 @@ begin
      else (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
 end;
 
+
 procedure TfrMain.mnPollL3LabClick(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Activate Polling
@@ -2039,6 +1713,7 @@ Return value: None
 begin
   mnPollL3Lab.checked:= not mnPollL3Lab.checked;
 end;
+
 
 procedure TfrMain.Fixerror1Click(Sender: TObject);
 {---------------------------------------------------------------------
@@ -2143,6 +1818,7 @@ begin
  end;
 end;
 
+
 procedure TfrMain.pmL3PPopup(Sender: TObject);
 {---------------------------------------------------------------------
 Description: updates the fix-error-popupmenu depending if there is an error to fix
@@ -2156,6 +1832,7 @@ begin
     FixError1.Enabled:=lbInfo.ItemIndex>-1;
   end;
 end;
+
 
 procedure TfrMain.Fixallerrors1Click(Sender: TObject);
 {---------------------------------------------------------------------
@@ -2190,6 +1867,7 @@ begin
  end;
 end;
 
+
 procedure TfrMain.mnPollToSelectedClick(Sender: TObject);
 {---------------------------------------------------------------------
 Description: switch polling to selected line
@@ -2199,6 +1877,7 @@ Return value: None
 begin
   mnPollToSelected.Checked:=not mnPollToSelected.Checked;
 end;
+
 
 procedure TfrMain.ShowSearchReplaceDialog(AReplace: boolean);
 {---------------------------------------------------------------------
@@ -2264,6 +1943,7 @@ begin
   end;
 end;
 
+
 procedure TfrMain.DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
 {---------------------------------------------------------------------
 Description: Do the actual Search and replace
@@ -2288,11 +1968,9 @@ begin
     Include(Options, ssoSelectedOnly);
   if gbSearchWholeWords then
     Include(Options, ssoWholeWord);
+//  (activeMDICHild as TfrEditorChild).memo.SearchEngine :=
   if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
   begin
-  {$IFDEF MSWINDOWS}
-    MessageBeep(MB_ICONASTERISK);
-  {$ENDIF}
     Statusbar.SimpleText := STextNotFound;
     if ssoBackwards in Options then
       (activeMDICHild as TfrEditorChild).memo.BlockEnd := (activeMDICHild as TfrEditorChild).memo.BlockBegin
@@ -2304,6 +1982,7 @@ begin
   if frConfirmReplaceDialog <> nil then
     frConfirmReplaceDialog.Free;
 end;
+
 
 procedure TfrMain.acFindNextUpdate(Sender: TObject);
 {---------------------------------------------------------------------
@@ -2355,6 +2034,7 @@ begin
 end;
 {---------------------------------------------------------------------}
 
+
 procedure TfrMain.acHighlightLdrawExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Set highlighting to LDraw
@@ -2364,6 +2044,7 @@ Return value: None
 begin
   (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynLDRSyn;
 end;
+
 
 procedure TfrMain.acHighlightPascalExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -2375,6 +2056,7 @@ begin
   (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynPasSyn;
 end;
 
+
 procedure TfrMain.acHighlightCppExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Set highlighting to Pascal
@@ -2384,6 +2066,7 @@ Return value: None
 begin
   (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynCPPSyn;
 end;
+
 
 procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
 {---------------------------------------------------------------------
@@ -2427,17 +2110,26 @@ begin
   MRUSectionList.Free;
 end;
 
+
 procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
-
-var
-  frmcount: Integer;
-
 begin
    while MDIChildCount > 0 do
    begin
      ActiveMDIChild.Close;
      ActiveMDIChild.Free;
    end;
+end;
+
+
+procedure TfrMain.acWindowCascadeExecute(Sender: TObject);
+begin
+  frMain.Cascade;
+end;
+
+
+procedure TfrMain.acWindowTileExecute(Sender: TObject);
+begin
+  frMain.Tile;
 end;
 
 end.
