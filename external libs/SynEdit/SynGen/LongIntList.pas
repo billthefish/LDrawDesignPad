@@ -19,7 +19,7 @@ Contributors:
   For a list of the contributors to the mwEdit project see the
   accompanying Contributors.mwEdit.txt file.
 
-$Id: LongIntList.pas,v 1.1 2003-06-08 10:35:49 c_schmitz Exp $
+$Id: LongIntList.pas,v 1.2 2003-07-03 07:24:19 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net

@@ -28,7 +28,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterGeneral.pas,v 1.2 2003-06-08 17:05:50 duncan2 Exp $
+$Id: SynHighlighterGeneral.pas,v 1.3 2003-07-03 07:23:08 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -772,7 +772,7 @@ begin
   for i := 1 to Length(Value) do begin
     fIdentChars := fIdentChars + [Value[i]];
   end; //for
- //REMOVED BY STEPHAN -  fWordBreakChars := fWordBreakChars - fIdentChars;
+  WordBreakChars := WordBreakChars - fIdentChars;
 end;
 
 function TSynGeneralSyn.GetIdentChars: TSynIdentChars;

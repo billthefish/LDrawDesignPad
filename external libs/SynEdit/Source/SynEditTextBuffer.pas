@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditTextBuffer.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynEditTextBuffer.pas,v 1.2 2003-07-03 07:23:06 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -106,8 +106,9 @@ type
     function WrapString(var InputString: String) : String;                      //Fiala 2001-12-17
     procedure WrapLine(const LineNumber: Integer);                              //Fiala 2001-12-17
 {begin}                                                                         //mh 2000-10-19
-    function ExpandedString(Index: integer): string;
+    function ExpandString(Index: integer): string;
     function GetExpandedString(Index: integer): string;
+    function GetExpandedStringLength(Index: integer): integer;
     function GetLengthOfLongestLine: integer;
 {end}                                                                           //mh 2000-10-19
     function GetRange(Index: integer): TSynEditRange;
@@ -165,6 +166,7 @@ type
 {end}                                                                           //Fiala 2001-12-17
 {begin}                                                                         //mh 2000-10-19
     property ExpandedStrings[Index: integer]: string read GetExpandedString;
+    property ExpandedStringLengths[Index: integer]: integer read GetExpandedStringLength;
     property LengthOfLongestLine: integer read GetLengthOfLongestLine;
 {end}                                                                           //mh 2000-10-19
     property Ranges[Index: integer]: TSynEditRange read GetRange write PutRange;
@@ -652,7 +654,7 @@ begin
 end;
 
 {begin}                                                                         //mh 2000-10-19
-function TSynEditStringList.ExpandedString(Index: integer): string;
+function TSynEditStringList.ExpandString(Index: integer): string;
 var
   HasTabs: boolean;
 begin
@@ -702,16 +704,28 @@ begin
     if sfHasNoTabs in fList^[Index].fFlags then
       Result := fList^[Index].fString
     else
-      Result := ExpandedString(Index);
+      Result := ExpandString(Index);
   end else
     Result := '';
+end;
+
+function TSynEditStringList.GetExpandedStringLength(Index: integer): integer;
+begin
+  if (Index >= 0) and (Index < fCount) then
+  begin
+    if sfExpandedLengthUnknown in fList^[Index].fFlags then
+      Result := Length( ExpandedStrings[index] )
+    else
+      Result := fList^[Index].fExpandedLength;
+  end
+  else
+    Result := 0;
 end;
 
 function TSynEditStringList.GetLengthOfLongestLine: integer;                    //mh 2000-10-19
 var
   i, MaxLen: integer;
   PRec: PSynEditStringRec;
-  s: string;
 begin
   if fIndexOfLongestLine < 0 then begin
     MaxLen := 0;
@@ -719,7 +733,7 @@ begin
       PRec := @fList^[0];
       for i := 0 to fCount - 1 do begin
         if sfExpandedLengthUnknown in PRec^.fFlags then
-          s := ExpandedString(i);
+          ExpandString(i);
         if PRec^.fExpandedLength > MaxLen then begin
           MaxLen := PRec^.fExpandedLength;
           fIndexOfLongestLine := i;

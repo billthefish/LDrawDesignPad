@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterBat.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynHighlighterBat.pas,v 1.2 2003-07-03 07:23:07 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -112,7 +112,7 @@ type
     function Func77: TtkTokenKind;
     function Func78: TtkTokenKind;
     function Func130: TtkTokenKind;
-    procedure AmpersandProc;
+    procedure VariableProc;
     procedure CRProc;
     procedure CommentProc;
     procedure IdentProc;
@@ -376,7 +376,7 @@ var
 begin
   for I := #0 to #255 do
     case I of
-      '%': fProcTable[I] := AmpersandProc;
+      '%': fProcTable[I] := VariableProc;
       #13: fProcTable[I] := CRProc;
       ':': fProcTable[I] := CommentProc;
       'A'..'Q', 'S'..'Z', 'a'..'q', 's'..'z', '_': fProcTable[I] := IdentProc;
@@ -423,12 +423,14 @@ begin
   Next;
 end;
 
-procedure TSynBatSyn.AmpersandProc;
+procedure TSynBatSyn.VariableProc;
 begin
   fTokenID := tkVariable;
   repeat
     Inc(Run);
-  until not (fLine[Run] in ['0'..'9']);
+  until not (fLine[Run] in ['A'..'Z', 'a'..'z', '0'..'9', '_']);
+  if fLine[Run] = '%' then
+    Inc(Run);
 end;
 
 procedure TSynBatSyn.CRProc;

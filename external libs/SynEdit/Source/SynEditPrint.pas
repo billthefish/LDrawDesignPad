@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditPrint.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynEditPrint.pas,v 1.2 2003-07-03 07:23:05 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -192,7 +192,7 @@ type
     procedure InitPrint;
     procedure InitRanges;
     function GetPageCount: Integer;
-    procedure SetSynEdit(const Value: TSynEdit);
+    procedure SetSynEdit(const Value: TCustomSynEdit);
     procedure SetFooter(const Value: TFooter);
     procedure SetHeader(const Value: THeader);
     procedure SetMargins(const Value: TSynEditPrintMargins);
@@ -211,7 +211,7 @@ type
     procedure PrintRange(StartPage, EndPage: Integer);
     property PrinterInfo: TSynEditPrinterInfo read FPrinterInfo;
     property PageCount: Integer read GetPageCount;
-    property SynEdit: TSynEdit write SetSynEdit;
+    property SynEdit: TCustomSynEdit write SetSynEdit;
 
     procedure LoadFromStream(AStream: TStream);
     procedure SaveToStream(AStream: TStream);
@@ -918,7 +918,7 @@ begin
   end;
 end;
 
-procedure TSynEditPrint.SetSynEdit(const Value: TSynEdit);
+procedure TSynEditPrint.SetSynEdit(const Value: TCustomSynEdit);
 begin
 //  Lines := Value.Lines;                                                       // sb 2001-11-09
   HighLighter := Value.Highlighter;

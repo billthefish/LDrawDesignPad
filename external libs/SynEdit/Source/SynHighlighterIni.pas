@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterIni.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynHighlighterIni.pas,v 1.2 2003-07-03 07:23:08 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net

@@ -281,4 +281,4 @@
 
 {$ENDIF}
 
-// $Id: SynEdit.inc,v 1.1 2003-06-08 10:33:21 c_schmitz Exp $
+// $Id: SynEdit.inc,v 1.2 2003-07-03 07:23:04 billthefish Exp $

@@ -17,7 +17,7 @@ All Rights Reserved.
 Contributors to the SynEdit and mwEdit projects are listed in the
 Contributors.txt file.
 
-$Id: SynEditHighlighter.pas,v 1.1 2003-06-08 10:35:14 c_schmitz Exp $
+$Id: SynEditHighlighter.pas,v 1.2 2003-07-03 07:23:04 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
