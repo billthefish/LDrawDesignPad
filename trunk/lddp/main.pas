@@ -319,7 +319,7 @@ type
     initialized:boolean;
     fSearchFromCaret: boolean;
     procedure AppInitialize;
-    procedure CreateMDIChild(const Name: string;new:boolean);
+    procedure CreateMDIChild(const CaptionName: string;new:boolean);
 
 
   public
@@ -501,25 +501,25 @@ Description: Loads given Filename into the active MDI editor child
 Parameter: fname: Filename
 Return value: none
 ----------------------------------------------------------------------}
-var sr:TsearchRec;
+var
+  sr:TsearchRec;
+
 begin
   if FileExists(fName) then
-  begin
-    (activeMDICHild as TfrEditorChild).Memo.Lines.LoadFromFile(fName);
-    (activeMDICHild as TfrEditorChild).Memo.modified:=false;
-    FindFirst(fname, faAnyFile, SR);
-    (activeMDICHild as TfrEditorChild).filedatetime:=FileDateToDateTime(SR.time);
-    FindClose(sr);
-    (activeMDICHild as TfrEditorChild).updatecontrols;
-  end
-   else
-   begin
+    with (activeMDICHild as TfrEditorChild) do
+    begin
+      FindFirst(fname, faAnyFile, SR);
+      filedatetime:=FileDateToDateTime(SR.time);
+      FindClose(sr);
+      Memo.Lines.LoadFromFile(fName);
+      Memo.modified:=false;
+      updatecontrols;
+    end
+  else
      MessageDlg('File '''+fname+''' not found!', mtError, [mbOK], 0);
-   end;
-
 end;
 
-procedure TfrMain.CreateMDIChild(const Name: string;new:boolean);
+procedure TfrMain.CreateMDIChild(const CaptionName: string; new:boolean);
 {---------------------------------------------------------------------
 Description: Creates a new MDI child
 Parameter: new: if new is false, then File 'name' is loaded automatically
@@ -529,16 +529,27 @@ Return value: none
 ----------------------------------------------------------------------}
 var
   Child: TfrEditorChild;
+  FileExt: string;
+
 begin
   { create a new MDI child window }
   Child := TfrEditorChild.Create(Application);
-  Child.Caption := Name;
-  child.pnInfo.height:=1;
-  if not new then
+  with Child do
   begin
-    if lowercase(ExtractFileExt(name))='.c' then child.memo.Highlighter:=syncppsyn;
-    if (lowercase(ExtractFileExt(name))='.pas') or (lowercase(ExtractFileExt(name))='.dpr') then child.memo.Highlighter:=synPasSyn;
-    LoadFile(name);
+    Caption := CaptionName;
+    Tag := 1;
+    pnInfo.height:=1;
+    if not new then
+    begin
+      Tag := 0;
+      FileExt := LowerCase(ExtractFileExt(name));
+      if (FileExt = '.c') or (FileExt = '.cpp') or
+         (FileExt = '.h') or (FileExt = '.hpp') then
+        Memo.Highlighter:=SynCppSyn
+      else if (FileExt = '.pas') or (FileExt = '.dpr') then
+        Memo.Highlighter:=SynPasSyn;
+      LoadFile(CaptionName);
+    end;
   end;
   UpdateControls(false);
 end;
@@ -556,7 +567,6 @@ Return value: none
 ----------------------------------------------------------------------}
 begin
   CreateMDIChild('Untitled' + IntToStr(MDIChildCount + 1),true);
-  ActiveMDIChild.Tag := 1;
 end;
 
 procedure TfrMain.acFileOpenExecute(Sender: TObject);
@@ -572,10 +582,9 @@ var
 begin
   if OpenDialog1.Execute then
   begin
-    for i:=0 to OpenDialog1.Files.Count -1 do
+    for i:=0 to OpenDialog1.Files.Count - 1 do
     begin
       CreateMDIChild(OpenDialog1.Files[i], false);
-      ActiveMDIChild.Tag := 0;
       UpdateMRU(OpenDialog1.Files[i]);
     end;
   end;
