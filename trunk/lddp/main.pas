@@ -491,14 +491,17 @@ ExpandSelection will move the beginning of the slected to to the beginning of
 the line and the end of the selected text to the end of the line
 --------}
 var
-  tmpBlEndY: Integer;
+  tmpBlEnd: TBufferCoord;
 
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Line;
+    tmpBlEnd := BlockEnd;
     BlockBegin := BufferCoord(1, BlockBegin.Line);
-    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+    if tmpBlEnd.Char > 1 then
+      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 1]) + 1, tmpBlEnd.Line)
+    else
+      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 2]) + 1, tmpBlEnd.Line - 1);
   end;
 end;
 
@@ -2962,7 +2965,7 @@ var
   DModel: TDATModel;
 
 begin
- ExpandSelection;
+  ExpandSelection;
   DModel := TDATModel.Create;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin

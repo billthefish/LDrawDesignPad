@@ -137,7 +137,7 @@ begin
     HoseDATCode.ObjectType := boHoseNoTabs;
     feLength.Value := 130;
   end
-  else if ((Line1.Filename = 'x757.dat') and (Line2.Filename = 'x760.dat')) then
+  else if ((Line1.Filename = '757.dat') and (Line2.Filename = '760.dat')) then
   begin
     lblType2.Caption := 'Hose Flexible 12L';
     HoseDATCode.ObjectType := boHose12;
@@ -190,14 +190,8 @@ var
   tmpPoint: TDATPoint;
 
 begin
-  tmpPoint[1] := feCP1X.Value;
-  tmpPoint[2] := feCP1Y.Value;
-  tmpPoint[3] := feCP1Z.Value;
-  HoseDATCode.ControlPoint1 := tmpPoint;
-  tmpPoint[1] := feCP2X.Value;
-  tmpPoint[2] := feCP2Y.Value;
-  tmpPoint[3] := feCP2Z.Value;
-  HoseDATCode.ControlPoint2 := tmpPoint;
+  HoseDATCode.ControlPoint1 := DATPoint(feCP1X.Value, feCP1Y.Value, feCP1Z.Value);
+  HoseDATCode.ControlPoint2 := DATPoint(feCP2X.Value, feCP2Y.Value, feCP2Z.Value);
 end;
 
 end.
