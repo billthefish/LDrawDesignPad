@@ -318,26 +318,26 @@ type
     XAxis2: TMenuItem;
     YAxis2: TMenuItem;
     ZAxis2: TMenuItem;
-    ToolBar6: TToolBar;
-    ToolButton33: TToolButton;
-    ToolButton34: TToolButton;
-    ToolButton35: TToolButton;
-    ToolButton36: TToolButton;
-    ToolButton37: TToolButton;
-    ToolButton38: TToolButton;
-    ToolButton39: TToolButton;
-    ToolButton40: TToolButton;
-    ToolButton41: TToolButton;
-    ToolButton42: TToolButton;
-    ToolButton43: TToolButton;
-    ToolButton44: TToolButton;
-    ToolButton45: TToolButton;
-    ToolButton46: TToolButton;
-    ToolButton47: TToolButton;
-    ToolButton48: TToolButton;
+    tbrColorReplace: TToolBar;
     ColorBar1: TMenuItem;
     acColorToolbar: TAction;
     acColorReplaceShortcut: TAction;
+    tbnColor0: TToolButton;
+    tbnColor1: TToolButton;
+    tbnColor2: TToolButton;
+    tbnColor3: TToolButton;
+    tbnColor4: TToolButton;
+    tbnColor5: TToolButton;
+    tbnColor6: TToolButton;
+    tbnColor7: TToolButton;
+    tbnColor8: TToolButton;
+    tbnColor9: TToolButton;
+    tbnColor10: TToolButton;
+    tbnColor11: TToolButton;
+    tbnColor12: TToolButton;
+    tbnColor13: TToolButton;
+    tbnColor14: TToolButton;
+    tbnColor15: TToolButton;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -450,6 +450,7 @@ type
     procedure LoadFormValues;
     procedure SaveFormValues;
     procedure CreateMDIChild(const CaptionName: string; new: Boolean);
+    procedure ExpandSelection;
   end;
 
 
@@ -483,6 +484,23 @@ var
 
 
 
+procedure TfrMain.ExpandSelection;
+{-------
+Descrption: If the selected text begins and/or end in the middle of a line
+ExpandSelection will move the beginning of the slected to to the beginning of
+the line and the end of the selected text to the end of the line
+--------}
+var
+  tmpBlEndY: Integer;
+
+begin
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    tmpBlEndY := BlockEnd.Line;
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
+  end;
+end;
 
 procedure TfrMain.FileIsDropped ( VAR Msg : TMessage ) ;
 {---------------------------------------------------------------------
@@ -559,7 +577,7 @@ begin
   Mirror1.Enabled := mdicount>0;
   ErrorCheck1.Enabled := mdicount>0;
   MirrorLineOn1.Enabled := mdicount>0;
-  ToolBar6.Enabled := mdicount>0;
+  tbrColorReplace.Enabled := mdicount>0;
 
   if Assigned(ActiveMDICHild) then
   begin
@@ -786,19 +804,23 @@ var
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
+    //Show splash screen
     SplashScreen.lbState.Caption:='Initializing plugins...';
     SplashScreen.show;
     SplashScreen.update;
     screen.cursor:=-11;
 
+    //Set INI file varibles
     IniFileName := WindowsDir + '\LDraw.ini';
     IniSection := 'LDDP Main';
     frOptions.IniFileName := IniFileName;
     frOptions.IniSection := 'LDDP Options';
 
+    //Load form parameters from INI file
     LoadFormValues;
     frOptions.LoadFormValues;
 
+    //Set InstallDIR in registry for legacy plugin support
     regT:=Tregistry.create;
     regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
     regt.WriteString('InstallDir', application.ExeName);
@@ -806,8 +828,10 @@ begin
     slPlugins:=TStringlist.create;
     LoadPlugins(true);
 
+    //Set META menu commands
     BuildMetaMenu;
 
+    //Build the MRU list
     UpdateMRU;
 
     // Set initial directory to that of the last opened file
@@ -815,10 +839,11 @@ begin
     if LastOpen1.count > 0 then
     OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption);
 
-
+    //Restore highlighter settings
     SynLDRSyn.Assign(frOptions.SynLDRSyn1);
     pmMemo.tag:=pmMemo.items.count;
 
+    //Load files listed on the command line
     if paramcount>0 then
       for i:=1 to paramcount do
       begin
@@ -2220,7 +2245,7 @@ end;
 {---------------------------------------------------------------------}
 procedure TfrMain.acColorToolbarExecute(Sender: TObject);
 begin
-  Toolbar6.visible := not(Toolbar6.visible);
+  tbrColorReplace.visible := not(tbrColorReplace.visible);
 end;
 
 procedure TfrMain.acToolbarUpdate(Sender: TObject);
@@ -2230,7 +2255,7 @@ begin
   acSearchToolBar.Checked := Toolbar3.visible;
   acWindowsToolBar.Checked := Toolbar4.visible;
   acExternalsToolBar.Checked := Toolbar2.visible;
-  acColorToolBar.Checked := Toolbar6.visible;
+  acColorToolBar.Checked := tbrColorReplace.visible;
 end;
 {---------------------------------------------------------------------}
 
@@ -2434,7 +2459,7 @@ begin
   Toolbar3.Visible := LDDPini.ReadBool(IniSection, 'Toolbar3_Visible', Toolbar3.Visible);
   Toolbar4.Visible := LDDPini.ReadBool(IniSection, 'Toolbar4_Visible', Toolbar4.Visible);
   Toolbar5.Visible := LDDPini.ReadBool(IniSection, 'Toolbar5_Visible', Toolbar5.Visible);
-  Toolbar6.Visible := LDDPini.ReadBool(IniSection, 'Toolbar6_Visible', Toolbar6.Visible);
+  tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
   LDDPini.Free;
 end;
 
@@ -2461,7 +2486,7 @@ begin
   LDDPini.WriteBool(IniSection, 'Toolbar3_Visible', Toolbar3.Visible);
   LDDPini.WriteBool(IniSection, 'Toolbar4_Visible', Toolbar4.Visible);
   LDDPini.WriteBool(IniSection, 'Toolbar5_Visible', Toolbar5.Visible);
-  LDDPini.WriteBool(IniSection, 'Toolbar6_Visible', Toolbar6.Visible);
+  LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -2470,6 +2495,7 @@ end;
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveFormValues;
+  frOptions.SaveFormValues;
 end;
 
 procedure TfrMain.acBMP2LDrawExecute(Sender: TObject);
@@ -2676,17 +2702,14 @@ procedure TfrMain.acAutoRoundExecute(Sender: TObject);
 
 var
   DModel: TDATModel;
-  tmpBlEndY: Integer;
 
 begin
+  ExpandSelection;
   DModel := TDATModel.Create;
   DModel.RotationDecimalPlaces := frOptions.seRotAcc.Value;
   DModel.PositionDecimalPlaces := frOptions.sePntAcc.Value;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Line;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
     DModel.ModelText := SelText;
     SelText := DModel.ModelText;
   end;
@@ -2695,7 +2718,6 @@ end;
 procedure TfrMain.acTriangleCombineExecute(Sender: TObject);
 
 var
-  tmpBlEndY: Integer;
   DModel: TDATModel;
   i: Integer;
   QuadCombine: TDATQuad;
@@ -2803,6 +2825,7 @@ var
   end;
 
 begin
+  ExpandSelection;
   DModel := TDATModel.Create;
 
   if (frOptions.cboDet.Checked) then
@@ -2825,10 +2848,6 @@ begin
 
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Line;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
-
     DModel.ModelText := SelText;
 
     i := 0;
@@ -2878,17 +2897,14 @@ end;
 procedure TfrMain.acRandomizeColorsExecute(Sender: TObject);
 
 var
-  i, tmpBlEndY, RandColor: Integer;
+  RandColor, i: Integer;
   DModel: TDATModel;
 
 begin
+  ExpandSelection;
   DModel := TDATModel.Create;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Line;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
-
     DModel.ModelText := SelText;
     for i := 0 to DModel.Count - 1 do
       if DModel[i] is TDATElement then
@@ -2942,18 +2958,14 @@ end;
 procedure TfrMain.acColorReplaceShortcutExecute(Sender: TObject);
 
 var
-  i, tmpBlEndY: Integer;
+  i: Integer;
   DModel: TDATModel;
 
 begin
+ ExpandSelection;
   DModel := TDATModel.Create;
-  ShowMessage((Sender as TToolButton).Hint);
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    tmpBlEndY := BlockEnd.Line;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    BlockEnd := BufferCoord(Length(Lines[tmpBlEndY - 1]) + 1, tmpBlEndY);
-
     DModel.ModelText := SelText;
     for i := 0 to DModel.Count - 1 do
       if DModel[i] is TDATElement then
