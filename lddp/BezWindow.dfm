@@ -83,7 +83,7 @@ object frmDATCurve: TfrmDATCurve
     Height = 28
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 9
+    TabOrder = 7
   end
   object gbxStartPoint: TGroupBox
     Left = 16
@@ -91,7 +91,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'Start Point'
-    TabOrder = 1
+    TabOrder = 0
     object lblStart1: TLabel
       Left = 8
       Top = 16
@@ -121,45 +121,54 @@ object frmDATCurve: TfrmDATCurve
     Height = 41
     Caption = 'Control Point 1'
     Enabled = False
-    TabOrder = 3
-    object feCP1X: TJvFloatEdit2
+    TabOrder = 2
+    object feCP1X: TJvValidateEdit
       Left = 8
       Top = 16
       Width = 49
       Height = 21
-      Alignment = taRightJustify
-      ReadOnly = False
+      CheckChars = '0123456789.'
+      CriticalPoints.CheckPoints = cpNone
+      CriticalPoints.ColorAbove = clBlue
+      CriticalPoints.ColorBelow = clRed
+      TrimDecimals = True
+      DisplayFormat = dfFloat
+      DecimalPlaces = 9
       TabOrder = 0
-      OnChange = feCP1XChange
-      MaxDecimals = 5
-      HasMaxValue = False
-      HasMinValue = False
+      Text = '0.'
+      Value = 0.000000000000000000
     end
-    object feCP1Z: TJvFloatEdit2
-      Left = 120
-      Top = 16
-      Width = 49
-      Height = 21
-      Alignment = taRightJustify
-      ReadOnly = False
-      TabOrder = 2
-      OnChange = feCP1XChange
-      MaxDecimals = 5
-      HasMaxValue = False
-      HasMinValue = False
-    end
-    object feCP1Y: TJvFloatEdit2
+    object feCP1Y: TJvValidateEdit
       Left = 64
       Top = 16
       Width = 49
       Height = 21
-      Alignment = taRightJustify
-      ReadOnly = False
+      CheckChars = '0123456789.'
+      CriticalPoints.CheckPoints = cpNone
+      CriticalPoints.ColorAbove = clBlue
+      CriticalPoints.ColorBelow = clRed
+      TrimDecimals = True
+      DisplayFormat = dfFloat
+      DecimalPlaces = 9
       TabOrder = 1
-      OnChange = feCP1XChange
-      MaxDecimals = 5
-      HasMaxValue = False
-      HasMinValue = False
+      Text = '0.'
+      Value = 0.000000000000000000
+    end
+    object feCP1Z: TJvValidateEdit
+      Left = 120
+      Top = 16
+      Width = 49
+      Height = 21
+      CheckChars = '0123456789.'
+      CriticalPoints.CheckPoints = cpNone
+      CriticalPoints.ColorAbove = clBlue
+      CriticalPoints.ColorBelow = clRed
+      TrimDecimals = True
+      DisplayFormat = dfFloat
+      DecimalPlaces = 9
+      TabOrder = 2
+      Text = '0.'
+      Value = 0.000000000000000000
     end
   end
   object gbxCont2: TGroupBox
@@ -169,45 +178,54 @@ object frmDATCurve: TfrmDATCurve
     Height = 41
     Caption = 'Control Point 2'
     Enabled = False
-    TabOrder = 5
-    object feCP2X: TJvFloatEdit2
+    TabOrder = 4
+    object feCP2X: TJvValidateEdit
       Left = 8
       Top = 16
       Width = 49
       Height = 21
-      Alignment = taRightJustify
-      ReadOnly = False
+      CheckChars = '0123456789.'
+      CriticalPoints.CheckPoints = cpNone
+      CriticalPoints.ColorAbove = clBlue
+      CriticalPoints.ColorBelow = clRed
+      TrimDecimals = True
+      DisplayFormat = dfFloat
+      DecimalPlaces = 9
       TabOrder = 0
-      OnChange = feCP1XChange
-      MaxDecimals = 5
-      HasMaxValue = False
-      HasMinValue = False
+      Text = '0.'
+      Value = 0.000000000000000000
     end
-    object feCP2Y: TJvFloatEdit2
+    object feCP2Y: TJvValidateEdit
       Left = 64
       Top = 16
       Width = 49
       Height = 21
-      Alignment = taRightJustify
-      ReadOnly = False
+      CheckChars = '0123456789.'
+      CriticalPoints.CheckPoints = cpNone
+      CriticalPoints.ColorAbove = clBlue
+      CriticalPoints.ColorBelow = clRed
+      TrimDecimals = True
+      DisplayFormat = dfFloat
+      DecimalPlaces = 9
       TabOrder = 1
-      OnChange = feCP1XChange
-      MaxDecimals = 5
-      HasMaxValue = False
-      HasMinValue = False
+      Text = '0.'
+      Value = 0.000000000000000000
     end
-    object feCP2Z: TJvFloatEdit2
+    object feCP2Z: TJvValidateEdit
       Left = 120
       Top = 16
       Width = 49
       Height = 21
-      Alignment = taRightJustify
-      ReadOnly = False
+      CheckChars = '0123456789.'
+      CriticalPoints.CheckPoints = cpNone
+      CriticalPoints.ColorAbove = clBlue
+      CriticalPoints.ColorBelow = clRed
+      TrimDecimals = True
+      DisplayFormat = dfFloat
+      DecimalPlaces = 9
       TabOrder = 2
-      OnChange = feCP1XChange
-      MaxDecimals = 5
-      HasMaxValue = False
-      HasMinValue = False
+      Text = '0.'
+      Value = 0.000000000000000000
     end
   end
   object gbxEndPoint: TGroupBox
@@ -216,7 +234,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'End Point'
-    TabOrder = 2
+    TabOrder = 1
     object lblEnd1: TLabel
       Left = 8
       Top = 16
@@ -246,7 +264,7 @@ object frmDATCurve: TfrmDATCurve
     Height = 17
     Caption = 'cbxContEnable'
     Enabled = False
-    TabOrder = 7
+    TabOrder = 6
     OnClick = cbxContEnableClick
   end
   object gbxACont1: TGroupBox
@@ -255,7 +273,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'Adjusted Control Point 1'
-    TabOrder = 4
+    TabOrder = 3
     object lblACont11: TLabel
       Left = 8
       Top = 16
@@ -284,7 +302,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'Adjusted Control Point 2'
-    TabOrder = 6
+    TabOrder = 5
     object lblACont21: TLabel
       Left = 8
       Top = 16
@@ -307,18 +325,21 @@ object frmDATCurve: TfrmDATCurve
       Caption = ' '
     end
   end
-  object feLength: TJvFloatEdit2
+  object feLength: TJvValidateEdit
     Left = 16
     Top = 48
-    Width = 145
+    Width = 105
     Height = 21
-    Alignment = taRightJustify
-    ReadOnly = False
-    TabOrder = 0
-    Visible = False
-    OnChange = feLengthChange
-    MaxDecimals = 5
-    HasMaxValue = False
+    CheckChars = '0123456789.'
+    CriticalPoints.CheckPoints = cpNone
+    CriticalPoints.ColorAbove = clBlue
+    CriticalPoints.ColorBelow = clRed
+    TrimDecimals = True
+    DisplayFormat = dfFloat
+    DecimalPlaces = 9
     HasMinValue = True
+    TabOrder = 9
+    Text = '0.'
+    Value = 0.000000000000000000
   end
 end
