@@ -2636,7 +2636,7 @@ var
       QuadCombine.Point[1] := QuadPoints[0];
       QuadCombine.Point[2] := QuadPoints[1];
       QuadCombine.Point[3] := QuadPoints[2];
-      QuadCombine.Point[4] := QuadPoints[2];
+      QuadCombine.Point[4] := QuadPoints[3];
       QuadCombine.Color := tri1.Color;
       ErrorLine := L3CheckLine(QuadCombine.DATString);
 
@@ -2695,6 +2695,19 @@ var
 begin
   DModel := TDATModel.Create;
 
+  if (frOptions.cboDet.Checked) then
+    DetThreshold := frOptions.seDet.Value
+  else
+    DetThreshold := 0;
+
+  if frOptions.cboDist.Checked then
+    DistThreshold := frOptions.seDist.Value
+  else
+    DistThreshold := 0;
+
+  if frOptions.seCollinear.Text <> '' then
+    CollinearPointsThreshold := frOptions.seCollinear.Value;
+  
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     tmpBlEndY := BlockEnd.Y;
