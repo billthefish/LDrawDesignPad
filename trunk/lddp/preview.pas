@@ -34,6 +34,6 @@ var
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 end.
