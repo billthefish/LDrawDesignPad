@@ -72,7 +72,7 @@ type
     acFileSaveAs: TAction;
     WindowCascade1: TWindowCascade;
     WindowTileHorizontal1: TWindowTileHorizontal;
-    HelpAbout1: TAction;
+    HelpAbout: TAction;
     acFileClose: TWindowClose;
     WindowTileVertical1: TWindowTileVertical;
     WindowTileItem2: TMenuItem;
@@ -215,9 +215,27 @@ type
     SynEditPrint: TSynEditPrint;
     SynCppSyn: TSynCppSyn;
     SynPasSyn: TSynPasSyn;
+    N12: TMenuItem;
+    Toolbars: TMenuItem;
+    pmToolbars: TPopupMenu;
+    FilesToolbar: TMenuItem;
+    Edit2: TMenuItem;
+    Files1: TMenuItem;
+    Editing1: TMenuItem;
+    SearchandReplace1: TMenuItem;
+    Windows1: TMenuItem;
+    ExternalPrograms2: TMenuItem;
+    SearchReplace1: TMenuItem;
+    Windows2: TMenuItem;
+    ExternalPrograms3: TMenuItem;
+    acFileToolbar: TAction;
+    acEditingToolbar: TAction;
+    acSearchToolbar: TAction;
+    acWindowsToolbar: TAction;
+    acExternalsToolbar: TAction;
     procedure acFileNewExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
-    procedure HelpAbout1Execute(Sender: TObject);
+    procedure HelpAboutExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
     procedure MRUManagerClick(Sender: TObject; const RecentName,
       Caption: String; UserData: Integer);
@@ -269,6 +287,12 @@ type
     procedure acInsertBFCExecute(Sender: TObject);
     procedure mnPollToSelectedClick(Sender: TObject);
     procedure acFindNextUpdate(Sender: TObject);
+    procedure acFileToolbarExecute(Sender: TObject);
+    procedure acEditingToolbarExecute(Sender: TObject);
+    procedure acSearchToolbarExecute(Sender: TObject);
+    procedure acWindowsToolbarExecute(Sender: TObject);
+    procedure acExternalsToolbarExecute(Sender: TObject);
+    procedure acToolbarUpdate(Sender: TObject);
 
 
   private
@@ -609,7 +633,7 @@ begin
   end;
 end;
 
-procedure TfrMain.HelpAbout1Execute(Sender: TObject);
+procedure TfrMain.HelpAboutExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Show 'About' Box
 Parameter: Standard
@@ -2036,5 +2060,44 @@ begin
   (Sender as TAction).Enabled := gsSearchText <> '';
 end;
 
+{---------------------------------------------------------------------
+Description: These toggle the toolbars on and off
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+procedure TfrMain.acFileToolbarExecute(Sender: TObject);
+begin
+  Toolbar1.visible := not(Toolbar1.visible);
+end;
+{---------------------------------------------------------------------}
+procedure TfrMain.acEditingToolbarExecute(Sender: TObject);
+begin
+  Toolbar5.visible := not(Toolbar5.visible);
+end;
+{---------------------------------------------------------------------}
+procedure TfrMain.acSearchToolbarExecute(Sender: TObject);
+begin
+  Toolbar3.visible := not(Toolbar3.visible);
+end;
+{---------------------------------------------------------------------}
+procedure TfrMain.acWindowsToolbarExecute(Sender: TObject);
+begin
+  Toolbar4.visible := not(Toolbar4.visible);
+end;
+{---------------------------------------------------------------------}
+procedure TfrMain.acExternalsToolbarExecute(Sender: TObject);
+begin
+  Toolbar2.visible := not(Toolbar2.visible);
+end;
+{---------------------------------------------------------------------}
+procedure TfrMain.acToolbarUpdate(Sender: TObject);
+begin
+  acFileToolBar.Checked := Toolbar1.visible;
+  acEditingToolBar.Checked := Toolbar5.visible;
+  acSearchToolBar.Checked := Toolbar3.visible;
+  acWindowsToolBar.Checked := Toolbar4.visible;
+  acExternalsToolBar.Checked := Toolbar2.visible;
+end;
+{---------------------------------------------------------------------}
 end.
 
