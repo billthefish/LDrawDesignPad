@@ -3,6 +3,8 @@
 *.~dfm
 *.~pas
 *.dsk
+*.~dsk
 *.ddp
 *.~ddp
+*.~dpr
 *.cfg
