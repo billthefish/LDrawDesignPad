@@ -610,6 +610,7 @@ object frEditOptions: TfrEditOptions
       Height = 25
       Caption = 'Restore Defaults'
       TabOrder = 2
+      OnClick = Button1Click
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000000000000000000000
