@@ -130,7 +130,6 @@ begin
   clr:=frMain.LDrawparse(memo.lines[memo.CaretY-1]);
 
   frMain.acInline.enabled:= clr.typ=1;
-  frMain.acReplaceColor.enabled:= clr.color>-1;
 
   if frMain.slPlugins.Count > 0 then
   for i:=0 to frMain.plugins3.Count-1 do
