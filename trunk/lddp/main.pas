@@ -29,7 +29,8 @@ uses
   QSynHighlighterCpp, QSynHighlighterPas, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, Classes, QActnList, QTypes,
   QComCtrls, QControls, Inifiles, splash, QSyneditTypes, QGraphics,
-  QSyneditKeyCmds, l3check, DATModel, DATBase;
+  QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls, IdIntercept,
+  IdLogBase, IdLogDebug;
 
 
 type TLDrawArray= record
@@ -171,8 +172,6 @@ type
     acFilePrint: TAction;
     acFileCloseAll: TAction;
     acWindowTile: TAction;
-    http: TIdHTTP;
-    acCheckUpdate: TAction;
     SynPasSyn: TSynPasSyn;
     SynCppSyn: TSynCppSyn;
     MainMenu1: TMainMenu;
@@ -249,6 +248,8 @@ type
     ReverseWinding2: TMenuItem;
     ToolButton9: TToolButton;
     ErrorCheck1: TMenuItem;
+    http: TIdHTTP;
+    acCheckforUpdate: TAction;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -315,6 +316,7 @@ type
     procedure acWindowCascadeExecute(Sender: TObject);
     procedure acWindowTileExecute(Sender: TObject);
     procedure acReverseWindingExecute(Sender: TObject);
+    procedure acCheckforUpdateExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -2038,5 +2040,27 @@ begin
 end;
 
 
+
+procedure TfrMain.acCheckforUpdateExecute(Sender: TObject);
+var strVersionHTTP:string;
+    strActualVersion:string;
+begin
+  {$IFDEF MSWINDOWS}
+     strActualVersion := GetWindowsVersion;
+  {$ELSE}
+     strActualVersion := LDDPLINUXVERSION;
+  {$ENDIF}
+  strVersionHTTP := http.Get('http://lddp.sourceforge.net/lddp.ver');
+  if trim(strVersionHTTP)=strActualVersion then MessageDlg('There is no newer version available.', mtInformation, [mbOK], 0)
+  else
+     begin
+        MessageDlg('There is a newer version available!!!', mtInformation, [mbOK], 0);
+        {$IFDEF MSWINDOWS} //NOT IN KYLIX YET
+           OpenInBrowser('http://www.sourceforge.net/projects/lddp');
+        {$ELSE}
+
+        {$ENDIF}
+     end;
+end;
 
 end.

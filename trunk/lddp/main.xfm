@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 234
-  Top = 168
+  Left = 568
+  Top = 347
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -629,7 +629,7 @@ object frMain: TfrMain
         Action = acHomepage
       end
       object CheckforUpdate1: TMenuItem
-        Action = acCheckUpdate
+        Action = acCheckforUpdate
       end
     end
   end
@@ -738,13 +738,14 @@ object frMain: TfrMain
       OnExecute = acReplaceExecute
     end
     object acErrorCheck: TAction
-      Category = 'Externals'
+      Category = 'Editor'
       Caption = 'Error-Check'
       Hint = 'Check for errors'
       ImageIndex = 21
       OnExecute = acErrorCheckExecute
     end
     object acOptions: TAction
+      Category = 'Misc'
       Caption = 'Options'
       ImageIndex = 31
       ShortCut = 16461
@@ -824,6 +825,7 @@ object frMain: TfrMain
       OnExecute = acTrimLinesExecute
     end
     object acHomepage: TAction
+      Category = 'Misc'
       Caption = 'LDDP &Homepage'
       ImageIndex = 32
       OnExecute = acHomepageExecute
@@ -878,6 +880,7 @@ object frMain: TfrMain
       OnExecute = acInsertBFCExecute
     end
     object acEditOptions: TAction
+      Category = 'Misc'
       Caption = '&Editor Options'
       OnExecute = acEditOptionsExecute
     end
@@ -917,18 +920,22 @@ object frMain: TfrMain
       OnUpdate = acToolbarUpdate
     end
     object acHighlightLdraw: TAction
+      Category = 'Highlighter'
       Caption = 'LDraw'
       OnExecute = acHighlightLdrawExecute
     end
     object acHighlightPascal: TAction
+      Category = 'Highlighter'
       Caption = 'Pascal'
       OnExecute = acHighlightPascalExecute
     end
     object acHighlightCpp: TAction
+      Category = 'Highlighter'
       Caption = 'C++'
       OnExecute = acHighlightCppExecute
     end
     object acMRUList: TAction
+      Category = 'Misc'
       Caption = 'acMRUList'
       OnExecute = acMRUListExecute
     end
@@ -950,16 +957,18 @@ object frMain: TfrMain
       ImageIndex = 15
       OnExecute = acWindowTileExecute
     end
-    object acCheckUpdate: TAction
-      Category = 'Help'
-      Caption = 'Check for Update'
-    end
     object acReverseWinding: TAction
       Category = 'Editor'
       Caption = 'Reverse Winding'
       ImageIndex = 38
       ShortCut = 16471
       OnExecute = acReverseWindingExecute
+    end
+    object acCheckforUpdate: TAction
+      Category = 'Misc'
+      Caption = 'Check for Update'
+      Hint = 'Check if there is a newer version available...'
+      OnExecute = acCheckforUpdateExecute
     end
   end
   object ilToolBarColor: TImageList
@@ -1984,9 +1993,9 @@ object frMain: TfrMain
       FFFFFFFFFFFFFFFF5FF87FFFFFFF20FEFFFFFFFFFFFFFFFF5BF83FFFFFFF2000
       FFFFFFFFFFFFFFFF5FF80FFFFFFF0004FFFFFFFFFFFFFFFF5FF00FFEFFFF7F04
       FFFFFFFFFFFFFFFF5FFE1FFCFFFF7F14FFFFFFFFFFFFFFFF58FE1FF07FFE7F34
-      FFFFFFFFFFFFFFFF5FFE3F807FFE7F7CFFFFFFFFFFFFFFFF40103F803FFC7F30
-      FFFFFFFFFFFFFFFF7FF01F001FF87F10FFFFFFFFFFFFFFFF0000070007E00000
-      FFFFFFFFFFFFFFFF000000000000000007E000000370FFFFB3FC33FC07FEFFFF
+      000006265EFFFFFF5FFE3F807FFE7F7CEFFFE0604066FFFF40103F803FFC7F30
+      B54C8C92A8A8FFFF7FF01F001FF87F10551135555737FFFF0000070007E00000
+      4152415248D5FFFF000000000000000007E000000370FFFFB3FC33FC07FEFFFF
       1FF8FFF807F8FFFFC80048000000FFFF3FFCFFF87FFCFFFF6BFC4BFC07FEFFFF
       7FFEFFFC7FFEFFFF78004800F800FFFF7FFEFFFC7EFFFFFF5BFC4BFC77FEF7FF
       FFFFFFFF7F7FFFFF3C0030002000FFFFFFFFFFFFFEFEFFFF040000000000FFFF
@@ -1997,8 +2006,8 @@ object frMain: TfrMain
       07E000003800FFFF7200018000000000002000000100FFFF3A0007E000000000
       00F802000000FFFF3FF01FF800300C0003FE00003D80FFFF1FF03FFC00781E00
       0FFF3B000000FFFF17F83FFC007C3E003FFF00003DFFFFFF1FFB3FFC3F3E7CFC
-      FFFF3BFE0000FFFF0FFC3FFC7E1E787EFFFF200021F8FFFF3FF81FF87E1E787E
-      FFFE33F061F8FFFFCFF00FF07E1E787EFFF8F800F800FFFF1FFE07E07F1E78FE
+      FFFF3BFE0000FFFF0FFC3FFC7E1E787EFFFF200021F8FFFF3CF81FF87E1E787E
+      FFFE33F061F8FFFFCCF00FF07E1E787EFFF8F800F800FFFF1FFE07E07F1E78FE
       FFE033FC61FFFFFF1FDCFFFF7FFE7FFE3F8023FC21FFFFFFFE8EFFFF47FE7FE2
       0E0000000000FFFF0847FFFF03FC3FC001173BFC3DFFFFFF0843FFFF01F81F80
       015400000000FFFF0800FFFF0000000001B402000100FFFF0000FFFF00000000
@@ -2245,18 +2254,6 @@ object frMain: TfrMain
     Left = 40
     Top = 208
   end
-  object http: TIdHTTP
-    Host = 'home.arcor.de'
-    Request.Accept = 'text/html, */*'
-    Request.ContentLength = 0
-    Request.ContentRangeEnd = 0
-    Request.ContentRangeStart = 0
-    Request.ContentType = 'text/html'
-    Request.ProxyPort = 0
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    Left = 72
-    Top = 208
-  end
   object SynPasSyn: TSynPasSyn
     Left = 72
     Top = 304
@@ -2265,5 +2262,16 @@ object frMain: TfrMain
     DefaultFilter = 'C++ Files (*.c,*.cpp,*.h,*.hpp)|*.c;*.cpp;*.h;*.hpp'
     Left = 104
     Top = 304
+  end
+  object http: TIdHTTP
+    ProtocolVersion = pv1_0
+    Request.Accept = 'text/html, */*'
+    Request.ContentLength = 0
+    Request.ContentRangeEnd = 0
+    Request.ContentRangeStart = 0
+    Request.ProxyPort = 0
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Left = 72
+    Top = 208
   end
 end

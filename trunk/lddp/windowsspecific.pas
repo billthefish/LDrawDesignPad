@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 unit windowsspecific;
 
 interface
-uses windows, shellapi, messages, sysutils, classes,  Forms;
+uses windows, shellapi, messages, sysutils, classes,  Forms, version;
 
 type
   TLDDPCallBack = procedure(strCBText : PChar );
@@ -67,11 +67,21 @@ function PluginInfo(fname:string; nr:integer):string;
 procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
 procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
 procedure OpenInBrowser(url:string);
+function GetWindowsVersion:string;
 
 
 
 implementation
 uses main;
+
+function GetWindowsVersion:string;
+var ver:TVersion;
+begin
+  ver:=TVersion.Create(paramstr(0));
+  Result:=IntToStr (ver.HauptVersion) + '.' +
+              IntToStr (ver.NebenVersion);
+  ver.free;
+end;
 
 function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
 {---------------------------------------------------------------------
