@@ -246,6 +246,9 @@ type
     LDDPHomepage1: TMenuItem;
     CheckforUpdate1: TMenuItem;
     N7: TMenuItem;
+    ToolButton7: TToolButton;
+    ReverseWinding1: TMenuItem;
+    acReverseWinding: TAction;
 
     {$IFDEF MSWINDOWS}  //NOT IN KYLIX RIGHT NOW
     procedure acHomepageExecute(Sender: TObject);
@@ -313,6 +316,7 @@ type
     procedure acFileCloseAllExecute(Sender: TObject);
     procedure acWindowCascadeExecute(Sender: TObject);
     procedure acWindowTileExecute(Sender: TObject);
+    procedure acReverseWindingExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -462,6 +466,7 @@ begin
   acIncIndent.Enabled:=mdicount>0;
   acDecIndent.Enabled:=mdicount>0;
   acTrimLines.Enabled:=mdicount>0;
+  acReverseWinding.Enabled := mdicount>0;
   acUndo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanUndo;
   acRedo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanRedo;
   acUserDefined.Enabled:=mdicount>0;
@@ -1118,7 +1123,7 @@ begin
    if frOptions.edEmail.text <> '' then
    seltext := seltext + ' <'+frOptions.edEmail.text+'>';
 
-   seltext := seltext + + #13#10 + '0 Unofficial Element'+#13#10+
+   seltext := seltext + #13#10 + '0 Unofficial Element'+#13#10+
                                    '0 KEYWORDS your keywords'+#13#10;
  end;
 
@@ -2046,5 +2051,50 @@ begin
   frMain.Tile;
 end;
 
+
+
+
+procedure TfrMain.acReverseWindingExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Reverse the winding of a block
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+var
+  startsel, endsel, lengthsel, i : Integer;
+  DATModel1: TDATModel;
+
+begin
+  with (ActiveMDIChild as TfrEditorChild).memo do
+  begin
+    DATModel1 := TDATModel.Create;
+
+    startsel := selstart;
+    endsel := selend;
+
+    while Text[startsel] <> #10 do
+      dec(startsel);
+    while Text[endsel] <> #10 do
+      inc(endsel);
+
+    SelStart := startsel;
+    SelEnd := endsel;
+
+    lengthsel := SelLength;
+
+    DATModel1.ModelText := SelText;
+
+    for i := 0 to DATModel1.Count-1 do
+      if DATModel1[i] is TDATPolygon then
+        (DATModel1[i] as TDATPolygon).ReverseWinding;
+
+    SelText := DATModel1.ModelText;
+
+    SelStart := startsel;
+    SelEnd := endsel + (Length(DATModel1.ModelText) - lengthsel) - DATModel1.Count;
+
+    DATModel1.Free;
+  end;
+end;
 
 end.
