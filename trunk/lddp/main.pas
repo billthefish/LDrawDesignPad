@@ -2012,39 +2012,41 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 var
-  startsel, endsel, lengthsel, i : Integer;
+  startcol, endcol, lengthsel, i : Integer;
   DATModel1: TDATModel;
+  tmpPoint: TPoint;
 
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     DATModel1 := TDATModel.Create;
 
-    startsel := selstart;
-    endsel := selend;
+    startcol := CharIndexToRowCol(SelStart).Y - 1;
+    endcol := CharIndexToRowCol(SelEnd).Y - 1;
 
-    while Text[startsel] <> #10 do
-      dec(startsel);
-    while Text[endsel] <> #10 do
-      inc(endsel);
+    tmpPoint.X := 1;
+    tmpPoint.Y := startcol+1;
+    SelStart := RowColToCharIndex(tmpPoint);
+    tmpPoint.Y := endcol+2;
+    SelEnd := RowColToCharIndex(tmpPoint);
 
-    SelStart := startsel;
-    SelEnd := endsel;
+    if SelLength <> 0 then
+    begin
+      DATModel1.ModelText := SelText;
 
-    lengthsel := SelLength;
+      for i := 0 to DATModel1.Count-1 do
+        if DATModel1[i] is TDATPolygon then
+          (DATModel1[i] as TDATPolygon).ReverseWinding;
 
-    DATModel1.ModelText := SelText;
+      SelText := DATModel1.ModelText;
 
-    for i := 0 to DATModel1.Count-1 do
-      if DATModel1[i] is TDATPolygon then
-        (DATModel1[i] as TDATPolygon).ReverseWinding;
+      tmpPoint.Y := startcol+1;
+      SelStart := RowColToCharIndex(tmpPoint);
+      tmpPoint.Y := endcol+2;
+      SelEnd := RowColToCharIndex(tmpPoint)-1;
 
-    SelText := DATModel1.ModelText;
-
-    SelStart := startsel;
-    SelEnd := endsel + (Length(DATModel1.ModelText) - lengthsel) - DATModel1.Count;
-
-    DATModel1.Free;
+      DATModel1.Free;
+    end;
   end;
 end;
 
