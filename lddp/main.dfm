@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 247
-  Top = 206
+  Left = 334
+  Top = 307
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -444,15 +444,6 @@ object frMain: TfrMain
       object RandomizeColorsinSelection1: TMenuItem
         Action = acRandomizeColors
       end
-      object N13: TMenuItem
-        Caption = '-'
-      end
-      object Comment1: TMenuItem
-        Action = acCommentBlock
-      end
-      object Uncomment1: TMenuItem
-        Action = acUncommentBlock
-      end
     end
     object View1: TMenuItem
       Caption = 'View'
@@ -476,6 +467,18 @@ object frMain: TfrMain
           Action = acExternalsToolbar
         end
       end
+      object SyntaxHighlighting1: TMenuItem
+        Caption = 'Syntax Highlighting'
+        object Ldraw2: TMenuItem
+          Action = acHighlightLdraw
+        end
+        object C2: TMenuItem
+          Action = acHighlightCpp
+        end
+        object Pascal2: TMenuItem
+          Action = acHighlightPascal
+        end
+      end
     end
     object Insert1: TMenuItem
       Caption = 'Insert'
@@ -496,6 +499,15 @@ object frMain: TfrMain
       object TrimLines1: TMenuItem
         Action = acTrimLines
       end
+      object Comment1: TMenuItem
+        Action = acCommentBlock
+      end
+      object Uncomment1: TMenuItem
+        Action = acUncommentBlock
+      end
+      object N24: TMenuItem
+        Caption = '-'
+      end
       object InlinePart2: TMenuItem
         Action = acInline
       end
@@ -505,11 +517,65 @@ object frMain: TfrMain
       object N22: TMenuItem
         Caption = '-'
       end
+      object ErrorCheck1: TMenuItem
+        Caption = 'Error Checking'
+        Hint = 'Check for errors'
+        ImageIndex = 21
+        object E1: TMenuItem
+          Action = acErrorCheck
+        end
+        object N21: TMenuItem
+          Caption = '-'
+        end
+        object MarkAll1: TMenuItem
+          Action = acECMarkAll
+        end
+        object MarkAllofSelectedType1: TMenuItem
+          Action = acECMarkAllTyped
+        end
+        object UnmarkAll2: TMenuItem
+          Action = acECUnMarkAll
+        end
+        object UnmarkAllofSelectedType2: TMenuItem
+          Action = acECUnMarkAllTyped
+        end
+        object N18: TMenuItem
+          Caption = '-'
+        end
+        object AutofixSelectedError1: TMenuItem
+          Action = acECFixError
+        end
+        object N19: TMenuItem
+          Caption = '-'
+        end
+        object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
+          Action = acECFixAllMarkedErrorsTyped
+        end
+        object AutofixAllMarkedErrors1: TMenuItem
+          Action = acECFixAllMarkedErrors
+        end
+        object N20: TMenuItem
+          Caption = '-'
+        end
+        object AutofixAllErrorsofSelectedType1: TMenuItem
+          Action = acECFixAllErrorsTyped
+        end
+        object AutofixAllErrors1: TMenuItem
+          Action = acECFixAllErrors
+        end
+        object N14: TMenuItem
+          Caption = '-'
+        end
+        object CopyErrorListToClipboard1: TMenuItem
+          Action = acECCopy
+        end
+      end
       object AutoRoundSelection1: TMenuItem
         Action = acAutoRound
       end
       object SoortByPosition1: TMenuItem
         Action = acSortByPosition
+        Enabled = False
       end
       object CombineTrianglesIntoQuad1: TMenuItem
         Action = acTriangleCombine
@@ -586,73 +652,8 @@ object frMain: TfrMain
           end
         end
       end
-      object SyntaxHighlighting1: TMenuItem
-        Caption = 'Syntax Highlighting'
-        object Ldraw2: TMenuItem
-          Action = acHighlightLdraw
-        end
-        object C2: TMenuItem
-          Action = acHighlightCpp
-        end
-        object Pascal2: TMenuItem
-          Action = acHighlightPascal
-        end
-      end
       object N6: TMenuItem
         Caption = '-'
-      end
-      object ErrorCheck1: TMenuItem
-        Caption = 'Error Checking'
-        Hint = 'Check for errors'
-        ImageIndex = 21
-        object E1: TMenuItem
-          Action = acErrorCheck
-        end
-        object N21: TMenuItem
-          Caption = '-'
-        end
-        object MarkAll1: TMenuItem
-          Action = acECMarkAll
-        end
-        object MarkAllofSelectedType1: TMenuItem
-          Action = acECMarkAllTyped
-        end
-        object UnmarkAll2: TMenuItem
-          Action = acECUnMarkAll
-        end
-        object UnmarkAllofSelectedType2: TMenuItem
-          Action = acECUnMarkAllTyped
-        end
-        object N18: TMenuItem
-          Caption = '-'
-        end
-        object AutofixSelectedError1: TMenuItem
-          Action = acECFixError
-        end
-        object N19: TMenuItem
-          Caption = '-'
-        end
-        object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
-          Action = acECFixAllMarkedErrorsTyped
-        end
-        object AutofixAllMarkedErrors1: TMenuItem
-          Action = acECFixAllMarkedErrors
-        end
-        object N20: TMenuItem
-          Caption = '-'
-        end
-        object AutofixAllErrorsofSelectedType1: TMenuItem
-          Action = acECFixAllErrorsTyped
-        end
-        object AutofixAllErrors1: TMenuItem
-          Action = acECFixAllErrors
-        end
-        object N14: TMenuItem
-          Caption = '-'
-        end
-        object CopyErrorListToClipboard1: TMenuItem
-          Action = acECCopy
-        end
       end
       object ProcessthroughLSynth1: TMenuItem
         Action = acLSynth
