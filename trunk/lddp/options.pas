@@ -55,7 +55,6 @@ type
     Label4: TLabel;
     lbLdraw: TLabel;
     TabSheet1: TTabSheet;
-    Bevel4: TBevel;
     Label11: TLabel;
     lbExternal: TLabel;
     Label10: TLabel;
@@ -104,6 +103,10 @@ type
     btnReset: TBitBtn;
     SynMemo1: TSynMemo;
     GroupBox6: TGroupBox;
+    seCollinear: TMaskEdit;
+    Label6: TLabel;
+    Memo3: TMemo;
+    GroupBox7: TGroupBox;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -365,6 +368,7 @@ begin
   LDDPini.WriteString(IniSection, 'edSig_Text', edSig.Text);
   LDDPini.WriteString(IniSection, 'seDet_Text', seDet.Text);
   LDDPini.WriteString(IniSection, 'seDist_Text', seDist.Text);
+  LDDPini.WriteString(IniSection, 'seCollinear_Text', seCollinear.Text);
   LDDPini.WriteString(IniSection, 'sePntAcc_Text', sePntAcc.Text);
   LDDPini.WriteString(IniSection, 'seRotAcc_Text', seRotAcc.Text);
   LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
@@ -416,8 +420,9 @@ begin
   edEMail.Text := LDDPini.ReadString(IniSection, 'edEmail_Text', '');
   edName.Text := LDDPini.ReadString(IniSection, 'edName_Text', '');
   edSig.Text := LDDPini.ReadString(IniSection, 'edSig_Text', '');
-  seDet.Text := LDDPini.ReadString(IniSection, 'seDet_Text', '');
-  seDist.Text := LDDPini.ReadString(IniSection, 'seDist_Text', '');
+  seDet.Text := LDDPini.ReadString(IniSection, 'seDet_Text', '0.1');
+  seDist.Text := LDDPini.ReadString(IniSection, 'seDist_Text', '0.001');
+  seCollinear.Text := LDDPini.ReadString(IniSection, 'seCollinear_Text', '0.0001');
   sePntAcc.Text := LDDPini.ReadString(IniSection, 'sePntAcc_Text', '');
   seRotAcc.Text := LDDPini.ReadString(IniSection, 'seRotAcc_Text', '');
   cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
