@@ -127,10 +127,13 @@ Return value: none
 var clr:TLDrawArray;
     i:integer;
 begin
-    If Memo.modified then begin
-      frMain.Statusbar.Panels[2].Text:='Modified'
-    end
-       else frMain.Statusbar.Panels[2].Text:='';
+  If Memo.modified then
+  begin
+    frMain.Statusbar.Panels[2].Text:='Modified'
+  end
+    else frMain.Statusbar.Panels[2].Text:='';
+  frMain.acUndo.Enabled:=Memo.CanUndo;
+  frMain.acRedo.Enabled:=Memo.CanRedo;
   frMain.StatusBar.Panels[1].text:=inttostr(memo.CaretY)+':'+inttostr(memo.CaretX);
   clr:=frMain.LDrawparse(memo.lines[memo.CaretY-1]);
 
@@ -154,7 +157,6 @@ begin
           end;
       end;
     end;
-//  frMain.acFindNext.Enabled:=memo.LastFindText<>'';
 end;
 
 procedure TfrEditorChild.MemoChange(Sender: TObject);

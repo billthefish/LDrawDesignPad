@@ -565,8 +565,8 @@ begin
   acIncIndent.Enabled:=mdicount>0;
   acDecIndent.Enabled:=mdicount>0;
   acTrimLines.Enabled:=mdicount>0;
-  acUndo.Enabled:=mdicount>0;
-  acRedo.Enabled:=mdicount>0;
+  acUndo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanUndo;
+  acRedo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanRedo;
   acUserDefined.Enabled:=mdicount>0;
   if mdicount=0 then acInline.enabled:=false;
   acReplaceColor.enabled:=mdicount>0;
