@@ -24,6 +24,7 @@ uses
   SysUtils,
   Contnrs,
   Classes,
+//  Dialogs,
   Math;
 
 type
@@ -34,13 +35,19 @@ type
   TDATCustomModel=class(TPersistent)
     private
       FModelCollection: TObjectList;
+      FPntAcc, FRotAcc: Byte;
 
     protected
+      procedure SetModelFromStringlist(sList: TStringList);
       procedure SetLine(Idx: Integer; Value: TDATType);
       function GetLine(Idx: Integer): TDATType;
       function GetCount: Integer;
       property Lines[Idx:Integer]: TDATType read GetLine write SetLine;
       property Count:Integer read GetCount;
+      function GetModelText: string; virtual;
+      procedure SetModelText(mText: string); virtual;
+      procedure SetPointAcc(PAcc: Byte);
+      procedure SetRotAcc(RAcc: Byte);
       procedure Add(strLine: string); overload; virtual;
       procedure Add(objLine: TDATType); overload; virtual;
       procedure Insert(Index: Integer; strLine: string); overload; virtual;
@@ -53,7 +60,8 @@ type
     public
       constructor Create; virtual;
       destructor Destroy; override;
-
+      property PositionDecimalPlaces: Byte read FPntAcc write SetPointAcc;
+      property RotationDecimalPlaces: Byte read FRotAcc write SetRotAcc;
   end;
 
 { An Object for holding and manipulating a DAT model }
@@ -61,11 +69,6 @@ type
   TDATModel=class(TDATCustomModel)
     private
       strFilePath: string;
-      procedure SetModelFromStringlist(sList: TStringList);
-
-    protected
-      function GetModelText: string;
-      procedure SetModelText(mText: string);
 
     public
       property FilePath: string read strFilePath write strFilePath;
@@ -110,6 +113,47 @@ type
       procedure Clear; override;
   end;
 
+  TDATBendibleObjectType = (boHoseTabs, boHoseNoTabs, boRibbedHose, boFlexHose, boFlexAxle);
+
+  TDATBendibleObject = class(TDATCustomModel)
+    private
+      FObjectType: TDATBendibleObjectType;
+      FCont1, FCont2: TDATPoint;
+      FStartPoint, FEndPoint: TDATMatrix;
+      FLength: Extended;
+      FColor: Integer;
+      FUserControl: Boolean;
+
+      function B0(t:single):single;
+      function B1(t:single):single;
+      function B2(t:single):single;
+      function B3(t:single):single;
+      function GetBezierCoordinate(subp:TDATSubPart; aryMatrix: array of Extended; AssignMatrix: Boolean; Reverse:Boolean):TDATPoint;
+      function PointSum(Point1,Point2:TDATPoint):TDATPoint;
+      function PointMult(Point1:TDATPoint; Factor: Extended): TDATPoint;
+      function EuclidDistance(Point1,Point2:TDATPoint):Extended;
+      function BezierSum(u: Extended; Point1, Point2, Point3, Point4: TDATPoint): TDATPoint;
+      function VectorCrossProduct(Vector1, Vector2: TDATPoint):TDATPoint;
+      function NormalizeVector(Vector: TDATPoint):TDATPoint;
+      function BezMakeMatrix(Vector: TDATPoint): TDATRotationMatrix;
+
+
+    protected
+      function GetModelText: string; override;
+
+    public
+      constructor Create; override;
+      property ObjectType: TDATBendibleObjectType read FObjectType write FObjectType;
+      property DefinedControlPoints: Boolean read FUserControl write FUserControl;
+      property ControlPoint1: TDATPoint read FCont1 write FCont1;
+      property ControlPoint2: TDATPoint read FCont2 write FCont2;
+      property StartMatrix: TDATMatrix read FStartPoint write FStartPoint;
+      property EndMatrix: TDATMatrix read FEndPoint write FEndPoint;
+      property Color: Integer read FColor write FColor;
+      property Length: Extended read FLength write FLength;
+      property ModelText: string read GetModelText;
+
+  end;
 (*
 { Enumerated type for the Minifig rotate commands}
 
@@ -162,12 +206,38 @@ constructor TDATCustomModel.Create;
 begin
   inherited Create;
   FModelCollection := TObjectList.Create;
+  FPntAcc := 2;
+  FRotAcc := 3;
 end;
 
 destructor TDATCustomModel.Destroy;
 begin
   FModelCollection.Free;
   inherited Destroy;
+end;
+
+procedure TDATCustomModel.SetPointAcc(PAcc: Byte);
+
+var
+  i: Integer;
+
+begin
+  FPntAcc := PAcc;
+  for i := 0 to Count - 1 do
+    if Lines[i] is TDATElement then
+      (Lines[i] as TDATElement).PositionDecimalPlaces := PAcc;
+end;
+
+procedure TDATCustomModel.SetRotAcc(RAcc: Byte);
+
+var
+  i: Integer;
+
+begin
+  FRotAcc := RAcc;
+  for i := 0 to Count - 1 do
+    if Lines[i] is TDATElement then
+      (Lines[i] as TDATElement).RotationDecimalPlaces := RAcc;
 end;
 
 function TDATCustomModel.GetLine(Idx:Integer): TDATType;
@@ -184,6 +254,46 @@ begin
     FModelCollection[Idx] := Value;
 end;
 
+function TDATCustomModel.GetModelText: string;
+
+var
+  i: Integer;
+
+begin
+  Result := '';
+  if Count > 0 then
+  begin
+    for i := 0 to Count - 2 do
+      Result := Result + Lines[i].DATString + #13#10;
+    Result := Result + Lines[Count-1].DATString;
+  end;
+end;
+
+procedure TDATCustomModel.SetModelText(mText: string);
+
+var
+  ModelFile: TStringList;
+
+begin
+  ModelFile := TStringList.Create;
+  Clear;
+
+  ModelFile.Text := mText;
+
+  SetModelFromStringlist(ModelFile);
+  ModelFile.Free;
+end;
+
+procedure TDATCustomModel.SetModelFromStringList(sList: TStringList);
+
+var
+  i: Integer;
+
+begin
+  for i := 0 to sList.Count - 1 do
+    Add(sList[i]);
+end;
+
 procedure TDATCustomModel.Add(objLine: TDATType);
 begin
   Insert(GetCount, objLine);
@@ -197,6 +307,11 @@ end;
 procedure TDATCustomModel.Insert(Index: Integer; objLine: TDATType);
 
 begin
+  if objLine.LineType > 0 then
+  begin
+    (objLine as TDATElement).RotationDecimalPlaces := FRotAcc;
+    (objLine as TDATElement).PositionDecimalPlaces := FPntAcc;
+  end;
   FModelCollection.Insert(Index, objLine);
 end;
 
@@ -255,43 +370,6 @@ begin
 end;
 
 { TDATModel Code }
-procedure TDATModel.SetModelFromStringList(sList: TStringList);
-
-var
-  i: Integer;
-
-begin
-  for i := 0 to sList.Count - 1 do
-    Add(sList[i]);
-end;
-
-function TDATModel.GetModelText: string;
-
-var
-  i: Integer;
-
-begin
-  Result := '';
-  for i := 0 to Count - 2 do
-    Result := Result + Lines[i].DATString + #13#10;
-  Result := Result + Lines[Count-1].DATString;
-end;
-
-procedure TDATModel.SetModelText(mText: string);
-
-var
-  ModelFile: TStringList;
-
-begin
-  ModelFile := TStringList.Create;
-  Clear;
-
-  ModelFile.Text := mText;
-
-  SetModelFromStringlist(ModelFile);
-  ModelFile.Free;
-end;
-
 procedure TDATModel.LoadModel(Filename:string);
 
 var
@@ -483,6 +561,398 @@ end;
 procedure TDATModel.Translate(x,y,z: Extended);
 begin
   inherited Translate(x,y,z);
+end;
+
+{ TDATBendibleObject Code }
+constructor TDATBendibleObject.Create;
+begin
+  inherited Create;
+  FCont1 := FDATOriginPoint;
+  FCont2 := FDATOriginPoint;
+  FStartPoint := FDATIdentityMatrix;
+  FEndPoint := FDATIdentityMatrix;
+  FObjectType := boHoseTabs;
+  FLength := 130;
+end;
+
+function TDATBendibleObject.B0(t:single):single;
+
+begin
+  Result:=sqr(1-t)*(1-t);
+end;
+
+function TDATBendibleObject.B1(t:single):single;
+
+begin
+  Result:=3*sqr(1-t)*t;
+end;
+function TDATBendibleObject.B2(t:single):single;
+
+begin
+  Result:=3*(1-t)*sqr(t);
+end;
+function TDATBendibleObject.B3(t:single):single;
+
+begin
+  Result:=sqr(t)*t;
+end;
+
+function TDATBendibleObject.GetBezierCoordinate(subp:TDATSubPart; aryMatrix: array of Extended; AssignMatrix: Boolean; Reverse:Boolean):TDATPoint;
+
+var
+  aMatrix: TDATMatrix;
+  TempSubPart: TDATSubPart;
+
+begin
+  aMatrix[1,1] := aryMatrix[0];
+  aMatrix[1,2] := aryMatrix[1];
+  aMatrix[1,3] := aryMatrix[2];
+  aMatrix[1,4] := aryMatrix[3];
+
+  aMatrix[2,1] := aryMatrix[4];
+  aMatrix[2,2] := aryMatrix[5];
+  aMatrix[2,3] := aryMatrix[6];
+  aMatrix[2,4] := aryMatrix[7];
+
+  aMatrix[3,1] := aryMatrix[8];
+  aMatrix[3,2] := aryMatrix[9];
+  aMatrix[3,3] := aryMatrix[10];
+  aMatrix[3,4] := aryMatrix[11];
+
+  aMatrix[4,1] := aryMatrix[12];
+  aMatrix[4,2] := aryMatrix[13];
+  aMatrix[4,3] := aryMatrix[14];
+  aMatrix[4,4] := aryMatrix[15];
+
+  TempSubPart := TDATSubPart.Create;
+  TempSubPart.DATString := subp.DATString;
+
+  TempSubPart.Transform(aMatrix, Reverse);
+  Result := TempSubPart.Position;
+
+  if AssignMatrix then
+    subp.RotationMatrix := TempSubPart.RotationMatrix;
+
+  TempSubPart.Free;
+end;
+
+function TDATBendibleObject.PointSum(Point1,Point2:TDATPoint):TDATPoint;
+
+begin
+  Result[1] := Point1[1] + Point2[1];
+  Result[2] := Point1[2] + Point2[2];
+  Result[3] := Point1[3] + Point2[3];
+end;
+
+function TDATBendibleObject.PointMult(Point1:TDATPoint; Factor: Extended): TDATPoint;
+
+begin
+  Result[1] := Point1[1] * Factor;
+  Result[2] := Point1[2] * Factor;
+  Result[3] := Point1[3] * Factor;
+end;
+
+function TDATBendibleObject.EuclidDistance(Point1,Point2:TDATPoint):Extended;
+
+begin
+  Result:= Sqrt( Sqr(Point1[1]-Point2[1]) +
+                 Sqr(Point1[2]-Point2[2]) +
+                 Sqr(Point1[3]-Point2[3]));
+end;
+
+function TDATBendibleObject.BezierSum(u: Extended; Point1, Point2, Point3, Point4: TDATPoint): TDATPoint;
+
+begin
+  Result := PointSum( PointSum( PointMult( Point1, B0(u)),PointMult( Point2, B1(u))),
+                        PointSum( PointMult( Point3, B2(u)),PointMult( Point4, B3(u))));
+end;
+
+function TDATBendibleObject.VectorCrossProduct(Vector1, Vector2: TDATPoint):TDATPoint;
+
+begin
+  result[1] := (Vector1[2] * Vector2[3]) - (Vector1[3] * Vector2[2]);
+  result[2] := (Vector1[3] * Vector2[1]) - (Vector1[1] * Vector2[3]);
+  result[3] := (Vector1[1] * Vector2[2]) - (Vector1[2] * Vector2[1]);
+end;
+
+function TDATBendibleObject.NormalizeVector(Vector: TDATPoint):TDATPoint;
+
+var
+  sum: Extended;
+
+begin
+  sum:= sqrt( sqr(Vector[1]) + sqr(Vector[2]) + sqr(Vector[3]));
+  result[1] := Vector[1] / sum;
+  result[2] := Vector[2] / sum;
+  result[3] := Vector[3] / sum;
+end;
+
+function TDATBendibleObject.BezMakeMatrix(Vector: TDATPoint): TDATRotationMatrix;
+
+var
+  tempV,v1,v2,v3: TDATPoint;
+
+begin
+  tempV[1] := 0;
+  tempV[2] := 1;
+  tempV[3] := 0;
+
+  v2 := NormalizeVector(Vector);
+  v1 := NormalizeVector(VectorCrossProduct(v2, tempV));
+  v3 := NormalizeVector(VectorCrossProduct(v1, v2));
+  Result[1,1] := v1[1];
+  Result[1,2] := v2[1];
+  Result[1,3] := v3[1];
+  Result[2,1] := v1[2];
+  Result[2,2] := v2[2];
+  Result[2,3] := v3[2];
+  Result[3,1] := v1[3];
+  Result[3,2] := v2[3];
+  Result[3,3] := v3[3];
+end;
+
+function TDATBendibleObject.GetModelText: string;
+var
+  Line1, Line2: TDATSubPart;
+  BezBegin, BezEnd, BezCont1, BezCont2: TDATPoint;
+  Segments: Integer;
+  strFileType: string;
+
+  dummyPart: TDATSubPart;
+  BezPoint1, BezPoint2, dummyPoint, lastPoint, pntC1, pntC2: TDATPoint;
+  BezIntLen: array of Extended;
+  BezIntPos: array of TDATPoint;
+  Factor, Distance, Last, rlLength, rlCount, InteEpsilon, BezI, BezILast, I2: Extended;
+  i, PointPerSegment, Iterations, MaxIterations: Byte;
+  intCount,BezSearch: Word;
+  PntDec, RotDec: Byte;
+
+begin
+  Clear;
+  Line1 := TDATSubPart.Create;
+  Line2 := TDATSubPart.Create;
+  Line1.RotationMatrix := FStartPoint;
+  Line2.RotationMatrix := FEndPoint;
+  Line1.Color := FColor;
+  Line2.Color := FColor;
+
+  if EuclidDistance(Line1.Position, Line2.Position) < FLength then
+  begin
+    Segments := Round(FLength);
+
+    case FObjectType of
+      boHoseTabs:
+      begin
+        Line1.SubPart := '750.dat';
+        Line2.SubPart := '750.dat';
+        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        FLength := 130;
+        Segments := 50;
+        strFileType := '754.dat';
+      end;
+      boHoseNoTabs:
+      begin
+        Line1.SubPart := '752.dat';
+        Line2.SubPart := '752.dat';
+        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        FLength := 130;
+        Segments := 50;
+        strFileType := '754.dat';
+      end;
+      boRibbedHose:
+      begin
+        Line1.SubPart := '79.dat';
+        Line2.SubPart := '79.dat';
+        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        FLength := Segments * 6.2;
+        strFileType := '80.dat';
+      end;
+      boFlexAxle:
+      begin
+        Line1.SubPart := 'stud3a.dat';
+        Line2.SubPart := 'stud3a.dat';
+        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 0, 0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        Segments := Trunc(Segments/4);
+        strFileType := 'axlehol8.dat';
+      end;
+      boFlexHose:
+      begin
+        Line1.SubPart := '76.dat';
+        Line2.SubPart := '76.dat';
+        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+        Segments := Trunc(Segments/4);
+        strFileType := '77.dat';
+      end;
+    end;
+
+    PointPerSegment:= 12;
+    Factor:= 1;
+    Distance:= 0.5;
+    Last:= 1;
+    Iterations:= 0;
+    rlLength:= 0;
+    MaxIterations:= 100;
+    InteEpsilon:= 0.07;
+    SetLength(BezIntLen,Segments*PointPerSegment);
+    SetLength(BezIntPos,Segments*PointPerSegment);
+    if FUserControl then
+    begin
+      BezCont1 := FCont1;
+      BezCont2 := FCont2;
+    end;
+
+    dummyPart := TDATSubPart.Create;
+
+    Add('0 Begin Bezier Curve ');
+    Add(Line1.DATString);
+    Add(Line2.DATString);
+
+    if strFileType = '754.dat' then
+    begin
+      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '755.dat';
+      dummyPart.RotationMatrix := Line1.RotationMatrix;
+      dummyPart.Rotate(180,0,0,1);
+      dummyPart.Position := Line1.Position;
+      Add(dummyPart.DATString);
+
+      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '755.dat';
+      dummyPart.RotationMatrix := Line2.RotationMatrix;
+      dummyPart.Rotate(180,0,0,1);
+      dummyPart.Position := Line2.Position;
+      Add(dummyPart.DATString);
+    end;
+
+    dummyPoint[1] := 0;
+    dummyPoint[2] := 0;
+    dummyPoint[3] := 0;
+    dummyPart.Color := FColor;
+
+    for i:= 0 to System.Length(BezIntLen)-1 do
+    begin
+      BezIntLen[i] := 0;
+      BezIntPos[i] := dummyPoint;
+    end;
+    while (Iterations < MaxIterations) and (abs(rlLength - FLength) > InteEpsilon) do
+    begin
+      rlCount := 0;
+      rlLength := 0;
+      lastPoint := BezBegin;
+      pntC1 := PointSum(BezBegin, PointMult( PointSum( PointMult( BezBegin, -1), BezCont1),Factor));
+      pntC2 := PointSum(BezEnd, PointMult( PointSum( PointMult( BezEnd, -1), BezCont2),Factor));
+      while rlCount < (Segments * PointPerSegment) do
+      begin
+        intCount:=Round(rlCount);
+        BezIntPos[intCount] :=  BezierSum(((rlCount/Segments)/PointPerSegment),BezBegin,pntC1,pntC2,BezEnd);
+        rlLength:= rlLength + EuclidDistance(BezIntPos[intCount], lastPoint);
+        BezIntLen[intCount] := rlLength;
+        lastPoint := BezIntPos[intCount];
+        rlCount := rlCount+1;
+      end;
+      if rlLength < FLength then
+      begin
+        Factor := Factor + Distance;
+        if Last = 0 then Distance := (Distance / 2) * 1.4;
+        Last := 1;
+      end
+      else
+      begin
+        Factor := Factor - Distance;
+        if Last = 1 then Distance := Distance / 2;
+        Last := 0;
+      end;
+      inc(Iterations);
+    end;
+    rlCount := 0;
+    BezILast := 0;
+    BezSearch := 0;
+    while rlCount < Segments do
+    begin
+      if rlCount = (Segments -1) then BezI := 1
+      else
+      begin
+        while (BezSearch < (Segments * PointPerSegment)) and
+              (BezIntLen[BezSearch] < ((rlLength * (rlCount + 1)) / Segments)) do inc(BezSearch);
+        i2 :=  ((rlLength * ((rlCount + 1) / Segments)) - BezIntLen[BezSearch-1]) /(BezIntLen[BezSearch] - BezIntLen[BezSearch-1]);
+        BezI := ((i2 + BezSearch-1) / Segments) / PointPerSegment;
+      end;
+
+      BezPoint1 := BezierSum(BezILast, BezBegin, pntC1, pntC2, BezEnd);
+      BezPoint2 := BezierSum(BezI, BezBegin, pntC1, pntC2, BezEnd);
+      dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + strFileType;
+      dummyPart.Position := PointMult(PointSum(BezPoint1,BezPoint2), 0.5);
+      dummyPart.RMatrix := BezMakeMatrix(PointSum(BezPoint1,PointMult(BezPoint2,-1.0)));
+
+      case ObjectType of
+        boHoseTabs, boHoseNoTabs:
+        begin
+          dummyPart.Position := GetBezierCoordinate(dummyPart,[0, 0, 1, 0,  1.1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0, 1], False, True);
+          if rlCount = (Segments -1) then
+            dummyPart.SubPart := '756.dat';
+        end;
+        boFlexAxle:
+        begin
+          if rlCount < 5 then
+          begin
+            dummyPart.Position := GetBezierCoordinate(dummyPart,[0, -1, 0, 0,  1, 0, 0, -2,  0, 0, 1, 0,  0, 0, 0, 1], True, True);
+            dummyPart.SubPart := 's\faxle' + IntToStr(Round(rlCount)+1) + '.dat';
+          end
+          else if rlCount > (Segments - 6) then
+          begin
+            dummyPart.Position := GetBezierCoordinate(dummyPart,[0, 1, 0, 0,  -1, 0, 0, 2,  0, 0, 1, 0,  0, 0, 0, 1], True, True);
+            dummyPart.SubPart := 's\faxle' + IntToStr(Segments - Round(rlCount)) + '.dat';
+          end
+          else
+            dummyPart.Position := GetBezierCoordinate(dummyPart,[1, 0, 0, 0,  0, 4.26, 0, -2.13,  0, 0, 1, 0,  0, 0, 0, 1], True, True);
+        end;
+        boFlexHose:
+          dummyPart.Position := GetBezierCoordinate(dummyPart,[1, 0, 0, 0,  0, 4.4, 0, -2.2,  0, 0, 1, 0,  0, 0, 0, 1], True, True);
+      end;
+
+      Add(dummyPart.DATString);
+
+      BezILast := BezI;
+      rlCount := rlCount + 1;
+    end;
+
+    Add('0 Start Point (' +
+        FloatToStr(RoundTo(BezBegin[1],-4)) + ' ' +
+        FloatToStr(RoundTo(BezBegin[2],-4)) + ' ' +
+        FloatToStr(RoundTo(BezBegin[3],-4)) + ') ' +
+        'Control Point 1 (' +
+        FloatToStr(RoundTo(pntC1[1], -4)) + ' ' +
+        FloatToStr(RoundTo(pntC1[2], -4)) + ' ' +
+        FloatToStr(RoundTo(pntC1[3], -4)) + ')');
+    Add('0 Control Point 2 (' +
+        FloatToStr(RoundTo(pntC2[1], -4)) + ' ' +
+        FloatToStr(RoundTo(pntC2[2], -4)) + ' ' +
+        FloatToStr(RoundTo(pntC2[3], -4)) + ') ' +
+        'End Point (' +
+        FloatToStr(RoundTo(BezEnd[1], -4)) + ' ' +
+        FloatToStr(RoundTo(BezEnd[2], -4)) + ' ' +
+        FloatToStr(RoundTo(BezEnd[3], -4)) + ') ');
+    Add('0 Number Of Segments: ' + IntToStr(Segments) + ' ' +
+        'Curve Length: ' + FloatToStr(RoundTo(FLength, -4)));
+    Add('0 End Bezier Curve');
+  end;
+
+  Result := inherited GetModelText;
+  Line1.Free;
+  Line2.Free;
 end;
 
 {
