@@ -43,4 +43,4 @@ where you will find the necessary links.
 --
 Michael Hieke
 
-$Id: Readme.txt,v 1.1 2003-06-08 10:32:45 c_schmitz Exp $
+$Id: Readme.txt,v 1.2 2003-07-03 06:54:07 billthefish Exp $
