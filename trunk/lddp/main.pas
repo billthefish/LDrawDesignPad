@@ -23,9 +23,7 @@ interface
 uses
   {$IFDEF MSWINDOWS}
   windowsspecific, registry,
-  {$ELSEIF LINUX}
-  linuxspecific,
-  {$IFEND}
+  {$ENDIF}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
   QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns, Types,
   QSynHighlighterCpp, QSynHighlighterPas, IdBaseComponent, IdComponent,
@@ -248,6 +246,8 @@ type
     ToolButton7: TToolButton;
     ReverseWinding1: TMenuItem;
     acReverseWinding: TAction;
+    BFCStatement2: TMenuItem;
+    ReverseWinding2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -330,8 +330,6 @@ type
     slPlugins:TStringList;
     lastfind:integer;
     strIniName: string;
-    LDDPini: TMemIniFile;
-
 
     procedure LoadPlugins(AppInit:Boolean = false);
 
@@ -636,10 +634,6 @@ begin
       strIniName := ExtractFilePath(Application.ExeName) + 'LDraw.ini';
     {$ENDIF}
 
-    LDDPini := TMemIniFile.Create(strIniName);
-    frOptions.edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory','');
-    LDDPini.Free;
-
     frOptions.IniFileName := strIniName;
     frEditOptions.IniFileName := strIniName;
     frOptions.IniSection := 'LDDP Options';
@@ -814,14 +808,7 @@ begin
   frOptions.LoadFormValues;
 
   if frOptions.showmodal=mrOK then
-  begin
-    LDDPini := TMemIniFile.Create(strIniName);
-    if frOptions.edLDrawDir.Text <> '' then
-      LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
-    LDDPini.UpdateFile;
-    LDDPini.Free;
-    frOptions.SaveFormValues;
-  end
+    frOptions.SaveFormValues
   else frOptions.LoadFormValues;
 end;
 
@@ -880,11 +867,8 @@ begin
     exit;
   end;
   (activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((activeMDICHild as TfrEditorChild).tempFileName);
-  {$IFDEF MSWINDOWS}
   DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-  {$ELSEIF LINUX}
-
-  {$IFEND}
+{$ELSE}
 
 {$ENDIF}  //NOT IN KYLIX YET
 end;
@@ -897,6 +881,7 @@ Return value: None
 ----------------------------------------------------------------------}
 
 begin
+{$IFDEF MSWINDOWS}
   if (activeMDICHild as TfrEditorChild).memo.modified then
     if MessageDlg('File has been modified. '+#13+#10+'Do you want to save and view the file in LDView '+#13+#10+'or cancel the operation?', mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
   acFileSaveExecute(Sender);
@@ -905,11 +890,10 @@ begin
     acOptionsExecute(Sender);
     exit;
   end;
-  {$IFDEF MSWINDOWS}
   DOCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "'+(activeMDICHild as TfrEditorChild).caption+'"',SW_SHOWNA,false);
-  {$ELSEIF LINUX}
+{$ELSE}
 
-  {$IFEND}
+{$ENDIF}
 end;
 
 
@@ -975,13 +959,9 @@ begin
     end;
     if cboShowCommand.checked then ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
     (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-    {$IFDEF MSWINDOWS}
       DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
-    {$ELSEIF LINUX}
-
-    {$IFEND}
-
   end;
+{$ELSE}
 
 {$ENDIF}  //NOT IN KYLIX YET
 end;
@@ -1139,6 +1119,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+  {$IFDEF MSWINDOWS}
   if (not FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
   begin
     MessageDlg('You have to specify a valid path to L3Lab.exe first!', mtError, [mbOK], 0);
@@ -1146,11 +1127,10 @@ begin
     exit;
   end;
   (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-  {$IFDEF MSWINDOWS}
   DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-  {$ELSEIF LINUX}
+  {$ELSE}
 
-  {$IFEND}
+  {$ENDIF}
 end;
 
 procedure TfrMain.acincIndentExecute(Sender: TObject);
@@ -1170,19 +1150,23 @@ Description: Insert standard part header
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
+var
+  HeaderText: string;
+
 begin
- with (activeMDICHild as TfrEditorChild).memo do
- begin
-   seltext:='0 Part name'+#13#10+
-            '0 Name: ' + ExtractFileName(ActiveMDIChild.Caption) + #13#10 +
-            '0 Author: ' + frOptions.edName.text;
-   if frOptions.edEmail.text <> '' then
-   seltext := seltext + ' <'+frOptions.edEmail.text+'>';
+  HeaderText := '0 Part name'+#13#10+
+                '0 Name: ' + ExtractFileName(ActiveMDIChild.Caption) + #13#10 +
+                '0 Author: ' + frOptions.edName.text;
+  if frOptions.edEmail.text <> '' then
+    HeaderText := HeaderText + ' <'+frOptions.edEmail.text+'>';
 
-   seltext := seltext + #13#10 + '0 Unofficial Element'+#13#10+
-                                   '0 KEYWORDS your keywords'+#13#10;
- end;
-
+  HeaderText := HeaderText + #13#10 + '0 Unofficial Element'+#13#10+
+                '0 KEYWORDS your keywords'+#13#10;
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Text := HeaderText + Lines.Text;
+    Modified := true;
+  end;
 end;
 
 
@@ -1193,10 +1177,12 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
- with (activeMDICHild as TfrEditorChild).memo do
- begin
-   seltext:='0 '+FOrmatDatetime('yyyy-mm-dd',now)+' '+frOptions.edSIG.text+' Update description'+#13#10;
- end;
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Insert(CaretY-1, '0 ' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
+                           frOptions.edSIG.text + ' Update description');
+    Modified := true;
+  end;
 end;
 
 procedure TfrMain.acCommentBlockExecute(Sender: TObject);
@@ -1310,15 +1296,16 @@ begin
 
  with (activeMDICHild as TfrEditorChild).memo do
  begin
-   LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
+   LDrawBasePath := frOptions.edLdrawDir.Text
+                    {$IFDEF MSWINDOWS}+ PathDelim{$ENDIF};
 
    DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
-   DATModel1.Add(Lines[carety-1]);
+   DATModel1.Add(Lines[CaretY-1]);
 
    DATModel1.InlinePart(0);
 
    DATModel1.Insert(0,'');
-   DATModel1.Insert(0,'0 Original Line: '+lines[carety-1]);
+   DATModel1.Insert(0,'0 Original Line: '+ Lines[CaretY-1]);
    DATModel1.Insert(0,'0 Inlined by LDDesignPad');
    DATModel1.Add('0 End of Inlined Part');
    DATModel1.Add('');
@@ -1342,11 +1329,12 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 var
-  i, lengthsel, startsel, endsel:integer;
+  i, startcol, endcol:integer;
   cname,tmp,nr:string;
   cvalue:integer;
   EditCh: TfrEditorChild;
   clr: TDATModel;
+  tmpPoint: TPoint;
 
 begin
   EditCh := ActiveMDIChild as TfrEditorChild;
@@ -1426,18 +1414,14 @@ begin
       begin
         clr.Clear;
 
-        startsel := selstart;
-        endsel := selend;
+        startcol := CharIndexToRowCol(SelStart).Y - 1;
+        endcol := CharIndexToRowCol(SelEnd).Y - 1;
 
-        while Text[startsel] <> #10 do
-          dec(startsel);
-        while Text[endsel] <> #10 do
-          inc(endsel);
-
-        SelStart := startsel;
-        SelEnd := endsel;
-
-        lengthsel := SelLength;
+        tmpPoint.X := 1;
+        tmpPoint.Y := startcol+1;
+        SelStart := RowColToCharIndex(tmpPoint);
+        tmpPoint.Y := endcol+2;
+        SelEnd := RowColToCharIndex(tmpPoint);
 
         clr.ModelText := SelText;
 
@@ -1451,8 +1435,10 @@ begin
 
         SelText := clr.ModelText;
 
-        SelStart := startsel;
-        SelEnd := endsel + (Length(clr.ModelText) - lengthsel) - clr.Count;
+        tmpPoint.Y := startcol+1;
+        SelStart := RowColToCharIndex(tmpPoint);
+        tmpPoint.Y := endcol+2;
+        SelEnd := RowColToCharIndex(tmpPoint)-1;
       end;
     end;
   end;
@@ -1732,7 +1718,8 @@ Return value: None
 begin
  with (activeMDICHild as TfrEditorChild).memo do
  begin
-   seltext:='0 BFC CERTIFY|NOCERTIFY CLIP|NOCLIP CW|CCW INVERTNEXT'+#13#10;
+   Lines.Insert(CaretY-1 , '0 BFC CERTIFY|NOCERTIFY CLIP|NOCLIP CW|CCW INVERTNEXT');
+   Modified := true;
  end;
 end;
 
@@ -1837,7 +1824,6 @@ begin
     Include(Options, ssoSelectedOnly);
   if gbSearchWholeWords then
     Include(Options, ssoWholeWord);
-//  (activeMDICHild as TfrEditorChild).memo.SearchEngine :=
   if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
   begin
     Statusbar.SimpleText := STextNotFound;
@@ -1947,6 +1933,7 @@ var
   MRUSectionList: TStringList;
   i: integer;
   mnuNewItem: TMenuItem;
+  LDDPini: TMemIniFile;
 
 begin
   LDDPini := TMemIniFile.Create(strIniName);
@@ -2012,7 +1999,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 var
-  startcol, endcol, lengthsel, i : Integer;
+  startcol, endcol, i : Integer;
   DATModel1: TDATModel;
   tmpPoint: TPoint;
 
