@@ -329,7 +329,6 @@ var
 resourcestring
   STextNotFound = 'Text not found';
 
-
 function TfrMain.LDrawConstruct(line:TLDrawArray):string;
 {---------------------------------------------------------------------
 Description: Assembles a string in LDraw format from the abstract TLDrawArray
@@ -721,9 +720,9 @@ var i:integer;
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
-    splashscreen.lbState.Caption:='Initializing plugins...';
-    splashscreen.show;
-    splashscreen.update;
+    SplashScreen.lbState.Caption:='Initializing plugins...';
+    SplashScreen.show;
+    SplashScreen.update;
     screen.cursor:=-11;
 
   regT:=Tregistry.create;
@@ -738,8 +737,9 @@ begin
   if paramcount>0 then
     for i:=1 to paramcount do CreateMDIChild(paramstr(i),false);
   finally
+    sleep(1500);
     screen.cursor:=0;
-    splashscreen.free;
+    SplashScreen.free;
   end;
 end;
 
