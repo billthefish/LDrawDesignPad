@@ -272,8 +272,9 @@ var
 
 begin
   Result := '';
-  for i := 0 to Count - 1 do
-    Result := Result + Lines[i].DATString + #13#10
+  for i := 0 to Count - 2 do
+    Result := Result + Lines[i].DATString + #13#10;
+  Result := Result + Lines[Count-1].DATString;
 end;
 
 procedure TDATModel.SetModelText(mText: string);
