@@ -408,8 +408,6 @@ var
   frMain: TfrMain;
   splashscreen: TfrSplash;
 
-const
-  LDDPLINUXVERSION = '1.0.4'; //hard-coded Linux version, for now
 
 implementation
 

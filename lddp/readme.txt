@@ -106,6 +106,17 @@ Remarks:
 
 + = New feature  * = Bugfix   - = Removed feature
 
+
+v1.51 14 November 2003
+* Drag and Drop from files onto LDDP is working now again
+* Fixed window menu showing active windows
++ Updated compile instructions
+* Fixed Search and Replace Functions
+* Fixed Word to word jumping (still needs some more fixing)
+* Fixed color replace dialog not showing color names when hovering with mouse over palette
+* Numerous small fixes
+
+
 v1.50 08 October 2003
 + Ability to insert BFC Statements 
 + Overhauled Error Check. Many new features available
