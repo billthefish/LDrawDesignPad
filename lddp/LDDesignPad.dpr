@@ -3,7 +3,12 @@ program LDDesignPad;
 {%File 'readme.txt'}
 
 uses
+  {$IFDEF MSWINDOWS}
   Forms,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  QForms,
+  {$ENDIF}
   main in 'main.pas' {frMain},
   childwin in 'childwin.pas' {frEditorChild},
   about in 'about.pas' {frAboutBox},
