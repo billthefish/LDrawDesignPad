@@ -12,7 +12,7 @@ object TextSearchDialog: TTextSearchDialog
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDefault
+  Position = poMainFormCenter
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 13
