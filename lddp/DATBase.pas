@@ -762,14 +762,14 @@ begin
         TmpMatrix[2,2] := StrToFloat(TempList[6]);
         TmpMatrix[2,3] := StrToFloat(TempList[7]);
 
-        if TmpLnType = 3 then
+        if TmpLnType >= 3 then
         begin
           TmpMatrix[3,1] := StrToFloat(TempList[8]);
           TmpMatrix[3,2] := StrToFloat(TempList[9]);
           TmpMatrix[3,3] := StrToFloat(TempList[10]);
         end;
 
-        if TmpLnType > 4 then
+        if TmpLnType >= 4 then
         begin
           TmpMatrix[4,1] := StrToFloat(TempList[11]);
           TmpMatrix[4,2] := StrToFloat(TempList[12]);
