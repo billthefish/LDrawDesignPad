@@ -13,8 +13,7 @@ Contents
 1. Installation
 ----------------
 
-Create a new dir and unzip the contents of the zip file into it.
-Make sure you extract the \Plugins subdir too.
+The installer will do everything for you. Just install like every other program.
 
 
 2. Introduction
@@ -146,7 +145,6 @@ v1.51 14 November 2003
 * Fixed Word to word jumping (still needs some more fixing)
 * Fixed color replace dialog not showing color names when hovering with mouse over palette
 * Numerous small fixes
-
 
 v1.50 08 October 2003
 + Ability to insert BFC Statements 

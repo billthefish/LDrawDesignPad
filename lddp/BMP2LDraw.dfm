@@ -49,6 +49,8 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Top = 12
         Width = 164
         Height = 16
+        Min = 0
+        Max = 100
         TabOrder = 0
       end
     end
@@ -58,7 +60,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
     Top = 296
     Width = 352
     Height = 129
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alBottom
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -196,7 +198,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Top = 12
         Width = 73
         Height = 21
-        TabOrder = 0
+        TabOrder = 4
         Text = 'None'
       end
       object BitBtn6: TBitBtn
@@ -205,7 +207,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Width = 90
         Height = 25
         Caption = 'C&lear color'
-        TabOrder = 2
+        TabOrder = 6
         OnClick = BitBtn6Click
         Glyph.Data = {
           36050000424D3605000000000000360400002800000010000000100000000100
@@ -257,7 +259,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Width = 90
         Height = 25
         Caption = '&Pick color'
-        TabOrder = 1
+        TabOrder = 5
         OnClick = Button1Click
         Glyph.Data = {
           F6000000424DF600000000000000760000002800000010000000100000000100
@@ -275,7 +277,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Width = 103
         Height = 25
         Caption = '<< Previous'
-        TabOrder = 6
+        TabOrder = 2
         OnClick = BitBtn4Click
       end
       object BitBtn5: TBitBtn
@@ -285,7 +287,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Height = 25
         Caption = '>> Next'
         Default = True
-        TabOrder = 5
+        TabOrder = 3
         OnClick = BitBtn5Click
       end
       object rbTrans1: TRadioButton
@@ -295,7 +297,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Height = 17
         Caption = '&Replace with transparency value (default)'
         Checked = True
-        TabOrder = 3
+        TabOrder = 0
         TabStop = True
       end
       object rbTrans2: TRadioButton
@@ -304,7 +306,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Width = 215
         Height = 17
         Caption = '&Just leave color out'
-        TabOrder = 4
+        TabOrder = 1
       end
     end
     object TabSheet3: TTabSheet
@@ -344,7 +346,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Caption = 
           'Span over Quadrilateral.  Insert complete Quadrilateral line her' +
           'e:'
-        TabOrder = 1
+        TabOrder = 2
         OnClick = TabSheet3Show
       end
       object BitBtn2: TBitBtn
@@ -353,7 +355,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Width = 103
         Height = 25
         Caption = '<< Previous'
-        TabOrder = 2
+        TabOrder = 4
         OnClick = btNext1Click
       end
       object btSave: TBitBtn
@@ -364,7 +366,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Caption = 'Done'
         Default = True
         Enabled = False
-        TabOrder = 3
+        TabOrder = 5
         OnClick = btSaveClick
         Glyph.Data = {
           36050000424D3605000000000000360400002800000010000000100000000100
@@ -415,7 +417,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Top = 14
         Width = 48
         Height = 21
-        TabOrder = 5
+        TabOrder = 1
         Text = '1'
       end
       object edQuad: TEdit
@@ -423,7 +425,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Top = 58
         Width = 291
         Height = 21
-        TabOrder = 4
+        TabOrder = 3
       end
     end
   end

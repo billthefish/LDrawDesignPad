@@ -23,7 +23,7 @@ object frEditorChild: TfrEditorChild
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 261
+    Top = 268
     Width = 620
     Height = 7
     Cursor = crVSplit
@@ -33,13 +33,13 @@ object frEditorChild: TfrEditorChild
   end
   object pnInfo: TPanel
     Left = 0
-    Top = 268
+    Top = 275
     Width = 620
     Height = 91
     Align = alBottom
     BevelOuter = bvNone
     Caption = 'pnInfo'
-    TabOrder = 0
+    TabOrder = 1
     Visible = False
     object Panel2: TPanel
       Left = 0
@@ -102,17 +102,15 @@ object frEditorChild: TfrEditorChild
     Left = 0
     Top = 0
     Width = 620
-    Height = 261
+    Height = 268
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
     Font.Name = 'Courier New'
     Font.Style = []
-    ParentColor = False
-    ParentFont = False
     PopupMenu = frMain.pmMemo
-    TabOrder = 1
+    TabOrder = 0
     OnClick = memoClick
     OnKeyDown = MemoKeyDown
     OnKeyUp = MemoKeyDown
