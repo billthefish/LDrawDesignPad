@@ -24,9 +24,7 @@ interface
 uses
   {$IFDEF MSWINDOWS}
   windowsspecific,
-  {$ELSEIF LINUX}
-  linuxspecific,
-  {$IFEND}
+  {$ENDIF}
   QDialogs, QForms, QImgList, QExtCtrls, QStdCtrls, QCheckLst, QMask, QButtons,
   QControls, QComCtrls, QGraphics, Classes, SysUtils, IniFiles;
 type
@@ -106,7 +104,8 @@ type
   private
     { Private declarations }
   public
-    IniFileName, IniSection: string;
+    IniFileName: string;
+    IniSection: string;
     procedure UpdateCOntrols;
     procedure LoadFormValues;
     procedure SaveFormValues;
