@@ -3,36 +3,35 @@
 
 [Setup]
 AppName=LDraw Design Pad
-AppVerName=LDraw Design Pad 1.4
-AppPublisher=LDDP OPen Source Project
+AppVerName=LDraw Design Pad 1.5b
 AppPublisherURL=http://www.lddp.net
 AppSupportURL=http://www.lddp.net
 AppUpdatesURL=http://www.lddp.net
-DefaultDirName={pf}\LDDP
+DefaultDirName={pf}\LDraw Design Pad
 DefaultGroupName=LDraw Design Pad
 AllowNoIcons=yes
-InfoBeforeFile=D:\Entwicklung\_Projekte\LDDP\readme.txt
-OutputDir=D:\Entwicklung\_Projekte\LDDP\Setup
-OutputBaseFilename=LDDesignPad
+LicenseFile=C:\Lego\Source Code\LDDP\docs\GNU Public Licence.txt
+InfoAfterFile=C:\Lego\Source Code\LDDP\lddp\readme.txt
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
+Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Files]
-Source: "D:\Entwicklung\_Projekte\LDDP\LDDesignPad.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "D:\Entwicklung\_Projekte\LDDP\readme.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "D:\Entwicklung\_Projekte\LDDP\colors.pal"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "D:\Entwicklung\_Projekte\LDDP\Plugins\*.*"; DestDir: "{app}\Plugins"; CopyMode: alwaysoverwrite
-Source: "D:\Entwicklung\_Projekte\LDDP\Plugins Samples Sourcecode\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\"; CopyMode: alwaysoverwrite
-Source: "D:\Entwicklung\_Projekte\LDDP\Plugins Samples Sourcecode\C++\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\C++\"; CopyMode: alwaysoverwrite
-Source: "D:\Entwicklung\_Projekte\LDDP\Plugins Samples Sourcecode\Delphi\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\Delphi\"; CopyMode: alwaysoverwrite
+Source: "C:\Lego\Source Code\LDDP\LDDP CVS Executible\LDDesignPad.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Lego\Source Code\LDDP\plugins\c++\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\C++\"; Flags: ignoreversion
+Source: "C:\Lego\Source Code\LDDP\plugins\delphi\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\Delphi\"; Flags: ignoreversion
+Source: "C:\Lego\Source Code\LDDP\plugins\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\"; Flags: ignoreversion
+Source: "C:\Lego\Source Code\LDDP\plugins\delphi\EditorPluginSample.dll"; DestDir: "{app}\Plugins\"; Flags: ignoreversion
+Source: "C:\Lego\Source Code\LDDP\lddp\colors.pal"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Lego\Source Code\LDDP\lddp\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
+; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\LDraw Design Pad"; Filename: "{app}\LDDesignPad.exe"
+Name: "{group}\Uninstall LDraw Design Pad"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\LDraw Design Pad"; Filename: "{app}\LDDesignPad.exe"; Tasks: desktopicon
-Name: "{sendto}\LDraw Design Pad"; Filename: "{app}\LDDesignPad.exe"
-
-
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\LDraw Design Pad"; Filename: "{app}\LDDesignPad.exe"; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\LDDesignPad.exe"; Description: "Launch LDraw Design Pad"; Flags: nowait postinstall skipifsilent
