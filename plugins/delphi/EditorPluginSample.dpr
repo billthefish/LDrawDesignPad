@@ -100,7 +100,7 @@ begin
 
   strSeltext:='';
   i:=1;
-  while i<Length(strCompleteText) do
+  while i<Length(strCompleteText)+1 do
    begin
       if strCompleteText[i]=' ' then
       strCompleteText[i]:='_';
