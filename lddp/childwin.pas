@@ -132,7 +132,7 @@ begin
   frMain.acInline.enabled:= clr.typ=1;
   frMain.acReplaceColor.enabled:= clr.color>-1;
 
-  if frMain.plugins3.Count>0 then
+  if frMain.slPlugins.Count > 0 then
   for i:=0 to frMain.plugins3.Count-1 do
     begin
       case strtoint(copy(frMain.slplugins[frMain.plugins3.Items[i].tag],1,pos(',',frMain.slplugins[frMain.plugins3.Items[i].tag])-1))  of
