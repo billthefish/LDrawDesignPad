@@ -4,15 +4,15 @@ program LDDesignPad;
 
 uses
   Forms,
-  Main in 'main.pas' {frMain},
-  Childwin in 'childwin.pas' {frEditorChild},
-  About in 'about.pas' {frAboutBox},
+  main in 'main.pas' {frMain},
+  childwin in 'childwin.pas' {frEditorChild},
+  about in 'about.pas' {frAboutBox},
   options in 'options.pas' {frOptions},
   splash in 'splash.pas' {frSplash},
-  ColorDialog in 'ColorDialog.pas' {frColorDialog},
-  dlgSearchText in 'dlgSearchText.pas' {frTextSearchDialog},
-  dlgReplaceText in 'dlgReplaceText.pas' {frTextReplaceDialog},
-  dlgConfirmReplace in 'dlgConfirmReplace.pas' {frConfirmReplaceDialog},
+  colordialog in 'ColorDialog.pas' {frColorDialog},
+  dlgsearchtext in 'dlgSearchText.pas' {frTextSearchDialog},
+  dlgreplacetext in 'dlgReplaceText.pas' {frTextReplaceDialog},
+  dlgconfirmreplace in 'dlgConfirmReplace.pas' {frConfirmReplaceDialog},
   editoptions in 'editoptions.pas' {frEditOptions};
 
 {$R *.RES}
@@ -22,11 +22,11 @@ begin
     screen.cursor:=-11;
     Application.Initialize;
     Application.Title := 'LDraw DesignPad';
-  Application.CreateForm(TfrMain, frMain);
-  Application.CreateForm(TfrAboutBox, frAboutBox);
-  Application.CreateForm(TfrOptions, frOptions);
-  Application.CreateForm(TfrColorDialog, frColorDialog);
-  Application.CreateForm(TfrEditOptions, frEditOptions);
+    Application.CreateForm(TfrMain, frMain);
+    Application.CreateForm(TfrAboutBox, frAboutBox);
+    Application.CreateForm(TfrOptions, frOptions);
+    Application.CreateForm(TfrColorDialog, frColorDialog);
+    Application.CreateForm(TfrEditOptions, frEditOptions);
   finally
     screen.cursor:=0;
   end;
