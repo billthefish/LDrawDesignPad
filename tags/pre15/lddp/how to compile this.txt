@@ -1,0 +1,21 @@
+How to compile this program?
+
+Preferences:
+
+- Delphi 4 or higher (not sure about this since I am using Delphi 6, but it should work)
+
+You need the following component suites to compile this source successfully:
+
+* Jedi VCL - http://jvcl.sourceforge.net
+* SynEdit  - http://synedit.sourceforge.net
+  After extracting the synedit sources copy the files in the LDrawHighlighter.zip over the existing files
+  then install it as described.
+* ICS Internet Componen Suite - http://overbyte.delphicenter.com/
+
+That's all!
+
+Have fun!
+
+The LDDP project is looking forward to your contribution ;) !
+
+
