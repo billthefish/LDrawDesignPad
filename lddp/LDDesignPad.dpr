@@ -1,4 +1,21 @@
 program LDDesignPad;
+(*
+These sources are copyrighted (C) by Carsten Schmitz and the LDDP project contributors.
+
+This source is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This source is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*)
 
 {%File 'readme.txt'}
 
@@ -13,10 +30,12 @@ uses
   dlgsearchtext in 'dlgsearchtext.pas' {frTextSearchDialog},
   dlgreplacetext in 'dlgreplacetext.pas' {frTextReplaceDialog},
   dlgconfirmreplace in 'dlgconfirmreplace.pas' {frConfirmReplaceDialog},
-  editoptions in 'editoptions.pas' {frEditOptions},
+  editoptions in 'editoptions.pas', {frEditOptions}
   windowsspecific in 'windowsspecific.pas',
-  linuxspecific in 'linuxspecific.pas';
-
+  linuxspecific in 'linuxspecific.pas',
+  l3check in 'l3check.pas',
+  DATBase in 'DATBase.pas',
+  DATModel in 'DATModel.pas';
 {$R *.res}
 
 begin
@@ -25,10 +44,10 @@ begin
     Application.Initialize;
     Application.Title := 'LDraw DesignPad';
     Application.CreateForm(TfrMain, frMain);
-  Application.CreateForm(TfrAboutBox, frAboutBox);
-  Application.CreateForm(TfrOptions, frOptions);
-  Application.CreateForm(TfrColorDialog, frColorDialog);
-  Application.CreateForm(TfrEditOptions, frEditOptions);
+    Application.CreateForm(TfrAboutBox, frAboutBox);
+    Application.CreateForm(TfrOptions, frOptions);
+    Application.CreateForm(TfrColorDialog, frColorDialog);
+    Application.CreateForm(TfrEditOptions, frEditOptions);
   finally
     screen.cursor:=0;
   end;
