@@ -4,7 +4,9 @@ object frSplash: TfrSplash
   Width = 341
   Height = 154
   VertScrollBar.Range = 141
+  VertScrollBar.Visible = False
   HorzScrollBar.Range = 328
+  HorzScrollBar.Visible = False
   BorderIcons = []
   BorderStyle = fbsNone
   Caption = 'frSplash'
