@@ -20,7 +20,7 @@ object frOptions: TfrOptions
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 260
+    Top = 267
     Width = 521
     Height = 37
     Align = alBottom
@@ -30,9 +30,9 @@ object frOptions: TfrOptions
       521
       37)
     object BitBtn1: TBitBtn
-      Left = 332
+      Left = 304
       Top = 4
-      Width = 75
+      Width = 95
       Height = 25
       Caption = 'OK'
       Default = True
@@ -83,7 +83,7 @@ object frOptions: TfrOptions
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
     end
     object BitBtn2: TBitBtn
-      Left = 420
+      Left = 412
       Top = 4
       Width = 100
       Height = 25
@@ -141,12 +141,13 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 521
-    Height = 260
-    ActivePage = TabSheet2
+    Height = 267
+    ActivePage = tsExternal
     Align = alClient
     Images = ImageList1
     MultiLine = True
     Style = tsFlatButtons
+    TabIndex = 0
     TabOrder = 1
     OnChange = PageControl1Change
     object tsExternal: TTabSheet
@@ -155,7 +156,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 203
+        Height = 210
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
@@ -264,7 +265,7 @@ object frOptions: TfrOptions
           Top = 137
           Width = 25
           Height = 22
-          TabOrder = 0
+          TabOrder = 7
           OnClick = btL3LabClick
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
@@ -315,7 +316,7 @@ object frOptions: TfrOptions
           Top = 97
           Width = 25
           Height = 22
-          TabOrder = 1
+          TabOrder = 5
           OnClick = btMLCadClick
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
@@ -366,7 +367,7 @@ object frOptions: TfrOptions
           Top = 57
           Width = 25
           Height = 22
-          TabOrder = 2
+          TabOrder = 3
           OnClick = btLDViewClick
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
@@ -417,7 +418,7 @@ object frOptions: TfrOptions
           Top = 18
           Width = 25
           Height = 22
-          TabOrder = 3
+          TabOrder = 1
           OnClick = btLDrawClick
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
@@ -468,28 +469,28 @@ object frOptions: TfrOptions
           Top = 137
           Width = 260
           Height = 21
-          TabOrder = 4
+          TabOrder = 6
         end
         object edMLCadDir: TEdit
           Left = 116
           Top = 97
           Width = 260
           Height = 21
-          TabOrder = 5
+          TabOrder = 4
         end
         object edLDViewDir: TEdit
           Left = 116
           Top = 58
           Width = 260
           Height = 21
-          TabOrder = 6
+          TabOrder = 2
         end
         object edLdrawDir: TEdit
           Left = 116
           Top = 18
           Width = 260
           Height = 21
-          TabOrder = 7
+          TabOrder = 0
         end
         object edLSynthDir: TEdit
           Left = 116
@@ -558,7 +559,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 203
+        Height = 210
         Align = alClient
         Caption = 'User Defide Program Configuration'
         TabOrder = 0
@@ -591,7 +592,7 @@ object frOptions: TfrOptions
         end
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 140
+          Top = 147
           Width = 509
           Height = 61
           Align = alBottom
@@ -602,7 +603,7 @@ object frOptions: TfrOptions
             'Hidden'
             'Normal but focus remains on LDDP'
             'Maximized')
-          TabOrder = 0
+          TabOrder = 5
         end
         object btExternal: TBitBtn
           Left = 400
@@ -667,7 +668,7 @@ object frOptions: TfrOptions
           Top = 18
           Width = 309
           Height = 21
-          TabOrder = 3
+          TabOrder = 0
         end
         object cboShowCommand: TCheckBox
           Left = 91
@@ -683,7 +684,7 @@ object frOptions: TfrOptions
           Width = 161
           Height = 17
           Caption = 'Wait until program is finished'
-          TabOrder = 5
+          TabOrder = 3
         end
       end
     end
@@ -711,7 +712,7 @@ object frOptions: TfrOptions
           Width = 185
           Height = 17
           Caption = 'Det Coplanarity Check Threshold:'
-          TabOrder = 0
+          TabOrder = 2
         end
         object cboDist: TCheckBox
           Left = 20
@@ -719,41 +720,44 @@ object frOptions: TfrOptions
           Width = 181
           Height = 17
           Caption = 'Dist Coplanarity Check Threshold:'
-          TabOrder = 1
+          TabOrder = 0
         end
         object Memo1: TMemo
           Left = 288
           Top = 16
           Width = 217
           Height = 33
+          TabStop = False
           BorderStyle = bsNone
           Lines.Strings = (
             'General files (parts, subparts and some '
             'primitives) typically use a value of 0.1.')
-          TabOrder = 2
+          TabOrder = 5
         end
         object Memo2: TMemo
           Left = 288
           Top = 44
           Width = 217
           Height = 33
+          TabStop = False
           BorderStyle = bsNone
           Lines.Strings = (
             'Geometric primitives typically use 0.01. '
             'Hi-res primitives typically use 0.001.')
-          TabOrder = 3
+          TabOrder = 6
         end
         object Memo3: TMemo
           Left = 288
           Top = 72
           Width = 218
           Height = 41
+          TabStop = False
           BorderStyle = bsNone
           Lines.Strings = (
             'Only adjust this value if you want to change '
             'the pecent deviation used for collinear point '
             'determination ')
-          TabOrder = 4
+          TabOrder = 7
         end
         object seDist: TJvFloatEdit2
           Left = 208
@@ -762,8 +766,8 @@ object frOptions: TfrOptions
           Height = 21
           Alignment = taRightJustify
           ReadOnly = False
-          TabOrder = 5
-          Value = 0.100000000000000000
+          TabOrder = 1
+          Value = 0.1
           MaxDecimals = 5
           HasMaxValue = False
           HasMinValue = False
@@ -775,8 +779,8 @@ object frOptions: TfrOptions
           Height = 21
           Alignment = taRightJustify
           ReadOnly = False
-          TabOrder = 6
-          Value = 0.010000000000000000
+          TabOrder = 3
+          Value = 0.01
           MaxDecimals = 5
           HasMaxValue = False
           HasMinValue = False
@@ -788,8 +792,8 @@ object frOptions: TfrOptions
           Height = 21
           Alignment = taRightJustify
           ReadOnly = False
-          TabOrder = 7
-          Value = 0.000100000000000000
+          TabOrder = 4
+          Value = 0.0001
           MaxDecimals = 5
           HasMaxValue = False
           HasMinValue = False
@@ -799,7 +803,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 121
         Width = 513
-        Height = 82
+        Height = 89
         Align = alClient
         Caption = 'Decimal Accuracy'
         TabOrder = 1
@@ -854,7 +858,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 189
+        Height = 210
         Align = alClient
         Caption = 'User Details For Macros'
         TabOrder = 0
@@ -884,7 +888,7 @@ object frOptions: TfrOptions
           Top = 76
           Width = 285
           Height = 21
-          TabOrder = 0
+          TabOrder = 2
         end
         object edSig: TEdit
           Left = 104
@@ -899,7 +903,7 @@ object frOptions: TfrOptions
           Top = 19
           Width = 285
           Height = 21
-          TabOrder = 2
+          TabOrder = 0
         end
       end
     end
@@ -910,7 +914,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 203
+        Height = 210
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0
@@ -932,7 +936,7 @@ object frOptions: TfrOptions
           Width = 181
           Height = 25
           Caption = 'Rescan for Plugins'
-          TabOrder = 0
+          TabOrder = 1
           OnClick = Button1Click
           Glyph.Data = {
             36040000424D3604000000000000360000002800000010000000100000000100
@@ -977,7 +981,7 @@ object frOptions: TfrOptions
           Height = 145
           OnClickCheck = cblPluginsClickCheck
           ItemHeight = 13
-          TabOrder = 1
+          TabOrder = 0
         end
       end
     end
@@ -988,7 +992,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 203
+        Height = 210
         Align = alClient
         Caption = 'Highlighter Options'
         TabOrder = 0
@@ -1054,7 +1058,7 @@ object frOptions: TfrOptions
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          TabOrder = 1
+          TabOrder = 2
           OnClick = btnBackgroundClick
         end
         object btnForeground: TButton
@@ -1070,16 +1074,16 @@ object frOptions: TfrOptions
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 1
           OnClick = btnForegroundClick
         end
         object btnReset: TBitBtn
           Left = 368
-          Top = 13
+          Top = 16
           Width = 113
           Height = 25
           Caption = '&Restore Defaults'
-          TabOrder = 2
+          TabOrder = 3
           OnClick = btnResetClick
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
@@ -1135,8 +1139,6 @@ object frOptions: TfrOptions
           Font.Height = -13
           Font.Name = 'Courier New'
           Font.Style = []
-          ParentColor = False
-          ParentFont = False
           TabOrder = 4
           Gutter.Font.Charset = DEFAULT_CHARSET
           Gutter.Font.Color = clWindowText
@@ -1169,7 +1171,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 203
+        Height = 210
         Align = alClient
         Caption = 'Editor Options'
         TabOrder = 0
@@ -1193,7 +1195,7 @@ object frOptions: TfrOptions
           Width = 185
           Height = 17
           Caption = 'Show Line Numbers in Left Margin'
-          TabOrder = 0
+          TabOrder = 1
         end
         object speMarginWidth: TJvSpinEdit
           Left = 8
@@ -1203,7 +1205,7 @@ object frOptions: TfrOptions
           CheckOptions = [coCheckOnChange]
           CheckMinValue = True
           ButtonKind = bkStandard
-          TabOrder = 1
+          TabOrder = 0
         end
         object speRightLine: TJvSpinEdit
           Left = 8
@@ -1374,6 +1376,7 @@ object frOptions: TfrOptions
     Top = 264
   end
   object ColorDialog1: TColorDialog
+    Ctl3D = True
     Left = 96
     Top = 264
   end

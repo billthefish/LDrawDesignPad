@@ -25,7 +25,7 @@ object frMain: TfrMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 361
+    Top = 369
     Width = 784
     Height = 19
     AutoHint = True
@@ -42,6 +42,7 @@ object frMain: TfrMain
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -56,7 +57,7 @@ object frMain: TfrMain
     Color = clBtnFace
     ParentColor = False
     PopupMenu = pmToolbars
-    RowSize = 30
+    RowSize = 27
     TabOrder = 1
     object ToolBar2: TToolBar
       Left = 637
@@ -700,7 +701,7 @@ object frMain: TfrMain
     end
     object acFileOpen: TAction
       Category = 'File'
-      Caption = '&Open'
+      Caption = '&Open...'
       Hint = 'Open|Open a file'
       ImageIndex = 7
       ShortCut = 16463
@@ -721,7 +722,7 @@ object frMain: TfrMain
     end
     object acFileSaveAs: TAction
       Category = 'File'
-      Caption = 'Save &As'
+      Caption = 'Save &As...'
       Hint = 'Save As|Save file under a new filename'
       ImageIndex = 18
       OnExecute = acFileSaveAsExecute
@@ -797,7 +798,7 @@ object frMain: TfrMain
     end
     object acOptions: TAction
       Category = 'Misc'
-      Caption = 'Options'
+      Caption = 'Options...'
       Hint = 'Options|Options'
       ImageIndex = 31
       ShortCut = 16461
@@ -919,7 +920,7 @@ object frMain: TfrMain
     end
     object acFindNext: TAction
       Category = 'Search'
-      Caption = 'Find Next...'
+      Caption = 'Find Next'
       Enabled = False
       Hint = 'Find next...'
       ImageIndex = 13
@@ -991,7 +992,7 @@ object frMain: TfrMain
     end
     object acFilePrint: TAction
       Category = 'File'
-      Caption = '&Print'
+      Caption = '&Print...'
       ImageIndex = 36
       ShortCut = 16464
       OnExecute = acFilePrintExecute
@@ -1018,19 +1019,19 @@ object frMain: TfrMain
     end
     object acCheckforUpdate: TAction
       Category = 'Misc'
-      Caption = 'Check for Update'
+      Caption = 'Check for Update...'
       Hint = 'Check if there is a newer version available...'
       OnExecute = acCheckforUpdateExecute
     end
     object acBMP2LDraw: TAction
       Category = 'Misc'
-      Caption = 'Convert Bitmap to LDraw'
+      Caption = 'Convert Bitmap to LDraw...'
       Hint = 'Start BMP-2-LDraw Tool'
       OnExecute = acBMP2LDrawExecute
     end
     object acModelTreeView: TAction
       Category = 'Misc'
-      Caption = 'View Model Tree'
+      Caption = 'View Model Tree...'
       Hint = 'Show a Tree Model of this file including all submodels'
       OnExecute = acModelTreeViewExecute
     end
@@ -1115,13 +1116,13 @@ object frMain: TfrMain
     end
     object acLSynth: TAction
       Category = 'Misc'
-      Caption = 'Process Through LSynth'
+      Caption = 'Process Through LSynth...'
       Hint = 'Run Current Text Though LSynth'
       OnExecute = acLSynthExecute
     end
     object acBendableObject: TAction
       Category = 'Misc'
-      Caption = 'Generate Bendable Object '
+      Caption = 'Generate Bendable Object... '
       ShortCut = 16456
       OnExecute = acBendableObjectExecute
     end
@@ -2800,15 +2801,15 @@ object frMain: TfrMain
     Footer.DefaultFont.Height = -13
     Footer.DefaultFont.Name = 'Arial'
     Footer.DefaultFont.Style = []
-    Margins.Left = 25.000000000000000000
-    Margins.Right = 15.000000000000000000
-    Margins.Top = 25.000000000000000000
-    Margins.Bottom = 25.000000000000000000
-    Margins.Header = 15.000000000000000000
-    Margins.Footer = 15.000000000000000000
-    Margins.LeftHFTextIndent = 2.000000000000000000
-    Margins.RightHFTextIndent = 2.000000000000000000
-    Margins.HFInternalMargin = 0.500000000000000000
+    Margins.Left = 25
+    Margins.Right = 15
+    Margins.Top = 25
+    Margins.Bottom = 25
+    Margins.Header = 15
+    Margins.Footer = 15
+    Margins.LeftHFTextIndent = 2
+    Margins.RightHFTextIndent = 2
+    Margins.HFInternalMargin = 0.5
     Margins.MirrorMargins = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2873,20 +2874,14 @@ object frMain: TfrMain
     Top = 296
   end
   object http: TIdHTTP
-    MaxLineAction = maException
-    ReadTimeout = 0
-    AllowCookies = True
     ProtocolVersion = pv1_0
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
+    Request.Accept = 'text/html, */*'
     Request.ContentLength = 0
     Request.ContentRangeEnd = 0
     Request.ContentRangeStart = 0
     Request.ContentType = 'text/html'
-    Request.Accept = 'text/html, */*'
-    Request.BasicAuthentication = False
+    Request.ProxyPort = 0
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    HTTPOptions = [hoForceEncodeParams]
     Left = 72
     Top = 200
   end

@@ -21,13 +21,14 @@ object frModelTreeView: TfrModelTreeView
     Width = 346
     Height = 41
     Align = alBottom
-    TabOrder = 0
+    TabOrder = 1
     object BitBtn1: TBitBtn
       Left = 256
       Top = 8
       Width = 81
       Height = 25
       Caption = 'OK'
+      Default = True
       ModalResult = 1
       TabOrder = 0
       Glyph.Data = {
@@ -82,7 +83,7 @@ object frModelTreeView: TfrModelTreeView
     Height = 301
     Align = alClient
     Indent = 19
-    TabOrder = 1
+    TabOrder = 0
     OnDblClick = tvModelDblClick
   end
 end

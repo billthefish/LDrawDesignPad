@@ -4,8 +4,8 @@ object frmDATCurve: TfrmDATCurve
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Bendible Objects Creator'
-  ClientHeight = 311
-  ClientWidth = 384
+  ClientHeight = 306
+  ClientWidth = 393
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -34,7 +34,7 @@ object frmDATCurve: TfrmDATCurve
   end
   object lblContEnable: TLabel
     Left = 40
-    Top = 216
+    Top = 218
     Width = 138
     Height = 13
     Caption = 'Manually Enter Control Points'
@@ -67,23 +67,23 @@ object frmDATCurve: TfrmDATCurve
     ParentFont = False
   end
   object btnGenerate: TButton
-    Left = 8
+    Left = 16
     Top = 264
     Width = 97
-    Height = 33
+    Height = 28
     Caption = 'Generate Curve'
     Enabled = False
     ModalResult = 1
-    TabOrder = 0
+    TabOrder = 8
   end
   object btnCancel: TButton
     Left = 280
     Top = 264
     Width = 97
-    Height = 33
+    Height = 28
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 9
   end
   object gbxStartPoint: TGroupBox
     Left = 16
@@ -91,7 +91,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'Start Point'
-    TabOrder = 2
+    TabOrder = 1
     object lblStart1: TLabel
       Left = 8
       Top = 16
@@ -142,7 +142,7 @@ object frmDATCurve: TfrmDATCurve
       Height = 21
       Alignment = taRightJustify
       ReadOnly = False
-      TabOrder = 1
+      TabOrder = 2
       OnChange = feCP1XChange
       MaxDecimals = 5
       HasMaxValue = False
@@ -155,7 +155,7 @@ object frmDATCurve: TfrmDATCurve
       Height = 21
       Alignment = taRightJustify
       ReadOnly = False
-      TabOrder = 2
+      TabOrder = 1
       OnChange = feCP1XChange
       MaxDecimals = 5
       HasMaxValue = False
@@ -169,7 +169,7 @@ object frmDATCurve: TfrmDATCurve
     Height = 41
     Caption = 'Control Point 2'
     Enabled = False
-    TabOrder = 4
+    TabOrder = 5
     object feCP2X: TJvFloatEdit2
       Left = 8
       Top = 16
@@ -216,7 +216,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'End Point'
-    TabOrder = 5
+    TabOrder = 2
     object lblEnd1: TLabel
       Left = 8
       Top = 16
@@ -246,7 +246,7 @@ object frmDATCurve: TfrmDATCurve
     Height = 17
     Caption = 'cbxContEnable'
     Enabled = False
-    TabOrder = 6
+    TabOrder = 7
     OnClick = cbxContEnableClick
   end
   object gbxACont1: TGroupBox
@@ -255,7 +255,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'Adjusted Control Point 1'
-    TabOrder = 7
+    TabOrder = 4
     object lblACont11: TLabel
       Left = 8
       Top = 16
@@ -284,7 +284,7 @@ object frmDATCurve: TfrmDATCurve
     Width = 177
     Height = 41
     Caption = 'Adjusted Control Point 2'
-    TabOrder = 8
+    TabOrder = 6
     object lblACont21: TLabel
       Left = 8
       Top = 16
@@ -314,7 +314,7 @@ object frmDATCurve: TfrmDATCurve
     Height = 21
     Alignment = taRightJustify
     ReadOnly = False
-    TabOrder = 9
+    TabOrder = 0
     Visible = False
     OnChange = feLengthChange
     MaxDecimals = 5

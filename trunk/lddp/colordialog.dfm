@@ -191,7 +191,7 @@ object frColorDialog: TfrColorDialog
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 0
       OnClick = btOldCOlorClick
     end
     object btNewColor: TPanel
@@ -207,7 +207,7 @@ object frColorDialog: TfrColorDialog
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 1
       OnClick = btNewColorClick
     end
     object edColornumber: TEdit
@@ -215,7 +215,7 @@ object frColorDialog: TfrColorDialog
       Top = 100
       Width = 57
       Height = 21
-      TabOrder = 0
+      TabOrder = 2
     end
     object edDescription: TEdit
       Left = 225
@@ -230,7 +230,7 @@ object frColorDialog: TfrColorDialog
       Font.Style = []
       ParentFont = False
       ReadOnly = True
-      TabOrder = 1
+      TabOrder = 4
     end
     object ScrollBar1: TScrollBar
       Left = 385
@@ -239,7 +239,7 @@ object frColorDialog: TfrColorDialog
       Height = 161
       Kind = sbVertical
       PageSize = 0
-      TabOrder = 4
+      TabOrder = 5
       OnChange = ScrollBar1Change
     end
     object rgOptions: TRadioGroup
@@ -249,7 +249,7 @@ object frColorDialog: TfrColorDialog
       Height = 89
       Items.Strings = (
         'Replace All')
-      TabOrder = 5
+      TabOrder = 3
     end
   end
   object Panel3: TPanel

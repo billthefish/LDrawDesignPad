@@ -25,7 +25,7 @@ object frAboutBox: TfrAboutBox
     Width = 361
     Height = 185
     BevelOuter = bvLowered
-    TabOrder = 0
+    TabOrder = 1
     object ProgramIcon: TImage
       Left = 8
       Top = 12
@@ -234,7 +234,7 @@ object frAboutBox: TfrAboutBox
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 1
+    TabOrder = 0
     Glyph.Data = {
       36050000424D3605000000000000360400002800000010000000100000000100
       08000000000000010000120B0000120B00000001000000010000000000000000
