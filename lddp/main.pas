@@ -443,9 +443,6 @@ Description: Loads given Filename into the active MDI editor child
 Parameter: fname: Filename
 Return value: none
 ----------------------------------------------------------------------}
-var
-  sr:TsearchRec;
-
 begin
   if FileExists(fName) then
     with (EditCh as TfrEditorChild) do
@@ -686,8 +683,7 @@ begin
   finally
     sleep(1500);
     screen.cursor:=0;
-    SplashScreen.Close;
-    SplashScreen.Release;
+    SplashScreen.Free;
   end;
 end;
 
@@ -793,6 +789,7 @@ Return value: None
 var
   s:string;
   i:integer;
+  DatModel1: TDATModel;
 
 begin
   if frOptions.cboDet.Checked then
@@ -803,13 +800,26 @@ begin
   with ActiveMDIChild as TfrEditorChild do
   begin
     lbInfo.Items.Clear;
-    for i := 0 to memo.Lines.Count - 1 do
-    begin
-      s := L3CheckLine(memo.Lines[i]);
-      if s <> '' then
-        lbInfo.Items.Add('[L3P-Warning] Line ' + IntToStr(i+1) + ': ' +
-                         s + ': ' + memo.Lines[i]);
-    end;
+
+    DATModel1 := TDATModel.Create;
+    DATModel1.ModelText := Memo.Lines.Text;
+
+    for i := 0 to DATModel1.Count - 1 do
+      if (DATModel1.IndexOfLine(DATModel1[i].DATString) = i) then
+      begin
+        s := L3CheckLine(DATModel1[i].DATString);
+        if s <> '' then
+          lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
+                           s + ': ' + memo.Lines[i]);
+      end
+      else if (DATModel1[i] is TDATElement) then
+        lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
+                         'Identical to line ' +
+                         IntToStr(DATModel1.IndexOfLine(DATModel1[i].DATString) + 1) +
+                         ': ' + memo.Lines[i]);
+
+    DATModel1.Free;
+                         
     if lbInfo.Items.Count > 0 then
     begin
       if pnInfo.Height < 30 then
