@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 234
-  Top = 211
+  Left = 261
+  Top = 111
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'
@@ -22,7 +22,7 @@ object frMain: TfrMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 376
+    Top = 368
     Width = 811
     Height = 19
     AutoHint = True
@@ -39,7 +39,6 @@ object frMain: TfrMain
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -54,6 +53,7 @@ object frMain: TfrMain
     BevelKind = bkNone
     Color = clBtnFace
     ParentColor = False
+    PopupMenu = pmToolbars
     RowSize = 30
     TabOrder = 1
     object ToolBar2: TToolBar
@@ -64,7 +64,7 @@ object frMain: TfrMain
       Align = alNone
       AutoSize = True
       BorderWidth = 1
-      Caption = 'Externals'
+      Caption = 'External Programs'
       Color = clBtnFace
       DragKind = dkDock
       DragMode = dmAutomatic
@@ -131,7 +131,7 @@ object frMain: TfrMain
       Align = alNone
       AutoSize = True
       BorderWidth = 1
-      Caption = 'ToolBar2'
+      Caption = 'Files'
       Color = clBtnFace
       DragKind = dkDock
       DragMode = dmAutomatic
@@ -149,6 +149,7 @@ object frMain: TfrMain
       object ToolButton13: TToolButton
         Left = 5
         Top = 0
+        Hint = 'New|Create New File'
         Action = acFileNew
       end
       object ToolButton14: TToolButton
@@ -219,7 +220,7 @@ object frMain: TfrMain
       Align = alNone
       AutoSize = True
       BorderWidth = 1
-      Caption = 'Search & Replace'
+      Caption = 'Windows'
       Color = clBtnFace
       DragKind = dkDock
       DragMode = dmAutomatic
@@ -258,7 +259,7 @@ object frMain: TfrMain
       Align = alNone
       AutoSize = True
       BorderWidth = 1
-      Caption = 'Search & Replace'
+      Caption = 'Editing'
       Color = clBtnFace
       DragKind = dkDock
       DragMode = dmAutomatic
@@ -402,7 +403,7 @@ object frMain: TfrMain
       end
       object FileExitItem: TMenuItem
         Action = acFileExit
-        Hint = 'Close|Exit LDraw Designpad'
+        Hint = 'Close|Exit LDraw DesignPad'
       end
     end
     object Edit1: TMenuItem
@@ -419,21 +420,47 @@ object frMain: TfrMain
       end
       object CutItem: TMenuItem
         Action = acEditCut
+        ShortCut = 16472
       end
       object CopyItem: TMenuItem
         Action = acEditCopy
+        ShortCut = 16451
       end
       object PasteItem: TMenuItem
         Action = acEditPaste
+        ShortCut = 16470
       end
       object SelectAll1: TMenuItem
         Action = acSelectAll
+      end
+      object N12: TMenuItem
+        Caption = '-'
+      end
+      object Toolbars: TMenuItem
+        Caption = '&Toolbars'
+        Hint = 'Show or Hide Toolbars'
+        object FilesToolbar: TMenuItem
+          Action = acFileToolbar
+        end
+        object Edit2: TMenuItem
+          Action = acEditingToolbar
+        end
+        object SearchReplace1: TMenuItem
+          Action = acSearchToolbar
+        end
+        object Windows2: TMenuItem
+          Action = acWindowsToolbar
+        end
+        object ExternalPrograms3: TMenuItem
+          Action = acExternalsToolbar
+        end
       end
       object N3: TMenuItem
         Caption = '-'
       end
       object miMiscOptions: TMenuItem
         Action = acOptions
+        Hint = 'Options|Change Program Settings'
       end
     end
     object N7: TMenuItem
@@ -514,7 +541,7 @@ object frMain: TfrMain
       Caption = '&Help'
       Hint = 'Help'
       object HelpAboutItem: TMenuItem
-        Action = HelpAbout1
+        Action = HelpAbout
         Hint = 'About|Displays information about the program'
       end
       object LDDPHomepage1: TMenuItem
@@ -623,13 +650,13 @@ object frMain: TfrMain
       Hint = 'Tile vertical'
       ImageIndex = 16
     end
-    object HelpAbout1: TAction
+    object HelpAbout: TAction
       Category = 'Help'
       Caption = '&About...'
       Hint = 
         'Info|Anzeige von Informationen, Versionsnummer und Copyright-Ver' +
         'merk'
-      OnExecute = HelpAbout1Execute
+      OnExecute = HelpAboutExecute
     end
     object acFileRevert: TAction
       Category = 'File'
@@ -799,6 +826,46 @@ object frMain: TfrMain
       Caption = 'BFC Statement'
       OnExecute = acInsertBFCExecute
     end
+    object acFileToolbar: TAction
+      Category = 'Toolbars'
+      AutoCheck = True
+      Caption = 'Files'
+      Checked = True
+      OnExecute = acFileToolbarExecute
+      OnUpdate = acToolbarUpdate
+    end
+    object acEditingToolbar: TAction
+      Category = 'Toolbars'
+      AutoCheck = True
+      Caption = 'Editing'
+      Checked = True
+      OnExecute = acEditingToolbarExecute
+      OnUpdate = acToolbarUpdate
+    end
+    object acSearchToolbar: TAction
+      Category = 'Toolbars'
+      AutoCheck = True
+      Caption = 'Search && Replace'
+      Checked = True
+      OnExecute = acSearchToolbarExecute
+      OnUpdate = acToolbarUpdate
+    end
+    object acWindowsToolbar: TAction
+      Category = 'Toolbars'
+      AutoCheck = True
+      Caption = 'Windows'
+      Checked = True
+      OnExecute = acWindowsToolbarExecute
+      OnUpdate = acToolbarUpdate
+    end
+    object acExternalsToolbar: TAction
+      Category = 'Toolbars'
+      AutoCheck = True
+      Caption = 'External Programs'
+      Checked = True
+      OnExecute = acExternalsToolbarExecute
+      OnUpdate = acToolbarUpdate
+    end
   end
   object MRUManager: TJvMRUManager
     Duplicates = dupIgnore
@@ -811,14 +878,9 @@ object frMain: TfrMain
   end
   object fstMain: TJvFormStorage
     IniFileName = 'Software\Waterproof Productions\LDDesignPad'
+    Options = []
     UseRegistry = True
     StoredProps.Strings = (
-      'ToolBar1.Left'
-      'ToolBar2.Left'
-      'ToolBar3.Left'
-      'ToolBar1.Top'
-      'ToolBar2.Top'
-      'ToolBar3.Top'
       'OpenDialog.InitialDir')
     StoredValues = <
       item
@@ -2339,15 +2401,15 @@ object frMain: TfrMain
     Footer.DefaultFont.Height = -13
     Footer.DefaultFont.Name = 'Arial'
     Footer.DefaultFont.Style = []
-    Margins.Left = 25
-    Margins.Right = 15
-    Margins.Top = 25
-    Margins.Bottom = 25
-    Margins.Header = 15
-    Margins.Footer = 15
-    Margins.LeftHFTextIndent = 2
-    Margins.RightHFTextIndent = 2
-    Margins.HFInternalMargin = 0.5
+    Margins.Left = 25.000000000000000000
+    Margins.Right = 15.000000000000000000
+    Margins.Top = 25.000000000000000000
+    Margins.Bottom = 25.000000000000000000
+    Margins.Header = 15.000000000000000000
+    Margins.Footer = 15.000000000000000000
+    Margins.LeftHFTextIndent = 2.000000000000000000
+    Margins.RightHFTextIndent = 2.000000000000000000
+    Margins.HFInternalMargin = 0.500000000000000000
     Margins.MirrorMargins = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2369,5 +2431,29 @@ object frMain: TfrMain
   object SynPasSyn: TSynPasSyn
     Left = 72
     Top = 304
+  end
+  object pmToolbars: TPopupMenu
+    Left = 360
+    Top = 344
+    object Files1: TMenuItem
+      Action = acFileToolbar
+      AutoCheck = True
+    end
+    object Editing1: TMenuItem
+      Action = acEditingToolbar
+      AutoCheck = True
+    end
+    object SearchandReplace1: TMenuItem
+      Action = acSearchToolbar
+      AutoCheck = True
+    end
+    object Windows1: TMenuItem
+      Action = acWindowsToolbar
+      AutoCheck = True
+    end
+    object ExternalPrograms2: TMenuItem
+      Action = acExternalsToolbar
+      AutoCheck = True
+    end
   end
 end
