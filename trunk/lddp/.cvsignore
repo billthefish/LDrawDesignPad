@@ -2,7 +2,6 @@
 *.dof
 *.~dfm
 *.~pas
-main.ddp
-LDDesignPad.dsk
+*.dsk
 *.ddp
 *.~ddp
