@@ -9,16 +9,11 @@ To compile this source successfully, you'll also need to download and install th
 
 * Jedi VCL - http://jvcl.sourceforge.net
 * SynEdit  - http://synedit.sourceforge.net
-            (After extracting the synedit sources copy the files from the CVS 'LDraw Synedit mod'
-             module over the existing files. Then install it as described in the SynEdit documentation.)
+            (After extracting the synedit sources copy the files in the LDrawHighlighter.zip
+             over the existing files then install it as described in the synedit documentation.)
 * ICS Internet Component Suite - http://overbyte.delphicenter.com/
-
-If you should still have problems to compile this,
-please ask in the HELP-Forums at http://www.sourceforge.net/projects/lddp.
-
 
 That's all!  Have fun!
 
 The LDDP project is looking forward to your contribution ;) !
-
 
