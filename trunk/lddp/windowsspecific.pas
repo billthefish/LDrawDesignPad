@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 unit windowsspecific;
 
 interface
-uses windows, shellapi, messages, sysutils, classes, menus, Forms;
+uses windows, shellapi, messages, sysutils, classes,  Forms;
 
 type
   TLDDPCallBack = procedure(strCBText : PChar );
@@ -134,10 +134,10 @@ Return value: None
 var
   aTmp: array[0..255] of char;
 begin
-//  if GetShortPathName(PChar(FileName),aTmp,Sizeof(aTmp)-1)=0 then
-//     Result:= FileName
-//  else
-//     Result:=StrPas(aTmp);
+  if GetShortPathName(PChar(FileName),aTmp,Sizeof(aTmp)-1)=0 then
+     Result:= FileName
+  else
+     Result:=StrPas(aTmp);
 end;
 
 
@@ -229,16 +229,16 @@ var
 begin
   SetLength(sBuff, 255);         // allocate buffer
   Plugin_Info:=nil;
-//  libHndl := LoadLibrary(pchar(fname));
+  libHndl := LoadLibrary(pchar(fname));
 
   if libHndl <> 0 then
-//    @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
+    @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
 
   if Assigned(Plugin_Info) then Plugin_info(nr,PChar(sBuff), 255);
 
   SetLength(sBuff, Length(PChar(sBuff)));
   result:=sBuff;
-//  FreeLibrary(libHndl);
+  FreeLibrary(libHndl);
 end;
 
 procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
@@ -261,7 +261,6 @@ Return value: None
 var
  libHndl:THandle;
  ProcessText:procedure(CompleteText,SelText:PChar; var SelStart, SelLength , cursorow , cursorcolumn:longWORD;myCallback:TLDDPCallBack);stdcall;
- st:string;
 
 begin
   ProcessText:=nil;

@@ -23,7 +23,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}
-  windowsspecific, registry, JvPlacemnt, QStdCtrls, QButtons, QCheckLst,
+  windowsspecific, registry, JvPlacemnt,
   {$ELSEIF LINUX}
   linuxspecific,
   {$IFEND}
@@ -31,7 +31,8 @@ uses
   QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
   Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
   QSyneditTypes, IdBaseComponent, IdComponent, QGraphics, QSyneditKeyCmds,
-  QSynHighlighterCpp, QSynHighlighterPas,  IdHTTP, QMask ;
+  QSynHighlighterCpp, QSynHighlighterPas,  IdHTTP, QMask ,
+  QStdCtrls, QButtons, QCheckLst;
 
 type
   TfrOptions = class(TForm)
@@ -99,15 +100,22 @@ type
     edExternal: TEdit;
     Bevel4: TBevel;
     edParameters: TEdit;
+    btLDraw: TBitBtn;
+    btLDView: TBitBtn;
+    btL3P: TBitBtn;
+    btMLCad: TBitBtn;
+    btL3Lab: TBitBtn;
+    OpenDialog: TOpenDialog;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
-    procedure edL3PDirExit(Sender: TObject);
-    procedure edLDrawDirAfterDialog(Sender: TObject; var Name: String;
-      var Action: Boolean);
-    procedure cboL3PClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure edParametersButtonClick(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
+    procedure btLDrawClick(Sender: TObject);
+    procedure btLDViewClick(Sender: TObject);
+    procedure btL3PClick(Sender: TObject);
+    procedure btMLCadClick(Sender: TObject);
+    procedure btL3LabClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -207,22 +215,6 @@ begin
   UpdateCOntrols;
 end;
 
-procedure TfrOptions.edL3PDirExit(Sender: TObject);
-begin
-  UpdateCOntrols;
-end;
-
-procedure TfrOptions.edLDrawDirAfterDialog(Sender: TObject;
-  var Name: String; var Action: Boolean);
-begin
-   UpdateCOntrols;
-end;
-
-procedure TfrOptions.cboL3PClick(Sender: TObject);
-begin
-  UpdateControls;
-end;
-
 procedure TfrOptions.Button1Click(Sender: TObject);
 begin
   frMain.LoadPlugins;
@@ -257,6 +249,47 @@ begin
       RenameFile(pth,copy(pth,1,length(pth)-length(extractFileExt(pth)))+'.dll');
       frOptions.cblPlugins.checked[frOptions.cblPlugins.Itemindex]:=true;
     end;
+end;
+
+procedure TfrOptions.btLDrawClick(Sender: TObject);
+var strDir:Widestring;
+begin
+  strDir:=edLdrawDir.Text;
+  if SelectDirectory('Choose LDraw Library Location','',strDir) then edLdrawDir.Text:=strDir;
+  UpdateControls;
+end;
+
+procedure TfrOptions.btLDViewClick(Sender: TObject);
+var strDir:Widestring;
+begin
+  strDir:=edLDViewDir.Text;
+  if SelectDirectory('Choose LDView Location','',strDir) then edLDViewDir.Text:=strDir;
+  UpdateControls;
+end;
+
+procedure TfrOptions.btL3PClick(Sender: TObject);
+var strDir:Widestring;
+begin
+  strDir:=edL3PDir.Text;
+  if SelectDirectory('Choose LDView Location','',strDir) then edL3PDir.Text:=strDir;
+  UpdateControls;
+end;
+
+
+procedure TfrOptions.btMLCadClick(Sender: TObject);
+var strDir:Widestring;
+begin
+  strDir:=edMLCadDir.Text;
+  if SelectDirectory('Choose LDView Location','',strDir) then edMLCadDir.Text:=strDir;
+  UpdateControls;
+end;
+
+procedure TfrOptions.btL3LabClick(Sender: TObject);
+var strDir:Widestring;
+begin
+  strDir:=edL3LabDir.Text;
+  if SelectDirectory('Choose LDView Location','',strDir) then edL3LabDir.Text:=strDir;
+  UpdateControls;
 end;
 
 end.

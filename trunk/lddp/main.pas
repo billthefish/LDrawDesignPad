@@ -71,12 +71,9 @@ type
     acInsertPartHeader: TAction;
     acInsertUpdateLine: TAction;
     acL3Lab: TAction;
-    acL3Lab1: TMenuItem;
     acL3PCheck: TAction;
     acLDView: TAction;
-    acLDView1: TMenuItem;
     acMLCad: TAction;
-    acMLCad1: TMenuItem;
     acMRUList: TAction;
     acOptions: TAction;
     acRedo: TAction;
@@ -94,72 +91,30 @@ type
     BFCStatement1: TMenuItem;
     btPolling: TToolButton;
     C1: TMenuItem;
-    C2: TMenuItem;
     ChangeColor1: TMenuItem;
-    ChangeColor2: TMenuItem;
-    CheckforUpdate1: TMenuItem;
-    Comment1: TMenuItem;
     ControlBar1: TControlBar;
-    CopyItem: TMenuItem;
     Cut1: TMenuItem;
-    CutItem: TMenuItem;
-    Edit1: TMenuItem;
-    Edit2: TMenuItem;
     Editing1: TMenuItem;
-    ExternalPrograms1: TMenuItem;
     ExternalPrograms2: TMenuItem;
-    ExternalPrograms3: TMenuItem;
-    File1: TMenuItem;
-    FileCloseItem: TMenuItem;
-    FileExitItem: TMenuItem;
-    FileNewItem: TMenuItem;
-    FileOpenItem: TMenuItem;
     Files1: TMenuItem;
-    FileSaveAsItem: TMenuItem;
-    FileSaveItem: TMenuItem;
-    FilesToolbar: TMenuItem;
-    Find1: TMenuItem;
-    FindNext1: TMenuItem;
     Fixallerrors1: TMenuItem;
     Fixerror1: TMenuItem;
-    Help1: TMenuItem;
     HelpAbout: TAction;
-    HelpAboutItem: TMenuItem;
     Highlighting1: TMenuItem;
     ilToolBarColor: TImageList;
     InlinePart1: TMenuItem;
-    InlinePart2: TMenuItem;
-    Insert1: TMenuItem;
     Insert2: TMenuItem;
-    L3PCheck1: TMenuItem;
-    LastOpen1: TMenuItem;
-    LDDPHomepage1: TMenuItem;
     Ldraw1: TMenuItem;
-    Ldraw2: TMenuItem;
-    MainMenu1: TMainMenu;
     MenuItem2: TMenuItem;
-    miEditorOptions: TMenuItem;
-    miMiscOptions: TMenuItem;
     mnPollL3Lab: TMenuItem;
     mnPollToSelected: TMenuItem;
-    N1: TMenuItem;
-    N2: TMenuItem;
-    N3: TMenuItem;
-    N4: TMenuItem;
     N5: TMenuItem;
-    N6: TMenuItem;
     N8: TMenuItem;
     N9: TMenuItem;
     N10: TMenuItem;
     N11: TMenuItem;
-    N12: TMenuItem;
-    N13: TMenuItem;
-    Nonefound1: TMenuItem;
     Pascal1: TMenuItem;
-    Pascal2: TMenuItem;
     Paste1: TMenuItem;
-    PasteItem: TMenuItem;
-    Plugins1: TMenuItem;
     Plugins3: TMenuItem;
     pmL3P: TPopupMenu;
     pmMemo: TPopupMenu;
@@ -168,27 +123,17 @@ type
     Pollevery30secs1: TMenuItem;
     Pollevery3sec1: TMenuItem;
     Pollevery5sec1: TMenuItem;
-    Print1: TMenuItem;
-    Redo1: TMenuItem;
-    Replace1: TMenuItem;
-    Revert1: TMenuItem;
-    Search1: TMenuItem;
     SearchandReplace1: TMenuItem;
-    SearchReplace1: TMenuItem;
-    SelectAll1: TMenuItem;
-    StandardPartHeader1: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
     SynEditPrint: TSynEditPrint;
     SynLDRSyn: TSynLDRSyn;
-    SyntaxHighlighting1: TMenuItem;
     tmPoll: TTimer;
     ToolBar1: TToolBar;
     ToolBar2: TToolBar;
     ToolBar3: TToolBar;
     ToolBar4: TToolBar;
     ToolBar5: TToolBar;
-    Toolbars: TMenuItem;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
@@ -219,32 +164,88 @@ type
     ToolButton6: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
-    Tools1: TMenuItem;
-    TrimLines1: TMenuItem;
     TrimLines2: TMenuItem;
-    Uncomment1: TMenuItem;
-    Undo1: TMenuItem;
-    UpdateHeader1: TMenuItem;
     UpdateHeader2: TMenuItem;
-    UserDefinedProgram1: TMenuItem;
-    Window1: TMenuItem;
     acWindowCascade: TWindowCascade;
-    WindowCascadeItem: TMenuItem;
     Windows1: TMenuItem;
-    Windows2: TMenuItem;
-    WindowTileItem: TMenuItem;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
     acFileOpen: TAction;
     acFileSaveAs: TAction;
     acFilePrint: TAction;
-    CloseAll1: TMenuItem;
     acFileCloseAll: TAction;
     acWindowTile: TAction;
     http: TIdHTTP;
     acCheckUpdate: TAction;
     SynPasSyn: TSynPasSyn;
     SynCppSyn: TSynCppSyn;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    FileNewItem: TMenuItem;
+    FileOpenItem: TMenuItem;
+    FileCloseItem: TMenuItem;
+    CloseAll1: TMenuItem;
+    FileSaveItem: TMenuItem;
+    FileSaveAsItem: TMenuItem;
+    Print1: TMenuItem;
+    Revert1: TMenuItem;
+    N2: TMenuItem;
+    LastOpen1: TMenuItem;
+    N1: TMenuItem;
+    FileExitItem: TMenuItem;
+    Edit1: TMenuItem;
+    Undo1: TMenuItem;
+    Redo1: TMenuItem;
+    N4: TMenuItem;
+    CutItem: TMenuItem;
+    CopyItem: TMenuItem;
+    PasteItem: TMenuItem;
+    SelectAll1: TMenuItem;
+    N13: TMenuItem;
+    Comment1: TMenuItem;
+    Uncomment1: TMenuItem;
+    N12: TMenuItem;
+    Toolbars: TMenuItem;
+    FilesToolbar: TMenuItem;
+    Edit2: TMenuItem;
+    SearchReplace1: TMenuItem;
+    Windows2: TMenuItem;
+    ExternalPrograms3: TMenuItem;
+    N3: TMenuItem;
+    miMiscOptions: TMenuItem;
+    miEditorOptions: TMenuItem;
+    Search1: TMenuItem;
+    Find1: TMenuItem;
+    FindNext1: TMenuItem;
+    Replace1: TMenuItem;
+    ChangeColor2: TMenuItem;
+    Tools1: TMenuItem;
+    Plugins1: TMenuItem;
+    Nonefound1: TMenuItem;
+    Insert1: TMenuItem;
+    StandardPartHeader1: TMenuItem;
+    UpdateHeader1: TMenuItem;
+    ExternalPrograms1: TMenuItem;
+    L3PCheck1: TMenuItem;
+    acLDView1: TMenuItem;
+    acMLCad1: TMenuItem;
+    acL3Lab1: TMenuItem;
+    UserDefinedProgram1: TMenuItem;
+    SyntaxHighlighting1: TMenuItem;
+    Ldraw2: TMenuItem;
+    C2: TMenuItem;
+    Pascal2: TMenuItem;
+    N6: TMenuItem;
+    TrimLines1: TMenuItem;
+    InlinePart2: TMenuItem;
+    Window1: TMenuItem;
+    WindowCascadeItem: TMenuItem;
+    WindowTileItem: TMenuItem;
+    Help1: TMenuItem;
+    HelpAboutItem: TMenuItem;
+    LDDPHomepage1: TMenuItem;
+    CheckforUpdate1: TMenuItem;
+    N7: TMenuItem;
 
     {$IFDEF MSWINDOWS}  //NOT IN KYLIX RIGHT NOW
     procedure acHomepageExecute(Sender: TObject);
@@ -855,7 +856,7 @@ begin
   st.add(cmd+' '+u+' >'+Zieldatei);
   s:=GetShortFileName(GetTempDir)+GetTMPFIleName+'.bat';
   st.SaveToFile(s);
-  {$IFDEF WINDOWS}
+  {$IFDEF MSWINDOWS}
     DOCommand(GetDOSVar('COMSPEC')+' /C '+ s,SW_HIDE,true);
   {$ELSEIF LINUX}
 
@@ -907,7 +908,7 @@ begin
     exit;
   end;
   (activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((activeMDICHild as TfrEditorChild).tempFileName);
-  {$IFDEF WINDOWS}
+  {$IFDEF MSWINDOWS}
   DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
   {$ELSEIF LINUX}
 
@@ -989,7 +990,7 @@ begin
     acOptionsExecute(Sender);
     exit;
   end;
-  {$IFDEF WINDOWS}
+  {$IFDEF MSWINDOWS}
   DOCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "'+(activeMDICHild as TfrEditorChild).caption+'"',SW_SHOWNA,false);
   {$ELSEIF LINUX}
 
@@ -1010,7 +1011,6 @@ var sr:TSearchRec;
     plgBitmap: TBitMap;
 
 begin
-  plgBitmap := TBitMap.Create;
   PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
   i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
   frOptions.cblPlugins.clear;
@@ -1092,7 +1092,6 @@ Parameter: Fname: path and filename of dll, nr: no. of Info to get
 Return value: None
 ----------------------------------------------------------------------}
 var
- libHndl:THandle;
  st,libname:string;
  s1,s2,s3,s4:longword;
 
@@ -1451,7 +1450,7 @@ begin
     end;
     if cboShowCommand.checked then ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
     (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-    {$IFDEF WINDOWS}
+    {$IFDEF MSWINDOWS}
       DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
     {$ELSEIF LINUX}
 
@@ -1626,7 +1625,7 @@ begin
     exit;
   end;
   (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-  {$IFDEF WINDOWS}
+  {$IFDEF MSWINDOWS}
   DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
   {$ELSEIF LINUX}
 
