@@ -24,8 +24,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  JvStrHlder, StdCtrls, Buttons, ExtCtrls, JvComponent,
-  JvTransBtn, JvColorBox;
+  JvStrHlder, StdCtrls, Buttons, ExtCtrls, jvColorBox, JvComponent;
 
 type
   TfrColorDialog = class(TForm)
@@ -43,8 +42,8 @@ type
     rbReplaceSelection: TRadioButton;
     rbReplaceAll: TRadioButton;
     edDescription: TEdit;
-    btOldColor: TJvTransparentButton;
-    btNewColor: TJvTransparentButton;
+    btOldColor: TPanel;
+    btNewColor: TPanel;
     JvColorSquare1: TJvColorSquare;
     JvColorSquare2: TJvColorSquare;
     JvColorSquare3: TJvColorSquare;
@@ -102,15 +101,15 @@ end;
 
 procedure TfrColorDialog.btOldCOlorClick(Sender: TObject);
 begin
-  btNewcolor.down:=false;
-  btOldcolor.down:=true;
+  btNewcolor.BevelOuter:=bvRaised;
+  btOldcolor.BevelOuter:=bvLowered;
 
 end;
 
 procedure TfrColorDialog.btNewColorClick(Sender: TObject);
 begin
-  btNewcolor.down:=true;
-  btOldcolor.down:=false;
+  btNewcolor.BevelOuter:=bvLowered;
+  btOldcolor.BevelOuter:=bvRaised;
 end;
 
 procedure TfrColorDialog.JvColorSquare1MouseMove(Sender: TObject;
@@ -134,7 +133,8 @@ begin
   tmp:=copy(tmp,pos('=',tmp)+1,20);
   cname:=copy(tmp,1,pos(' ',tmp)-1);
 
-  if btnewColor.down then begin
+  if btnewColor.BevelOuter=bvLowered then
+  begin
     btNewColor.color:=color;
     btNewColor.tag:=strtoint(nr);
     btNewcolor.caption:=nr+' - '+cname;
