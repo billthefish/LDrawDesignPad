@@ -1,4 +1,4 @@
-HOW TO COMPILE UNOFFICIAL LDDP VCL
+HOW TO COMPILE LDDP
 ----------------------------------
 
 You'll need:
@@ -12,7 +12,3 @@ To compile this source successfully, you'll also need to download and install th
              Note: you will need the newest released CVS snapshot
 
 * JEDI-VCL  - http://jvcl.sourceforge.net
-
-Note:  This is a unofficial side project.  This mean that the most current features of the
-       Official version of LDDP may not be implemented in this unofficial version.  Please
-       email me complaining about this.  -Orion
