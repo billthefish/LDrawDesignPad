@@ -890,7 +890,8 @@ Return value: None
 
 var
   s: string;
-  i, idx:integer;
+  i, j: Integer;
+  errorfound: Boolean;
   DATModel1: TDATModel;
 
   procedure AddError(LineNumber, ErrorType: string);
@@ -903,10 +904,29 @@ var
     error.Checked := True;
     error.SubItems.Add(LineNumber);
     error.SubItems.Add(ErrorType);
+    errorfound := True;
+  end;
+
+  function CheckIdentPoints(points1, points2: array of TDATPoint; numpoints: Integer): Boolean;
+
+  var
+    i,j, samecount: Integer;
+
+  begin
+    samecount := 0;
+    for i := 0 to numpoints - 1 do
+      for j := 0 to numpoints - 1 do
+        if CheckSamePoint(points1[i], points2[j]) then
+        begin
+          inc(samecount);
+          Break;
+        end;
+     Result := (samecount = numpoints);
   end;
 
 begin
   Screen.Cursor := crHourGlass;
+
   if (frOptions.cboDet.Checked) then
     DetThreshold := frOptions.seDet.Value
   else
@@ -930,10 +950,37 @@ begin
     if DATModel1[i] is TDATElement then
     begin
       // Check for Identical Lines
-      idx := DATModel1.IndexOfLine(DATModel1[i].DATString);
-      if idx <> i then
-        AddError(IntToStr(i+1),'Identical to line ' + IntToStr(idx+1))
-      else
+      if i <> 0 then
+      begin
+        errorfound := false;
+        for j := 0 to i - 1 do
+          if DATModel1[j].LineType = DATModel1[i].LineType then
+            case DATModel1[j].LineType of
+               1: if DATModel1[i].DATString = DATModel1[j].DATString then
+                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+               2: if CheckIdentPoints([(DATModel1[i] as TDATLine).Point[1], (DATModel1[i] as TDATLine).Point[2]],
+                                      [(DATModel1[j] as TDATLine).Point[1], (DATModel1[j] as TDATLine).Point[2]],
+                                      2) then
+                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+               3: if CheckIdentPoints([(DATModel1[i] as TDATTriangle).Point[1], (DATModel1[i] as TDATTriangle).Point[2], (DATModel1[i] as TDATTriangle).Point[3]],
+                                      [(DATModel1[j] as TDATTriangle).Point[1], (DATModel1[j] as TDATTriangle).Point[2], (DATModel1[j] as TDATTriangle).Point[3]],
+                                      3) then
+                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+               4: if CheckIdentPoints([(DATModel1[i] as TDATQuad).Point[1], (DATModel1[i] as TDATQuad).Point[2], (DATModel1[i] as TDATQuad).Point[3], (DATModel1[i] as TDATQuad).Point[4]],
+                                      [(DATModel1[j] as TDATQuad).Point[1], (DATModel1[j] as TDATQuad).Point[2], (DATModel1[j] as TDATQuad).Point[3], (DATModel1[j] as TDATQuad).Point[4]],
+                                      4) then
+                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+               5: if (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[1], (DATModel1[i] as TDATOpLine).Point[2]],
+                                      [(DATModel1[j] as TDATOpLine).Point[1], (DATModel1[j] as TDATOpLine).Point[2]],
+                                      2)) and
+                     (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[3], (DATModel1[i] as TDATOpLine).Point[4]],
+                                      [(DATModel1[j] as TDATOpLine).Point[3], (DATModel1[j] as TDATOpLine).Point[4]],
+                                      2)) then
+                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+            end;
+      end;
+      // Do not continue if line is identical
+      if (not errorfound) then
       begin
         // Check For Illegal Color Number
         if (DATModel1[i] is TDATSubPart) and
@@ -1818,6 +1865,16 @@ begin
      DATElem := TDATSubPart.Create;
      (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
      (DATElem as TDATSubPart).RM[3,2] := 1;
+     memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
+     DATElem.Free;
+     lbInfo.items.delete(lbInfo.ItemIndex);
+   end
+
+   else if pos('Y column all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
+   begin
+     DATElem := TDATSubPart.Create;
+     (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
+     (DATElem as TDATSubPart).RM[2,2] := 1;
      memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
      DATElem.Free;
      lbInfo.items.delete(lbInfo.ItemIndex);
