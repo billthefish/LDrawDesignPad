@@ -11,7 +11,7 @@ object frOptions: TfrOptions
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poScreenCenter
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -19,12 +19,11 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 512
-    Height = 211
-    ActivePage = TabSheet2
+    Height = 204
+    ActivePage = tsExternal
     Align = alClient
     Images = ImageList1
     Style = tsFlatButtons
-    TabIndex = 2
     TabOrder = 0
     OnChange = PageControl1Change
     object tsExternal: TTabSheet
@@ -512,7 +511,7 @@ object frOptions: TfrOptions
         PasswordChar = #0
         ReadOnly = False
         TabOrder = 2
-        Value = 0.1
+        Value = 0.100000000000000000
       end
       object seDet: TJvFloatEdit
         Left = 209
@@ -531,7 +530,7 @@ object frOptions: TfrOptions
         PasswordChar = #0
         ReadOnly = False
         TabOrder = 3
-        Value = 0.001
+        Value = 0.001000000000000000
       end
     end
     object TabSheet4: TTabSheet
@@ -699,7 +698,7 @@ object frOptions: TfrOptions
   end
   object Panel1: TPanel
     Left = 0
-    Top = 211
+    Top = 204
     Width = 512
     Height = 37
     Align = alBottom
