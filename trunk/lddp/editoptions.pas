@@ -22,9 +22,18 @@ unit editoptions;
 interface
 
 uses
+  {$IFDEF MSWINDOWS}
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, SynEditHighlighter, SynHighlighterLDraw, SynEdit, SynMemo,
-  StdCtrls, ExtCtrls, Buttons, ComCtrls, JvPlacemnt, ActnList, StdActns;
+  Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, JvPlacemnt, ActnList, StdActns,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  QDialogs, QStdCtrls, QSynEditHighlighter, QSynHighlighterLDraw, QButtons,
+  QExtCtrls, QSynEdit, QSynMemo, QComCtrls,
+  {$ENDIF}
+  JvColorBox,
+  SynEditHighlighter, SynHighlighterLDraw, SynEdit, SynMemo,
+  SysUtils;
 
 type
   TfrEditOptions = class(TForm)
