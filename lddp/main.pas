@@ -767,7 +767,7 @@ begin
   SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
   slPlugins:=TStringlist.create;
   pmMemo.tag:=pmMemo.items.count;
-  LoadPlugins;
+  LoadPlugins(true);
   if paramcount>0 then
     for i:=1 to paramcount do CreateMDIChild(paramstr(i),false);
   finally
