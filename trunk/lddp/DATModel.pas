@@ -722,7 +722,8 @@ var
   BezPoint1, BezPoint2, dummyPoint, lastPoint, pntC1, pntC2: TDATPoint;
   BezIntLen: array of Extended;
   BezIntPos: array of TDATPoint;
-  Factor, Distance, Last, rlLength, rlCount, InteEpsilon, BezI, BezILast, I2: Extended;
+  BezLength, Factor, Distance, Last, rlLength, rlCount: Extended;
+  InteEpsilon, BezI, BezILast, I2: Extended;
   i, PointPerSegment, Iterations, MaxIterations: Byte;
   intCount,BezSearch: Word;
   PntDec, RotDec: Byte;
@@ -736,70 +737,74 @@ begin
   Line1.Color := FColor;
   Line2.Color := FColor;
 
-  if EuclidDistance(Line1.Position, Line2.Position) < FLength then
-  begin
-    Segments := Round(FLength);
+  Segments := 0;
+  BezLength := 0;
 
-    case FObjectType of
-      boHoseTabs:
-      begin
-        Line1.SubPart := '750.dat';
-        Line2.SubPart := '750.dat';
-        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        FLength := 130;
-        Segments := 50;
-        strFileType := '754.dat';
-      end;
-      boHoseNoTabs:
-      begin
-        Line1.SubPart := '752.dat';
-        Line2.SubPart := '752.dat';
-        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        FLength := 130;
-        Segments := 50;
-        strFileType := '754.dat';
-      end;
-      boRibbedHose:
-      begin
-        Line1.SubPart := '79.dat';
-        Line2.SubPart := '79.dat';
-        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        FLength := Segments * 6.2;
-        strFileType := '80.dat';
-      end;
-      boFlexAxle:
-      begin
-        Line1.SubPart := 'stud3a.dat';
-        Line2.SubPart := 'stud3a.dat';
-        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 0, 0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        Segments := Trunc(Segments/4);
-        strFileType := 'axlehol8.dat';
-      end;
-      boFlexHose:
-      begin
-        Line1.SubPart := '76.dat';
-        Line2.SubPart := '76.dat';
-        BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
-        Segments := Trunc(Segments/4);
-        strFileType := '77.dat';
-      end;
+  case FObjectType of
+    boHoseTabs:
+    begin
+      Line1.SubPart := '750.dat';
+      Line2.SubPart := '750.dat';
+      BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezLength := 130;
+      Segments := 50;
+      strFileType := '754.dat';
     end;
+    boHoseNoTabs:
+    begin
+      Line1.SubPart := '752.dat';
+      Line2.SubPart := '752.dat';
+      BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezLength := 130;
+      Segments := 50;
+      strFileType := '754.dat';
+    end;
+    boRibbedHose:
+    begin
+      Line1.SubPart := '79.dat';
+      Line2.SubPart := '79.dat';
+      BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      Segments := Round(FLength);
+      BezLength := FLength * 6.2;
+      strFileType := '80.dat';
+    end;
+    boFlexAxle:
+    begin
+      Line1.SubPart := 'stud3a.dat';
+      Line2.SubPart := 'stud3a.dat';
+      BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 0, 0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      Segments := Trunc(Round(FLength)/4);
+      BezLength := FLength;
+      strFileType := 'axlehol8.dat';
+    end;
+    boFlexHose:
+    begin
+      Line1.SubPart := '76.dat';
+      Line2.SubPart := '76.dat';
+      BezBegin:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont1:=GetBezierCoordinate(Line1,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezEnd:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      BezCont2:=GetBezierCoordinate(Line2,[1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1], False, True);
+      Segments := Trunc(Round(FLength)/4);
+      BezLength := FLength;
+      strFileType := '77.dat';
+    end;
+  end;
 
+  if EuclidDistance(Line1.Position, Line2.Position) < BezLength then
+  begin
     PointPerSegment:= 12;
     Factor:= 1;
     Distance:= 0.5;
@@ -847,7 +852,7 @@ begin
       BezIntLen[i] := 0;
       BezIntPos[i] := dummyPoint;
     end;
-    while (Iterations < MaxIterations) and (abs(rlLength - FLength) > InteEpsilon) do
+    while (Iterations < MaxIterations) and (abs(rlLength - BezLength) > InteEpsilon) do
     begin
       rlCount := 0;
       rlLength := 0;
@@ -863,7 +868,7 @@ begin
         lastPoint := BezIntPos[intCount];
         rlCount := rlCount+1;
       end;
-      if rlLength < FLength then
+      if rlLength < BezLength then
       begin
         Factor := Factor + Distance;
         if Last = 0 then Distance := (Distance / 2) * 1.4;
