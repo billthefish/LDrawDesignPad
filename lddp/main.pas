@@ -1152,6 +1152,7 @@ begin
       imgix := -1;
       if FileExists(ChangeFileExt(PluginFile, '.bmp')) then
         try
+          plgBitmap := TBitMap.Create;
           plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
           imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
           plgBitmap.Free;
@@ -1282,8 +1283,8 @@ begin
  with (activeMDICHild as TfrEditorChild).memo do
  begin
    seltext:='0 Part name'+#13#10+
-            '0 Name: 000000.dat'+#13#10+
-            '0 Author: '+frOptions.edName.text+' <'+frOptions.edEmail.text+'>'+#13#10+
+            '0 Name: ' + ExtractFileName(ActiveMDIChild.Caption) +#13#10+
+            '0 Author: ' + frOptions.edName.text + ' <'+frOptions.edEmail.text+'>' + #13#10 +
             '0 Unofficial Element'+#13#10+
             '0 KEYWORDS your keywords'+#13#10;
  end;
