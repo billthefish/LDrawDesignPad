@@ -622,7 +622,9 @@ Return value: None
 ----------------------------------------------------------------------}
 var
   i:integer;
+  {$IFDEF MSWINDOWS}
   regT:TRegistry;
+  {$ENDIF}
 begin
   SplashScreen := TfrSplash.Create(Application);
   try
@@ -868,7 +870,7 @@ Return value: None
 ----------------------------------------------------------------------}
 
 begin
-  if (not FIleExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
+  if (not FileExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
     MessageDlg('You have to specify a valid path to LDView.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
@@ -1118,7 +1120,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  if (not FIleExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
+  if (not FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
   begin
     MessageDlg('You have to specify a valid path to L3Lab.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
