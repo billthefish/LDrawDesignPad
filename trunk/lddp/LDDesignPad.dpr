@@ -29,12 +29,12 @@ uses
   colordialog in 'colordialog.pas' {frColorDialog},
   dlgsearchreplacetext in 'dlgsearchreplacetext.pas' {frTextReplaceDialog},
   BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
+  modeltreeview in 'modeltreeview.pas' {frModelTreeView},
   windowsspecific in 'windowsspecific.pas',
   linuxspecific in 'linuxspecific.pas',
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
-  DATModel in 'DATModel.pas',
-  modeltreeview in 'modeltreeview.pas' {frModelTreeView};
+  DATModel in 'DATModel.pas';
 
 {$R *.res}
 

@@ -18,11 +18,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -------------------------------------------------------------------------------}
 
 interface
+
+{$IFNDEF MSWINDOWS}
   function GetTempDir:string;
+{$ENDIF}
 
 implementation
 
-
+{$IFNDEF MSWINDOWS}
 function GetTempDir:string;
 {---------------------------------------------------------------------
 Description: Find out windows temp path
@@ -35,5 +38,5 @@ begin
   tempDir := '~/'; //use the user's home directory, for now
   Result:=tempDir;
 end;
-
+{$ENDIF}
 end.

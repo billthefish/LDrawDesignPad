@@ -101,7 +101,6 @@ object frEditorChild: TfrEditorChild
     PopupMenu = frMain.pmMemo
     TabOrder = 1
     OnClick = memoClick
-    OnDragDrop = memoDragDrop
     OnKeyDown = MemoKeyDown
     OnKeyUp = MemoKeyDown
     Gutter.Font.Color = clText
@@ -113,9 +112,11 @@ object frEditorChild: TfrEditorChild
     Gutter.LeftOffset = 0
     Gutter.RightOffset = 0
     Highlighter = frMain.SynLDRSyn
+    Options = [eoAutoIndent, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
     SearchEngine = frMain.SynEditSearch1
     TabWidth = 2
     OnChange = MemoChange
+    OnGutterClick = memoGutterClick
     RemovedKeystrokes = <>
     AddedKeystrokes = <
       item
