@@ -2435,7 +2435,7 @@ var strVersionHTTP:string;
     strActualVersion:string;
 
 begin
-  strActualVersion := GetWindowsVersion;
+  strActualVersion := GetAppVersion(Application.ExeName);
   strVersionHTTP := http.Get('http://lddp.sourceforge.net/lddp.ver');
   if trim(strVersionHTTP)=strActualVersion then MessageDlg('There is no newer version available.', mtInformation, [mbOK], 0)
   else
