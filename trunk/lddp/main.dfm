@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 233
-  Top = 249
+  Left = 306
+  Top = 404
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'
@@ -2472,5 +2472,9 @@ object frMain: TfrMain
     Title = 'Save File as...'
     Left = 40
     Top = 208
+  end
+  object SynEditSearch1: TSynEditSearch
+    Left = 136
+    Top = 304
   end
 end

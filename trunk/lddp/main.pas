@@ -49,7 +49,7 @@ uses
   IniFiles,
   JvStrUtils,
   SysUtils, //for TSearchRec & TFileName
-  splash;   //splash screen
+  splash, SynEditMiscClasses, SynEditSearch;   //splash screen
 
 type TLDrawArray= record
   typ:integer;
@@ -267,6 +267,7 @@ type
     acFileOpen: TAction;
     acFileSaveAs: TAction;
     acFilePrint: TAction;
+    SynEditSearch1: TSynEditSearch;
 
     {$IFDEF MSWINDOWS}  //NOT IN KYLIX RIGHT NOW
     procedure acHomepageExecute(Sender: TObject);
@@ -2250,6 +2251,7 @@ begin
     Include(Options, ssoSelectedOnly);
   if gbSearchWholeWords then
     Include(Options, ssoWholeWord);
+//  (activeMDICHild as TfrEditorChild).memo.SearchEngine :=
   if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
   begin
   {$IFDEF MSWINDOWS}
