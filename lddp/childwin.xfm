@@ -65,9 +65,18 @@ object frEditorChild: TfrEditorChild
       Width = 615
       Height = 46
       Hint = 
-        'Doublecklick on a L3P error message to jump to the error'#39's posit' +
-        'ion.'
+        'Doubleclick on a L3P error message to jump to the error'#39's positi' +
+        'on.'
       Align = alClient
+      Font.CharSet = fcsLatin1
+      Font.Color = clBlack
+      Font.Height = 11
+      Font.Name = 'Courier New'
+      Font.Pitch = fpVariable
+      Font.Style = []
+      Font.Weight = 40
+      ItemHeight = 14
+      ParentFont = False
       ParentShowHint = False
       PopupMenu = frMain.pmL3P
       ShowHint = True
