@@ -3,29 +3,28 @@
 
 [Setup]
 AppName=LDraw Design Pad
-AppVerName=LDraw Design Pad 1.5b
+AppVerName=LDraw Design Pad 1.51
 AppPublisherURL=http://www.lddp.net
 AppSupportURL=http://www.lddp.net
 AppUpdatesURL=http://www.lddp.net
 DefaultDirName={pf}\LDraw Design Pad
 DefaultGroupName=LDraw Design Pad
 AllowNoIcons=yes
-LicenseFile=C:\Lego\Source Code\LDDP\docs\GNU Public Licence.txt
-InfoAfterFile=C:\Lego\Source Code\LDDP\lddp\readme.txt
+LicenseFile=D:\Entwicklung\_Projekte\LDDP\docs\GNU Public Licence.txt
+InfoAfterFile=D:\Entwicklung\_Projekte\LDDP\lddp\readme.txt
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
 Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Files]
-Source: "C:\Lego\Source Code\LDDP\LDDP CVS Executible\LDDesignPad.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Lego\Source Code\LDDP\plugins\c++\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\C++\"; Flags: ignoreversion
-Source: "C:\Lego\Source Code\LDDP\plugins\delphi\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\Delphi\"; Flags: ignoreversion
-Source: "C:\Lego\Source Code\LDDP\plugins\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\"; Flags: ignoreversion
-Source: "C:\Lego\Source Code\LDDP\plugins\delphi\EditorPluginSample.dll"; DestDir: "{app}\Plugins\"; Flags: ignoreversion
-Source: "C:\Lego\Source Code\LDDP\lddp\colors.pal"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Lego\Source Code\LDDP\lddp\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Windows\System32\qtintf70.dll"; DestDir: "{sys}"; Flags: ignoreversion
+Source: "D:\Entwicklung\_Projekte\LDDP\LDDP\LDDesignPad.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Entwicklung\_Projekte\LDDP\plugins\c++\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\C++\"; Flags: ignoreversion
+Source: "D:\Entwicklung\_Projekte\LDDP\plugins\delphi\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\Delphi\"; Flags: ignoreversion
+Source: "D:\Entwicklung\_Projekte\LDDP\plugins\*.*"; DestDir: "{app}\Plugins Samples Sourcecode\"; Flags: ignoreversion
+Source: "D:\Entwicklung\_Projekte\LDDP\plugins\delphi\EditorPluginSample.dll"; DestDir: "{app}\Plugins\"; Flags: ignoreversion
+Source: "D:\Entwicklung\_Projekte\LDDP\lddp\colors.pal"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Entwicklung\_Projekte\LDDP\lddp\readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
