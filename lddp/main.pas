@@ -276,7 +276,6 @@ type
     acECUnMarkAllTyped: TAction;
     AutofixSelectedError2: TMenuItem;
     AutofixAllErrors2: TMenuItem;
-    SynEditRegexSearch: TSynEditRegexSearch;
     N22: TMenuItem;
     ProcessthroughLSynth1: TMenuItem;
     acLSynth: TAction;
@@ -436,7 +435,7 @@ type
     procedure AppInitialize;
     procedure SetErrorCheckMarks(State: Boolean; ErrorType: string);
     procedure ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
-    PROCEDURE FileIsDropped ( VAR Msg : TMessage ) ; Message WM_DropFiles ;
+    procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
     procedure BuildMetaMenu;
 
   public
@@ -476,11 +475,9 @@ uses
 var
   gbSearchBackwards: boolean;
   gbSearchCaseSensitive: boolean;
-  gbSearchFromCaret: boolean;
   gbSearchSelectionOnly: boolean;
   gbSearchTextAtCaret: boolean;
   gbSearchWholeWords: boolean;
-  gbSearchRegex: boolean;
 
   gsSearchText: string;
   gsSearchTextHistory: string;
@@ -510,30 +507,34 @@ begin
   end;
 end;
 
-procedure TfrMain.FileIsDropped ( VAR Msg : TMessage ) ;
+procedure TfrMain.FileIsDropped(var Msg: TMessage);
 {---------------------------------------------------------------------
 Description: Accepts files dropped from explorer
 Parameter: msg:TMessage : not needed
 Return value: msg:TMessage : not needed
 ----------------------------------------------------------------------}
-VAR
-   hDrop : THandle ;
-   fName : string ;
-   NumberOfFiles : INTEGER ;
-   fCounter : INTEGER ;
-BEGIN
+var
+   hDrop: THandle ;
+   fName: string ;
+   NumberOfFiles: Integer ;
+   fCounter: Integer ;
+
+begin
    hDrop := Msg.WParam ;
    NumberOfFiles := DragQueryFile(hDrop,$FFFFFFFF, nil, 0);
-   FOR fCounter := 1 TO NumberOfFiles DO
-   BEGIN
+   for fCounter := 1 to NumberOfFiles do
+   begin
      SetLength(fname, MAX_PATH); // Anticipate largest string size
      SetLength(fname, DragQueryFile(HDrop, fCounter-1, PChar(fname),MAX_PATH));
      if (lowercase(extractFIleExt(fname)) <> '.exe') and
         (lowercase(extractFIleExt(fname)) <> '.com') then
+     begin
        CreateMDIChild(fName,false);
-   END ;
+       UpdateMRU(fName);
+     end;
+   end;
    DragFinish ( hDrop);
-END ;
+end;
 
 
 
@@ -2146,7 +2147,6 @@ begin
     // assign search options
     SearchBackwards := gbSearchBackwards;
     SearchCaseSensitive := gbSearchCaseSensitive;
-    SearchFromCursor := gbSearchFromCaret;
     SearchInSelectionOnly := gbSearchSelectionOnly;
     // start with last search text
     SearchText := gsSearchText;
@@ -2167,17 +2167,14 @@ begin
     if ShowModal = mrOK then begin
       gbSearchBackwards := SearchBackwards;
       gbSearchCaseSensitive := SearchCaseSensitive;
-      gbSearchFromCaret := SearchFromCursor;
       gbSearchSelectionOnly := SearchInSelectionOnly;
       gbSearchWholeWords := SearchWholeWords;
-      gbSearchRegex := SearchRegularExpression;
       gsSearchText := SearchText;
       gsSearchTextHistory := SearchTextHistory;
       if AReplace then with dlg as TTextReplaceDialog do begin
         gsReplaceText := ReplaceText;
         gsReplaceTextHistory := ReplaceTextHistory;
       end;
-      fSearchFromCaret := gbSearchFromCaret;
       if gsSearchText <> '' then begin
         DoSearchReplaceText(AReplace, gbSearchBackwards);
         fSearchFromCaret := TRUE;
@@ -2201,16 +2198,13 @@ begin
     Include(Options, ssoBackwards);
   if gbSearchCaseSensitive then
     Include(Options, ssoMatchCase);
-  if not fSearchFromCaret then
-    Include(Options, ssoEntireScope);
   if gbSearchSelectionOnly then
     Include(Options, ssoSelectedOnly);
   if gbSearchWholeWords then
     Include(Options, ssoWholeWord);
-  if gbSearchRegex then
-    (activeMDICHild as TfrEditorChild).memo.SearchEngine := SynEditRegexSearch
-  else
-    (activeMDICHild as TfrEditorChild).memo.SearchEngine := SynEditSearch;
+
+  (activeMDICHild as TfrEditorChild).memo.SearchEngine := SynEditSearch;
+
   if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
   begin
     MessageBeep(MB_ICONASTERISK);

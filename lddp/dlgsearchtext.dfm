@@ -3,8 +3,8 @@ object TextSearchDialog: TTextSearchDialog
   Top = 604
   BorderStyle = bsDialog
   Caption = 'Search Text'
-  ClientHeight = 180
-  ClientWidth = 332
+  ClientHeight = 136
+  ClientWidth = 328
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -35,7 +35,7 @@ object TextSearchDialog: TTextSearchDialog
     Left = 8
     Top = 40
     Width = 154
-    Height = 127
+    Height = 81
     Caption = 'Options'
     TabOrder = 1
     object cbSearchCaseSensitive: TCheckBox
@@ -54,29 +54,13 @@ object TextSearchDialog: TTextSearchDialog
       Caption = '&Whole words only'
       TabOrder = 1
     end
-    object cbSearchFromCursor: TCheckBox
-      Left = 8
-      Top = 61
-      Width = 140
-      Height = 17
-      Caption = 'Search from &caret'
-      TabOrder = 2
-    end
     object cbSearchSelectedOnly: TCheckBox
       Left = 8
-      Top = 83
+      Top = 59
       Width = 140
       Height = 17
       Caption = '&Selected text only'
-      TabOrder = 3
-    end
-    object cbRegularExpression: TCheckBox
-      Left = 8
-      Top = 104
-      Width = 140
-      Height = 17
-      Caption = '&Regular expression'
-      TabOrder = 4
+      TabOrder = 2
     end
   end
   object rgSearchDirection: TRadioGroup
@@ -93,7 +77,7 @@ object TextSearchDialog: TTextSearchDialog
   end
   object btnOK: TButton
     Left = 170
-    Top = 149
+    Top = 109
     Width = 75
     Height = 23
     Caption = 'OK'
@@ -103,7 +87,7 @@ object TextSearchDialog: TTextSearchDialog
   end
   object btnCancel: TButton
     Left = 249
-    Top = 149
+    Top = 109
     Width = 75
     Height = 23
     Cancel = True

@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: dlgsearchtext.pas,v 1.8 2003-11-11 00:29:22 c_schmitz Exp $
+$Id: dlgsearchtext.pas,v 1.9 2004-11-12 23:43:02 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -52,36 +52,28 @@ type
     gbSearchOptions: TGroupBox;
     cbSearchCaseSensitive: TCheckBox;
     cbSearchWholeWords: TCheckBox;
-    cbSearchFromCursor: TCheckBox;
     cbSearchSelectedOnly: TCheckBox;
     btnOK: TButton;
     btnCancel: TButton;
-    cbRegularExpression: TCheckBox;
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     function GetSearchBackwards: boolean;
     function GetSearchCaseSensitive: boolean;
-    function GetSearchFromCursor: boolean;
     function GetSearchInSelection: boolean;
     function GetSearchText: string;
     function GetSearchTextHistory: string;
     function GetSearchWholeWords: boolean;
     procedure SetSearchBackwards(Value: boolean);
     procedure SetSearchCaseSensitive(Value: boolean);
-    procedure SetSearchFromCursor(Value: boolean);
     procedure SetSearchInSelection(Value: boolean);
     procedure SetSearchText(Value: string);
     procedure SetSearchTextHistory(Value: string);
     procedure SetSearchWholeWords(Value: boolean);
-    procedure SetSearchRegularExpression(const Value: boolean);
-    function GetSearchRegularExpression: boolean;
   public
     property SearchBackwards: boolean read GetSearchBackwards
       write SetSearchBackwards;
     property SearchCaseSensitive: boolean read GetSearchCaseSensitive
       write SetSearchCaseSensitive;
-    property SearchFromCursor: boolean read GetSearchFromCursor
-      write SetSearchFromCursor;
     property SearchInSelectionOnly: boolean read GetSearchInSelection
       write SetSearchInSelection;
     property SearchText: string read GetSearchText write SetSearchText;
@@ -89,8 +81,6 @@ type
       write SetSearchTextHistory;
     property SearchWholeWords: boolean read GetSearchWholeWords
       write SetSearchWholeWords;
-    property SearchRegularExpression: boolean read GetSearchRegularExpression
-      write SetSearchRegularExpression;
   end;
 
 implementation
@@ -109,19 +99,9 @@ begin
   Result := cbSearchCaseSensitive.Checked;
 end;
 
-function TTextSearchDialog.GetSearchFromCursor: boolean;
-begin
-  Result := cbSearchFromCursor.Checked;
-end;
-
 function TTextSearchDialog.GetSearchInSelection: boolean;
 begin
   Result := cbSearchSelectedOnly.Checked;
-end;
-
-function TTextSearchDialog.GetSearchRegularExpression: boolean;
-begin
-  Result := cbRegularExpression.Checked;
 end;
 
 function TTextSearchDialog.GetSearchText: string;
@@ -158,11 +138,6 @@ begin
   cbSearchCaseSensitive.Checked := Value;
 end;
 
-procedure TTextSearchDialog.SetSearchFromCursor(Value: boolean);
-begin
-  cbSearchFromCursor.Checked := Value;
-end;
-
 procedure TTextSearchDialog.SetSearchInSelection(Value: boolean);
 begin
   cbSearchSelectedOnly.Checked := Value;
@@ -182,13 +157,6 @@ procedure TTextSearchDialog.SetSearchWholeWords(Value: boolean);
 begin
   cbSearchWholeWords.Checked := Value;
 end;
-
-procedure TTextSearchDialog.SetSearchRegularExpression(
-  const Value: boolean);
-begin
-  cbRegularExpression.Checked := Value;
-end;
-
 { event handlers }
 
 procedure TTextSearchDialog.FormCloseQuery(Sender: TObject;

@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 329
-    ActivePage = TabSheet1
+    ActivePage = TabSheet7
     Align = alClient
     Images = ImageList1
     MultiLine = True

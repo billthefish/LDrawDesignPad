@@ -2,9 +2,8 @@ inherited TextReplaceDialog: TTextReplaceDialog
   Left = 482
   Top = 358
   Caption = 'Replace text'
-  ClientHeight = 210
+  ClientHeight = 168
   OldCreateOrder = True
-  Position = poMainFormCenter
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel [1]
@@ -23,11 +22,11 @@ inherited TextReplaceDialog: TTextReplaceDialog
     TabOrder = 3
   end
   inherited btnOK: TButton
-    Top = 179
+    Top = 139
     TabOrder = 4
   end
   inherited btnCancel: TButton
-    Top = 179
+    Top = 139
     TabOrder = 5
   end
   object cbReplaceText: TComboBox

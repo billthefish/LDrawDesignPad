@@ -3091,10 +3091,6 @@ object frMain: TfrMain
     Left = 136
     Top = 296
   end
-  object SynEditRegexSearch: TSynEditRegexSearch
-    Left = 168
-    Top = 296
-  end
   object pmExternal: TPopupMenu
     Left = 168
     Top = 264
