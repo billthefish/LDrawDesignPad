@@ -70,11 +70,11 @@ end;
 
 function SubPartIsXZPrimitive(Subp: string): Boolean;
 begin
-  if (pos('DISC',Subp) > 0) or (pos('NDIS',Subp) > 0) or
-     (pos('RECT',Subp) > 0) or (pos('RIN',Subp) > 0) or
-     (pos('AXLEEND',Subp) > 0) or (pos('AXLEHOL2',Subp) > 0) or
-     (pos('AXLEHOL3',Subp) > 0) or (pos('AXLEHOL9',Subp) > 0) or
-     (pos('AXLEHO10',Subp) > 0) or (pos('EDGE',Subp) > 0) then
+  if (pos('disc',Subp) > 0) or (pos('ndis',Subp) > 0) or
+     (pos('rect',Subp) > 0) or (pos('rin',Subp) > 0) or
+     (pos('axleend',Subp) > 0) or (pos('axlehol2',Subp) > 0) or
+     (pos('axlehol3',Subp) > 0) or (pos('axlehol9',Subp) > 0) or
+     (pos('axleho10',Subp) > 0) or (pos('edge',Subp) > 0) then
     Result := true
   else
     Result := false;

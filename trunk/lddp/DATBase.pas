@@ -263,9 +263,9 @@ var
 {$ENDIF}
 
   FDATIdentityMatrix: TDATMatrix = ((1,0,0,0),
-                                   (0,1,0,0),
-                                   (0,0,1,0),
-                                   (0,0,0,1));
+                                    (0,1,0,0),
+                                    (0,0,1,0),
+                                    (0,0,0,1));
 
 implementation
 
@@ -515,9 +515,9 @@ end;
 
 procedure TDATSubPart.SetSubPartFile(strSP: string);
 begin
-  strFileExt := UpperCase(ExtractFileExt(strSP));
+  strFileExt := LowerCase(ExtractFileExt(strSP));
   if strFileExt = '' then strFileExt := '.DAT';
-  strSubPartFile := UpperCase(ChangeFileExt(strSP,''));
+  strSubPartFile := LowerCase(ChangeFileExt(strSP,''));
 end;
 
 function TDATSubPart.GetFileName;
@@ -602,9 +602,9 @@ begin
 
       if tempList.Count = 15 then
       begin
-        strFileExt := UpperCase(ExtractFileExt(Trim(TempList[14])));
-        if strFileExt = '' then strFileExt := '.DAT';
-        strSubPartFile := UpperCase(ChangeFileExt(Trim(TempList[14]),''));
+        strFileExt := LowerCase(ExtractFileExt(Trim(TempList[14])));
+        if strFileExt = '' then strFileExt := '.dat';
+        strSubPartFile := LowerCase(ChangeFileExt(Trim(TempList[14]),''));
       end;
 
       FDATMatrix[4,1] := 0;

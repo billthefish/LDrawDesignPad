@@ -1296,8 +1296,7 @@ begin
 
  with (activeMDICHild as TfrEditorChild).memo do
  begin
-   LDrawBasePath := frOptions.edLdrawDir.Text
-                    {$IFDEF MSWINDOWS}+ PathDelim{$ENDIF};
+   LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
 
    DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
    DATModel1.Add(Lines[CaretY-1]);
