@@ -1,8 +1,8 @@
 object frOptions: TfrOptions
-  Left = 309
-  Top = 223
+  Left = 862
+  Top = 113
   Width = 520
-  Height = 275
+  Height = 282
   Caption = 'Misc. Options'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 512
-    Height = 204
+    Height = 211
     ActivePage = tsExternal
     Align = alClient
     Images = ImageList1
