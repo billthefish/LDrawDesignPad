@@ -518,7 +518,6 @@ begin
   Plugins1.Enabled:=mdicount>0;
   Insert1.Enabled:=mdicount>0;
   Edit1.Enabled := mdicount>0;
-  Tools1.Enabled := mdicount>0;
   Window1.Enabled := mdicount>0;
   acCommentBlock.Enabled:=mdicount>0;
   acUnCommentBlock.Enabled:=mdicount>0;
@@ -526,6 +525,18 @@ begin
   acDecIndent.Enabled:=mdicount>0;
   acTrimLines.Enabled:=mdicount>0;
   acReverseWinding.Enabled := mdicount>0;
+  acTriangleCombine.Enabled := mdicount>0;
+  acMirrorX.Enabled := mdicount>0;
+  acMirrorY.Enabled := mdicount>0;
+  acMirrorZ.Enabled := mdicount>0;
+  acAutoRound.Enabled := mdicount>0;
+  acLSynth.Enabled := mdicount>0;
+  acBendableObject.Enabled := mdicount>0;
+  acModelTreeView.Enabled := mdicount>0;
+  acBMP2LDraw.Enabled := mdicount>0;
+  Mirror1.Enabled := mdicount>0;
+  ErrorCheck1.Enabled := mdicount>0;
+  MirrorLineOn1.Enabled := mdicount>0;
 
   if Assigned(ActiveMDICHild) then
   begin
@@ -2770,7 +2781,7 @@ begin
 
   if frOptions.seCollinear.Text <> '' then
     CollinearPointsThreshold := frOptions.seCollinear.Value;
-  
+
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     tmpBlEndY := BlockEnd.Line;
@@ -2869,11 +2880,14 @@ begin
 
     DATLine := StrToDAT(SelText);
 
+
     case DATLine.LineType of
       0: rows := 0;
       1,3: rows := 3;
       2: rows := 2;
       4,5: rows := 4;
+    else
+      rows := 0;
     end;
 
     if rows > 0 then
