@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 306
-  Top = 404
+  Left = 583
+  Top = 118
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'

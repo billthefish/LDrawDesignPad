@@ -53,10 +53,10 @@ uses
   splash;   //splash screen
 
 type TLDrawArray= record
-  typ:integer;
-  color:integer;
-  xyz:array[1..4,1..3] of real;
-  partname:string;
+  typ: Integer;
+  color: Integer;
+  xyz: array[1..4,1..3] of Extended;
+  partname: string;
 end;
 
 type
@@ -2047,18 +2047,22 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 
-var line:TLDrawArray;
-    x4,y4,z4:real;
-    strTemp:string;
+var
+  line: TLDrawArray;
+  x4,y4,z4: Extended;
+  strTemp: string;
+
 begin
  with (activeMDICHild as TfrEditorChild) do
  begin
-   memo.TopLine:=strtoint((copy(lbinfo.Items[lbinfo.Itemindex],19,pos(':',lbinfo.Items[lbinfo.Itemindex])-19)))-1;
-   memo.CaretXY:=point(1000,strtoint((copy(lbinfo.Items[lbinfo.Itemindex],19,pos(':',lbinfo.Items[lbinfo.Itemindex])-19))));
-   memo.selend:=memo.selstart-length(memo.lines[memo.CaretY-1]);
-   memo.setfocus;
+   // Set postion to line with error 
+   lbInfoDblClick(Sender);
+
+   // Get the Dat code from the L3P error
    strTemp:=copy(lbInfo.Items[lbInfo.ItemIndex],pos(':',lbInfo.Items[lbInfo.ItemIndex])+1, length(lbInfo.Items[lbInfo.ItemIndex]));
    strTemp:=copy(strTemp,pos(':',strTemp)+2, length(strTemp));
+
+   // Fix the error
    if pos(strTemp,lbInfo.Items[lbInfo.ItemIndex])>0 then
    begin
      if pos('Bad vertex sequence, 0132',lbInfo.Items[lbInfo.ItemIndex])>0 then
@@ -2076,13 +2080,41 @@ begin
        memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
        lbInfo.items.delete(lbInfo.ItemIndex);
        exit;
-     end;
-     if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex])>0 then
+     end
+     else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
        memo.lines[memo.CaretY-1]:='';
+       lbInfo.items.delete(lbInfo.ItemIndex);
        exit;
-     end;
-     if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex])>0 then
+     end
+     else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
+     begin
+       line:=LDrawParse(memo.lines[memo.CaretY-1]);
+       line.xyz[2,2] := 1;
+       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
+
+       lbInfo.items.delete(lbInfo.ItemIndex);
+       exit;
+     end
+     else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
+     begin
+       line:=LDrawParse(memo.lines[memo.CaretY-1]);
+       line.xyz[3,2] := 1;
+       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
+
+       lbInfo.items.delete(lbInfo.ItemIndex);
+       exit;
+     end
+     else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
+     begin
+       line:=LDrawParse(memo.lines[memo.CaretY-1]);
+       line.xyz[4,2] := 1;
+       memo.lines[memo.CaretY-1]:=LDrawConstruct(line);
+
+       lbInfo.items.delete(lbInfo.ItemIndex);
+       exit;
+     end
+     else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
        line:=LDrawParse(memo.lines[memo.CaretY-1]);
        x4:=line.xyz[2,1];
@@ -2256,7 +2288,6 @@ begin
     Include(Options, ssoSelectedOnly);
   if gbSearchWholeWords then
     Include(Options, ssoWholeWord);
-//  (activeMDICHild as TfrEditorChild).memo.SearchEngine :=
   if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
   begin
   {$IFDEF MSWINDOWS}
@@ -2397,12 +2428,16 @@ begin
 end;
 
 procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
+
+var
+  frmcount: Integer;
+
 begin
-  while MDIChildCount > 0 do
-  begin
-    MDIChildren[0].Close;
-    MDIChildren[0].Free;
-  end;
+   while MDIChildCount > 0 do
+   begin
+     ActiveMDIChild.Close;
+     ActiveMDIChild.Free;
+   end;
 end;
 
 end.
