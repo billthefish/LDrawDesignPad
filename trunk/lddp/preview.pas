@@ -1,4 +1,4 @@
-unit Preview;
+unit preview;
 
 interface
 
