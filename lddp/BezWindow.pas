@@ -1,7 +1,7 @@
 unit BezWindow;
 
 (*
-Copyright 2002, 2003 Orion Pobursky
+Copyright 2002-2005 Orion Pobursky
 
 This file is part of the Bendible Objects Creator
 (formerly known as Generate DAT Curves) plugin

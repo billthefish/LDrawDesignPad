@@ -49,8 +49,6 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
         Top = 12
         Width = 164
         Height = 16
-        Min = 0
-        Max = 100
         TabOrder = 0
       end
     end
