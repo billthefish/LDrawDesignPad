@@ -22,9 +22,17 @@ unit about;
 
 interface
 
-uses Windows, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls, version;
-
+uses
+  {$IFDEF MSWINDOWS}
+  Windows, Classes, Graphics, Forms, Controls, StdCtrls,
+  Buttons, ExtCtrls, version,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  QStdCtrls, QExtCtrls,
+  {$ENDIF}
+  SysUtils;
+  
 type
   TfrAboutBox = class(TForm)
     Panel1: TPanel;

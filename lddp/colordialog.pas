@@ -23,8 +23,18 @@ unit colordialog;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  JvStrHlder, StdCtrls, Buttons, ExtCtrls, jvColorBox, JvComponent;
+  {$IFDEF MSWINDOWS}
+  Windows, Messages, Classes, Graphics, Controls, Forms,
+  StdCtrls, Buttons, ExtCtrls,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  QDialogs, QStdCtrls, QExtCtrls, QButtons,
+  {$ENDIF}
+  JvColorBox,
+  JvComponent,
+  JvStrHlder,
+  SysUtils;
 
 type
   TfrColorDialog = class(TForm)
