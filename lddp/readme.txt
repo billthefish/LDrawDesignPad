@@ -102,6 +102,7 @@ and the great programs they wrote to make LDRAWing a lot easier:
 - Steve Bliss
 - Lars C. Hassing
 - Tore Eriksson
+- Willy Tschager 
 
 Special Thank to:
 
@@ -130,6 +131,13 @@ We especially thank you, the user, for downloading our program
 
 + = New feature  * = Bugfix   - = Removed feature
 
+
+v1.53 24 January 2004
++ Updated the colors.pal file (Thanks to Willy Tschager)
++ Added ability to auto fix 'Y column all zeros' errors
++ Added ability to copy the error check output to the clipboard
++ Added Hose 12L to Bendible Object Generator
+* Fixed accuracy of identical line check
 
 v1.52 5 December 2003
 + Added ability to process current text through LSynth
