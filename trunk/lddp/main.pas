@@ -186,7 +186,6 @@ type
     N13: TMenuItem;
     Comment1: TMenuItem;
     Uncomment1: TMenuItem;
-    N12: TMenuItem;
     Toolbars: TMenuItem;
     FilesToolbar: TMenuItem;
     Edit2: TMenuItem;
@@ -195,7 +194,7 @@ type
     ExternalPrograms3: TMenuItem;
     N3: TMenuItem;
     miMiscOptions: TMenuItem;
-    Search1: TMenuItem;
+    Insert1: TMenuItem;
     Find1: TMenuItem;
     FindNext1: TMenuItem;
     Replace1: TMenuItem;
@@ -203,7 +202,6 @@ type
     Tools1: TMenuItem;
     Plugins1: TMenuItem;
     Nonefound1: TMenuItem;
-    Insert1: TMenuItem;
     StandardPartHeader1: TMenuItem;
     UpdateHeader1: TMenuItem;
     ExternalPrograms1: TMenuItem;
@@ -263,6 +261,8 @@ type
     INVERTNEXT1: TMenuItem;
     CLIP2: TMenuItem;
     NOCLIP2: TMenuItem;
+    N7: TMenuItem;
+    View1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -403,7 +403,7 @@ begin
   acReplace.Enabled:=mdicount>0;
   Plugins1.Enabled:=mdicount>0;
   Insert1.Enabled:=mdicount>0;
-  Search1.Enabled := mdicount>0;
+  Edit1.Enabled := mdicount>0;
   Tools1.Enabled := mdicount>0;
   Window1.Enabled := mdicount>0;
   acCommentBlock.Enabled:=mdicount>0;
