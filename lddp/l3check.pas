@@ -32,6 +32,7 @@ function L3CheckLine(Line: string): string;
 
 var
   DetThreshold: Extended = 0;
+  UnitDetThreshold: Extended = 0.1;
   DistThreshold: Extended = 0;
   CollinearPointsThreshold: Extended = 0.0001;
 
@@ -293,6 +294,33 @@ begin
                  maxdist := det / dist[i];
              if maxdist > DistThreshold then
                Result := 'Vertices not coplaner (' + FloatToStr(maxdist) + ')';
+           end;
+           if (Result = '') and (UnitDetThreshold > 0)  then
+           begin
+             tempval := RotationMatrix[1,1];
+             for i := 1 to 4 do
+             begin
+               TempPoint := Point[i];
+               if abs(TempPoint[1]) > abs(tempval) then tempval := TempPoint[1];
+               if abs(TempPoint[2]) > abs(tempval) then tempval := TempPoint[2];
+               if abs(TempPoint[3]) > abs(tempval) then tempval := TempPoint[3];
+             end;
+             TempMatrix := FDATIdentityMatrix;
+             TempMatrix[1,1] := 1 / abs(tempval);
+             TempMatrix[2,2] := 1 / abs(tempval);
+             TempMatrix[3,3] := 1 / abs(tempval);
+             Transform(TempMatrix);
+             for i := 1 to 3 do
+             begin
+               TempPoint := PointSubtract(Point[i], Point[4]);
+               TempMatrix[i,1] := TempPoint[1];
+               TempMatrix[i,2] := TempPoint[2];
+               TempMatrix[i,3] := TempPoint[3];
+             end;
+             det := MatrixDet(TempMatrix);
+             if det < 0 then det := -det;
+             if det > UnitDetThreshold then
+               Result := 'Vertices not coplaner (' + FloatToStr(det) + ')';
            end;
          end;
     5: with DLine as TDATOpLine do

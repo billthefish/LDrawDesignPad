@@ -2,7 +2,7 @@ object frOptions: TfrOptions
   Left = 256
   Top = 126
   Width = 529
-  Height = 335
+  Height = 368
   VertScrollBar.Range = 37
   ActiveControl = BitBtn1
   AutoScroll = False
@@ -20,7 +20,7 @@ object frOptions: TfrOptions
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 264
+    Top = 297
     Width = 521
     Height = 37
     Align = alBottom
@@ -141,8 +141,8 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 521
-    Height = 264
-    ActivePage = tsExternal
+    Height = 297
+    ActivePage = TabSheet2
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -155,7 +155,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 207
+        Height = 240
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
@@ -558,7 +558,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 207
+        Height = 240
         Align = alClient
         Caption = 'User Defide Program Configuration'
         TabOrder = 0
@@ -591,7 +591,7 @@ object frOptions: TfrOptions
         end
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 144
+          Top = 177
           Width = 509
           Height = 61
           Align = alBottom
@@ -694,13 +694,13 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 137
+        Height = 169
         Align = alTop
         Caption = 'Error Check Options'
         TabOrder = 0
         object Label6: TLabel
           Left = 73
-          Top = 101
+          Top = 133
           Width = 125
           Height = 13
           Caption = 'Collinear Points Threshold:'
@@ -751,7 +751,7 @@ object frOptions: TfrOptions
         end
         object Memo3: TMemo
           Left = 288
-          Top = 88
+          Top = 120
           Width = 218
           Height = 41
           TabStop = False
@@ -792,7 +792,7 @@ object frOptions: TfrOptions
         end
         object seCollinear: TJvFloatEdit2
           Left = 208
-          Top = 98
+          Top = 130
           Width = 73
           Height = 21
           Alignment = taRightJustify
@@ -803,12 +803,47 @@ object frOptions: TfrOptions
           HasMaxValue = False
           HasMinValue = False
         end
+        object cboUnitDet: TCheckBox
+          Left = 20
+          Top = 88
+          Width = 205
+          Height = 17
+          Caption = 'Unit Det Coplanarity Check Threshold:'
+          TabOrder = 8
+        end
+        object seUnitDet: TJvFloatEdit2
+          Left = 224
+          Top = 88
+          Width = 57
+          Height = 21
+          Alignment = taRightJustify
+          ReadOnly = False
+          TabOrder = 9
+          Value = 0.010000000000000000
+          MaxDecimals = 5
+          HasMaxValue = False
+          HasMinValue = False
+        end
+        object Memo4: TMemo
+          Left = 288
+          Top = 84
+          Width = 217
+          Height = 33
+          TabStop = False
+          BorderStyle = bsNone
+          Color = clBtnFace
+          Lines.Strings = (
+            'Geometric primitives typically use 0.01. '
+            'Hi-res primitives typically use 0.001.')
+          ReadOnly = True
+          TabOrder = 10
+        end
       end
       object GroupBox5: TGroupBox
         Left = 0
-        Top = 137
+        Top = 169
         Width = 513
-        Height = 70
+        Height = 71
         Align = alClient
         Caption = 'Decimal Accuracy'
         TabOrder = 1
@@ -863,7 +898,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 207
+        Height = 240
         Align = alClient
         Caption = 'User Details For Macros'
         TabOrder = 0
@@ -919,7 +954,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 207
+        Height = 240
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0
@@ -937,7 +972,7 @@ object frOptions: TfrOptions
         end
         object Button1: TBitBtn
           Left = 308
-          Top = 145
+          Top = 201
           Width = 181
           Height = 25
           Caption = 'Rescan for Plugins'
@@ -983,7 +1018,7 @@ object frOptions: TfrOptions
           Left = 12
           Top = 24
           Width = 285
-          Height = 145
+          Height = 201
           OnClickCheck = cblPluginsClickCheck
           ItemHeight = 13
           TabOrder = 0
@@ -997,7 +1032,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 207
+        Height = 240
         Align = alClient
         Caption = 'Highlighter Options'
         TabOrder = 0
@@ -1144,8 +1179,6 @@ object frOptions: TfrOptions
           Font.Height = -13
           Font.Name = 'Courier New'
           Font.Style = []
-          ParentColor = False
-          ParentFont = False
           TabOrder = 4
           Gutter.Font.Charset = DEFAULT_CHARSET
           Gutter.Font.Color = clWindowText
@@ -1178,7 +1211,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 207
+        Height = 240
         Align = alClient
         Caption = 'Editor Options'
         TabOrder = 0
@@ -1229,7 +1262,7 @@ object frOptions: TfrOptions
   end
   object ImageList1: TImageList
     Left = 36
-    Top = 264
+    Top = 296
     Bitmap = {
       494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
@@ -1376,14 +1409,14 @@ object frOptions: TfrOptions
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Open'
     Left = 7
-    Top = 264
+    Top = 296
   end
   object SynLDRSyn1: TSynLDRSyn
     Left = 64
-    Top = 264
+    Top = 296
   end
   object ColorDialog1: TColorDialog
     Left = 96
-    Top = 264
+    Top = 296
   end
 end

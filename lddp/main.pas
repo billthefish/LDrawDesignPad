@@ -989,6 +989,11 @@ begin
   else
     DetThreshold := 0;
 
+  if (frOptions.cboUnitDet.Checked) then
+    UnitDetThreshold := frOptions.seUnitDet.Value
+  else
+    UnitDetThreshold := 0;
+
   if frOptions.cboDist.Checked then
     DistThreshold := frOptions.seDist.Value
   else
@@ -2716,6 +2721,11 @@ begin
     DetThreshold := frOptions.seDet.Value
   else
     DetThreshold := 0;
+
+  if (frOptions.cboUnitDet.Checked) then
+    UnitDetThreshold := frOptions.seUnitDet.Value
+  else
+    UnitDetThreshold := 0;
 
   if frOptions.cboDist.Checked then
     DistThreshold := frOptions.seDist.Value
