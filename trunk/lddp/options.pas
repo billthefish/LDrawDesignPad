@@ -26,72 +26,84 @@ uses
   windowsspecific,
   {$ENDIF}
   QDialogs, QForms, QImgList, QExtCtrls, QStdCtrls, QCheckLst, QMask, QButtons,
-  QControls, QComCtrls, QGraphics, Classes, SysUtils, IniFiles;
+  QControls, QComCtrls, QGraphics, Classes, SysUtils, IniFiles, QSynEdit,
+  QSynMemo, QSynEditHighlighter, QSynHighlighterLDraw;
 type
   TfrOptions = class(TForm)
-    PageControl1: TPageControl;
-    tsExternal: TTabSheet;
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-    Bevel1: TBevel;
-    Label3: TLabel;
-    cboLDraw: TCheckBox;
-    lbLdraw: TLabel;
-    Label4: TLabel;
-    cboLDView: TCheckBox;
-    lbLDVIew: TLabel;
-    TabSheet2: TTabSheet;
-    cboDist: TCheckBox;
-    Label6: TLabel;
-    cboDet: TCheckBox;
-    Bevel2: TBevel;
-    Label2: TLabel;
-    cboMLCad: TCheckBox;
-    lbMLCAD: TLabel;
-    Label5: TLabel;
-    Label7: TLabel;
-    TabSheet3: TTabSheet;
-    Bevel3: TBevel;
-    Label8: TLabel;
-    cblPlugins: TCheckListBox;
-    Label9: TLabel;
-    Button1: TBitBtn;
     ImageList1: TImageList;
+    OpenDialog: TOpenDialog;
+    PageControl1: TPageControl;
+    tsExternal: TTabSheet;
+    GroupBox1: TGroupBox;
+    btL3Lab: TBitBtn;
+    btMLCad: TBitBtn;
+    btLDView: TBitBtn;
+    btLDraw: TBitBtn;
+    edL3LabDir: TEdit;
+    edMLCadDir: TEdit;
+    edLDViewDir: TEdit;
+    edLdrawDir: TEdit;
+    lbL3Lab: TLabel;
+    Label17: TLabel;
+    Label5: TLabel;
+    lbMLCAD: TLabel;
+    Label2: TLabel;
+    lbLDVIew: TLabel;
+    Label4: TLabel;
+    lbLdraw: TLabel;
     TabSheet1: TTabSheet;
+    Bevel4: TBevel;
     Label11: TLabel;
-    cboExternal: TCheckBox;
     lbExternal: TLabel;
     Label10: TLabel;
     cboWaitForFinish: TCheckBox;
     cboShowCommand: TCheckBox;
-    TabSheet4: TTabSheet;
-    Label13: TLabel;
-    Label14: TLabel;
-    Bevel5: TBevel;
-    Label15: TLabel;
-    edName: TEdit;
-    edSig: TEdit;
-    edEmail: TEdit;
-    Label16: TLabel;
-    Label17: TLabel;
-    lbL3Lab: TLabel;
-    cboL3Lab: TCheckBox;
-    rgStyle: TRadioGroup;
-    edLdrawDir: TEdit;
-    edLDViewDir: TEdit;
-    edMLCadDir: TEdit;
-    edL3LabDir: TEdit;
-    seDist: TMaskEdit;
-    seDet: TMaskEdit;
     edExternal: TEdit;
-    Bevel4: TBevel;
     edParameters: TEdit;
-    btLDraw: TBitBtn;
-    btLDView: TBitBtn;
-    btMLCad: TBitBtn;
-    btL3Lab: TBitBtn;
-    OpenDialog: TOpenDialog;
+    TabSheet2: TTabSheet;
+    GroupBox2: TGroupBox;
+    seDet: TMaskEdit;
+    seDist: TMaskEdit;
+    cboDet: TCheckBox;
+    cboDist: TCheckBox;
+    Memo1: TMemo;
+    Memo2: TMemo;
+    TabSheet4: TTabSheet;
+    GroupBox3: TGroupBox;
+    edEmail: TEdit;
+    edSig: TEdit;
+    edName: TEdit;
+    Label16: TLabel;
+    Label14: TLabel;
+    Label13: TLabel;
+    TabSheet3: TTabSheet;
+    GroupBox4: TGroupBox;
+    Button1: TBitBtn;
+    cblPlugins: TCheckListBox;
+    Label9: TLabel;
+    btExternal: TBitBtn;
+    rgStyle: TRadioGroup;
+    GroupBox5: TGroupBox;
+    sePntAcc: TMaskEdit;
+    seRotAcc: TMaskEdit;
+    lbPntAcc: TLabel;
+    lbRotAcc: TLabel;
+    TabSheet5: TTabSheet;
+    lstElement: TListBox;
+    Label1: TLabel;
+    shForeground: TShape;
+    btnForeground: TButton;
+    shBackground: TShape;
+    btnBackground: TButton;
+    Label3: TLabel;
+    SynLDRSyn1: TSynLDRSyn;
+    ColorDialog1: TColorDialog;
+    btnReset: TBitBtn;
+    SynMemo1: TSynMemo;
+    GroupBox6: TGroupBox;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -101,8 +113,13 @@ type
     procedure btLDViewClick(Sender: TObject);
     procedure btMLCadClick(Sender: TObject);
     procedure btL3LabClick(Sender: TObject);
+    procedure btExternalClick(Sender: TObject);
+    procedure lstElementClick(Sender: TObject);
+    procedure btnForegroundClick(Sender: TObject);
+    procedure btnBackgroundClick(Sender: TObject);
+    procedure btnResetClick(Sender: TObject);
   private
-    { Private declarations }
+    SelectedElement: TSynHighlighterAttributes;
   public
     IniFileName: string;
     IniSection: string;
@@ -123,45 +140,37 @@ uses main;
 procedure TfrOptions.UpdateCOntrols;
 begin
   if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
-    cboLDraw.checked:=true;
     lbLDraw.font.Color:=clGreen;
     lbldraw.Caption:='Found!';
   end
     else begin
-      cboLDraw.checked:=false;
       lbLDraw.font.Color:=clRed;
       lbldraw.Caption:='Not found!';
     end;
 
   if FileExists(frOptions.edLDViewDir.text+'\LDView.exe') then begin
-    cboLDVIEW.checked:=true;
     lbLDView.font.Color:=clGreen;
     lbLDView.Caption:='Found!';
   end
     else begin
-      cboLDView.checked:=false;
       lbLDView.font.Color:=clRed;
       lbLDView.Caption:='Not found!';
     end;
 
   if FileExists(frOptions.edMLCADDir.text+'\MLCAD.exe') then begin
-    cboMLCAD.checked:=true;
     lbMLCAD.font.Color:=clGreen;
     lbMLCAD.Caption:='Found!';
   end
     else begin
-      cboMLCAD.checked:=false;
       lbMLCAD.font.Color:=clRed;
       lbMLCAD.Caption:='Not found!';
     end;
 
   if FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe') then begin
-    cboL3Lab.checked:=true;
     lbL3Lab.font.Color:=clGreen;
     lbL3Lab.Caption:='Found!';
   end
     else begin
-      cboL3Lab.checked:=false;
       lbL3Lab.font.Color:=clRed;
       lbL3Lab.Caption:='Not found!';
     end;
@@ -170,12 +179,10 @@ begin
   if trim(frOptions.edExternal.text)='' then lbExternal.Caption:=''
     else
       if FileExists(frOptions.edExternal.text) then begin
-        cboExternal.checked:=true;
         lbExternal.font.Color:=clGreen;
         lbExternal.Caption:='Found!';
       end
         else begin
-          cboExternal.checked:=false;
           lbExternal.font.Color:=clRed;
           lbExternal.Caption:='Not found!';
         end;
@@ -183,6 +190,15 @@ end;
 
 procedure TfrOptions.FormShow(Sender: TObject);
 begin
+  {$IFDEF MSWINDOWS}
+  OpenDialog.Filter := 'Executibles (*.*)|*.exe';
+  {$ELSE}
+  OpenDialog.Filter := 'Executibles (*)|*';
+  {$ENDIF}
+  lstElement.ItemIndex := -1;
+  SelectedElement := nil;
+  shForeground.Color := clButton;
+  shBackground.Color := clButton;
   UpdateCOntrols;
   PageControl1.ActivePage:=tsExternal;
 end;
@@ -260,6 +276,75 @@ begin
   UpdateControls;
 end;
 
+procedure TfrOptions.btExternalClick(Sender: TObject);
+var strDir:Widestring;
+begin
+  OpenDialog.InitialDir := ExtractFileDir(edExternal.Text);
+  OpenDialog.Title := 'Select Program Location';
+  if OpenDialog.Execute then edExternal.Text:=OpenDialog.FileName;
+  UpdateControls;
+end;
+
+procedure TfrOptions.lstElementClick(Sender: TObject);
+begin
+  case lstElement.ItemIndex of
+    0: SelectedElement := SynLDRSyn1.IdentifierAttri;
+    1: SelectedElement := SynLDRSyn1.ColorAttri;
+    2: SelectedElement := SynLDRSyn1.CommentAttri;
+    3: SelectedElement := SynLDRSyn1.FirstTriAttri;
+    4: SelectedElement := SynLDRSyn1.SecondTriAttri;
+    5: SelectedElement := SynLDRSyn1.ThirdTriAttri;
+    6: SelectedElement := SynLDRSyn1.FourthTriAttri;
+    7: SelectedElement := SynLDRSyn1.LineAttri;
+    8: SelectedElement := SynLDRSyn1.TriangleAttri;
+    9: SelectedElement := SynLDRSyn1.QuadAttri;
+    10: SelectedElement := SynLDRSyn1.OpLineAttri;
+    else SelectedElement := nil;
+  end;
+  if Assigned(SelectedElement) then
+  begin
+    shForeground.Color := SelectedElement.Foreground;
+    shBackground.Color := SelectedElement.Background;
+    btnForeGround.Enabled := True;
+    btnBackground.Enabled := True;
+  end;
+end;
+
+procedure TfrOptions.btnForegroundClick(Sender: TObject);
+begin
+  if Assigned(SelectedElement) then
+    if ColorDialog1.Execute then
+    begin
+      SelectedElement.Foreground := ColorDialog1.Color;
+      shForeground.Color := ColorDialog1.Color;
+    end;
+end;
+
+procedure TfrOptions.btnBackgroundClick(Sender: TObject);
+begin
+  if Assigned(SelectedElement) then
+    if ColorDialog1.Execute then
+    begin
+      SelectedElement.Background := ColorDialog1.Color;
+      shBackground.Color := ColorDialog1.Color;
+    end;
+end;
+
+procedure TfrOptions.btnResetClick(Sender: TObject);
+
+var
+  NewHighlighter: TSynLDRSyn;
+
+begin
+  NewHighlighter := TSynLDRSyn.Create(nil);
+  SynLDRSyn1.Assign(NewHighlighter);
+  NewHighLighter.Free;
+  lstElement.ItemIndex := -1;
+  SelectedElement := nil;
+  shForeground.Color := clButton;
+  shBackground.Color := clButton;
+end;
+
 procedure TfrOptions.SaveFormValues;
 var
   LDDPini: TMemIniFile;
@@ -278,13 +363,39 @@ begin
   LDDPini.WriteString(IniSection, 'edEmail_Text', edEMail.Text);
   LDDPini.WriteString(IniSection, 'edName_Text', edName.Text);
   LDDPini.WriteString(IniSection, 'edSig_Text', edSig.Text);
-  LDDPini.WriteString(IniSection, 'edDet_Text', seDet.Text);
-  LDDPini.WriteString(IniSection, 'edDist_Text', seDist.Text);
+  LDDPini.WriteString(IniSection, 'seDet_Text', seDet.Text);
+  LDDPini.WriteString(IniSection, 'seDist_Text', seDist.Text);
+  LDDPini.WriteString(IniSection, 'sePntAcc_Text', sePntAcc.Text);
+  LDDPini.WriteString(IniSection, 'seRotAcc_Text', seRotAcc.Text);
   LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
   LDDPini.WriteBool(IniSection, 'cboDet_Checked', cboDet.Checked);
   LDDPini.WriteBool(IniSection, 'cboWaitForFinish_Checked', cboWaitForFinish.Checked);
   LDDPini.WriteBool(IniSection, 'cboShowCommand_Checked', cboShowCommand.Checked);
   LDDPini.WriteInteger(IniSection, 'rgStyle_ItemIndex', rgStyle.ItemIndex);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_ColorAttriBackground', SynLDRSyn1.ColorAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_ColorAttriForeground', SynLDRSyn1.ColorAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_CommentAttriBackground', SynLDRSyn1.CommentAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_CommentAttriForeground', SynLDRSyn1.CommentAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_FirstTriAttriBackground', SynLDRSyn1.FirstTriAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_FirstTriAttriForeground', SynLDRSyn1.FirstTriAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_SecondTriAttriBackground', SynLDRSyn1.SecondTriAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_SecondTriAttriForeground', SynLDRSyn1.SecondTriAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_ThirdTriAttriBackground', SynLDRSyn1.ThirdTriAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_ThirdTriAttriForeground', SynLDRSyn1.ThirdTriAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_FourthTriAttriBackground', SynLDRSyn1.FourthTriAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_FourthTriAttriForeground', SynLDRSyn1.FourthTriAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_LineAttriBackground', SynLDRSyn1.LineAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_LineAttriForeground', SynLDRSyn1.LineAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_TriangleAttriBackground', SynLDRSyn1.TriangleAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_TriangleAttriForeground', SynLDRSyn1.TriangleAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_QuadAttriBackground', SynLDRSyn1.QuadAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_QuadAttriForeground', SynLDRSyn1.QuadAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_OpLineAttriBackground', SynLDRSyn1.OpLineAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_OpLineAttriForeground', SynLDRSyn1.OpLineAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_IdentifierAttriBackground', SynLDRSyn1.IdentifierAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_IdentifierAttriForeground', SynLDRSyn1.IdentifierAttri.Foreground);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_KeyAttriBackground', SynLDRSyn1.KeyAttri.Background);
+  LDDPini.WriteInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -305,13 +416,39 @@ begin
   edEMail.Text := LDDPini.ReadString(IniSection, 'edEmail_Text', '');
   edName.Text := LDDPini.ReadString(IniSection, 'edName_Text', '');
   edSig.Text := LDDPini.ReadString(IniSection, 'edSig_Text', '');
-  seDet.Text := LDDPini.ReadString(IniSection, 'edDet_Text', '');
-  seDist.Text := LDDPini.ReadString(IniSection, 'edDist_Text', '');
+  seDet.Text := LDDPini.ReadString(IniSection, 'seDet_Text', '');
+  seDist.Text := LDDPini.ReadString(IniSection, 'seDist_Text', '');
+  sePntAcc.Text := LDDPini.ReadString(IniSection, 'sePntAcc_Text', '');
+  seRotAcc.Text := LDDPini.ReadString(IniSection, 'seRotAcc_Text', '');
   cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
   cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
   cboWaitForFinish.Checked := LDDPini.ReadBool(IniSection, 'cboWaitForFinish_Checked', false);
   cboShowCommand.Checked := LDDPini.ReadBool(IniSection, 'cboShowCommand_Checked', false);
   rgStyle.ItemIndex := LDDPini.ReadInteger(IniSection, 'rgStyle_ItemIndex', 0);
+  SynLDRSyn1.ColorAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ColorAttriBackground', SynLDRSyn1.ColorAttri.Background);
+  SynLDRSyn1.ColorAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ColorAttriForeground', SynLDRSyn1.ColorAttri.Foreground);
+  SynLDRSyn1.CommentAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_CommentAttriBackground', SynLDRSyn1.CommentAttri.Background);
+  SynLDRSyn1.CommentAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_CommentAttriForeground', SynLDRSyn1.CommentAttri.Foreground);
+  SynLDRSyn1.FirstTriAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_FirstTriAttriBackground', SynLDRSyn1.FirstTriAttri.Background);
+  SynLDRSyn1.FirstTriAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_FirstTriAttriForeground', SynLDRSyn1.FirstTriAttri.Foreground);
+  SynLDRSyn1.SecondTriAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_SecondTriAttriBackground', SynLDRSyn1.SecondTriAttri.Background);
+  SynLDRSyn1.SecondTriAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_SecondTriAttriForeground', SynLDRSyn1.SecondTriAttri.Foreground);
+  SynLDRSyn1.ThirdTriAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ThirdTriAttriBackground', SynLDRSyn1.ThirdTriAttri.Background);
+  SynLDRSyn1.ThirdTriAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ThirdTriAttriForeground', SynLDRSyn1.ThirdTriAttri.Foreground);
+  SynLDRSyn1.FourthTriAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_FourthTriAttriBackground', SynLDRSyn1.FourthTriAttri.Background);
+  SynLDRSyn1.FourthTriAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_FourthTriAttriForeground', SynLDRSyn1.FourthTriAttri.Foreground);
+  SynLDRSyn1.LineAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_LineAttriBackground', SynLDRSyn1.LineAttri.Background);
+  SynLDRSyn1.LineAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_LineAttriForeground', SynLDRSyn1.LineAttri.Foreground);
+  SynLDRSyn1.TriangleAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_TriangleAttriBackground', SynLDRSyn1.TriangleAttri.Background);
+  SynLDRSyn1.TriangleAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_TriangleAttriForeground', SynLDRSyn1.TriangleAttri.Foreground);
+  SynLDRSyn1.QuadAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_QuadAttriBackground', SynLDRSyn1.QuadAttri.Background);
+  SynLDRSyn1.QuadAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_QuadAttriForeground', SynLDRSyn1.QuadAttri.Foreground);
+  SynLDRSyn1.OpLineAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_OpLineAttriBackground', SynLDRSyn1.OpLineAttri.Background);
+  SynLDRSyn1.OpLineAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_OpLineAttriForeground', SynLDRSyn1.OpLineAttri.Foreground);
+  SynLDRSyn1.IdentifierAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_IdentifierAttriBackground', SynLDRSyn1.IdentifierAttri.Background);
+  SynLDRSyn1.IdentifierAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_IdentifierAttriForeground', SynLDRSyn1.IdentifierAttri.Foreground);
+  SynLDRSyn1.KeyAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_KeyAttriBackground', SynLDRSyn1.KeyAttri.Background);
+  SynLDRSyn1.KeyAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_KeyAttriForeground', SynLDRSyn1.KeyAttri.Foreground);
   LDDPini.Free;
 end;
 

@@ -39,7 +39,6 @@ type
     acEditCopy: TEditCopy;
     acEditCut: TEditCut;
     acEditingToolbar: TAction;
-    acEditOptions: TAction;
     acEditPaste: TEditPaste;
     acExternalsToolbar: TAction;
     acFileClose: TWindowClose;
@@ -199,7 +198,6 @@ type
     ExternalPrograms3: TMenuItem;
     N3: TMenuItem;
     miMiscOptions: TMenuItem;
-    miEditorOptions: TMenuItem;
     Search1: TMenuItem;
     Find1: TMenuItem;
     FindNext1: TMenuItem;
@@ -254,7 +252,6 @@ type
     procedure acUserDefinedExecute(Sender: TObject);
     procedure acFilePrintExecute(Sender: TObject);
     procedure PluginClick(Sender: TObject);
-    procedure acEditOptionsExecute(Sender: TObject);
     procedure acOptionsExecute(Sender: TObject);
     procedure acInlineExecute(Sender: TObject);
     procedure acCommentBlockExecute(Sender: TObject);
@@ -352,7 +349,7 @@ implementation
 {$R *.xfm}
 
 uses
-  childwin, about, options, editoptions, colordialog, dlgsearchreplacetext,
+  childwin, about, options, colordialog, dlgsearchreplacetext,
   BMP2LDraw, modeltreeview;
 
 procedure TfrMain.UpdateControls(closing:boolean);
@@ -628,13 +625,10 @@ begin
     {$ENDIF}
     IniSection := 'LDDP Main';
     frOptions.IniFileName := IniFileName;
-    frEditOptions.IniFileName := IniFileName;
     frOptions.IniSection := 'LDDP Options';
-    frEditOptions.IniSection := 'LDDP Edit Options';
 
     LoadFormValues;
     frOptions.LoadFormValues;
-    frEditOptions.LoadFormValues;
 
     {$IFDEF MSWINDOWS}
       regT:=Tregistry.create;
@@ -653,7 +647,7 @@ begin
     OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption);
 
 
-    SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
+    SynLDRSyn.Assign(frOptions.SynLDRSyn1);
     pmMemo.tag:=pmMemo.items.count;
 
     if paramcount>0 then
@@ -828,28 +822,12 @@ begin
   frOptions.LoadFormValues;
 
   if frOptions.showmodal=mrOK then
-    frOptions.SaveFormValues
+  begin
+    frOptions.SaveFormValues;
+    SynLDRSyn.Assign(frOptions.SynLDRSyn1);
+  end
   else frOptions.LoadFormValues;
 end;
-
-
-
-procedure TfrMain.acEditOptionsExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Show modal edit option window
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  frEditOptions.LoadFormValues;
-  if frEditOptions.showmodal=mrOK then
-  begin
-    frEditOptions.SaveFormValues;
-    SynLDRSyn.Assign(frEditOptions.SynLDRSyn1);
-  end
-  else frEditOptions.LoadFormValues;
-end;
-
 
 procedure TfrMain.acUndoExecute(Sender: TObject);
 {---------------------------------------------------------------------
@@ -1345,6 +1323,10 @@ begin
    DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
    DATModel1.Add(Lines[CaretY-1]);
 
+   (DATModel1[0] as TDATSubPart).RotationDecimalPlaces :=
+     StrToInt(Trim(frOptions.seRotAcc.Text));
+   (DATModel1[0] as TDATSubPart).PositionDecimalPlaces :=
+     StrToInt(Trim(frOptions.sePntAcc.Text));
    DATModel1.InlinePart(0);
 
    DATModel1.Insert(0,'');

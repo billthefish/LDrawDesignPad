@@ -525,9 +525,6 @@ object frMain: TfrMain
       object miMiscOptions: TMenuItem
         Action = acOptions
       end
-      object miEditorOptions: TMenuItem
-        Action = acEditOptions
-      end
     end
     object Search1: TMenuItem
       Caption = 'Search'
@@ -886,11 +883,6 @@ object frMain: TfrMain
       Category = 'EditorBlocks'
       Caption = 'BFC Statement'
       OnExecute = acInsertBFCExecute
-    end
-    object acEditOptions: TAction
-      Category = 'Misc'
-      Caption = '&Editor Options'
-      OnExecute = acEditOptionsExecute
     end
     object acFileToolbar: TAction
       Category = 'Toolbars'
