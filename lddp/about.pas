@@ -27,16 +27,16 @@ uses
   version,
   {$ENDIF}
   QTypes, Classes, Variants, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QExtCtrls, SysUtils, main;
+  QExtCtrls, SysUtils, main, QButtons;
   
 type
   TfrAboutBox = class(TForm)
     Panel1: TPanel;
-    OKButton: TButton;
     ProgramIcon: TImage;
     ProductName: TLabel;
     Version: TLabel;
     Memo1: TMemo;
+    BitBtn1: TBitBtn;
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
