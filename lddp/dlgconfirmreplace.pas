@@ -22,8 +22,15 @@ unit dlgconfirmreplace;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls;
+  {$IFDEF MSWINDOWS}
+  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  QDialogs, QStdCtrls, QExtCtrl, QExtCtrls
+  {$ENDIF}
+  SysUtils;
 
 type
   TfrConfirmReplaceDialog = class(TForm)

@@ -23,8 +23,16 @@ unit dlgreplacetext;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  dlgSearchText, StdCtrls, ExtCtrls;
+  {$IFDEF MSWINDOWS}
+  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
+  QDialogs, QStdCtrls, QExtCtrls,
+  {$ENDIF}
+  dlgsearchtext,
+  SysUtils;
 
 type
   TfrTextReplaceDialog = class(TfrTextSearchDialog)
