@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditPrint.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditPrint.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -173,8 +173,8 @@ type
     fSelectedOnly: Boolean;                                                     // jj 2001-07-23
     fSelAvail: Boolean;
     fSelMode: TSynSelectionMode;
-    fBlockBegin: TPoint;
-    fBlockEnd: TPoint;
+    fBlockBegin: TBufferCoord;
+    fBlockEnd: TBufferCoord;
     procedure CalcPages;
     procedure SetLines(const Value: TStrings);
     procedure SetFont(const Value: TFont);
@@ -482,8 +482,8 @@ begin
   YPos := FMargins.PTop;
   if SelectedOnly then
   begin
-    iStartLine := fBlockBegin.y -1;
-    iEndLine := fBlockEnd.y -1;
+    iStartLine := fBlockBegin.Line -1;
+    iEndLine := fBlockEnd.Line -1;
   end
   else begin
     iStartLine := 0;
@@ -495,12 +495,12 @@ begin
       Text := Lines[i]
     else
     begin
-      if (fSelMode = smColumn) or (i = fBlockBegin.Y -1) then
-        iSelStart := fBlockBegin.X
+      if (fSelMode = smColumn) or (i = fBlockBegin.Line -1) then
+        iSelStart := fBlockBegin.Char
       else
         iSelStart := 1;
-      if (fSelMode = smColumn) or (i = fBlockEnd.Y -1) then
-        iSelLen := fBlockEnd.X  - iSelStart
+      if (fSelMode = smColumn) or (i = fBlockEnd.Line -1) then
+        iSelLen := fBlockEnd.Char  - iSelStart
       else
         iSelLen := MaxInt;
       Text := Copy( Lines[i], iSelStart, iSelLen );
@@ -781,17 +781,17 @@ begin
         iEnd := TPageLine(FPages[Num]).FirstLine - 1;
       for i := TPageLine(FPages[Num - 1]).FirstLine to iEnd do begin
         FLineNumber := i + 1;
-        if (not fSelectedOnly or ((i >= fBlockBegin.Y - 1) and (i <= fBlockEnd.Y - 1))) then begin
+        if (not fSelectedOnly or ((i >= fBlockBegin.Line - 1) and (i <= fBlockEnd.Line - 1))) then begin
           if (not fSelectedOnly or (fSelMode = smLine)) then
             WriteLine(Lines[i])
           else
           begin
-            if (fSelMode = smColumn) or (i = fBlockBegin.Y -1) then
-              iSelStart := fBlockBegin.X
+            if (fSelMode = smColumn) or (i = fBlockBegin.Line -1) then
+              iSelStart := fBlockBegin.Char
             else
               iSelStart := 1;
-            if (fSelMode = smColumn) or (i = fBlockEnd.Y -1) then
-              iSelLen := fBlockEnd.X  - iSelStart
+            if (fSelMode = smColumn) or (i = fBlockEnd.Line -1) then
+              iSelLen := fBlockEnd.Char  - iSelStart
             else
               iSelLen := MaxInt;
             WriteLine( Copy( Lines[i], iSelStart, iSelLen ) );

@@ -30,7 +30,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterSQL.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterSQL.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -156,8 +156,7 @@ type
     function GetIdentChars: TSynIdentChars; override;
     function GetSampleSource : String; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -416,7 +415,7 @@ const
     'SHARED_SERVERS,SHRINK,SIZE,SNAPSHOT,SOME,SORT,SORT_AREA_RETAINED_SIZE,' +
     'SORT_AREA_SIZE,SOURCE,SPECIFICATION,SPECIFIED,SPFILE,SPLIT,SQL_TRACE,' +
     'SQL92_SECURITY,STANDBY,STANDBY_ARCHIVE_DEST,STANDBY_FILE_MANAGEMENT,' +
-    'STAR_TRANSFORMATION_ENABLED,START,START_DATE,STATISTICS,' +
+    'STAR_TRANSFORMATION_ENABLED,START,START_DATE,STATIC,STATISTICS,' +
     'STATISTICS_LEVEL,STOP,STORAGE,STRUCTURE,SUBPARTITION,SUBPARTITIONS,' +
     'SUCCESSFUL,SUSPEND,SWITCH,SYNONYM,SYSTEM,TABLE,TABLESPACE,' +
     'TAPE_ASYNCH_IO,TEMPFILE,TEMPORARY,THE,THEN,THREAD,THROUGH,TIME,' +
@@ -1501,8 +1500,7 @@ begin
 {end}                                                                           // DJLP 2000-08-11
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynSQLSyn.GetLanguageName: string;
+class function TSynSQLSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangSQL;
 end;

@@ -28,7 +28,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterPython.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterPython.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -72,7 +72,7 @@ const
 
 type
   TtkTokenKind = (tkComment, tkIdentifier, tkKey, tkNull, tkNumber, tkSpace,
-    tkString, tkSymbol, tkNonKeyword, tkCodeComment, tkTrippleQuotedString,
+    tkString, tkSymbol, tkNonKeyword, tkTrippleQuotedString,
     tkSystemDefined, tkHex, tkOct, tkFloat, tkUnknown);
 
   TRangeState = (rsANil, rsComment, rsUnKnown, rsMultilineString, rsMultilineString2,
@@ -105,7 +105,6 @@ type
     fSystemAttri: TSynHighlighterAttributes;
     fSymbolAttri: TSynHighlighterAttributes;
     fCommentAttri: TSynHighlighterAttributes;
-    fCodeCommentAttri: TSynHighlighterAttributes;
     fIdentifierAttri: TSynHighlighterAttributes;
     fSpaceAttri: TSynHighlighterAttributes;
     fErrorAttri: TSynHighlighterAttributes;
@@ -140,8 +139,7 @@ type
     property TokenID: TtkTokenKind read FTokenID;
 
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -162,8 +160,6 @@ type
   published
     property CommentAttri: TSynHighlighterAttributes read fCommentAttri
     write fCommentAttri;
-    property CodeCommentAttri: TSynHighlighterAttributes read fCodeCommentAttri
-      write fCodeCommentAttri;
     property IdentifierAttri: TSynHighlighterAttributes read fIdentifierAttri
     write fIdentifierAttri;
     property KeyAttri: TSynHighlighterAttributes read fKeyAttri write fKeyAttri;
@@ -361,7 +357,7 @@ begin
     Result := TtkTokenKind (FKeywords.Objects[index])
 
   // Check if it is a system identifier (__*__)
-  else if (fStringLen > 5) and
+  else if (fStringLen >= 5) and
      (MayBe[0] = '_') and (MayBe[1] = '_') and (MayBe[2] <> '_') and
      (MayBe[fStringLen-1] = '_') and (MayBe[fStringLen-2] = '_') and
      (MayBe[fStringLen-3] <> '_') then
@@ -378,8 +374,9 @@ var
 begin
   for I := #0 to #255 do
     case I of
-      '@','&', '}', '{', ':', ',', ']', '[', '*', '`',
-      '^', ')', '(', ';', '/', '=', '-', '+', '!', '\':
+      '&', '}', '{', ':', ',', ']', '[', '*', '`',
+      '^', ')', '(', ';', '/', '=', '-', '+', '!', '\',
+      '%', '|', '~' :
         fProcTable[I] := SymbolProc;
       #13: fProcTable[I] := CRProc;
       '#': fProcTable[I] := CommentProc;
@@ -418,12 +415,9 @@ begin
 
   fRange := rsUnknown;
   fCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrComment);
-  fCommentAttri.Foreground := clTeal;
+  fCommentAttri.Foreground := clGray;
   fCommentAttri.Style := [fsItalic];
   AddAttribute(fCommentAttri);
-  fCodeCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrBrackets);
-  fCommentAttri.Foreground := clSilver;
-  AddAttribute(fCodeCommentAttri);
   fIdentifierAttri := TSynHighlighterAttributes.Create(SYNS_AttrIdentifier);
   AddAttribute(fIdentifierAttri);
   fKeyAttri := TSynHighlighterAttributes.Create(SYNS_AttrReservedWord);
@@ -434,7 +428,7 @@ begin
   fNonKeyAttri.Style := [fsBold];
   AddAttribute (fNonKeyAttri);
   fSystemAttri := TSynHighlighterAttributes.Create (SYNS_AttrSystem);
-  fNonKeyAttri.Foreground := clNavy;
+  fSystemAttri.Style := [fsBold];
   AddAttribute (fSystemAttri);
   fNumberAttri := TSynHighlighterAttributes.Create(SYNS_AttrNumber);
   fNumberAttri.Foreground := clBlue;
@@ -499,11 +493,8 @@ end;
 
 procedure TSynPythonSyn.CommentProc;
 begin
+  fTokenID := tkComment;
   inc(Run);
-  if FLine[Run] = '#' then
-    fTokenID := tkCodeComment
-  else
-    fTokenID := tkComment;
   while not (FLine[Run] in [#13, #10, #0]) do
     inc(Run);
 end;
@@ -1191,7 +1182,6 @@ function TSynPythonSyn.GetTokenAttribute: TSynHighlighterAttributes;
 begin
   case fTokenID of
     tkComment: Result := fCommentAttri;
-    tkCodeComment: Result := fCodeCommentAttri;
     tkIdentifier: Result := fIdentifierAttri;
     tkKey: Result := fKeyAttri;
     tkNonKeyword: Result := fNonKeyAttri;
@@ -1235,8 +1225,7 @@ begin
   Result := TSynValidStringChars;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynPythonSyn.GetLanguageName: string;
+class function TSynPythonSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangPython;
 end;

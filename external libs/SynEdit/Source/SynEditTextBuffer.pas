@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditTextBuffer.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditTextBuffer.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -59,8 +59,7 @@ uses
 type
   TSynEditRange = pointer;
 
-  TSynEditStringFlag = (sfHasTabs, sfHasNoTabs, sfExpandedLengthUnknown,
-    sfWrapped);
+  TSynEditStringFlag = (sfHasTabs, sfHasNoTabs, sfExpandedLengthUnknown);
   TSynEditStringFlags = set of TSynEditStringFlag;
 
   PSynEditStringRec = ^TSynEditStringRec;
@@ -82,15 +81,13 @@ type
   PSynEditStringRecList = ^TSynEditStringRecList;
   TSynEditStringRecList = array[0..MaxSynEditStrings - 1] of TSynEditStringRec;
 
-  TStringListIndexEvent = procedure(Index: Integer) of object;
-  TStringListInsertedEvent = procedure(Index: Integer; const s: String) of object;
+  TStringListChangeEvent = procedure(Sender: TObject; Index: Integer;
+    Count: integer) of object;
 
   TSynEditFileFormat = (sffDos, sffUnix, sffMac); // DOS: CRLF, UNIX: LF, Mac: CR
 
   TSynEditStringList = class(TStrings)
   private
-    fWordWrap : Boolean;                                                        //Fiala 2001-12-17
-    fWordWrapWidth : Integer;                                                   //Fiala 2001-12-17
     fList: PSynEditStringRecList;
     fCount: integer;
     fCapacity: integer;
@@ -103,9 +100,10 @@ type
 {end}                                                                           //mh 2000-10-19
     fOnChange: TNotifyEvent;
     fOnChanging: TNotifyEvent;
-    function WrapString(var InputString: String) : String;                      //Fiala 2001-12-17
-    procedure WrapLine(const LineNumber: Integer);                              //Fiala 2001-12-17
-{begin}                                                                         //mh 2000-10-19
+    fOnCleared: TNotifyEvent;
+    fOnDeleted: TStringListChangeEvent;
+    fOnInserted: TStringListChangeEvent;
+    fOnPutted: TStringListChangeEvent;
     function ExpandString(Index: integer): string;
     function GetExpandedString(Index: integer): string;
     function GetExpandedStringLength(Index: integer): integer;
@@ -115,15 +113,8 @@ type
     procedure Grow;
     procedure InsertItem(Index: integer; const S: string);
     procedure PutRange(Index: integer; ARange: TSynEditRange);
-    procedure SetWordWrap(const Value: boolean);                                //Fiala 2001-12-17
   protected
     fLongestLineIndex: integer;                                                 //mh 2000-10-19
-    fOnAdded: TStringListInsertedEvent;
-    fOnCleared: TNotifyEvent;
-    fOnDeleted: TStringListIndexEvent;
-    fOnInserted: TStringListInsertedEvent;
-    fOnPutted: TStringListInsertedEvent;
-
     function Get(Index: integer): string; override;
     function GetCapacity: integer;
       {$IFDEF SYN_COMPILER_3_UP} override; {$ENDIF}                             //mh 2000-10-18
@@ -146,22 +137,15 @@ type
     procedure Exchange(Index1, Index2: integer); override;
     procedure Insert(Index: integer; const S: string); override;
     procedure InsertLines(Index, NumLines: integer);                            // DJLP 2000-11-01
-    procedure InsertStrings(Index: integer; NewStrings: TStrings);              // DJLP 2000-11-01
+    procedure InsertStrings(Index: integer; NewStrings: TStrings);
+    procedure InsertText(Index: integer; NewText: String);
     procedure LoadFromFile(const FileName: string); override;
     procedure SaveToFile(const FileName: string); override;
 {begin}                                                                         //Fiala 2001-12-17
     procedure SaveToStream(Stream: TStream); override;
     procedure LoadFromStream(Stream: TStream); override;
-    procedure DoWrapLines(const FromLine, ToLine: Integer);
-    procedure DoUnWrapLines(const FromLine, ToLine: Integer);
-    function ReWrapLine(const LineNumber: Integer): Integer;
-    function IsLineWraped(const LineNumber: Integer): Boolean;
-    procedure DoWordWrap;
-    procedure DoWordUnWrap;
     property AppendNewLineAtEOF: Boolean read fAppendNewLineAtEOF write fAppendNewLineAtEOF;  //gbn 2002-04-25
 
-    property WordWrap: boolean read FWordWrap write SetWordWrap;
-    property WordWrapWidth: integer read FWordWrapWidth write fWordWrapWidth;
     property FileFormat: TSynEditFileFormat read fFileFormat write fFileFormat;
 {end}                                                                           //Fiala 2001-12-17
 {begin}                                                                         //mh 2000-10-19
@@ -171,14 +155,13 @@ type
 {end}                                                                           //mh 2000-10-19
     property Ranges[Index: integer]: TSynEditRange read GetRange write PutRange;
     property TabWidth: integer read fTabWidth write SetTabWidth;                //mh 2000-10-19
-    property OnAdded: TStringListInsertedEvent read fOnAdded write fOnAdded;
     property OnChange: TNotifyEvent read fOnChange write fOnChange;
     property OnChanging: TNotifyEvent read fOnChanging write fOnChanging;
     property OnCleared: TNotifyEvent read fOnCleared write fOnCleared;
-    property OnDeleted: TStringListIndexEvent read fOnDeleted write fOnDeleted;
-    property OnInserted: TStringListInsertedEvent read fOnInserted
+    property OnDeleted: TStringListChangeEvent read fOnDeleted write fOnDeleted;
+    property OnInserted: TStringListChangeEvent read fOnInserted
       write fOnInserted;
-    property OnPutted: TStringListInsertedEvent read fOnPutted write fOnPutted;
+    property OnPutted: TStringListChangeEvent read fOnPutted write fOnPutted;
   end;
 
   ESynEditStringList = class(Exception);
@@ -207,8 +190,8 @@ type
   protected
     fChangeReason: TSynChangeReason;
     fChangeSelMode: TSynSelectionMode;
-    fChangeStartPos: TPoint;
-    fChangeEndPos: TPoint;
+    fChangeStartPos: TBufferCoord;
+    fChangeEndPos: TBufferCoord;
     fChangeStr: string;
     fChangeNumber: integer;                                                     //sbs 2000-11-19
   public
@@ -216,8 +199,8 @@ type
   { public properties }
     property ChangeReason: TSynChangeReason read fChangeReason;
     property ChangeSelMode: TSynSelectionMode read fChangeSelMode;
-    property ChangeStartPos: TPoint read fChangeStartPos;
-    property ChangeEndPos: TPoint read fChangeEndPos;
+    property ChangeStartPos: TBufferCoord read fChangeStartPos;
+    property ChangeEndPos: TBufferCoord read fChangeEndPos;
     property ChangeStr: string read fChangeStr;
     property ChangeNumber: integer read fChangeNumber;
   end;
@@ -244,8 +227,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure AddChange(AReason: TSynChangeReason; AStart, AEnd: TPoint;
-      ChangeText: string; SelMode: TSynSelectionMode);
+    procedure AddChange(AReason: TSynChangeReason; const AStart, AEnd: TBufferCoord;
+      const ChangeText: string; SelMode: TSynSelectionMode);
     procedure BeginBlock;                                                       //sbs 2000-11-19
     procedure Clear;
     procedure EndBlock;                                                         //sbs 2000-11-19
@@ -279,6 +262,7 @@ resourcestring
 const
 {$ENDIF}
   SListIndexOutOfBounds = 'Invalid stringlist index %d';
+  SInvalidCapacity = 'Stringlist capacity cannot be smaller than count';
 
 { TSynEditFiler }
 
@@ -512,8 +496,6 @@ constructor TSynEditStringList.Create;
 begin
   inherited Create;
   fAppendNewLineAtEOF:=true; //Retain current behavior        gbn 2002-04-25
-  fWordWrap := False;
-  fWordWrapWidth := 80;
   fFileFormat := sffDos;
 {begin}                                                                         //mh 2000-10-19
   fIndexOfLongestLine := -1;
@@ -537,8 +519,8 @@ begin
   BeginUpdate;
   Result := fCount;
   InsertItem(Result, S);
-  if Assigned(fOnAdded) then
-    fOnAdded(Result, S);
+  if Assigned(OnInserted) then
+    OnInserted( Self, Result, 1 );
   EndUpdate;
 end;
 
@@ -566,8 +548,8 @@ begin
         end;
         Inc(fCount);
       end;
-      if Assigned(fOnAdded) then
-        fOnAdded(FirstAdded, '');
+      if Assigned(OnInserted) then
+        OnInserted( Self, FirstAdded, Strings.Count );
     finally
       EndUpdate;
     end;
@@ -602,7 +584,7 @@ begin
   end;
   fIndexOfLongestLine := -1;                                                    //mh 2000-10-19
   if Assigned(fOnDeleted) then
-    fOnDeleted(Index);
+    fOnDeleted( Self, Index, 1 );
   EndUpdate;
 end;
 
@@ -629,8 +611,8 @@ begin
       end;
     end;
     Dec(fCount, NumLines);
-    if Assigned(fOnDeleted) then                                       
-      fOnDeleted(Index);
+    if Assigned(fOnDeleted) then
+      fOnDeleted( Self, Index, NumLines );
   end;
 end;
 {end}                                                                           // DJLP 2000-11-01
@@ -786,41 +768,12 @@ begin
   BeginUpdate;
   InsertItem(Index, S);
   if Assigned(fOnInserted) then
-    fOnInserted(Index, S);
+    fOnInserted( Self, Index, 1 );
   EndUpdate;
 end;
 
 procedure TSynEditStringList.InsertItem(Index: integer; const S: string);
-var                                                                             //Fiala 2001-12-17
-  s1: string;                                                                   //Fiala 2001-12-17
-  tmpIndex: Integer;
 begin
-  BeginUpdate;
-  s1 := s;                                                                      //Fiala
-  tmpIndex := Index;                                                            //Fiala
-  repeat                                                                        //Fiala
-    if fCount = fCapacity then
-      Grow;
-    if tmpIndex < fCount then begin
-      System.Move(fList^[tmpIndex], fList^[tmpIndex + 1],
-        (fCount - tmpIndex) * SynEditStringRecSize);
-    end;
-    fIndexOfLongestLine := -1;                                                  //mh 2000-10-19
-    with fList^[tmpIndex] do begin
-      Pointer(fString) := nil;
-      fString := WrapString(s1);                                                //Fiala
-      fObject := nil;
-      fRange := NullRange;
-      fExpandedLength := -1;
-      fFlags := [sfExpandedLengthUnknown];
-      if Index <> tmpIndex then
-        Include( fFlags, sfWrapped );
-    end;
-    Inc(tmpIndex);
-    Inc(fCount);
-  until Length(s1) = 0;                                                         //Fiala
-  EndUpdate;
-(*//Old Code, left for reference
   BeginUpdate;
   if fCount = fCapacity then
     Grow;
@@ -834,14 +787,11 @@ begin
     fString := S;
     fObject := nil;
     fRange := NullRange;
-{begin}                                                                         //mh 2000-10-19
     fExpandedLength := -1;
     fFlags := [sfExpandedLengthUnknown];
-{end}                                                                           //mh 2000-10-19
   end;
   Inc(fCount);
   EndUpdate;
-*)
 end;
 
 {begin}                                                                         // DJLP 2000-11-01
@@ -859,8 +809,8 @@ begin
       end;
       FillChar(fList^[Index], NumLines * SynEditStringRecSize, 0);
       Inc(fCount, NumLines);
-      if Assigned(fOnAdded) then
-        fOnAdded(Index, '');
+      if Assigned(OnInserted) then
+        OnInserted( Self, Index, NumLines );
     finally
       EndUpdate;
     end;
@@ -873,17 +823,34 @@ var
   i, Cnt: integer;
 begin
   Cnt := NewStrings.Count;
-  if Cnt > 0 then begin
-    BeginUpdate;
-    try
+  if Cnt = 0 then exit;
+
+  BeginUpdate;
+  try
     InsertLines(Index, Cnt);
     for i := 0 to Cnt - 1 do
       Strings[Index + i] := NewStrings[i];
-    finally
-      EndUpdate;
-    end;
+  finally
+    EndUpdate;
   end;
 end;
+
+procedure TSynEditStringList.InsertText(Index: integer;
+  NewText: String);
+var
+  TmpStringList: TStringList;
+begin
+  if NewText = '' then exit;
+  
+  TmpStringList := TStringList.Create;
+  try
+    TmpStringList.Text := NewText;
+    InsertStrings(Index, TmpStringList);
+  finally
+    TmpStringList.Free;
+  end;
+end;
+
 {end}                                                                           // DJLP 2000-11-01
 
 procedure TSynEditStringList.LoadFromFile(const FileName: string);
@@ -1048,7 +1015,7 @@ begin
     end;
 {end}                                                                           //mh 2000-10-19
     if Assigned(fOnPutted) then
-      fOnPutted(Index, S);
+      fOnPutted( Self, Index, 1 );
     EndUpdate;
   end;
 end;
@@ -1071,11 +1038,10 @@ begin
   EndUpdate;
 end;
 
-{begin}                                                                         //Fiala 2001-12-17
 procedure TSynEditStringList.SaveToFile(const FileName: string);
 var
   Writer: TSynEditFileWriter;
-  i, j: integer;
+  i: integer;
   s: string;
 begin
   Writer := TSynEditFileWriter.Create(FileName);
@@ -1084,40 +1050,21 @@ begin
     i := 0;
     while i < fCount do begin
       s := Get(i);
-      j := i + 1;
-      if fWordWrap then
-        while (j < fCount) and (sfWrapped in fList^[j].fFlags) do begin
-          s := s + Get(j);
-          inc(j);
-        end;
-      i := j;
-      //GBN 2002-04-16
-      if (i<fCount) or (AppendNewLineAtEOF) then Writer.WriteLine(s, fFileFormat)
-      else Writer.Write(S);
+      Inc(i);
+      if (i<fCount) or (AppendNewLineAtEOF) then
+        Writer.WriteLine(s, fFileFormat)
+      else
+        Writer.Write(s);
     end;
   finally
     Writer.Free;
   end;
 end;
-{end}                                                                           //Fiala 2001-12-17
-(*//Old code, for reference
-procedure TSynEditStringList.SaveToFile(const FileName: string);
-var
-  Writer: TSynEditFileWriter;
-  i: integer;
-begin
-  Writer := TSynEditFileWriter.Create(FileName);
-  try
-    Writer.FileFormat := fFileFormat;
-    for i := 0 to fCount - 1 do
-      Writer.WriteLine(Get(i));
-  finally
-    Writer.Free;
-  end;
-end;
-*)
+
 procedure TSynEditStringList.SetCapacity(NewCapacity: integer);
 begin
+  if NewCapacity < Count then
+    EListError.Create( SInvalidCapacity );
   ReallocMem(fList, NewCapacity * SynEditStringRecSize);
   fCapacity := NewCapacity;
 end;
@@ -1154,209 +1101,6 @@ begin
   end;
 end;
 {end}                                                                           //mh 2000-10-10
-
-{begin}                                                                         //Fiala 2001-12-17
-{ InputString is cutted from left side, cuted part is returned as Result}
-function TSynEditStringList.WrapString(var InputString: String): String;
-const
-  WrapableChars =   [#32, #9,';','>',','];
-  WhiteSpaceChars = [#32, #9];
-var
-  i, j, k : Integer;
-  TabString : String;
-  addedChars : Integer;
-begin
-  if not fWordWrap then begin
-    Result := InputString;
-    InputString := '';
-    Exit;
-  end;
-
-//need to compensate for tab characters
-  TabString := InputString;
-  Addedchars := 0;
-  i := pos(#9, TabString);
-  while (i <> 0) and (i < fWordWrapWidth) do
-  begin
-    j := i mod fTabWidth;
-    if j = 0 then j := 1
-    else j := fTabWidth - j + 1;
-    System.Delete(TabString, i, 1);
-    for k := 1 to j do
-      System.Insert(#32, TabString, i);
-    addedChars := addedchars + j - 1;
-    i := pos(#9, TabString);
-  end;
-
-  if Length(TabString) > fWordWrapWidth then begin
-    i := fWordWrapWidth;
-    { trying find WrapableChars to the left }
-    while i > 0 do begin
-      if TabString[i] in WrapableChars
-        then Break;
-      Dec(i);
-    end;
-
-    //if we can't wrap, then we just cut the word at WordWrapWidth.  The same way that
-    //MS Word does.
-    if i = 0 then
-    begin
-      i := fWordWrapWidth;
-      i := i - addedChars;  //take the tabs back out;
-    end else begin
-    //I'm not sure what the correct behavior for this should be, actually.  For
-    //the time being I am making the assumption that all whitespace should stay
-    //together on the line above.  this might wreck havoc with scrollbars, but
-    //I think it looks cleaner than having it on the line below.
-
-      i := i - addedChars;  //take the tabs back out;
-
-      //make sure all the white space is on the current line that is possible
-      if (i + 1 < length(InputString)) and (InputString[i + 1] in WhitespaceChars) then
-              while i < length(InputString) do
-          if InputString[i + 1] in WhitespaceChars then
-            inc(i)
-          else break;
-    end;
-  end
-  else i:= Length(InputString);
-  Result := Copy(InputString, 1, i);
-  System.Delete( InputString, 1, i );
-end;
-
-procedure TSynEditStringList.SetWordWrap(const Value: boolean);
-begin
-  if fWordWrap <> Value then begin
-    FWordWrap := Value;
-    if Value
-      then DoWordWrap
-      else DoWordUnWrap;
-  end;
-end;
-
-{ Return wraping of all lines }
-procedure TSynEditStringList.DoWordUnWrap;
-begin
-  DoUnWrapLines(0, fCount - 1);
-end;
-
-{ Wrap all lines }
-procedure TSynEditStringList.DoWordWrap;
-begin
-  DoWrapLines(0, fCount - 1);
-end;
-
-{ wrap lines in visible windows - for write changing}
-procedure TSynEditStringList.DoWrapLines(const FromLine: Integer; const ToLine: Integer);
-var
-  i: Integer;
-begin
-  BeginUpdate;
-  try
-    for i := ToLine downto FromLine do
-      WrapLine(i);
-  finally
-    EndUpdate;
-  end;
-end;
-
-procedure TSynEditStringList.DoUnWrapLines(const FromLine, ToLine: Integer);
-var
-  i : Integer;
-  s : string;
-begin
-  BeginUpdate;
-  try
-    s := '';
-    for i := ToLine downto FromLine do begin
-      if (sfWrapped in fList^[i].fFlags) then begin
-        s := Strings[i] + s;
-        Delete(i);
-      end
-      else begin
-        with fList^[i] do begin
-          fString := fString + s;
-          fExpandedLength := -1;
-          fFlags := [sfExpandedLengthUnknown];
-        end;
-        s := '';
-      end;
-    end;
-  finally
-    EndUpdate;
-  end;
-end;
-
-function TSynEditStringList.ReWrapLine(const LineNumber: Integer): Integer;
-var
-  i, LineBegin, LineEnd : Integer;
-  s : string;
-begin
-  Result := LineNumber;
-  if not fWordWrap then Exit;
-  BeginUpdate;
-  { first we must find begin of wraped line }
-  LineBegin := LineNumber;
-  while (LineBegin >= 0) and (sfWrapped in fList^[LineBegin].fFlags) do Dec(LineBegin);
-  Result := LineBegin;
-  { now we find end of wraped line }
-  LineEnd := LineNumber;
-  while (LineEnd < fCount - 1) and (sfWrapped in fList^[LineEnd + 1].fFlags) do Inc(LineEnd);
-  { and we make back one long line }
-  s := '';
-  for i := LineEnd downto LineBegin do begin
-    if (sfWrapped in fList^[i].fFlags) then begin
-      s := Strings[i] + s;
-      Delete(i);
-    end
-    else fList^[i].fString := fList^[i].fString + s;
-  end;
-  { finally wrap this line again }
-  WrapLine(LineBegin);
-  EndUpdate;
-end;
-
-procedure TSynEditStringList.WrapLine(const LineNumber: Integer);
-var
-  s, s1: string;
-  tmpIndex: Integer;
-begin
-  s := fList^[LineNumber].fString;
-  with fList^[LineNumber] do begin
-    fString := WrapString(s);
-    fExpandedLength := -1;
-    fFlags := [sfExpandedLengthUnknown];
-  end;
-  if Length(s) > 0 then begin
-    s1 := s;
-    tmpIndex := LineNumber ;
-    while Length(s1) > 0 do begin
-      Inc(tmpIndex);
-      if fCount = fCapacity then
-        Grow;
-      if tmpIndex < fCount then begin
-        System.Move(fList^[tmpIndex], fList^[tmpIndex + 1],
-        (fCount - tmpIndex) * SynEditStringRecSize);
-      end;
-      with fList^[tmpIndex] do begin
-        Pointer(fString) := nil;
-        fString := WrapString(s1);
-        fObject := nil;
-        fRange := NullRange;
-        fExpandedLength := -1;
-        fFlags := [sfExpandedLengthUnknown, sfWrapped];
-      end;
-      Inc(fCount);
-    end;
-  end;
-  fIndexOfLongestLine := -1;
-end;
-
-function TSynEditStringList.IsLineWraped(const LineNumber: Integer): Boolean;
-begin
-  Result := sfWrapped in fList^[LineNumber].fFlags;
-end;
-{end}                                                                           //Fiala 2001-12-17
 
 { TSynEditUndoItem }
 
@@ -1418,8 +1162,8 @@ begin
     inherited Assign(Source);
 end;
 
-procedure TSynEditUndoList.AddChange(AReason: TSynChangeReason; AStart,
-  AEnd: TPoint; ChangeText: string; SelMode: TSynSelectionMode);
+procedure TSynEditUndoList.AddChange(AReason: TSynChangeReason; const AStart,
+  AEnd: TBufferCoord; const ChangeText: string; SelMode: TSynSelectionMode);
 var
   NewItem: TSynEditUndoItem;
 begin
@@ -1581,11 +1325,15 @@ end;
 
 
 procedure TSynEditUndoList.AddGroupBreak;
+var
+  vDummy: TBufferCoord;
 begin
   //Add the GroupBreak even if ItemCount = 0. Since items are stored in
   //reverse order in TCustomSynEdit.fRedoList, a GroupBreak could be lost.
   if LastChangeReason <> crGroupBreak then
-    AddChange(crGroupBreak, Point(0,0), Point(0,0), '', smNormal);
+  begin
+    AddChange(crGroupBreak, vDummy, vDummy, '', smNormal);
+  end;
 end;
 
 procedure TSynEditUndoList.SetInitialState(const Value: boolean);

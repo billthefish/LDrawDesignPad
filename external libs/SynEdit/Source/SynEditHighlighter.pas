@@ -17,7 +17,7 @@ All Rights Reserved.
 Contributors to the SynEdit and mwEdit projects are listed in the
 Contributors.txt file.
 
-$Id: SynEditHighlighter.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditHighlighter.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -139,17 +139,18 @@ type
       virtual; abstract;
     function GetDefaultFilter: string; virtual;
     function GetIdentChars: TSynIdentChars; virtual;
-    procedure SetWordBreakChars(AChars: TSynIdentChars); virtual;
     function GetSampleSource: string; virtual;
     function IsFilterStored: boolean; virtual;
     procedure SetAttributesOnChange(AEvent: TNotifyEvent);
     procedure SetDefaultFilter(Value: string); virtual;
     procedure SetSampleSource(Value: string); virtual;
+    procedure SetWordBreakChars(AChars: TSynIdentChars); virtual;
+  protected
+    function GetCapabilitiesProp: TSynHighlighterCapabilities;
+    function GetLanguageNameProp: string;
   public
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetCapabilities: TSynHighlighterCapabilities; virtual;
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetLanguageName: string; virtual;
+    class function GetCapabilities: TSynHighlighterCapabilities; virtual;
+    class function GetLanguageName: string; virtual;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -182,12 +183,12 @@ type
     procedure UnhookAttrChangeEvent(ANotifyEvent: TNotifyEvent);
     property IdentChars: TSynIdentChars read GetIdentChars;
     property WordBreakChars: TSynIdentChars read fWordBreakChars write SetWordBreakChars;
-    property LanguageName: string read GetLanguageName;
+    property LanguageName: string read GetLanguageNameProp;
   public
     property AttrCount: integer read GetAttribCount;
     property Attribute[idx: integer]: TSynHighlighterAttributes
       read GetAttribute;
-    property Capabilities: TSynHighlighterCapabilities read GetCapabilities;
+    property Capabilities: TSynHighlighterCapabilities read GetCapabilitiesProp;
     property SampleSource: string read GetSampleSource write SetSampleSource;
     property CommentAttribute: TSynHighlighterAttributes
       index SYN_ATTR_COMMENT read GetDefaultAttribute;
@@ -833,10 +834,14 @@ begin
     Result := TSynHighlighterAttributes(fAttributes.Objects[idx]);
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynCustomHighlighter.GetCapabilities: TSynHighlighterCapabilities;
+class function TSynCustomHighlighter.GetCapabilities: TSynHighlighterCapabilities;
 begin
   Result := [hcRegistry]; //registry save/load supported by default
+end;
+                   
+function TSynCustomHighlighter.GetCapabilitiesProp: TSynHighlighterCapabilities;
+begin
+  Result := GetCapabilities;
 end;
 
 function TSynCustomHighlighter.GetDefaultFilter: string;
@@ -855,13 +860,17 @@ begin
 end;
 
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynCustomHighlighter.GetLanguageName: string;
+class function TSynCustomHighlighter.GetLanguageName: string;
 begin
 {$IFDEF SYN_DEVELOPMENT_CHECKS}
   raise Exception.CreateFmt('%s.GetLanguageName not implemented', [ClassName]);
 {$ENDIF}
   Result := '<Unknown>';
+end;
+
+function TSynCustomHighlighter.GetLanguageNameProp: string;
+begin
+  Result := GetLanguageName;
 end;
 
 function TSynCustomHighlighter.GetRange: pointer;

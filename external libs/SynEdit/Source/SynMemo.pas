@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynMemo.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynMemo.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -267,8 +267,8 @@ end;
 
 procedure TSynMemo.EMReplaceSel(var Message: TMessage);
 var
-  StartOfBlock: TPoint;
-  EndOfBlock: TPoint;
+  StartOfBlock: TBufferCoord;
+  EndOfBlock: TBufferCoord;
 begin
   // EM_REPLACESEL
   // fCanUndo = (BOOL) wParam ;                  // flag that specifies whether replacement can be undone
@@ -283,8 +283,8 @@ begin
     if SelAvail and (Message.WParam <> 0){???} then begin
       UndoList.AddChange(crDelete, BlockBegin, BlockEnd, SelText, SelectionMode);
     end;
-    StartOfBlock := minPoint(BlockBegin, BlockEnd);
-    EndOfBlock := maxPoint(BlockBegin, BlockEnd);
+    StartOfBlock := BlockBegin;
+    EndOfBlock := BlockEnd;
     BlockBegin := StartOfBlock;
     BlockEnd := EndOfBlock;
     LockUndo;
@@ -346,24 +346,28 @@ end;
 
 procedure TSynMemo.EMCharFromPos(var Message: TMessage);
 var
-  CaretXY: TPoint;
+  vPos: TBufferCoord;
   i: integer;
 begin
   //(WPARAM) wParam,    // not used; must be zero
   //(LPARAM) lParam     // point coordinates
   // ???
-  CaretXY := PixelsToRowColumn(Point(Message.LParamLo, Message.LParamHi));
+  vPos := DisplayToBufferPos(PixelsToRowColumn(Message.LParamLo, Message.LParamHi));
 
-  Dec(CaretXY.y);
-  if(CaretXY.x > length(lines[CaretXY.y])) then CaretXY.x := length(lines[CaretXY.y])+1; //???
+  Dec(vPos.Line);
+  if vPos.Line >= Lines.Count then 
+    vPos.Char := 1
+  else if vPos.Char > Length(Lines[vPos.Line]) then
+    vPos.Char := Length(Lines[vPos.Line]) +1; // ???
 
-  i := CaretXY.y;
+  i := vPos.Line;
   while i > 0 do begin
     dec(i);
-    inc(CaretXY.x, length(Lines[i])+2);
+    inc(vPos.Char, length(Lines[i])+2);
   end;
 
-  Message.Result := MakeLong(CaretXY.x{CharIndex}, CaretXY.y{Line zero based});
+  //todo: this can't be right, CharIndex can easily overflow
+  Message.Result := MakeLong(vPos.Char{CharIndex}, vPos.Line{Line zero based});
 end;
 
 {$ENDIF NOT SYN_CLX}

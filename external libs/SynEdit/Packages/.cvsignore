@@ -1,7 +1,9 @@
 *.dcu
 *.dpl
 *.dcp
+*.bpl
 *.obj
 *.~*
-*.dof
-*.cfg
+*.res
+*.drc
+*.exe

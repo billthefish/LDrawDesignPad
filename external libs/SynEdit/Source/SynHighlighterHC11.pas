@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterHC11.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterHC11.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -135,8 +135,7 @@ type
     function GetIdentChars: TSynIdentChars; override;
     function GetSampleSource: string; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
@@ -198,12 +197,12 @@ const
     'RORB', 'ROR_', 'RTI', 'RTS', 'SBA', 'SBCA_', 'SBCB_', 'SEC', 'SEI', 'SEV',
     'STAA_', 'STAB_', 'STD_', 'STOP', 'STS_', 'STX_', 'STY_', 'SUBA_', 'SUBB_',
     'SUBD_', 'SWI', 'TAB', 'TAP', 'TBA', 'TEST', 'TPA', 'TSTA', 'TSTB', 'TST_',
-    'TSX', 'TSY', 'TXS', 'TYS', 'WAI', 'XGDX', 'XGDY', // Ende Befehle
-    'FCC_','FCB_','BSZ_','FDB_' // Codeerzeugende Direktiven
+    'TSX', 'TSY', 'TXS', 'TYS', 'WAI', 'XGDX', 'XGDY', // end commands
+    'FCC_','FCB_','BSZ_','FDB_' // codegenerating directives
     );
 
   Directives: array[1..DirectiveCount] of string = (
-    'EQU_', 'OPT_', 'PAGE', 'ORG_', 'RMB_', 'END'  // Direktiven
+    'EQU_', 'OPT_', 'PAGE', 'ORG_', 'RMB_', 'END'  // directives
     );
 procedure MakeIdentTable;
 var
@@ -581,8 +580,7 @@ begin
   Result := TSynValidStringChars;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynHC11Syn.GetLanguageName: string;
+class function TSynHC11Syn.GetLanguageName: string;
 begin
   Result := SYNS_Lang68HC11;
 end;

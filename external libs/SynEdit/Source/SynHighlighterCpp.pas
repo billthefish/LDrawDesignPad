@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterCpp.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterCpp.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -220,10 +220,8 @@ type
     function GetExtTokenID: TxtkTokenKind;
     function GetSampleSource: string; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetCapabilities: TSynHighlighterCapabilities; override;
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetLanguageName: string; override;
+    class function GetCapabilities: TSynHighlighterCapabilities; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
@@ -1912,14 +1910,12 @@ begin
   Result := TSynValidStringChars;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynCppSyn.GetLanguageName: string;
+class function TSynCppSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangCPP;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynCppSyn.GetCapabilities: TSynHighlighterCapabilities;
+class function TSynCppSyn.GetCapabilities: TSynHighlighterCapabilities;
 begin
   Result := inherited GetCapabilities + [hcUserSettings];
 end;

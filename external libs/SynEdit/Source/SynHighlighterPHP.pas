@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterPHP.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterPHP.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -65,7 +65,7 @@ uses
   Classes;
 
 type
-  TtkTokenKind = (tkComment, tkIdentifier, tkInvalidSymbol, tkKey, tkNull,
+  TtkTokenKind = (tkComment, tkIdentifier, tkKey, tkNull,
     tkNumber, tkSpace, tkString, tkSymbol, tkUnknown, tkVariable);
 
   TRangeState = (rsUnKnown, rsString39, rsString34, rsComment, rsVarExpansion);
@@ -90,7 +90,6 @@ type
     fIdentFuncTable: array[0..206] of TIdentFuncTableFunc;
     fCommentAttri: TSynHighlighterAttributes;
     fIdentifierAttri: TSynHighlighterAttributes;
-    fInvalidSymbolAttri: TSynHighlighterAttributes;
     fKeyAttri: TSynHighlighterAttributes;
     fNumberAttri: TSynHighlighterAttributes;
     fSpaceAttri: TSynHighlighterAttributes;
@@ -192,8 +191,7 @@ type
     function GetIdentChars: TSynIdentChars; override;
     function GetSampleSource: string; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
@@ -214,8 +212,6 @@ type
       write fCommentAttri;
     property IdentifierAttri: TSynHighlighterAttributes read fIdentifierAttri
       write fIdentifierAttri;
-    property InvalidSymbolAttri: TSynHighlighterAttributes read fInvalidSymbolAttri
-      write fInvalidSymbolAttri;
     property KeyAttri: TSynHighlighterAttributes read fKeyAttri write fKeyAttri;
     property NumberAttri: TSynHighlighterAttributes read fNumberAttri
       write fNumberAttri;
@@ -658,8 +654,6 @@ begin
   AddAttribute(fCommentAttri);
   fIdentifierAttri := TSynHighlighterAttributes.Create(SYNS_AttrIdentifier);
   AddAttribute(fIdentifierAttri);
-  fInvalidSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrInvalidSymbol);
-  AddAttribute(fInvalidSymbolAttri);
   fKeyAttri := TSynHighlighterAttributes.Create(SYNS_AttrReservedWord);
   fKeyAttri.Style := [fsBold];
   AddAttribute(fKeyAttri);
@@ -712,8 +706,8 @@ end;
 
 procedure TSynPHPSyn.AtSymbolProc;
 begin
-  fTokenID := tkInvalidSymbol;
   inc(Run);
+  fTokenId := tkSymbol;
 end;
 
 procedure TSynPHPSyn.BraceCloseProc;
@@ -1364,7 +1358,6 @@ begin
   case GetTokenID of
     tkComment: Result := fCommentAttri;
     tkIdentifier: Result := fIdentifierAttri;
-    tkInvalidSymbol: Result := fInvalidSymbolAttri;
     tkKey: Result := fKeyAttri;
     tkNumber: Result := fNumberAttri;
     tkSpace: Result := fSpaceAttri;
@@ -1401,8 +1394,7 @@ begin
   Result := TSynValidStringChars;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynPHPSyn.GetLanguageName: string;
+class function TSynPHPSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangPHP;
 end;
@@ -1420,7 +1412,6 @@ begin
             '    $x--;'#13#10+
             '    $x += 1.0;'#13#10+
             '  }'#13#10+
-            '  $number += @; // illegal character'#13#10+
             '}';
 
 end;

@@ -29,13 +29,38 @@ located at http://SynEdit.SourceForge.net
 
 -------------------------------------------------------------------------------}
 {
-@abstract(Provides a URI syntax highlighter for SynEdit)
+@abstract(Provides an URI syntax highlighter for SynEdit)
 @author(Maël Hörz)
 @created(2003)
-@lastmod(2003-05-07)
-The SynHighlighterURI unit provides SynEdit with a URI syntax highlighter.
-
+@lastmod(2003-10-21)
 http://www.mh-net.de.vu
+
+The SynHighlighterURI unit implements an URI syntax highlighter for SynEdit.
+
+Recognition of URIs is based on the information provided in the document
+"Uniform Resource Identifiers (URI): Generic Syntax" of "The Internet Society",
+that can be found at http://www.ietf.org/rfc/rfc2396.txt.
+
+Also interesting is http://www.freesoft.org/CIE/RFC/1738/33.htm which describes
+general URL syntax and major protocols.
+
+these protocols are recognized:
+-------------------------------
+http://
+https://
+ftp://
+mailto:
+news: or news://
+nntp://
+telnet://
+gopher://
+prospero://
+wais://
+
+as well as commonly used shorthands:
+------------------------------------
+someone@somewhere.org
+www.host.org
 }
 
 {$IFNDEF QSYNHIGHLIGHTERURI}
@@ -60,77 +85,89 @@ uses
   Classes;
 
 type
-  TtkTokenKind = (tkIdentifier, tkNull, tkSpace, tkHttpLink, tkFtpLink,
-    tkWebLink, tkMailLink, tkNewsLink, tkUnknown, tkNullChar);
+  TtkTokenKind = (tkNull, tkSpace, tkFtpLink, tkGopherLink,
+    tkHttpLink, tkHttpsLink, tkMailtoLink, tkNewsLink, tkNntpLink,
+    tkProsperoLink, tkTelnetLink, tkWaisLink, tkWebLink, tkUnknown, tkNullChar);
 
   TProcTableProc = procedure of object;
 
   PIdentFuncTableFunc = ^TIdentFuncTableFunc;
   TIdentFuncTableFunc = function: TtkTokenKind of object;
 
-  TURICheckVisitedEvent = procedure (Sender: TObject; const aURI: string;
-    aURIKind: TtkTokenKind; var aVisited: boolean) of object;
+  TAlreadyVisitedURIFunc = function (URI: string): Boolean of object;
 
   TSynURISyn = class(TSynCustomHighlighter)
   private
-    fLineStr: string;
     fLine: PChar;
     fLineNumber: Integer;
+    fLineStr: string;
+    fMayBeProtocol: PChar;
     fProcTable: array[#0..#255] of TProcTableProc;
     Run: LongInt;
-    fTokenPos: Integer;
+    fStringLen: Integer;
     FTokenID: TtkTokenKind;
-    fIdentFuncTable: array[0..145] of TIdentFuncTableFunc;
+    fTokenPos: Integer;
+    fIdentFuncTable: array[0..97] of TIdentFuncTableFunc;
     fIdentifierAttri: TSynHighlighterAttributes;
     fSpaceAttri: TSynHighlighterAttributes;
     fURIAttri: TSynHighlighterAttributes;
     fVisitedURIAttri: TSynHighlighterAttributes;
-    fOnVisitedURICheck: TURICheckVisitedEvent;
-    procedure CRProc;
-    procedure LFProc;
-    procedure NullProc;
-    procedure SpaceProc;
-    procedure UnknownProc;
-    function AltFunc: TtkTokenKind;
+    FAlreadyVisitedURI: TAlreadyVisitedURIFunc;
+
+    function KeyComp(const AKey: string): Boolean;
+    function KeyHash(ToHash: PChar): Integer;
     procedure InitIdent;
     procedure MakeMethodTables;
 
-    procedure CharacterProc;
+    procedure CRProc;
+    procedure LFProc;
+    procedure NullProc;
+    procedure ProtocolProc;
+    procedure SpaceProc;
+    procedure UnknownProc;
 
-    procedure HttpProc;
-    procedure FtpProc;
-    procedure WebProc;
-    procedure MailtoProc;
-    procedure NewsProc;
+    function AltFunc: TtkTokenKind;
+    function FtpFunc: TtkTokenKind;
+    function GopherFunc: TtkTokenKind;
+    function HttpFunc: TtkTokenKind;
+    function HttpsFunc: TtkTokenKind;
+    function MailtoFunc: TtkTokenKind;
+    function NewsFunc: TtkTokenKind;
+    function NntpFunc: TtkTokenKind;
+    function ProsperoFunc: TtkTokenKind;
+    function TelnetFunc: TtkTokenKind;
+    function WaisFunc: TtkTokenKind;
+    function WebFunc: TtkTokenKind;
 
     function IsValidEmailAddress: Boolean;
+    function IsValidURI: Boolean;
+    function IsValidWebLink: Boolean;
+
     procedure SetURIAttri(const Value: TSynHighlighterAttributes);
     procedure SetVisitedURIAttri(const Value: TSynHighlighterAttributes);
   protected
     function GetIdentChars: TSynIdentChars; override;
     function GetSampleSource: string; override;
+    procedure SetAlreadyVisitedURIFunc(Value: TAlreadyVisitedURIFunc);
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
+    function GetDefaultAttribute(Index: Integer): TSynHighlighterAttributes;
       override;
     function GetEol: Boolean; override;
     function GetTokenID: TtkTokenKind;
-    procedure SetLine(NewValue: String; LineNumber: Integer); override;
-    function GetToken: String; override;
+    procedure SetLine(NewValue: string; LineNumber: Integer); override;
+    function GetToken: string; override;
     function GetTokenAttribute: TSynHighlighterAttributes; override;
-    function GetTokenKind: integer; override;
+    function GetTokenKind: Integer; override;
     function GetTokenPos: Integer; override;
     procedure Next; override;
   published
     property URIAttri: TSynHighlighterAttributes read fURIAttri write SetURIAttri;
     property VisitedURIAttri: TSynHighlighterAttributes read fVisitedURIAttri
       write SetVisitedURIAttri;
-    property OnVisitedURICheck: TURICheckVisitedEvent read fOnVisitedURICheck
-      write fOnVisitedURICheck;
   end;
 
 {$IFDEF SYN_COMPILER_3_UP}
@@ -156,6 +193,40 @@ uses
   SynEditStrConst;
 {$ENDIF}
 
+const
+  AlphaNum = ['0'..'9', 'A'..'Z', 'a'..'z'];
+  Mark = ['-', '_', '.', '!', '~', '*', '''', '(' , ')'];
+  Unreserved = Mark + AlphaNum;
+  Reserved = [';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '%', '#'];
+  URIChars = Reserved + Unreserved;
+  NeverAtEnd = Mark - [''''] + Reserved - ['/', '$'];
+
+var
+  HashTable: array[#0..#255] of Integer;
+
+procedure MakeHashTable;
+var
+  c: Char;
+  u: Byte;
+begin
+  FillChar(HashTable, sizeof(HashTable), 0);
+
+  for c := 'A' to 'Z' do
+  begin
+    u := Ord(UpCase(c));
+    HashTable[c] := (u * u - 64) div 771;
+  end;
+
+  for c := 'a' to 'z' do
+  begin
+    u := Ord(UpCase(c));
+    HashTable[c] := (u * u - 64) div 771;
+  end;
+
+  HashTable[':'] := HashTable['Z'] + 1;
+  HashTable['/'] := HashTable['Z'] + 2;
+end;
+
 procedure TSynURISyn.InitIdent;
 var
   I: Integer;
@@ -166,11 +237,66 @@ begin
     pF^ := AltFunc;
     Inc(pF);
   end;
+
+  fIdentFuncTable[27] := WebFunc;
+  fIdentFuncTable[41] := NewsFunc;
+  fIdentFuncTable[53] := MailtoFunc;
+  fIdentFuncTable[58] := FtpFunc;
+  fIdentFuncTable[63] := WaisFunc;
+  fIdentFuncTable[65] := NewsFunc;
+  fIdentFuncTable[66] := NntpFunc;
+  fIdentFuncTable[67] := HttpFunc;
+  fIdentFuncTable[77] := GopherFunc;
+  fIdentFuncTable[79] := TelnetFunc;
+  fIdentFuncTable[75] := HttpsFunc;
+  fIdentFuncTable[97] := ProsperoFunc;
+end;
+
+function TSynURISyn.KeyComp(const AKey: string): Boolean;
+var
+  I: Integer;
+begin
+  Result := True;
+  for I := 1 to fStringLen do
+    if HashTable[fMayBeProtocol[I - 1]] <> HashTable[aKey[I]] then
+    begin
+      Result := False;
+      break;
+    end;
+end;
+
+function TSynURISyn.KeyHash(ToHash: PChar): Integer;
+begin
+  Result := 0;
+  while ToHash^ in ['A'..'Z', 'a'..'z'] do
+  begin
+    inc(Result, HashTable[ToHash^]);
+    inc(ToHash);
+  end;
+
+  if ToHash^ = ':' then
+  begin
+    inc(Result, HashTable[ToHash^]);
+    inc(ToHash);
+
+    if ToHash^ = '/' then
+    begin
+      inc(Result, HashTable[ToHash^]);
+      inc(ToHash);
+
+      if ToHash^ = '/' then
+      begin
+        inc(Result, HashTable[ToHash^]);
+        inc(ToHash);
+      end;
+    end;
+  end;
+  fStringLen := ToHash - fMayBeProtocol;
 end;
 
 function TSynURISyn.AltFunc: TtkTokenKind;
 begin
-  Result := tkIdentifier;
+  Result := tkUnknown;
 end;
 
 procedure TSynURISyn.MakeMethodTables;
@@ -183,7 +309,7 @@ begin
       #10: fProcTable[I] := LFProc;
       #0: fProcTable[I] := NullProc;
       #1..#9, #11, #12, #14..#32: fProcTable[I] := SpaceProc;
-      '_', 'A'..'Z', 'a'..'z', '0'..'9': fProcTable[I] := CharacterProc;
+      'A'..'Z', 'a'..'z': fProcTable[I] := ProtocolProc;
     else
       fProcTable[I] := UnknownProc;
     end;
@@ -219,7 +345,7 @@ begin
   fIdentifierAttri.Free;
 end;
 
-procedure TSynURISyn.SetLine(NewValue: String; LineNumber: Integer);
+procedure TSynURISyn.SetLine(NewValue: string; LineNumber: Integer);
 begin
   fLineStr := NewValue;
   fLine := PChar(NewValue);
@@ -278,7 +404,7 @@ begin
   fProcTable[fLine[Run]];
 end;
 
-function TSynURISyn.GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
+function TSynURISyn.GetDefaultAttribute(Index: Integer): TSynHighlighterAttributes;
 begin
   case Index of
     SYN_ATTR_IDENTIFIER: Result := fIdentifierAttri;
@@ -296,37 +422,25 @@ begin
 end;
 
 function TSynURISyn.GetToken: String;
-const
-  SpaceChar: Char = ' ';
 var
   Len: LongInt;
 begin
   Len := Run - fTokenPos;
-  if fTokenID <> tkNullChar then
-    SetString(Result, (FLine + fTokenPos), Len)
-  else
-    SetString(Result, PChar(@SpaceChar), Len);
-end;
-
-function TSynURISyn.GetTokenID: TtkTokenKind;
-begin
-  Result := fTokenId;
+  SetString(Result, (FLine + fTokenPos), Len);
 end;
 
 function TSynURISyn.GetTokenAttribute: TSynHighlighterAttributes;
 var
-  iVisited: boolean;
+  Visited: Boolean;
 begin
   case GetTokenID of
-    tkIdentifier: Result := fIdentifierAttri;
     tkSpace: Result := fSpaceAttri;
-    tkHttpLink, tkFtpLink, tkWebLink, tkMailLink, tkNewsLink:
+    tkHttpLink, tkFtpLink, tkWebLink, tkMailtoLink, tkNewsLink:
     begin
-      iVisited := False;
-      //todo: try to avoid the call to GetToken
-      if Assigned(OnVisitedURICheck) then
-        OnVisitedURICheck( Self, GetToken, fTokenId, iVisited ); 
-      if iVisited then
+      Visited := False;
+      if Assigned(FAlreadyVisitedURI) then
+        Visited := FAlreadyVisitedURI(GetToken);
+      if Visited then
         Result := fVisitedURIAttri
       else
         Result := fURIAttri;
@@ -336,7 +450,12 @@ begin
   end;
 end;
 
-function TSynURISyn.GetTokenKind: integer;
+function TSynURISyn.GetTokenID: TtkTokenKind;
+begin
+  Result := fTokenId;
+end;
+
+function TSynURISyn.GetTokenKind: Integer;
 begin
   Result := Ord(fTokenId);
 end;
@@ -351,8 +470,7 @@ begin
   Result := TSynValidStringChars + [#0];
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynURISyn.GetLanguageName: string;
+class function TSynURISyn.GetLanguageName: string;
 begin
   Result := SYNS_LangURI;
 end;
@@ -368,173 +486,229 @@ begin
             'news:comp.lang.pascal.borland';
 end;
 
-procedure TSynURISyn.CharacterProc;
+procedure TSynURISyn.SetAlreadyVisitedURIFunc(Value: TAlreadyVisitedURIFunc);
 begin
-  if IsValidEmailAddress then
-    fTokenID := tkMailLink
-  else
-  begin
-    case fLine[Run] of
-      'h', 'H': HttpProc;
-      'f', 'F': FtpProc;
-      'w', 'W': WebProc;
-      'm', 'M': MailtoProc;
-      'n', 'N': NewsProc;
-      else
-      begin
-        inc(Run);
-        fTokenID := tkUnknown
-      end
-    end
-  end;
+  FAlreadyVisitedURI := Value;
 end;
 
-procedure TSynURISyn.HttpProc;
-var
-  StartPos: Integer;
+procedure TSynURISyn.SetURIAttri(const Value: TSynHighlighterAttributes);
 begin
-  StartPos := Run;
-  repeat
-    Inc(Run);
-  until not(fLine[Run] in ['a'..'z', 'A'..'Z', '0'..'9',
-                           '@', '.', ':', '-', '_', '/',
-                           '~', '%', '?', '&', '=', '+']);
-
-  if (fLine[Run - 1] = '.') or (fLine[Run - 1] = ':') then Dec(Run);
-
-  // startpos + 1 because copy starts with 1 and not 0
-  if (Run - StartPos > 7) and (LowerCase(copy(fLine, StartPos + 1, 7)) = 'http://') then
-    fTokenID := tkHttpLink
-  else
-    fTokenID := tkUnknown;
+  fURIAttri.Assign(Value);
 end;
 
-procedure TSynURISyn.FtpProc;
-var
-  StartPos: Integer;
+procedure TSynURISyn.SetVisitedURIAttri(const Value: TSynHighlighterAttributes);
 begin
-  StartPos := Run;
-  repeat
-    Inc(Run);
-  until not(fLine[Run] in ['a'..'z', 'A'..'Z', '0'..'9',
-                           '@', '.', ':', '-', '_', '/', '~', '%']);
-  if (fLine[Run - 1] = '.') or (fLine[Run - 1] = ':') then Dec(Run);
-
-  // startpos + 1 because copy starts with 1 and not 0
-  if (Run - StartPos > 6) and (LowerCase(copy(fLine, StartPos + 1, 6)) = 'ftp://') then
-    fTokenID := tkFtpLink
-  else
-    fTokenID := tkUnknown;
-end;
-
-procedure TSynURISyn.WebProc;
-var
-  StartPos: Integer;
-begin
-  StartPos := Run;
-  repeat
-    Inc(Run);
-  until not(fLine[Run] in ['a'..'z', 'A'..'Z', '0'..'9',
-                           '@', '.', '-', '_', '/',
-                           '~', '%', '?', '&', '=', '+']);
-  if (fLine[Run - 1] = '.') or (fLine[Run - 1] = ':') then Dec(Run);
-
-  // startpos + 1 because copy starts with 1 and not 0
-  if (Run - StartPos > 4) and (LowerCase(copy(fLine, StartPos + 1, 4)) = 'www.') then
-    fTokenID := tkWebLink
-  else
-    fTokenID := tkUnknown;
-end;
-
-procedure TSynURISyn.MailtoProc;
-var
-  StartPos: Integer;
-begin
-  StartPos := Run;
-  repeat
-    Inc(Run);
-  until not(fLine[Run] in ['a'..'z', 'A'..'Z', '0'..'9', '@', '.', ':', '-', '_']);
-  if fLine[Run - 1] = '.' then Dec(Run);
-
-  // startpos + 1 because copy starts with 1 and not 0
-  if (Run - StartPos > 7) and (LowerCase(copy(fLine, StartPos + 1, 7)) = 'mailto:') then
-    fTokenID := tkMailLink
-  else
-    fTokenID := tkUnknown;
-end;
-
-procedure TSynURISyn.NewsProc;
-var
-  StartPos, DotPos: Integer;
-begin
-  StartPos := Run;
-  DotPos := -1;
-  repeat
-    if fLine[Run] = '.' then
-      DotPos := Run;
-    Inc(Run);
-  until not(fLine[Run] in ['a'..'z', 'A'..'Z', '0'..'9', '.', ':', '/', '-', '_']);
-
-  if DotPos = Run - 1 then
-  begin
-    repeat
-      Dec(DotPos);
-    until (fLine[DotPos] = '.') or (DotPos = -1);
-    Dec(Run);
-  end;
-
-  // startpos + 1 because copy starts with 1 and not 0
-  if (Run - StartPos > 5) and (DotPos > StartPos + 5) and
-    (LowerCase(copy(fLine, StartPos + 1, 5)) = 'news:') and
-    (fLine[StartPos + 5] <> '/') and (fLine[StartPos + 6] <> '/') then
-    fTokenID := tkNewsLink
-  else if (Run - StartPos > 7) and (DotPos > StartPos + 7) and
-    (LowerCase(copy(fLine, StartPos + 1, 7)) = 'news://') then
-    fTokenID := tkNewsLink
-  else
-    fTokenID := tkUnknown;
+  fVisitedURIAttri.Assign(Value);
 end;
 
 function TSynURISyn.IsValidEmailAddress: Boolean;
 var
   StartPos, AtPos, DotPos: Integer;
-begin
+begin     
   StartPos := Run;
-  AtPos := StartPos;
+
+  AtPos := -1;
   DotPos := -1;
-  repeat
+  while fLine[Run] in URIChars do
+  begin
     if fLine[Run] = '@' then
       AtPos := Run
     else if fLine[Run] = '.' then
-       DotPos := Run;
+      // reject array of dots: "neighbour" dots are not allowed
+      if (DotPos >= 0) and (DotPos = Run - 1) then
+        break
+      else
+        DotPos := Run;
     Inc(Run);
-  until not(fLine[Run] in ['a'..'z', 'A'..'Z', '0'..'9', '@', '.', '-', '_']);
-
-  if DotPos = Run - 1 then
-  begin
-    repeat
-      Dec(DotPos);
-    until (fLine[DotPos] = '.') or (DotPos = -1);
-    Dec(Run);
   end;
+
+  while (Run > StartPos) and (fLine[Run - 1] in NeverAtEnd) do
+    dec(Run);
+
+  while (DotPos >= Run) or (DotPos > -1) and (fLine[DotPos] <> '.') do
+    Dec(DotPos);
 
   Result := (StartPos < AtPos) and (AtPos < Run - 1) and (DotPos > AtPos + 1);
   if not Result then Run := StartPos;
 end;
 
-procedure TSynURISyn.SetURIAttri(const Value: TSynHighlighterAttributes);
+function TSynURISyn.IsValidURI: Boolean;
+var
+  ProtocolEndPos, DotPos: Integer;
+
+  function IsRelativePath: Boolean;
+  begin
+    Result := (DotPos - 1 >= 0) and
+      ((fLine[DotPos - 1] = '/') and (fLine[DotPos + 2] = '/')) or
+      ((fLine[DotPos - 1] = '\') and (fLine[DotPos + 2] = '\'));
+  end;
+
 begin
-  fURIAttri.Assign( Value );
+  ProtocolEndPos := Run;
+
+  DotPos := -1;
+  while fLine[Run] in URIChars do
+  begin
+    if fLine[Run] = '.' then
+      // reject array of dots: "neighbour" dots are not allowed
+      if (DotPos >= 0) and (DotPos = Run - 1) and not IsRelativePath then
+        break
+      else
+        DotPos := Run;
+    inc(Run);
+  end;
+
+  while (Run > ProtocolEndPos) and (fLine[Run - 1] in NeverAtEnd) do
+    dec(Run);
+
+  Result := Run > ProtocolEndPos;
 end;
 
-procedure TSynURISyn.SetVisitedURIAttri(
-  const Value: TSynHighlighterAttributes);
+function TSynURISyn.IsValidWebLink: Boolean;
+var
+  WWWEndPos, DotPos: Integer;
+
+  function IsRelativePath: Boolean;
+  begin
+    Result := (DotPos - 1 >= 0) and
+      ((fLine[DotPos - 1] = '/') and (fLine[DotPos + 2] = '/')) or
+      ((fLine[DotPos - 1] = '\') and (fLine[DotPos + 2] = '\'));
+  end;
+
 begin
-  fVisitedURIAttri.Assign( Value );
+  WWWEndPos := Run;
+
+  DotPos := -1;
+  while fLine[Run] in URIChars do
+  begin
+    if fLine[Run] = '.' then
+      // reject array of dots: "neighbour" dots are not allowed
+      if (DotPos >= 0) and (DotPos = Run - 1) and not IsRelativePath then
+        break
+      else
+        DotPos := Run;
+    inc(Run);
+  end;
+
+  while (Run > WWWEndPos) and (fLine[Run - 1] in NeverAtEnd) do
+    dec(Run);
+
+  Result := (Run > WWWEndPos) and (fLine[WWWEndPos] = '.') and
+            (DotPos > WWWEndPos + 1) and (DotPos < Run);
 end;
+
+procedure TSynURISyn.ProtocolProc;
+var
+  HashKey: Integer;
+begin
+  if IsValidEmailAddress then
+    fTokenID := tkMailtoLink
+  else
+  begin
+    fMayBeProtocol := fLine + Run;
+    HashKey := KeyHash(fMayBeProtocol);
+    inc(Run, fStringLen);
+
+    if HashKey <= 97 then
+      fTokenID := fIdentFuncTable[HashKey]
+    else
+      fTokenID := tkUnknown;
+  end;
+end;
+
+function TSynURISyn.FtpFunc: TtkTokenKind;
+begin
+  if KeyComp('ftp://') and IsValidURI then
+    Result := tkFtpLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.GopherFunc: TtkTokenKind;
+begin
+  if KeyComp('gopher://') and IsValidURI then
+    Result := tkGopherLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.HttpFunc: TtkTokenKind;
+begin
+  if KeyComp('http://') and IsValidURI then
+    Result := tkHttpLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.HttpsFunc: TtkTokenKind;
+begin
+  if KeyComp('https://') and IsValidURI then
+    Result := tkHttpsLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.MailtoFunc: TtkTokenKind;
+begin
+  if KeyComp('mailto:') and IsValidURI then
+    Result := tkMailtoLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.NewsFunc: TtkTokenKind;
+begin
+  if KeyComp('news:') and IsValidURI then
+    Result := tkNewsLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.NntpFunc: TtkTokenKind;
+begin
+  if KeyComp('nntp://') and IsValidURI then
+    Result := tkNntpLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.ProsperoFunc: TtkTokenKind;
+begin
+  if KeyComp('prospero://') and IsValidURI then
+    Result := tkProsperoLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.TelnetFunc: TtkTokenKind;
+begin
+  if KeyComp('telnet://') and IsValidURI then
+    Result := tkTelnetLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.WaisFunc: TtkTokenKind;
+begin
+  if KeyComp('wais://') and IsValidURI then
+    Result := tkWaisLink
+  else
+    Result := tkUnknown;
+end;
+
+function TSynURISyn.WebFunc: TtkTokenKind;
+begin
+  if KeyComp('www') and IsValidWebLink then
+    Result := tkWebLink
+  else
+    Result := tkUnknown;
+end;
+
 
 initialization
+  MakeHashTable;
 {$IFNDEF SYN_CPPB_1}
   RegisterPlaceableHighlighter(TSynURISyn);
 {$ENDIF}
 end.
+

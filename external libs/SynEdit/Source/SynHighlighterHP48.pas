@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterHP48.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterHP48.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -165,8 +165,7 @@ type
     function GetAttribCount: integer; override;
     function GetAttribute(idx: integer): TSynHighlighterAttributes; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -905,8 +904,7 @@ begin // sorted by name
     Result := nil;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynHP48Syn.GetLanguageName: string;
+class function TSynHP48Syn.GetLanguageName: string;
 begin
   Result := SYNS_LangHP48;
 end;

@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterMsg.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterMsg.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -128,8 +128,7 @@ type
     function IsFilterStored: Boolean; override;
   public
     constructor Create(AOwner: TComponent); override;
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
     function GetRange: Pointer; override;
     procedure ResetRange; override;
     procedure SetRange(Value: Pointer); override;
@@ -566,8 +565,7 @@ begin
   Result := fDefaultFilter <> SYNS_FilterSynGenMsgfiles;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynMsgSyn.GetLanguageName: string;
+class function TSynMsgSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangSynGenMsgfiles;
 end;

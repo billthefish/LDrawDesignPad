@@ -184,10 +184,8 @@ type
 		function GetIdentChars: TSynIdentChars; override;
 		function GetExtTokenID: TxtkTokenKind;
   public
-	{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetCapabilities: TSynHighlighterCapabilities; override;
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-  	function GetLanguageName: string; override;
+	  class function GetCapabilities: TSynHighlighterCapabilities; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
@@ -1234,14 +1232,12 @@ begin
   Result := ['_', '0'..'9', 'a'..'z', 'A'..'Z'];
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynHaskellSyn.GetLanguageName: string;
+class function TSynHaskellSyn.GetLanguageName: string;
 begin
   Result := 'Haskell';
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynHaskellSyn.GetCapabilities: TSynHighlighterCapabilities;
+class function TSynHaskellSyn.GetCapabilities: TSynHighlighterCapabilities;
 begin
   Result := inherited GetCapabilities + [hcUserSettings];
 end;

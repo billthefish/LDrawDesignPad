@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterGWS.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterGWS.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -171,10 +171,7 @@ Type
     public
       constructor Create(AOwner: TComponent); override;
 
-      {$IFNDEF SYN_CPPB_1} class {$ENDIF}   
-      function GetLanguageName: string; override;
-      {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-      function GetCapabilities: TSynHighlighterCapabilities; override;
+      class function GetLanguageName: string; override;
       function GetDefaultAttribute (Index: integer): TSynHighlighterAttributes; override;
 
       function GetEol: Boolean; override;
@@ -188,7 +185,6 @@ Type
       procedure Next; override;
       procedure SetRange(Value: Pointer); override;
       procedure ReSetRange; override;
-      function UseUserSettings(settingIndex: integer): boolean; override;
 
       property ExtTokenID: TxtkTokenKind read GetExtTokenID;
 
@@ -1042,85 +1038,14 @@ begin
   fRange := TRangeState(Value);
 end;
 
-function TSynGWScriptSyn.UseUserSettings(settingIndex: integer): boolean;
-
-  function ReadGWSSettings (settingIndex: integer) : boolean;
-    var
-      tmpStringAttri    : TSynHighlighterAttributes;
-      tmpNumberAttri    : TSynHighlighterAttributes;
-      tmpKeyAttri       : TSynHighlighterAttributes;
-      tmpSymbolAttri    : TSynHighlighterAttributes;
-      tmpAsmAttri       : TSynHighlighterAttributes;
-      tmpCommentAttri   : TSynHighlighterAttributes;
-      tmpIdentifierAttri: TSynHighlighterAttributes;
-      tmpInvalidAttri   : TSynHighlighterAttributes;
-      tmpSpaceAttri     : TSynHighlighterAttributes;
-      tmpDirecAttri     : TSynHighlighterAttributes;
-      s                 : TStringList;
-    begin
-      s := TStringList.Create;
-      try
-          Result := true;
-          tmpStringAttri    := TSynHighlighterAttributes.Create('');
-          tmpNumberAttri    := TSynHighlighterAttributes.Create('');
-          tmpKeyAttri       := TSynHighlighterAttributes.Create('');
-          tmpSymbolAttri    := TSynHighlighterAttributes.Create('');
-          tmpAsmAttri       := TSynHighlighterAttributes.Create('');
-          tmpCommentAttri   := TSynHighlighterAttributes.Create('');
-          tmpIdentifierAttri:= TSynHighlighterAttributes.Create('');
-          tmpInvalidAttri   := TSynHighlighterAttributes.Create('');
-          tmpSpaceAttri     := TSynHighlighterAttributes.Create('');
-          tmpDirecAttri     := TSynHighlighterAttributes.Create('');
-          tmpStringAttri    .Assign(fStringAttri);
-          tmpNumberAttri    .Assign(fNumberAttri);
-          tmpKeyAttri       .Assign(fKeyAttri);
-          tmpSymbolAttri    .Assign(fSymbolAttri);
-          tmpCommentAttri   .Assign(fCommentAttri);
-          tmpIdentifierAttri.Assign(fIdentifierAttri);
-          tmpInvalidAttri   .Assign(fInvalidAttri);
-          tmpSpaceAttri     .Assign(fSpaceAttri);
-          fStringAttri    .Assign(tmpStringAttri);
-          fNumberAttri    .Assign(tmpNumberAttri);
-          fKeyAttri       .Assign(tmpKeyAttri);
-          fSymbolAttri    .Assign(tmpSymbolAttri);
-          fCommentAttri   .Assign(tmpCommentAttri);
-          fIdentifierAttri.Assign(tmpIdentifierAttri);
-          fInvalidAttri   .Assign(tmpInvalidAttri);
-          fSpaceAttri     .Assign(tmpSpaceAttri);
-          tmpStringAttri    .Free;
-          tmpNumberAttri    .Free;
-          tmpKeyAttri       .Free;
-          tmpSymbolAttri    .Free;
-          tmpAsmAttri       .Free;
-          tmpCommentAttri   .Free;
-          tmpIdentifierAttri.Free;
-          tmpInvalidAttri   .Free;
-          tmpSpaceAttri     .Free;
-          tmpDirecAttri     .Free;
-        finally
-          s.Free;
-        end;
-      end;
-
-  begin
-    Result := ReadGWSSettings (settingIndex);
-  end;
-
 function TSynGWScriptSyn.GetIdentChars: TSynIdentChars;
 begin
   Result := TSynValidStringChars;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynGWScriptSyn.GetLanguageName: string;
+class function TSynGWScriptSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangGWS;
-end;
-
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynGWScriptSyn.GetCapabilities: TSynHighlighterCapabilities;
-begin
-  Result := inherited GetCapabilities + [hcUserSettings];
 end;
 
 function TSynGWScriptSyn.GetDefaultAttribute (Index: integer): TSynHighlighterAttributes;
