@@ -558,6 +558,9 @@ object frMain: TfrMain
         object UpdateHeader1: TMenuItem
           Action = acInsertUpdateLine
         end
+        object BFCStatement2: TMenuItem
+          Action = acInsertBFC
+        end
       end
       object ExternalPrograms1: TMenuItem
         Caption = 'External Programs'
@@ -2072,6 +2075,9 @@ object frMain: TfrMain
     end
     object InlinePart1: TMenuItem
       Action = acInline
+    end
+    object ReverseWinding2: TMenuItem
+      Action = acReverseWinding
     end
     object N9: TMenuItem
       Caption = '-'

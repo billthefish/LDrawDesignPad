@@ -294,7 +294,9 @@ var
 begin
   LDDPini := TMemIniFile.Create(IniFileName);
   LDDPini.EraseSection(IniSection);
-  LDDPini.WriteString(IniSection, 'edLDVeiwDir_Text', edLDViewDir.Text);
+  if frOptions.edLDrawDir.Text <> '' then
+    LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
+  LDDPini.WriteString(IniSection, 'edLDViewDir_Text', edLDViewDir.Text);
   LDDPini.WriteString(IniSection, 'edL3PDir_Text', edL3PDir.Text);
   LDDPini.WriteString(IniSection, 'edMLCadDir_Text', edMLCadDir.Text);
   LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
@@ -321,6 +323,7 @@ var
 
 begin
   LDDPini := TMemIniFile.Create(IniFileName);
+  edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory', '');
   edLDViewDir.Text := LDDPini.ReadString(IniSection, 'edLDViewDir_Text', '');
   edL3PDir.Text := LDDPini.ReadString(IniSection, 'edL3PDir_Text', '');
   edMLCadDir.Text := LDDPini.ReadString(IniSection, 'edMLCadDir_Text', '');
