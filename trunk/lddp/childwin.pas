@@ -225,8 +225,8 @@ var
    L3PErrorLine: Integer;
 begin
     // Set current postion to errorline
-    L3PErrorLine := StrToInt( Copy(lbinfo.Items[lbinfo.Itemindex], 19,
-                                   pos(':',lbinfo.Items[lbinfo.Itemindex])-19) );
+    L3PErrorLine := StrToInt( Copy(lbinfo.Items[lbinfo.Itemindex], 15,
+                                   pos(':',lbinfo.Items[lbinfo.Itemindex])-15) );
     memo.TopLine := L3PErrorLine;
     memo.CaretXY := Point(1, L3PErrorLine);
 

@@ -78,7 +78,7 @@ type
       procedure Delete(Index: Integer);
       procedure InlinePart(Index: Integer);
       procedure InlineAll;
-      function IndexOfLine(strLine: string): Integer;
+      function IndexOfLine(strLine: string; StartIndex: Integer = 0): Integer;
       procedure AddLines(ModelObj: TDATModel; Index: Integer = -1);
 
       procedure Add(strLine: string); overload; override;
@@ -408,10 +408,10 @@ begin
       inc(i);
 end;
 
-function TDATModel.IndexOfLine(strLine: string): Integer;
+function TDATModel.IndexOfLine(strLine: string; StartIndex: Integer = 0): Integer;
 
 begin
-  Result := 0;
+  Result := StartIndex;
   while Result < Count do
   begin
     if Lines[Result].DATString = strLine then
