@@ -104,6 +104,11 @@ begin
        (MessageDlg('File has been changed outside the editor!'+#13+#10+'Reload and loose all changes?', mtWarning, [mbYes, mbNo], 0)=mrYes) then
         begin
           Memo.Lines.LoadFromFile(caption);
+          FindFirst(caption, faAnyFile, SR);
+          {$ifdef MSWINDOWS}
+          filedatetime:=frMain.FileAccessDateToDateTime(SR.FindData.ftLastWriteTime);
+          {$endif}
+          FindClose(sr);
           Memo.modified:=false;
           updatecontrols;
         end;
