@@ -227,14 +227,23 @@ end;
 
 procedure TfrOptions.edParametersButtonClick(Sender: TObject);
 begin
-  MessageDlg('You can use the following parameters:'+#13#10+'%0 will be replaced by the path and filename of the file you are '+#13+#10+'just editing,'+#13+#10+'%1 is replaced by the path only,'+#13+#10+'%2 will be replaced by the file-name only (without extension),'+#13+#10+'%3 is used a place holder for the path and the filename without '+#13+#10+'extension.'+#13+#10+'%4, %5, %6, %7 are the same as %0 to %3 except they use the short'+#13+#10+'form for paths and file-names that means the 8.3 notation of MS-DOS.', mtInformation, [mbOK], 0);
+  MessageDlg('You can use the following parameters:'+#13#10+
+    '%0 will be replaced by the path and filename of the file you are '+#13+#10+
+    'just editing,'+#13+#10+'%1 is replaced by the path only,'+#13+#10+
+    '%2 will be replaced by the file-name only (without extension),'+#13+#10+
+    '%3 is used a place holder for the path and the filename without '+#13+#10+
+    'extension.'+#13+#10+'%4, %5, %6, %7 are the same as %0 to %3 except they use the short'+
+    #13+#10+'form for paths and file-names that means the 8.3 notation of MS-DOS.',
+    mtInformation, [mbOK], 0);
 end;
 
 procedure TfrOptions.cblPluginsClickCheck(Sender: TObject);
 var pth:string;
 begin
-  if frOptions.cblPlugins.checked[frOptions.cblPlugins.Itemindex] then pth:=ExtractFIlePath(paramstr(0))+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dld'
-    else pth:=ExtractFIlePath(paramstr(0))+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dll';
+  if frOptions.cblPlugins.checked[frOptions.cblPlugins.Itemindex] then
+    pth:=ExtractFIlePath(paramstr(0))+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dld'
+  else
+    pth:=ExtractFIlePath(paramstr(0))+'Plugins\'+copy(frOptions.cblPlugins.items[frOptions.cblplugins.Itemindex],1,pos(' -',frOptions.cblPlugins.items[frOptions.cblPlugins.Itemindex])-1)+'.dll';
   if (ExtractfileExt(pth)='.dll') then begin
     RenameFile(pth,copy(pth,1,length(pth)-length(extractFileExt(pth)))+'.dld');
     frOptions.cblPlugins.checked[frOptions.cblPlugins.Itemindex]:=false;

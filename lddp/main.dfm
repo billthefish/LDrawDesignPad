@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 194
-  Top = 163
+  Left = 301
+  Top = 439
   Width = 819
   Height = 441
   Caption = 'LDDesignPad for LDraw'
@@ -16,13 +16,13 @@ object frMain: TfrMain
   Position = poDefault
   WindowMenu = Window1
   OnCreate = FormCreate
-  OnDblClick = acFileOpenExecute
+  OnDblClick = FormDblClick
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 376
+    Top = 368
     Width = 811
     Height = 19
     AutoHint = True
@@ -39,7 +39,6 @@ object frMain: TfrMain
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -171,7 +170,7 @@ object frMain: TfrMain
       object ToolButton28: TToolButton
         Left = 97
         Top = 0
-        Action = acPrint
+        Action = acFilePrint
       end
     end
     object ToolBar3: TToolBar
@@ -363,8 +362,8 @@ object frMain: TfrMain
   object MainMenu1: TMainMenu
     AutoHotkeys = maManual
     Images = ilToolBarColor
-    Left = 40
-    Top = 344
+    Left = 8
+    Top = 336
     object File1: TMenuItem
       Caption = '&File'
       Hint = 'File Commands'
@@ -386,7 +385,7 @@ object frMain: TfrMain
         Action = acFileSaveAs
       end
       object Print1: TMenuItem
-        Action = acPrint
+        Action = acFilePrint
       end
       object Revert1: TMenuItem
         Action = acFileRevert
@@ -565,20 +564,10 @@ object frMain: TfrMain
       end
     end
   end
-  object OpenDialog: TOpenDialog
-    DefaultExt = 'dat'
-    Filter = 
-      'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
-      'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
-    Options = [ofHideReadOnly, ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
-    Title = 'Choose LDraw File...'
-    Left = 8
-    Top = 344
-  end
   object ActionList1: TActionList
     Images = ilToolBarColor
-    Left = 72
-    Top = 344
+    Left = 40
+    Top = 336
     object acFileNew: TAction
       Category = 'File'
       Caption = '&New'
@@ -587,13 +576,19 @@ object frMain: TfrMain
       ShortCut = 16462
       OnExecute = acFileNewExecute
     end
-    object acFileOpen: TAction
+    object acFileOpen: TFileOpen
       Category = 'File'
-      Caption = 'O&pen'
+      Caption = '&Open'
+      Dialog.DefaultExt = 'dat'
+      Dialog.Filter = 
+        'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
+        'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
+      Dialog.Options = [ofHideReadOnly, ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
+      Dialog.Title = 'Choose LDraw File...'
       Hint = 'Open|Open a file'
       ImageIndex = 7
       ShortCut = 16463
-      OnExecute = acFileOpenExecute
+      OnAccept = acFileOpenAccept
     end
     object acFileClose: TWindowClose
       Category = 'File'
@@ -608,12 +603,19 @@ object frMain: TfrMain
       ShortCut = 16467
       OnExecute = acFileSaveExecute
     end
-    object acFileSaveAs: TAction
+    object acFileSaveAs: TFileSaveAs
       Category = 'File'
-      Caption = 'Save &as...'
-      Hint = 'Save as..|Save Current File as...'
+      Caption = 'Save &As'
+      Dialog.DefaultExt = 'dat'
+      Dialog.Filter = 
+        'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
+        '.*)|*.*'
+      Dialog.Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
+      Dialog.Title = 'Save File as...'
+      Hint = 'Save As|Saves the active file with a new name'
       ImageIndex = 18
-      OnExecute = acFileSaveAsExecute
+      BeforeExecute = acFileSaveAsBeforeExecute
+      OnAccept = acFileSaveAsAccept
     end
     object acFileExit: TAction
       Category = 'File'
@@ -808,12 +810,6 @@ object frMain: TfrMain
       ShortCut = 16449
       OnExecute = acSelectAllExecute
     end
-    object acPrint: TAction
-      Category = 'File'
-      Caption = 'P&rint'
-      ImageIndex = 36
-      OnExecute = acPrintExecute
-    end
     object acFindNext: TAction
       Category = 'Search'
       Caption = 'Find Next...'
@@ -880,35 +876,40 @@ object frMain: TfrMain
       OnExecute = acExternalsToolbarExecute
       OnUpdate = acToolbarUpdate
     end
+    object acFilePrint: TPrintDlg
+      Category = 'File'
+      Caption = '&Print'
+      ImageIndex = 36
+      ShortCut = 16464
+      OnAccept = acFilePrintAccept
+    end
   end
   object MRUManager: TJvMRUManager
     Duplicates = dupIgnore
+    Mode = rmAppend
     RemoveOnSelect = True
     IniStorage = fstMain
     RecentMenu = LastOpen1
     OnClick = MRUManagerClick
-    Left = 104
-    Top = 344
+    Left = 72
+    Top = 336
   end
   object fstMain: TJvFormStorage
-    IniFileName = 'Software\Waterproof Productions\LDDesignPad'
+    Active = False
     Options = []
-    UseRegistry = True
-    StoredProps.Strings = (
-      'OpenDialog.InitialDir')
     StoredValues = <
       item
         Value = ''
         KeyString = 'InstallPath'
       end>
-    Left = 136
-    Top = 344
+    Left = 104
+    Top = 336
   end
   object ilToolBarColor: TImageList
-    Left = 168
-    Top = 344
+    Left = 136
+    Top = 336
     Bitmap = {
-      494C010126002700040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010126002700040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000004221
       2100422121004221210000000000000000000000000000000000424242004242
@@ -2232,25 +2233,14 @@ object frMain: TfrMain
       FC01FE008000FFFFFC40FE000000FFFFFC40FE000000FFFFFC1980000000FFF7
       F80380000001C1F7F00F80000003C3FBE03F80000003C7FBC07F80010003CBFB
       80FF80030003DCF701FF80070003FF0F03FF807F0003FFFF87FF80FF8007FFFF
-      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
-      000000000000}
-  end
-  object SaveDialog: TSaveDialog
-    DefaultExt = 'dat'
-    Filter = 
-      'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
-      '.*)|*.*'
-    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
-    Title = 'Save File as...'
-    Left = 200
-    Top = 344
+      CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF}
   end
   object pmMemo: TPopupMenu
     AutoHotkeys = maManual
     Images = ilToolBarColor
     MenuAnimation = [maLeftToRight]
-    Left = 232
-    Top = 344
+    Left = 168
+    Top = 336
     object Cut1: TMenuItem
       Action = acEditCut
     end
@@ -2328,12 +2318,12 @@ object frMain: TfrMain
     MultiThreaded = False
     SocksLevel = '5'
     SocksAuthentication = socksNoAuthentication
-    Left = 264
-    Top = 344
+    Left = 200
+    Top = 336
   end
   object pmPolling: TPopupMenu
-    Left = 296
-    Top = 344
+    Left = 232
+    Top = 336
     object mnPollL3Lab: TMenuItem
       Caption = 'Poll to L3Lab && LDView'
       GroupIndex = 1
@@ -2371,13 +2361,13 @@ object frMain: TfrMain
   object tmPoll: TTimer
     Interval = 3000
     OnTimer = tmPollTimer
-    Left = 328
-    Top = 344
+    Left = 264
+    Top = 336
   end
   object pmL3P: TPopupMenu
     OnPopup = pmL3PPopup
-    Left = 392
-    Top = 344
+    Left = 328
+    Top = 336
     object Fixerror1: TMenuItem
       Caption = 'Autofix error'
       OnClick = Fixerror1Click
@@ -2395,12 +2385,8 @@ object frMain: TfrMain
     Top = 304
   end
   object PrinterSetupDialog: TPrinterSetupDialog
-    Left = 489
-    Top = 343
-  end
-  object PrintDialog: TPrintDialog
-    Left = 457
-    Top = 342
+    Left = 393
+    Top = 335
   end
   object SynEditPrint: TSynEditPrint
     Copies = 1
@@ -2415,15 +2401,15 @@ object frMain: TfrMain
     Footer.DefaultFont.Height = -13
     Footer.DefaultFont.Name = 'Arial'
     Footer.DefaultFont.Style = []
-    Margins.Left = 25
-    Margins.Right = 15
-    Margins.Top = 25
-    Margins.Bottom = 25
-    Margins.Header = 15
-    Margins.Footer = 15
-    Margins.LeftHFTextIndent = 2
-    Margins.RightHFTextIndent = 2
-    Margins.HFInternalMargin = 0.5
+    Margins.Left = 25.000000000000000000
+    Margins.Right = 15.000000000000000000
+    Margins.Top = 25.000000000000000000
+    Margins.Bottom = 25.000000000000000000
+    Margins.Header = 15.000000000000000000
+    Margins.Footer = 15.000000000000000000
+    Margins.LeftHFTextIndent = 2.000000000000000000
+    Margins.RightHFTextIndent = 2.000000000000000000
+    Margins.HFInternalMargin = 0.500000000000000000
     Margins.MirrorMargins = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2434,8 +2420,8 @@ object frMain: TfrMain
     Highlighter = SynLDRSyn
     TabWidth = 8
     Color = clWhite
-    Left = 425
-    Top = 344
+    Left = 361
+    Top = 336
   end
   object SynCppSyn: TSynCppSyn
     DefaultFilter = 'C++ Files (*.c,*.cpp,*.h,*.hpp)|*.c;*.cpp;*.h;*.hpp'
@@ -2447,8 +2433,8 @@ object frMain: TfrMain
     Top = 304
   end
   object pmToolbars: TPopupMenu
-    Left = 360
-    Top = 344
+    Left = 296
+    Top = 336
     object Files1: TMenuItem
       Action = acFileToolbar
       AutoCheck = True

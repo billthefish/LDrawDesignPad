@@ -19,12 +19,11 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 512
-    Height = 218
+    Height = 211
     ActivePage = TabSheet4
     Align = alClient
     Images = ImageList1
     Style = tsFlatButtons
-    TabIndex = 3
     TabOrder = 0
     OnChange = PageControl1Change
     object tsExternal: TTabSheet
@@ -512,7 +511,7 @@ object frOptions: TfrOptions
         PasswordChar = #0
         ReadOnly = False
         TabOrder = 2
-        Value = 0.1
+        Value = 0.100000000000000000
       end
       object seDet: TJvFloatEdit
         Left = 209
@@ -531,7 +530,7 @@ object frOptions: TfrOptions
         PasswordChar = #0
         ReadOnly = False
         TabOrder = 3
-        Value = 0.001
+        Value = 0.001000000000000000
       end
     end
     object TabSheet4: TTabSheet
@@ -699,7 +698,7 @@ object frOptions: TfrOptions
   end
   object Panel1: TPanel
     Left = 0
-    Top = 218
+    Top = 211
     Width = 512
     Height = 37
     Align = alBottom
@@ -818,9 +817,7 @@ object frOptions: TfrOptions
   end
   object fstOptions: TJvFormStorage
     Active = False
-    IniFileName = 'Software\Waterproof Productions\LDDesignPad'
     Options = []
-    UseRegistry = True
     StoredProps.Strings = (
       'edL3PDir.Text'
       'edLDrawDir.Text'
