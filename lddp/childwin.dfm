@@ -93,7 +93,7 @@ object frEditorChild: TfrEditorChild
     TabOrder = 1
     OnClick = memoClick
     OnKeyDown = MemoKeyDown
-    OnKeyUp = MemoKeyUp
+    OnKeyUp = MemoKeyDown
     Gutter.Font.Charset = DEFAULT_CHARSET
     Gutter.Font.Color = clWindowText
     Gutter.Font.Height = -11
