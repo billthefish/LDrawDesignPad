@@ -108,7 +108,7 @@ function L3CheckLine(Line: string): string;
 
 var
   DLine: TDATType;
-  det, dp, maxdist: Extended;
+  det, dp, maxdist, tempval: Extended;
   i,j: Integer;
   A,B,C: Boolean;
   TempMatrix: TDATMatrix;
@@ -141,6 +141,7 @@ begin
              if (det = 0) and (RM[1,2] = 0) and (RM[2,2] = 0) and (RM[3,2] = 0) then
                for i := 1 to 3 do
                begin
+                 tempval := RM[i,2];
                  RM[i,2] := 1;
                  det := MatrixDet(RotationMatrix);
                  if det <> 0 then
@@ -149,7 +150,7 @@ begin
                    Break;
                  end
                  else
-                   RM[i,2] := 0;
+                   RM[i,2] := tempval;
                end;
              if det = 0 then Result := 'Singular matrix (unfixable)';
          end

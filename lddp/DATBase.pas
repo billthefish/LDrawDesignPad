@@ -260,7 +260,7 @@ type
 
 var
 {$IFDEF MSWINDOWS}
-  LDrawBasePath: string = 'c:\lego\LDRAW\';
+  LDrawBasePath: string = 'C:\Lego\LDRAW\';
 {$ELSE}
   LDrawBasePath: string = 'usr/share/bin/ldraw/';
 {$ENDIF}

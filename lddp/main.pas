@@ -1205,8 +1205,8 @@ begin
                 '0 KEYWORDS your keywords'+#13#10;
   with (activeMDICHild as TfrEditorChild).memo do
   begin
-    Lines.Text := HeaderText + Lines.Text;
-    Modified := true;
+    Text := HeaderText + Text;
+    Undolist.AddChange(crInsert,Point(1,1),Point(1,6),'',SelectionMode);
   end;
 end;
 
@@ -1649,6 +1649,11 @@ begin
    // Set postion to line with error
    lbInfoDblClick(Sender);
 
+   // Set Undo Info
+//   memo.BeginUndoBlock;
+//   memo.Undolist.AddChange(crInsert,memo.BlockBegin,memo.BlockEnd,memo.SelText,memo.SelectionMode);
+//   memo.EndUndoBlock;
+
    // Get the Dat code from the L3P error
    strTemp:=copy(lbInfo.Items[lbInfo.ItemIndex],pos(':',lbInfo.Items[lbInfo.ItemIndex])+1, length(lbInfo.Items[lbInfo.ItemIndex]));
    strTemp:=copy(strTemp,pos(':',strTemp)+2, length(strTemp));
@@ -1672,17 +1677,13 @@ begin
          y3 := ty;
          z3 := tz;
          memo.lines[memo.CaretY-1] := DATString;
+         DATElem.Free;
        end;
-       DATElem.Free;
-       lbInfo.items.delete(lbInfo.ItemIndex);
-       exit;
      end
+
      else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex])>0 then
-     begin
-       memo.lines[memo.CaretY-1]:='';
-       lbInfo.items.delete(lbInfo.ItemIndex);
-       exit;
-     end
+       memo.lines[memo.CaretY-1]:=''
+
      else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
        DATElem := TDATSubPart.Create;
@@ -1690,9 +1691,8 @@ begin
        (DATElem as TDATSubPart).RM[1,2] := 1;
        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
        DATElem.Free;
-       lbInfo.items.delete(lbInfo.ItemIndex);
-       exit;
      end
+
      else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
        DATElem := TDATSubPart.Create;
@@ -1700,9 +1700,8 @@ begin
        (DATElem as TDATSubPart).RM[2,2] := 1;
        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
        DATElem.Free;
-       lbInfo.items.delete(lbInfo.ItemIndex);
-       exit;
      end
+
      else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
        DATElem := TDATSubPart.Create;
@@ -1710,9 +1709,8 @@ begin
        (DATElem as TDATSubPart).RM[3,2] := 1;
        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
        DATElem.Free;
-       lbInfo.items.delete(lbInfo.ItemIndex);
-       exit;
      end
+
      else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex])>0 then
      begin
        DATElem := TDATQuad.Create;
@@ -1732,12 +1730,14 @@ begin
          y4 := ty;
          z4 := tz;
          memo.lines[memo.CaretY-1] := DATString;
+         DATElem.Free;
        end;
-       DATElem.Free;
-       lbInfo.items.delete(lbInfo.ItemIndex);
-       exit;
      end;
    end;
+
+   lbInfo.items.delete(lbInfo.ItemIndex);
+   if lbInfo.Items.Count < 1 then
+     pnInfo.Height := 1;
  end;
 end;
 
@@ -1764,17 +1764,19 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 
-var i:integer;
+var
+  i: Integer;
+
 begin
- with (activeMDICHild as TfrEditorChild) do
- begin
-   if lbInfo.items.count>0 then
-     for I:=lbInfo.items.count-1 downto 0 do
-     begin
-       lbInfo.ItemIndex:=i;
-       Fixerror1Click(Sender);
-     end;
- end;
+  with (activeMDICHild as TfrEditorChild) do
+  begin
+    if lbInfo.items.count>0 then
+      for I:=lbInfo.items.count-1 downto 0 do
+      begin
+        lbInfo.ItemIndex:=i;
+        Fixerror1Click(Sender);
+      end;
+  end;
 end;
 
 procedure TfrMain.mnPollToSelectedClick(Sender: TObject);
@@ -1968,7 +1970,11 @@ end;
 
 
 procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
-
+{---------------------------------------------------------------------
+Description: Closes all open child windows
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 var
   i: Integer;
 
@@ -1979,19 +1985,29 @@ end;
 
 
 procedure TfrMain.acWindowCascadeExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Cascades the child windows
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   frMain.Cascade;
 end;
 
 
 procedure TfrMain.acWindowTileExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Tiles the child windows
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   frMain.Tile;
 end;
 
 procedure TfrMain.acReverseWindingExecute(Sender: TObject);
 {---------------------------------------------------------------------
-Description: Reverse the winding of a block
+Description: Reverse the winding of a block of text
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
@@ -2029,7 +2045,7 @@ begin
 
       DATModel1.Free;
     end;
-    Modified := True;
+//    Modified := True;
   end;
 end;
 
@@ -2063,6 +2079,11 @@ begin
 end;
 
 procedure TfrMain.LoadFormValues;
+{---------------------------------------------------------------------
+Description: Loads form values from the LDraw.ini file
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 
 var
   LDDPini: TMemIniFile;
@@ -2077,6 +2098,11 @@ begin
 end;
 
 procedure TfrMain.SaveFormValues;
+{---------------------------------------------------------------------
+Description: Saves form values to the LDraw.ini file
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 
 var
   LDDPini: TMemIniFile;
@@ -2100,16 +2126,31 @@ begin
 end;
 
 procedure TfrMain.acBMP2LDrawExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Starts BMP2DAT
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   frBMP2LDrawMain.showmodal;
 end;
 
 procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Shows the model tree form
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   frModelTreeView.ShowModal;
 end;
 
 procedure TfrMain.acInsertBFCCertifyCWExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Inserts BFC Text
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
@@ -2119,43 +2160,59 @@ begin
 end;
 
 procedure TfrMain.acInsertBFCCertifyCCWExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Inserts BFC Text
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
     Lines.Insert(CaretY-1, '0 BFC CERTIFY CCW');
     Modified := true;
   end;
-
 end;
 
 procedure TfrMain.acInsertBFCInvertnextExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Inserts BFC Text
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
     Lines.Insert(CaretY-1, '0 BFC INVERTNEXT');
     Modified := true;
   end;
-
 end;
 
 procedure TfrMain.acInsertBFCClipExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Inserts BFC Text
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
     Lines.Insert(CaretY-1, '0 BFC CLIP');
     Modified := true;
   end;
-
 end;
 
 procedure TfrMain.acInsertBFCNoClipExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Inserts BFC Text
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
 begin
   with (activeMDICHild as TfrEditorChild).memo do
   begin
     Lines.Insert(CaretY-1, '0 BFC NOCLIP');
     Modified := true;
   end;
-
 end;
 
 end.
