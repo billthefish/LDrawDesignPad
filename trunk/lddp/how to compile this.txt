@@ -8,10 +8,9 @@ You'll need:
 To compile this source successfully, you'll also need to download 
 and install the following component suites:
 
-* SynEdit 
+* SynEdit 2.0.1 
 	http://synedit.sourceforge.net
-	Note: Use the zip file in the External Libraries/SynEdit folder
 
-* JEDI-VCL 
+* JVCL 3.0 with JCL 1.94
 	http://jvcl.sourceforge.net
 	Note: The LDDP code is incompatible with JVCL 2.x
