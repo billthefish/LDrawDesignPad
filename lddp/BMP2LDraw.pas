@@ -140,14 +140,14 @@ BEGIN
   i:=0;
   while i<=slConvertColors.count-1 do
   BEGIN
-    R2 := GetRValue(strtoint('$'+copy(slConvertColors[i],1,6)));
-    G2 := GetGValue(strtoint('$'+copy(slConvertColors[i],1,6)));
-    B2 := GetBValue(strtoint('$'+copy(slConvertColors[i],1,6)));
+    R2 := GetRValue(strtoint('$'+copy(slConvertColors[i],Pos(' ',slConvertColors[i]) + 1,6)));
+    G2 := GetGValue(strtoint('$'+copy(slConvertColors[i],Pos(' ',slConvertColors[i]) + 1,6)));
+    B2 := GetBValue(strtoint('$'+copy(slConvertColors[i],Pos(' ',slConvertColors[i]) + 1,6)));
 
     DistanceSquared := SQR(R1-R2) + SQR(G1-G2) + SQR(B1-B2);
     IF   DistanceSquared < SmallestDistanceSquared
     THEN BEGIN
-      RESULT := strtoint(copy(slConvertColors[i],8,5));
+      RESULT := strtoint(slConvertColors.Names[i]);
       SmallestDistanceSquared := DistanceSquared
     end;
     inc(i);
@@ -219,7 +219,7 @@ begin
 
     frBMP2LDrawMain.Enabled:=False;
     pnProgress.Visible:=true;
-    slConvertColors.LoadFromFile(extractFilepath(ParamStr(0))+'\bmpconvert.pal');
+    slConvertColors.LoadFromFile(ExtractFilePath(Application.ExeName)+'\colors.pal');
     transclr:=-1;
     if edit1.Text<>'None' then begin
       clo:=strtoint('$'+edit1.Text);
