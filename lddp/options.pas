@@ -122,7 +122,7 @@ uses main;
 
 procedure TfrOptions.UpdateCOntrols;
 begin
-  if FIleExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
+  if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
     cboLDraw.checked:=true;
     lbLDraw.font.Color:=clGreen;
     lbldraw.Caption:='Found!';
@@ -133,7 +133,7 @@ begin
       lbldraw.Caption:='Not found!';
     end;
 
-  if FIleExists(frOptions.edL3PDir.text+'\L3P.exe') then begin
+  if FileExists(frOptions.edL3PDir.text+'\L3P.exe') then begin
     cboL3P.checked:=true;
     lbL3P.font.Color:=clGreen;
     lbL3P.Caption:='Found!';
@@ -144,7 +144,7 @@ begin
       lbL3P.Caption:='Not found!';
     end;
 
-  if FIleExists(frOptions.edLDViewDir.text+'\LDView.exe') then begin
+  if FileExists(frOptions.edLDViewDir.text+'\LDView.exe') then begin
     cboLDVIEW.checked:=true;
     lbLDView.font.Color:=clGreen;
     lbLDView.Caption:='Found!';
@@ -155,7 +155,7 @@ begin
       lbLDView.Caption:='Not found!';
     end;
 
-  if FIleExists(frOptions.edMLCADDir.text+'\MLCAD.exe') then begin
+  if FileExists(frOptions.edMLCADDir.text+'\MLCAD.exe') then begin
     cboMLCAD.checked:=true;
     lbMLCAD.font.Color:=clGreen;
     lbMLCAD.Caption:='Found!';
@@ -166,7 +166,7 @@ begin
       lbMLCAD.Caption:='Not found!';
     end;
 
-  if FIleExists(frOptions.edL3LabDir.text+'\L3Lab.exe') then begin
+  if FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe') then begin
     cboL3Lab.checked:=true;
     lbL3Lab.font.Color:=clGreen;
     lbL3Lab.Caption:='Found!';
@@ -180,7 +180,7 @@ begin
 
   if trim(frOptions.edExternal.text)='' then lbExternal.Caption:=''
     else
-      if FIleExists(frOptions.edExternal.text) then begin
+      if FileExists(frOptions.edExternal.text) then begin
         cboExternal.checked:=true;
         lbExternal.font.Color:=clGreen;
         lbExternal.Caption:='Found!';
