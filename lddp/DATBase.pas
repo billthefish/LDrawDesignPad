@@ -318,8 +318,8 @@ constructor TDATElement.Create;
 begin
   inherited Create;
   intColor := 0;
-  PntAcc := 2;
-  RotACC := 3;
+  PntAcc := 15;
+  RotAcc := 15;
   FDATMatrix[4,4] := 1;
 end;
 
