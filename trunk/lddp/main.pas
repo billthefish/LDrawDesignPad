@@ -629,6 +629,7 @@ Return value: none
 ----------------------------------------------------------------------}
 begin
   CreateMDIChild('Untitled' + IntToStr(MDIChildCount + 1),true);
+  ActiveMDIChild.Tag := 1;
 end;
 
 procedure TfrMain.acFileOpenAccept(Sender: TObject);
@@ -643,6 +644,7 @@ begin
     for i:=0 to acFileOpen.Dialog.Files.Count -1 do
     begin
       CreateMDIChild(acFileOpen.Dialog.Files[i], false);
+      ActiveMDIChild.Tag := 0;
     end;
 end;
 
@@ -703,7 +705,7 @@ Return value: None
 ----------------------------------------------------------------------}
 var sr:TsearchRec;
 begin
-  if pos('Untitled',activeMDIChild.caption)>0 then acFileSaveAs.Execute
+  if ActiveMDIChild.Tag > 0 then acFileSaveAs.Execute
     else
     begin
       (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(activeMDICHild.caption);
@@ -729,7 +731,8 @@ end;
 
 procedure TfrMain.acFileSaveAsAccept(Sender: TObject);
 begin
-    activeMDIChild.caption:=acFileSaveAs.Dialog.filename;
+    ActiveMDIChild.caption:=acFileSaveAs.Dialog.filename;
+    ActiveMDIChild.Tag := 0;
     acFileSaveExecute(Sender);
 end;
 
