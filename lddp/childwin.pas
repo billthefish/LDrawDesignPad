@@ -220,13 +220,21 @@ Description: Focuses the line with the error when double clicked in L3P error li
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
+var
+  L3PErrorLine: Integer;
 begin
-  memo.TopLine:=strtoint((copy(lbinfo.Items[lbinfo.Itemindex],19,pos(':',lbinfo.Items[lbinfo.Itemindex])-19)))-1;
-  memo.CaretY:=memo.TopLine;
-  memo.CaretX:=1;
-  memo.selstart:=memo.selstart+length(memo.lines[memo.CaretY-1]);
-  memo.selend:=memo.selstart-length(memo.lines[memo.CaretY-1]);
-  memo.setfocus;
+   // Set current postion to errorline
+   L3PErrorLine := StrToInt( Copy(lbinfo.Items[lbinfo.Itemindex], 19,
+                                  pos(':',lbinfo.Items[lbinfo.Itemindex])-19) );
+   memo.TopLine := L3PErrorLine;
+   memo.CaretXY := Point(1, L3PErrorLine);
+
+   // Highlight errorline
+   memo.selstart:=memo.selstart+length(memo.lines[memo.CaretY-1]);
+   memo.selend:=memo.selstart-length(memo.lines[memo.CaretY-1]);
+
+   // Change focus from L3P error pane to editor pane
+   memo.setfocus;
 end;
 
 procedure TfrEditorChild.FormCreate(Sender: TObject);

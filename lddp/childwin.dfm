@@ -1,9 +1,9 @@
 object frEditorChild: TfrEditorChild
-  Left = 385
-  Top = 152
+  Left = 412
+  Top = 119
   Width = 715
   Height = 380
-  Caption = 'Untergeordnetes MDI'
+  Caption = 'Editor MDI Child'
   Color = clBtnFace
   ParentFont = True
   FormStyle = fsMDIChild
