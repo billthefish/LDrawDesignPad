@@ -21,9 +21,16 @@ unit childwin;
 
 interface
 
-uses Windows, Classes, Graphics, Forms, Controls, StdCtrls, dialogs, Sysutils,
-  Menus, ExtCtrls, SynMemo, SynEdit, SynEditHighlighter,
-  SynHighlighterLDraw;
+uses
+  {$IFDEF MSWINDOWS}
+  Windows, Classes, Graphics, Forms, Controls, StdCtrls, dialogs,
+  Menus, ExtCtrls,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  QForms, QSynEdit, QControls, QStdCtrls, QExtCtrls, QDialogs, Classes,
+  {$ENDIF}
+  SynMemo, SynEdit, SynEditHighlighter, SynHighlighterLDraw,
+  SysUtils;
 
 type
   TfrEditorChild = class(TForm)

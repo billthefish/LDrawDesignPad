@@ -22,9 +22,17 @@ unit options;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
- ImgList, JvEdit, JvFloatEdit, JvPlacemnt, ExtCtrls, StdCtrls, Buttons,
-  CheckLst, JvToolEdit, ComCtrls, Mask;
+  {$IFDEF MSWINDOWS}
+  Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
+  ImgList, ExtCtrls, StdCtrls, Buttons, CheckLst, ComCtrls, Mask, JvToolEdit,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  QImgList, QExtCtrls, QStdCtrls, QButtons, QCheckLst, QControls, QComCtrls,
+  {$ENDIF}
+  JvFloatEdit,
+  JvEdit,
+  JvPlacemnt,
+  SysUtils;
 
 type
   TfrOptions = class(TForm)
