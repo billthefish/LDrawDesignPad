@@ -1,4 +1,4 @@
-unit Version;
+unit version;
 
 interface
 
@@ -189,6 +189,6 @@ end; //GetFileVersionStr...
 
 initialization
 {$IFDEF RCS}
-    RCSId := '$Id: version.pas,v 1.1.1.1 2003-05-23 21:48:35 c_schmitz Exp $';
+    RCSId := '$Id: version.pas,v 1.2 2003-06-10 01:43:54 duncan2 Exp $';
 {$ENDIF}
 end.
