@@ -700,6 +700,8 @@ begin
     UpdateMRU;
 
     // Set initial directory to that of the last opened file
+    // (but only if a previous file is listed)
+    if LastOpen1.count > 0 then
     OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption);
 
     {$IFDEF MSWINDOWS}
