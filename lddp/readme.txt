@@ -18,6 +18,7 @@ Make sure you extract the \Plugins subdir too.
 
 
 2. Introduction
+----------------
 
 LDDesignPad (LDDP) is a tool for editing and handling LDraw files
 in a very comfortable way.
@@ -37,25 +38,23 @@ Features are:
 Special thanks to Roland Melkert (melkert@chello.nl) who translated 
 the delphi-plugin example to C++ !!!!! 
 
-Thank you too to the other Code- and LDraw-Gurus for suggestions 
-and the great programs they wrote to make LDRAWing a lot easier:
+3. Bendible Object Generator
+----------------------------
 
-- Travis Cobbs
-- Steve Bliss
-- Lars C. Hassing
-- Tore Eriksson
-
-( no particular order) and the others not mentioned ;)
-
-We especially thank you, the user, for downloading our program
-
-   -The LDDP Development Team:
-      Carsten Schmitz
-      Stephen Schonberg
-      Orion Pobursky
+Supported File Types:
+73590B.DAT Hose Flexible 8.5L with Tabs (750.dat for endpoints)
+73590A.DAT Hose Flexible 8.5L without Tabs (752.dat for endpoints)
+Technic Ribbed Hoses (79.dat for endpoints)
+Technic Flexible Axles (stud3a.dat for endpoints)
+Technic Flex-System Hose (76.dat for endpoints)
 
 
-3. Plugin Capability
+Usage:
+Place the endpoints where you want them. Ensure they are listed on adjacent lines
+Select the two lines with the endpoints.
+Select Generate Bendible Object from the Tools menu
+
+4. Plugin Capability
 --------------------
 
 There is a Delphi/C++ Sample Source in the PluginDir.
@@ -66,10 +65,8 @@ If you need any help writing a plugin or need a new yet unsupported function
 in the plugin header/call then don't hesitate to contact the LDDP team.
 All Plugin dll's are required be in the \Plugins directory.
 
-
-4. Comments and Bugs
+5. Comments and Bugs
 ---------------------
-
 
 LDDesignPad is distributed under the GPL.
 
@@ -86,8 +83,6 @@ Note to all plugin authors:
   file for it's configuration settings.  If you used settings other than the 
   InstallDir in the Registry, your plugins will have to be updated to work.
 
-
-
 Remarks:
 
 - The palette file (colors.pal) isn't complete.
@@ -98,10 +93,40 @@ Remarks:
 - If you wrote a plugin for LDDP we will be happy to a put a link or the
   plugin itself on the LDDP website!
 
-- Search and Replace seems to be broken.  This problem doesn't appear to be our code
-  bur we're currently looking in the cause.
+6. Credits
+----------
 
-5. Version History
+Thank you too to the other Code- and LDraw-Gurus for suggestions 
+and the great programs they wrote to make LDRAWing a lot easier:
+
+- Travis Cobbs
+- Steve Bliss
+- Lars C. Hassing
+- Tore Eriksson
+
+Special Thank to:
+
+Lars C. Hassing
+
+  Error Check feature derived from L3Check.cpp, L3Math.cpp
+  Part of the L3 project for handling LDraw *.dat files
+  Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)
+
+Fredrik Glöckner
+
+  Bendible Object Generator feature derived from 
+   Emacs LDraw Major-Mode
+  Copyright (C) 1999-2002  Fredrik Gl'#246'ckner (fredrigl@math.uio.no)
+
+We especially thank you, the user, for downloading our program
+
+   -The LDDP Development Team:
+      Carsten Schmitz
+      Stephen Schonberg
+      Orion Pobursky
+
+
+7. Version History
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
