@@ -110,6 +110,7 @@ object frEditorChild: TfrEditorChild
     Gutter.Font.Style = []
     Gutter.Font.Weight = 40
     Highlighter = frMain.SynLDRSyn
+    SearchEngine = frMain.SynEditSearch1
     TabWidth = 2
     OnChange = MemoChange
     RemovedKeystrokes = <>

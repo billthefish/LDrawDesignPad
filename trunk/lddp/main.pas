@@ -29,7 +29,8 @@ uses
   QSynHighlighterCpp, QSynHighlighterPas, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, Classes, QActnList, QTypes,
   QComCtrls, QControls, Inifiles, splash, QSyneditTypes, QGraphics,
-  QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls;
+  QSyneditKeyCmds, l3check, DATModel, DATBase, QStdCtrls,
+  QSynEditMiscClasses, QSynEditSearch;
 
 
 type TLDrawArray= record
@@ -249,6 +250,7 @@ type
     http: TIdHTTP;
     acCheckforUpdate: TAction;
     N7: TMenuItem;
+    SynEditSearch1: TSynEditSearch;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -275,7 +277,6 @@ type
     procedure acFileToolbarExecute(Sender: TObject);
     procedure acFindExecute(Sender: TObject);
     procedure acFindNextExecute(Sender: TObject);
-    procedure acFindNextUpdate(Sender: TObject);
     procedure acHighlightCppExecute(Sender: TObject);
     procedure acHighlightLdrawExecute(Sender: TObject);
     procedure acHighlightPascalExecute(Sender: TObject);
@@ -321,7 +322,6 @@ type
   private
     { Private declarations }
     initialized:boolean;
-    fSearchFromCaret: boolean;
     procedure AppInitialize;
     procedure CreateMDIChild(const CaptionName: string;new:boolean);
 
@@ -335,7 +335,7 @@ type
     IniFileName, IniSection: string;
 
     procedure LoadPlugins(AppInit:Boolean = false);
-    procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
+    procedure DoSearchReplaceText;
     function  GetTmpFileName: String;
     procedure LoadFile(fname:string; EditCh: TForm);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
@@ -360,20 +360,7 @@ implementation
 uses
   childwin,
   about, options, editoptions, colordialog,
-  dlgconfirmreplace, dlgsearchtext, dlgreplacetext;
-
-var
-  gbSearchBackwards: boolean;
-  gbSearchCaseSensitive: boolean;
-  gbSearchFromCaret: boolean;
-  gbSearchSelectionOnly: boolean;
-  gbSearchTextAtCaret: boolean;
-  gbSearchWholeWords: boolean;
-
-  gsSearchText: string;
-  gsSearchTextHistory: string;
-  gsReplaceText: string;
-  gsReplaceTextHistory: string;
+  dlgconfirmreplace, dlgsearchreplacetext;
 
 resourcestring
   STextNotFound = 'Text not found';
@@ -806,18 +793,23 @@ begin
     DATModel1.ModelText := Memo.Lines.Text;
 
     for i := 0 to DATModel1.Count - 1 do
-      if (DATModel1.IndexOfLine(DATModel1[i].DATString) = i) then
-      begin
-        s := L3CheckLine(DATModel1[i].DATString);
-        if s <> '' then
+      if DATModel1[i] is TDATElement then
+        if (DATModel1.IndexOfLine(DATModel1[i].DATString) <> i) then
           lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
+                           'Identical to line ' +
+                           IntToStr(DATModel1.IndexOfLine(DATModel1[i].DATString) + 1) +
+                           ': ' + memo.Lines[i])
+        else if (DATModel1[i] is TDATSubPart) and
+                ((DATModel1[i] as TDATElement).Color = 24) then
+          lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
+                           'Color 24 Illegal for this linetype: ' + memo.Lines[i])
+        else
+        begin
+          s := L3CheckLine(DATModel1[i].DATString);
+          if s <> '' then
+            lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
                            s + ': ' + memo.Lines[i]);
-      end
-      else if (DATModel1[i] is TDATElement) then
-        lbInfo.Items.Add('[Warning] Line ' + IntToStr(i+1) + ': ' +
-                         'Identical to line ' +
-                         IntToStr(DATModel1.IndexOfLine(DATModel1[i].DATString) + 1) +
-                         ': ' + memo.Lines[i]);
+        end;
 
     DATModel1.Free;
                          
@@ -1511,7 +1503,8 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  DoSearchReplaceText(FALSE, FALSE);
+// ShowMessage( IntToStr( ((activeMDICHild as TfrEditorChild).memo.SearchEngine as TSynEditSearch).Next ));
+  DoSearchReplaceText;//(FALSE, FALSE);
 end;
 
 procedure TfrMain.btPollingClick(Sender: TObject);
@@ -1773,112 +1766,62 @@ Description: Show Search and Replace dialogue
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var
-  dlg: TfrTextSearchDialog;
 begin
-  Statusbar.SimpleText := '';
-  if AReplace then
-    dlg := TfrTextReplaceDialog.Create(Self)
+  if not AReplace then
+  begin
+    frTextSearchReplaceDialog.cbReplaceText.Visible := False;
+    frTextSearchReplaceDialog.Label2.Visible := False;
+    frTextSearchReplaceDialog.cbReplaceAll.Visible := False;
+  end
   else
-    dlg := TfrTextSearchDialog.Create(Self);
-  with dlg do try
-    // assign search options
-    SearchBackwards := gbSearchBackwards;
-    SearchCaseSensitive := gbSearchCaseSensitive;
-    SearchFromCursor := gbSearchFromCaret;
-    SearchInSelectionOnly := gbSearchSelectionOnly;
-    // start with last search text
-    SearchText := gsSearchText;
-    if gbSearchTextAtCaret then
-    begin
-      // if something is selected search for that text
-      if (activeMDICHild as TfrEditorChild).memo.SelAvail and ((activeMDICHild as TfrEditorChild).memo.BlockBegin.Y = (activeMDICHild as TfrEditorChild).memo.BlockEnd.Y)
-      then
-        SearchText := (activeMDICHild as TfrEditorChild).memo.SelText
-      else
-        SearchText := (activeMDICHild as TfrEditorChild).memo.GetWordAtRowCol((activeMDICHild as TfrEditorChild).memo.CaretXY);
-    end;
-    SearchTextHistory := gsSearchTextHistory;
-    if AReplace then with dlg as TfrTextReplaceDialog do
-    begin
-      ReplaceText := gsReplaceText;
-      ReplaceTextHistory := gsReplaceTextHistory;
-    end;
-    SearchWholeWords := gbSearchWholeWords;
-    if ShowModal = mrOK then
-    begin
-      gbSearchBackwards := SearchBackwards;
-      gbSearchCaseSensitive := SearchCaseSensitive;
-      gbSearchFromCaret := SearchFromCursor;
-      gbSearchSelectionOnly := SearchInSelectionOnly;
-      gbSearchWholeWords := SearchWholeWords;
-      gsSearchText := SearchText;
-      gsSearchTextHistory := SearchTextHistory;
-      if AReplace then with dlg as TfrTextReplaceDialog do
-      begin
-        gsReplaceText := ReplaceText;
-        gsReplaceTextHistory := ReplaceTextHistory;
-      end;
-      fSearchFromCaret := gbSearchFromCaret;
-      if gsSearchText <> '' then
-      begin
-        DoSearchReplaceText(AReplace, gbSearchBackwards);
-        fSearchFromCaret := TRUE;
-      end;
-    end;
-  finally
-    dlg.Free;
+  begin
+    frTextSearchReplaceDialog.cbReplaceText.Visible := True;
+    frTextSearchReplaceDialog.Label2.Visible := True;
+    frTextSearchReplaceDialog.cbReplaceAll.Visible := True;
+  end;
+
+  if (activeMDICHild as TfrEditorChild).memo.SelLength > 0 then
+    frTextSearchReplaceDialog.cbSearchText.Text :=
+     (activeMDICHild as TfrEditorChild).memo.SelText;
+  if (frTextSearchReplaceDialog.ShowModal = mrOK) then
+  begin
+    ActiveMDIChild.SetFocus;
+    DoSearchReplaceText;
   end;
 end;
 
-
-procedure TfrMain.DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
+procedure TfrMain.DoSearchReplaceText;
 {---------------------------------------------------------------------
 Description: Do the actual Search and replace
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var
-  Options: TSynSearchOptions;
 begin
-  Statusbar.SimpleText := '';
-  if AReplace then
-    Options := [ssoPrompt, ssoReplace, ssoReplaceAll]
-  else
-    Options := [];
-  if ABackwards then
-    Include(Options, ssoBackwards);
-  if gbSearchCaseSensitive then
-    Include(Options, ssoMatchCase);
-  if not fSearchFromCaret then
-    Include(Options, ssoEntireScope);
-  if gbSearchSelectionOnly then
-    Include(Options, ssoSelectedOnly);
-  if gbSearchWholeWords then
-    Include(Options, ssoWholeWord);
-  if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
+  if (activeMDICHild as TfrEditorChild).memo.SearchReplace(frTextSearchReplaceDialog.SearchText,
+                                                           frTextSearchReplaceDialog.ReplaceText,
+                                                           frTextSearchReplaceDialog.SearchOptions) = 0 then
   begin
     Statusbar.SimpleText := STextNotFound;
-    if ssoBackwards in Options then
+    if ssoBackwards in frTextSearchReplaceDialog.SearchOptions then
       (activeMDICHild as TfrEditorChild).memo.BlockEnd := (activeMDICHild as TfrEditorChild).memo.BlockBegin
     else
       (activeMDICHild as TfrEditorChild).memo.BlockBegin := (activeMDICHild as TfrEditorChild).memo.BlockEnd;
     (activeMDICHild as TfrEditorChild).memo.CaretXY := (activeMDICHild as TfrEditorChild).memo.BlockBegin;
+
+    frTextSearchReplaceDialog.SearchOptions :=
+      frTextSearchReplaceDialog.SearchOptions - [ssoEntireScope];
+
+    acFindNext.Enabled := False;
+  end
+  else
+  begin
+    acFindNext.Enabled := True;
+    frTextSearchReplaceDialog.SearchOptions :=
+      frTextSearchReplaceDialog.SearchOptions - [ssoEntireScope];
   end;
 
   if frConfirmReplaceDialog <> nil then
     frConfirmReplaceDialog.Free;
-end;
-
-
-procedure TfrMain.acFindNextUpdate(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Updates the FindNext button
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (Sender as TAction).Enabled := gsSearchText <> '';
 end;
 
 {---------------------------------------------------------------------

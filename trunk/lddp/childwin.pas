@@ -29,7 +29,7 @@ uses
   {$ENDIF}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
   QSynHighlighterLDraw, QExtCtrls, Classes, QTypes, QComCtrls, QControls,
-  QSyneditTypes, QStdCtrls;
+  QSyneditTypes, QStdCtrls, QSynEditMiscClasses, QSynEditSearch;
 
 type
   TfrEditorChild = class(TForm)
@@ -229,7 +229,7 @@ begin
                                    pos(':',lbinfo.Items[lbinfo.Itemindex])-15) );
     memo.TopLine := L3PErrorLine;
     memo.CaretXY := Point(1, L3PErrorLine);
-
+    
     // Highlight errorline
     memo.selstart:=memo.selstart+length(memo.lines[memo.CaretY-1]);
     memo.selend:=memo.selstart-length(memo.lines[memo.CaretY-1]);

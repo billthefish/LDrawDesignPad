@@ -27,17 +27,15 @@ uses
   options in 'options.pas' {frOptions},
   splash in 'splash.pas' {frSplash},
   colordialog in 'colordialog.pas' {frColorDialog},
-  dlgsearchtext in 'dlgsearchtext.pas' {frTextSearchDialog},
-  dlgreplacetext in 'dlgreplacetext.pas' {frTextReplaceDialog},
+  dlgsearchreplacetext in 'dlgsearchreplacetext.pas' {frTextReplaceDialog},
   dlgconfirmreplace in 'dlgconfirmreplace.pas' {frConfirmReplaceDialog},
-  editoptions in 'editoptions.pas', {frEditOptions}
-  {$IFDEF MSWINDOWS}
+  editoptions in 'editoptions.pas',
   windowsspecific in 'windowsspecific.pas',
-  {$ENDIF}
   linuxspecific in 'linuxspecific.pas',
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
   DATModel in 'DATModel.pas';
+
 {$R *.res}
 
 begin
@@ -50,6 +48,7 @@ begin
     Application.CreateForm(TfrOptions, frOptions);
     Application.CreateForm(TfrColorDialog, frColorDialog);
     Application.CreateForm(TfrEditOptions, frEditOptions);
+    Application.CreateForm(TfrTextSearchReplaceDialog, frTextSearchReplaceDialog);
   finally
     screen.cursor:=0;
   end;
