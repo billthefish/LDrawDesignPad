@@ -9,9 +9,8 @@ To compile this source successfully, you'll also need to download and install th
 
 
 * SynEdit  - http://synedit.sourceforge.net
-            (After extracting the synedit sources copy the files in the LDrawHighlighter.zip
-             over the existing files then install it as described in the synedit documentation.)
-
+             Note: you will need the newest released CVS snapshot and will need to install the CLX version
+                   not the VCL version
 
 That's all!  Have fun!
 
