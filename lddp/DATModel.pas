@@ -413,8 +413,14 @@ begin
       begin
         for i := 0 to InlineFile.Count - 1 do
           if (InlineFile[i] is TDATElement) then
+          begin
             if (InlineFile[i] as TDATElement).Color = 16 then
               (InlineFile[i] as TDATElement).Color := (Lines[Index] as TDATElement).Color;
+            (InlineFile[i] as TDATElement).PositionDecimalPlaces :=
+              (Lines[Index] as TDATElement).PositionDecimalPlaces;
+            (InlineFile[i] as TDATElement).RotationDecimalPlaces :=
+              (Lines[Index] as TDATElement).RotationDecimalPlaces;
+          end;
         InlineFile.Transform((Lines[Index] as TDATSubPart).RotationMatrix);
         Delete(Index);
         AddLines(InlineFile, Index);
