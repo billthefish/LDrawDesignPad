@@ -28,10 +28,10 @@ uses
   linuxspecific,
   {$IFEND}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
+  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns,
   Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
   QSyneditTypes, IdBaseComponent, IdComponent, QGraphics, QSyneditKeyCmds,
-  QSynHighlighterCpp, QSynHighlighterPas,  IdHTTP, QMask ,
+  QSynHighlighterCpp, QSynHighlighterPas, IdHTTP, QMask,
   QStdCtrls, QButtons, QCheckLst;
 
 type

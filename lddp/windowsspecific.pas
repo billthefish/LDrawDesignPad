@@ -58,7 +58,7 @@ const
   SW_MAX = 10;
 
 function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
-function GetDOSVar (VarName: string): string;
+//function GetDOSVar (VarName: string): string;
 function GetShortFileName(Const FileName : String) : String;
 //procedure FileIsDropped ( VAR Msg : TMessage ) ; Message WM_DropFiles ;
 function WindowsDir:string;
@@ -195,7 +195,7 @@ begin
   if copy(tempdir,length(tempdir),1)<>'\' then tempdir:=tempdir+'\';
   Result:=tempDir;
 end;
-
+(*
   function GetDOSVar (VarName: string): string;
   {---------------------------------------------------------------------
   Description: Find out DOS var settings (path etc.)
@@ -215,7 +215,7 @@ end;
    FreeMem (PName) ;
    FreeMem (PBuff) ;
   end;
-
+*)
 function PluginInfo(fname:string; nr:integer):string;
 {---------------------------------------------------------------------
 Description: Get Info from plugin DLL
