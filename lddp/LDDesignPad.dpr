@@ -9,10 +9,10 @@ uses
   about in 'about.pas' {frAboutBox},
   options in 'options.pas' {frOptions},
   splash in 'splash.pas' {frSplash},
-  colordialog in 'ColorDialog.pas' {frColorDialog},
-  dlgsearchtext in 'dlgSearchText.pas' {frTextSearchDialog},
-  dlgreplacetext in 'dlgReplaceText.pas' {frTextReplaceDialog},
-  dlgconfirmreplace in 'dlgConfirmReplace.pas' {frConfirmReplaceDialog},
+  colordialog in 'colordialog.pas' {frColorDialog},
+  dlgsearchtext in 'dlgsearchtext.pas' {frTextSearchDialog},
+  dlgreplacetext in 'dlgreplacetext.pas' {frTextReplaceDialog},
+  dlgconfirmreplace in 'dlgconfirmreplace.pas' {frConfirmReplaceDialog},
   editoptions in 'editoptions.pas' {frEditOptions};
 
 {$R *.RES}
