@@ -28,7 +28,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynExportTeX.pas,v 1.1 2003-07-03 07:29:34 billthefish Exp $
+$Id: SynExportTeX.pas,v 1.2 2003-07-06 11:41:46 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -101,16 +101,6 @@ type
     property Title;
     property UseBackground;
   end;
-
-{$IFDEF SYN_COMPILER_3_UP}
-resourcestring
-{$ELSE}
-const
-{$ENDIF}
-  SYNS_FilterTeX          = 'TeX Files (*.tex)|*.tex';
-  SYNS_ExporterFormatTeX  = 'TEX';
-
-procedure Register;
 
 implementation
 
@@ -306,7 +296,7 @@ end;
 
 function TSynExporterTeX.GetFormatName: string;
 begin
-  Result := SYNS_ExporterFormatTeX;
+  Result := SYNS_LangTeX;
 end;
 
 // the purpose of this function is to leave only valid characters in AName

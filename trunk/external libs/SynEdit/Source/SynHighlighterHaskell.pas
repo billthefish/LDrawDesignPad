@@ -49,6 +49,7 @@ ashley@ashleybrown.co.uk
 
 {$IFNDEF QSYNHIGHLIGHTERHASKELL}
 unit SynHighlighterHaskell;
+{$ENDIF}
 
 {$I SynEdit.inc}
 
@@ -106,53 +107,53 @@ type
     fLineNumber: Integer;
     fIdentFuncTable: array[0..206] of TIdentFuncTableFunc;
 
-	fCommentAttri: TSynHighlighterAttributes;
-	fIdentifierAttri: TSynHighlighterAttributes;
-	fKeyAttri: TSynHighlighterAttributes;
-	fNumberAttri: TSynHighlighterAttributes;
-	fSpaceAttri: TSynHighlighterAttributes;
-	fStringAttri: TSynHighlighterAttributes;
-	fSymbolAttri: TSynHighlighterAttributes;
+    fCommentAttri: TSynHighlighterAttributes;
+    fIdentifierAttri: TSynHighlighterAttributes;
+    fKeyAttri: TSynHighlighterAttributes;
+    fNumberAttri: TSynHighlighterAttributes;
+    fSpaceAttri: TSynHighlighterAttributes;
+    fStringAttri: TSynHighlighterAttributes;
+    fSymbolAttri: TSynHighlighterAttributes;
 
-	function KeyHash(ToHash: PChar): Integer;
-	function KeyComp(const aKey: String): Boolean;
+    function KeyHash(ToHash: PChar): Integer;
+    function KeyComp(const aKey: String): Boolean;
 
-	function Func17: TtkTokenKind;
-	function Func24: TtkTokenKind;
-	function Func25: TtkTokenKind;
-	function Func30: TtkTokenKind;
-	function Func33: TtkTokenKind;
-	function Func40: TtkTokenKind;
-	function Func45: TtkTokenKind;
-	function Func47: TtkTokenKind;
-	function Func51: TtkTokenKind;
-	function Func58: TtkTokenKind;
-	function Func59: TtkTokenKind; 
-	function Func64: TtkTokenKind;
-	function Func67: TtkTokenKind;
-	function Func70: TtkTokenKind;
-	function Func76: TtkTokenKind;
-	function Func84: TtkTokenKind;
-	function Func92: TtkTokenKind;
-	function Func93: TtkTokenKind; 
-	function Func96: TtkTokenKind;
-	function Func97: TtkTokenKind;
-	function Func131: TtkTokenKind;
+    function Func17: TtkTokenKind;
+    function Func24: TtkTokenKind;
+    function Func25: TtkTokenKind;
+    function Func30: TtkTokenKind;
+    function Func33: TtkTokenKind;
+    function Func40: TtkTokenKind;
+    function Func45: TtkTokenKind;
+    function Func47: TtkTokenKind;
+    function Func51: TtkTokenKind;
+    function Func58: TtkTokenKind;
+    function Func59: TtkTokenKind; 
+    function Func64: TtkTokenKind;
+    function Func67: TtkTokenKind;
+    function Func70: TtkTokenKind;
+    function Func76: TtkTokenKind;
+    function Func84: TtkTokenKind;
+    function Func92: TtkTokenKind;
+    function Func93: TtkTokenKind; 
+    function Func96: TtkTokenKind;
+    function Func97: TtkTokenKind;
+    function Func131: TtkTokenKind;
 
-	procedure AnsiCProc;
-	procedure AndSymbolProc;
-	procedure AsciiCharProc;
-	procedure AtSymbolProc;
-	procedure BraceCloseProc;
-	procedure BraceOpenProc;
-	procedure CRProc;
-	procedure ColonProc;
-	procedure CommaProc;
-	procedure EqualProc;
-	procedure GreaterProc;
-	procedure IdentProc;
-	procedure LFProc;
-	procedure LowerProc;
+    procedure AnsiCProc;
+    procedure AndSymbolProc;
+    procedure AsciiCharProc;
+    procedure AtSymbolProc;
+    procedure BraceCloseProc;
+    procedure BraceOpenProc;
+    procedure CRProc;
+    procedure ColonProc;
+    procedure CommaProc;
+    procedure EqualProc;
+    procedure GreaterProc;
+    procedure IdentProc;
+    procedure LFProc;
+    procedure LowerProc;
     procedure MinusProc;
     procedure ModSymbolProc;
     procedure NotSymbolProc;
@@ -166,18 +167,18 @@ type
     procedure RoundOpenProc;
     procedure SemiColonProc;
     procedure SlashProc;
-	procedure SpaceProc;
-	procedure SquareCloseProc;
+    procedure SpaceProc;
+    procedure SquareCloseProc;
     procedure SquareOpenProc;
     procedure StarProc;
     procedure StringProc;
     procedure TildeProc;
     procedure XOrSymbolProc;
     procedure UnknownProc;
-	function AltFunc: TtkTokenKind;
-	procedure InitIdent;
-	function IdentKind(MayBe: PChar): TtkTokenKind;
-	procedure MakeMethodTables;
+    function AltFunc: TtkTokenKind;
+    procedure InitIdent;
+    function IdentKind(MayBe: PChar): TtkTokenKind;
+    procedure MakeMethodTables;
   protected
     function GetSampleSource: string; override;
 		function GetIdentChars: TSynIdentChars; override;
@@ -186,36 +187,36 @@ type
 	{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
     function GetCapabilities: TSynHighlighterCapabilities; override;
     {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-	function GetLanguageName: string; override;
+  	function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
-	  override;
-	function GetEol: Boolean; override;
+	    override;
+  	function GetEol: Boolean; override;
     function GetRange: Pointer; override;
     function GetTokenID: TtkTokenKind;
-	procedure SetLine(NewValue: String; LineNumber:Integer); override;
+	  procedure SetLine(NewValue: String; LineNumber:Integer); override;
     function GetToken: String; override;
     function GetTokenAttribute: TSynHighlighterAttributes; override;
     function GetTokenKind: integer; override;
-	function GetTokenPos: Integer; override;
-	procedure Next; override;
+  	function GetTokenPos: Integer; override;
+	  procedure Next; override;
     procedure SetRange(Value: Pointer); override;
     procedure ResetRange; override;
     procedure EnumUserSettings(settings: TStrings); override;
     property ExtTokenID: TxtkTokenKind read GetExtTokenID;
   published
-	property CommentAttri: TSynHighlighterAttributes read fCommentAttri
-	  write fCommentAttri;
+  	property CommentAttri: TSynHighlighterAttributes read fCommentAttri
+	    write fCommentAttri;
 		property IdentifierAttri: TSynHighlighterAttributes read fIdentifierAttri
-	  write fIdentifierAttri;
-	property KeyAttri: TSynHighlighterAttributes read fKeyAttri write fKeyAttri;
+  	  write fIdentifierAttri;
+  	property KeyAttri: TSynHighlighterAttributes read fKeyAttri write fKeyAttri;
     property NumberAttri: TSynHighlighterAttributes read fNumberAttri
       write fNumberAttri;
-	property SpaceAttri: TSynHighlighterAttributes read fSpaceAttri
+  	property SpaceAttri: TSynHighlighterAttributes read fSpaceAttri
       write fSpaceAttri;
     property StringAttri: TSynHighlighterAttributes read fStringAttri
-	  write fStringAttri;
+	    write fStringAttri;
     property SymbolAttri: TSynHighlighterAttributes read fSymbolAttri
       write fSymbolAttri;
   end;
@@ -239,17 +240,22 @@ var
 begin
   for I := #0 to #255 do
   begin
-	Case I of
-      '_', '0'..'9', 'a'..'z', 'A'..'Z', #39: Identifiers[I] := True;
-    else Identifiers[I] := False;
-	end;
-	Case I in['_', 'a'..'z', 'A'..'Z'] of
-	  True:
+  	Case I of
+      '_', '0'..'9', 'a'..'z', 'A'..'Z', #39:
+        Identifiers[I] := True;
+      else
+        Identifiers[I] := False;
+  	end;
+  	Case I in['_', 'a'..'z', 'A'..'Z'] of
+	    True:
         begin
-          if (I > #64) and (I < #91) then mHashTable[I] := Ord(I) - 64 else
-			if (I > #96) then mHashTable[I] := Ord(I) - 95;
+          if (I > #64) and (I < #91) then
+            mHashTable[I] := Ord(I) - 64
+          else if (I > #96) then
+            mHashTable[I] := Ord(I) - 95;
         end;
-    else mHashTable[I] := 0;
+      else
+        mHashTable[I] := 0;
     end;
   end;
 end;
@@ -260,9 +266,10 @@ var
   pF: PIdentFuncTableFunc;
 begin
   pF := PIdentFuncTableFunc(@fIdentFuncTable);
-  for I := Low(fIdentFuncTable) to High(fIdentFuncTable) do begin
-	pF^ := AltFunc;
-	Inc(pF);
+  for I := Low(fIdentFuncTable) to High(fIdentFuncTable) do
+  begin
+  	pF^ := AltFunc;
+	  Inc(pF);
   end;
   fIdentFuncTable[17] := Func17;
   fIdentFuncTable[24] := Func24;
@@ -285,7 +292,6 @@ begin
   fIdentFuncTable[96] := Func96;
   fIdentFuncTable[97] := Func97;
   fIdentFuncTable[131] := Func131;
-
 end;
 
 function TSynHaskellSyn.KeyHash(ToHash: PChar): Integer;
@@ -313,11 +319,13 @@ begin
       if Temp^ <> aKey[i] then
       begin
         Result := False;
-		break;
+    		break;
       end;
-	  inc(Temp);
-	end;
-  end else Result := False;
+  	  inc(Temp);
+  	end;
+  end
+  else
+    Result := False;
 end; { KeyComp }
 
 function TSynHaskellSyn.Func17: TtkTokenKind;
@@ -458,7 +466,7 @@ begin
       #13: fProcTable[I] := CRProc;
       ':': fProcTable[I] := ColonProc;
       ',': fProcTable[I] := CommaProc;
-	  '=': fProcTable[I] := EqualProc;
+	    '=': fProcTable[I] := EqualProc;
       '>': fProcTable[I] := GreaterProc;
       '?': fProcTable[I] := QuestionProc;
       'A'..'Z', 'a'..'z', '_': fProcTable[I] := IdentProc;
@@ -468,8 +476,8 @@ begin
       '%': fProcTable[I] := ModSymbolProc;
       '!': fProcTable[I] := NotSymbolProc;
       #0: fProcTable[I] := NullProc;
-	  '0'..'9': fProcTable[I] := NumberProc;
-	  '|': fProcTable[I] := OrSymbolProc;
+	    '0'..'9': fProcTable[I] := NumberProc;
+	    '|': fProcTable[I] := OrSymbolProc;
       '+': fProcTable[I] := PlusProc;
       '.': fProcTable[I] := PointProc;
       ')': fProcTable[I] := RoundCloseProc;
@@ -591,7 +599,6 @@ end;
 
 procedure TSynHaskellSyn.AsciiCharProc;
 begin
-
   fTokenID := tkString;
   repeat
     if fLine[Run] = '\' then begin
@@ -1199,6 +1206,7 @@ end;
 
 procedure TSynHaskellSyn.EnumUserSettings(settings: TStrings);
 begin
+ {$IFNDEF SYN_CLX}
   { returns the user settings that exist in the registry }
   with TBetterRegistry.Create do
   begin
@@ -1216,6 +1224,7 @@ begin
       Free;
     end;
   end;
+  {$ENDIF}
 end;
 
 
@@ -1251,5 +1260,6 @@ initialization
   RegisterPlaceableHighlighter(TSynHaskellSyn);
 {$ENDIF}
 end.
+
 
 

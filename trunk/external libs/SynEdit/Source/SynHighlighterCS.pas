@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterCS.pas,v 1.1 2003-07-03 07:29:34 billthefish Exp $
+$Id: SynHighlighterCS.pas,v 1.2 2003-07-06 11:41:46 c_schmitz Exp $
 
 You may retrieve the latest version of SynEdit from the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -64,6 +64,9 @@ uses
   Graphics,
   SynEditTypes,
   SynEditHighlighter,
+  {$ENDIF}
+  {$IFNDEF LINUX}
+  SynEditMiscClasses,
   {$ENDIF}
   SysUtils,
   Classes;
@@ -120,59 +123,59 @@ type
     function KeyHash(ToHash: PChar): Integer;
     function KeyComp(const aKey: String): Boolean;
     function Func17: TtkTokenKind;
-	function Func21: TtkTokenKind;
-	function Func22: TtkTokenKind;
-	function Func25: TtkTokenKind;
-	function Func30: TtkTokenKind;
-	function Func31: TtkTokenKind;
-	function Func32: TtkTokenKind;
-	function Func34: TtkTokenKind;
-	function Func40: TtkTokenKind;
-	function Func42: TtkTokenKind;
-	function Func45: TtkTokenKind;
-	function Func46: TtkTokenKind;
-	function Func48: TtkTokenKind;
-	function Func52: TtkTokenKind;
-	function Func53: TtkTokenKind;
-	function Func54: TtkTokenKind;
-	function Func56: TtkTokenKind;
-	function Func57: TtkTokenKind;
-	function Func59: TtkTokenKind;
+    function Func21: TtkTokenKind;
+    function Func22: TtkTokenKind;
+    function Func25: TtkTokenKind;
+    function Func30: TtkTokenKind;
+    function Func31: TtkTokenKind;
+    function Func32: TtkTokenKind;
+    function Func34: TtkTokenKind;
+    function Func40: TtkTokenKind;
+    function Func42: TtkTokenKind;
+    function Func45: TtkTokenKind;
+    function Func46: TtkTokenKind;
+    function Func48: TtkTokenKind;
+    function Func52: TtkTokenKind;
+    function Func53: TtkTokenKind;
+    function Func54: TtkTokenKind;
+    function Func56: TtkTokenKind;
+    function Func57: TtkTokenKind;
+    function Func59: TtkTokenKind;
     function Func60: TtkTokenKind;
     function Func61: TtkTokenKind;
-	function Func62: TtkTokenKind;
-	function Func63: TtkTokenKind;
-	function Func65: TtkTokenKind;
+    function Func62: TtkTokenKind;
+    function Func63: TtkTokenKind;
+    function Func65: TtkTokenKind;
     function Func66: TtkTokenKind;
     function Func67: TtkTokenKind;
     function Func68: TtkTokenKind;
     function Func69: TtkTokenKind;
-	function Func71: TtkTokenKind;
-	function Func72: TtkTokenKind;
-	function Func74: TtkTokenKind;
-	function Func75: TtkTokenKind;
-	function Func76: TtkTokenKind;
-	function Func78: TtkTokenKind;
-	function Func83: TtkTokenKind;
-	function Func86: TtkTokenKind;
-	function Func88: TtkTokenKind;
-	function Func89: TtkTokenKind;
-	function Func90: TtkTokenKind;
-	function Func92: TtkTokenKind;
-	function Func93: TtkTokenKind;
-	function Func98: TtkTokenKind;
-	function Func99: TtkTokenKind;
-	function Func101: TtkTokenKind;
-	function Func102: TtkTokenKind;
-	function Func104: TtkTokenKind;
-	function Func106: TtkTokenKind;
+    function Func71: TtkTokenKind;
+    function Func72: TtkTokenKind;
+    function Func74: TtkTokenKind;
+    function Func75: TtkTokenKind;
+    function Func76: TtkTokenKind;
+    function Func78: TtkTokenKind;
+    function Func83: TtkTokenKind;
+    function Func86: TtkTokenKind;
+    function Func88: TtkTokenKind;
+    function Func89: TtkTokenKind;
+    function Func90: TtkTokenKind;
+    function Func92: TtkTokenKind;
+    function Func93: TtkTokenKind;
+    function Func98: TtkTokenKind;
+    function Func99: TtkTokenKind;
+    function Func101: TtkTokenKind;
+    function Func102: TtkTokenKind;
+    function Func104: TtkTokenKind;
+    function Func106: TtkTokenKind;
     function Func107: TtkTokenKind;
     function Func109: TtkTokenKind;
     function Func110: TtkTokenKind;
     function Func115: TtkTokenKind;
-	function Func116: TtkTokenKind;
+    function Func116: TtkTokenKind;
 
-	procedure AnsiCProc;
+    procedure AnsiCProc;
     procedure AndSymbolProc;
     procedure AsciiCharProc;
     procedure AtSymbolProc;
@@ -1522,7 +1525,7 @@ end;
 procedure TSynCSSyn.EnumUserSettings(settings: TStrings);
 begin
   { returns the user settings that exist in the registry }
-  {$IFNDEF LINUX}
+  {$IFNDEF SYN_CLX}
   with TBetterRegistry.Create do
   begin
     try
@@ -1550,7 +1553,7 @@ function TSynCSSyn.UseUserSettings(settingIndex: integer): boolean;
 //   false: problem reading settings or invalid version specified - old settings
 //          were preserved
 
-  {$IFNDEF LINUX}
+  {$IFNDEF SYN_CLX}
   function ReadCPPBSettings(settingIndex: integer): boolean;
 
     function ReadCPPBSetting(settingTag: string; attri: TSynHighlighterAttributes; key: string): boolean;
@@ -1660,7 +1663,7 @@ function TSynCSSyn.UseUserSettings(settingIndex: integer): boolean;
   {$ENDIF}
 
 begin
-  {$IFNDEF LINUX}
+  {$IFNDEF SYN_CLX}
   Result := ReadCPPBSettings(settingIndex);
   {$ELSE}
   Result := False;
@@ -1689,7 +1692,7 @@ end;
 {begin}                                                                         //mh 2000-10-08
 function TSynCSSyn.IsFilterStored: boolean;
 begin
-  Result := fDefaultFilter <> SYNS_FilterCSS;
+  Result := fDefaultFilter <> SYNS_FilterCS;
 end;
 {end}                                                                           //mh 2000-10-08
 

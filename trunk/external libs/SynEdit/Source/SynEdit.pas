@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEdit.pas,v 1.2 2003-07-03 07:23:04 billthefish Exp $
+$Id: SynEdit.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
 
 
 You may retrieve the latest version of this file at the SynEdit home page,
@@ -3638,7 +3638,7 @@ begin
     if not (eoScrollPastEol in fOptions) then
       nMaxX := Length(Lines[Value.Y - 1]) + 1;
   end;
-  if Value.X > nMaxX then
+  if (Value.X > nMaxX) and not( eoAutoSizeMaxLineWidth in Options ) then
     Value.X := nMaxX;
   if Value.X < 1 then
     Value.X := 1;
@@ -3753,7 +3753,13 @@ var
   iTextArea: TRect;
 begin
   if eoScrollPastEol in Options then
-    MaxVal := MaxLineWidth - CharsInWindow +1
+  begin
+    if eoAutoSizeMaxLineWidth in Options then
+      //CaretX can't be MaxInt+1, so why increment by 1?...
+      MaxVal := MaxInt - CharsInWindow
+    else
+      MaxVal := MaxLineWidth - CharsInWindow +1
+  end
   else begin
     MaxVal := TSynEditStringList(Lines).LengthOfLongestLine;
     if MaxVal > CharsInWindow then
@@ -3764,7 +3770,6 @@ begin
     iDelta := fLeftChar - Value;
     fLeftChar := Value;
     fTextOffset := fGutterWidth + 2 - (LeftChar - 1) * fCharWidth;
-    UpdateScrollBars;
     if Abs(iDelta) < CharsInWindow then
     begin
       iTextArea := ClientRect;
@@ -3778,6 +3783,13 @@ begin
     end
     else
       InvalidateLines(-1, -1);
+    if ([eoAutoSizeMaxLineWidth, eoScrollPastEol] - Options = []) and
+      (MaxLineWidth < LeftChar + CharsInWindow) then
+    begin
+      MaxLineWidth := LeftChar + CharsInWindow
+    end
+    else
+      UpdateScrollBars;
     StatusChanged([scLeftChar]);
   end;
 end;
@@ -5031,7 +5043,7 @@ begin
         if (TempString[Runner.X] in IdChars) then break;
         Inc(Runner.X);
       end;
-      if Runner.X > fMaxLeftChar then
+      if Runner.X > fMaxLineWidth then
         exit;
     end;
     Value := Runner;
@@ -5109,7 +5121,27 @@ begin
 end;
 
 procedure TCustomSynEdit.Redo;
-{begin}                                                                         //sbs 2000-11-19
+
+  procedure RemoveGroupBreak;
+  var
+    Item: TSynEditUndoItem;
+    OldBlockNumber: integer;
+  begin
+    if fRedoList.LastChangeReason = crGroupBreak then
+    begin
+      OldBlockNumber := UndoList.BlockChangeNumber;
+      Item := fRedoList.PopItem;
+      try
+        UndoList.BlockChangeNumber := Item.ChangeNumber;
+        fUndoList.AddGroupBreak;
+      finally
+        UndoList.BlockChangeNumber := OldBlockNumber;
+        Item.Free;
+      end;
+      UpdateModifiedStatus;
+    end;
+  end;
+
 var
   Item: TSynEditUndoItem;
   OldChangeNumber: integer;
@@ -5120,21 +5152,11 @@ var
   FSpecial1: Boolean;                                                           //DDH 10/16/01 for Special1
   FSpecial2: Boolean;                                                           //DDH 10/16/01 for Special2
   FKeepGoing: Boolean;                                                          //DDH 10/16/01 for GroupUndo and AutoComplete
-
-  procedure RemoveGroupBreak;                                                   //ek 2000-11-04
-  begin
-    while (fRedoList.PeekItem<>nil) and (fRedoList.PeekItem.ChangeReason=crGroupBreak) do begin
-      fRedoList.PopItem.Free;
-      fUndoList.AddGroupBreak;
-    end;
-  end;
-
 begin
   if ReadOnly then                                                              //jcr 2001-01-16
     exit;
 
-  RemoveGroupBreak;                                                             //ek 2000-11-04
-  FLastChange := FRedoList.GetChangeReason;
+  FLastChange := FRedoList.LastChangeReason;
   FAutoComplete := FLastChange = crAutoCompleteBegin;
   FPasteAction := FLastChange = crPasteBegin;
   FSpecial1 := FLastChange = crSpecial1Begin;
@@ -5153,13 +5175,13 @@ begin
           FKeepGoing := False
         else begin                                                                   //DDH 10/16/01 for GroupUndo and AutoComplete
           if FAutoComplete then
-             FKeepGoing:= (FRedoList.GetChangeReason <> crAutoCompleteEnd)
+             FKeepGoing:= (FRedoList.LastChangeReason <> crAutoCompleteEnd)
           else if FPasteAction then
-             FKeepGoing:= (FRedoList.GetChangeReason <> crPasteEnd)
+             FKeepGoing:= (FRedoList.LastChangeReason <> crPasteEnd)
           else if FSpecial1 then
-             FKeepGoing := (FRedoList.GetChangeReason <> crSpecial1End)
+             FKeepGoing := (FRedoList.LastChangeReason <> crSpecial1End)
           else if FSpecial2 then
-             FKeepGoing := (FRedoList.GetChangeReason <> crSpecial2End)
+             FKeepGoing := (FRedoList.LastChangeReason <> crSpecial2End)
           else if Item.ChangeNumber = OldChangeNumber then
              FKeepGoing := True
           else begin
@@ -5172,10 +5194,10 @@ begin
 
       //mr.maX 2003-05-22 - Start
       //we need to eat the last command since it does nothing and also update modified status...
-      if (FAutoComplete and (FRedoList.GetChangeReason = crAutoCompleteEnd)) or
-         (FPasteAction and (FRedoList.GetChangeReason = crPasteEnd)) or
-         (FSpecial1 and (FRedoList.GetChangeReason = crSpecial1End)) or
-         (FSpecial2 and (FRedoList.GetChangeReason = crSpecial2End)) then
+      if (FAutoComplete and (FRedoList.LastChangeReason = crAutoCompleteEnd)) or
+         (FPasteAction and (FRedoList.LastChangeReason = crPasteEnd)) or
+         (FSpecial1 and (FRedoList.LastChangeReason = crSpecial1End)) or
+         (FSpecial2 and (FRedoList.LastChangeReason = crSpecial2End)) then
       begin
         RedoItem;
         UpdateModifiedStatus;
@@ -5185,11 +5207,11 @@ begin
     finally
       fUndoList.BlockChangeNumber := SaveChangeNumber;
     end;
+    RemoveGroupBreak;
   end;
 end;
 
 procedure TCustomSynEdit.RedoItem;
-{end}                                                                           //sbs 2000-11-19
 var
   Item: TSynEditUndoItem;
   OldSelMode: TSynSelectionMode;
@@ -5355,7 +5377,26 @@ begin
 end;
 
 procedure TCustomSynEdit.Undo;
-{begin}                                                                         //sbs 2000-11-19
+
+  procedure RemoveGroupBreak;
+  var
+    Item: TSynEditUndoItem;
+    OldBlockNumber: integer;
+  begin
+    if fUndoList.LastChangeReason = crGroupBreak then
+    begin
+      OldBlockNumber := RedoList.BlockChangeNumber;
+      try
+        Item := fUndoList.PopItem;
+        RedoList.BlockChangeNumber := Item.ChangeNumber;
+        Item.Free;
+        fRedoList.AddGroupBreak;
+      finally
+        RedoList.BlockChangeNumber := OldBlockNumber;
+      end;
+    end;
+  end;
+
 var
   Item: TSynEditUndoItem;
   OldChangeNumber: integer;
@@ -5366,22 +5407,13 @@ var
   FSpecial1: Boolean;                                                           //DDH 10/16/01 for Special1
   FSpecial2: Boolean;                                                           //DDH 10/16/01 for Special2
   FKeepGoing: Boolean;
-
-  procedure RemoveGroupBreak;                                                   //ek 2000-11-04
-  begin
-    while (fUndoList.PeekItem<>nil) and (fUndoList.PeekItem.ChangeReason=crGroupBreak) do begin
-      fUndoList.PopItem.Free;
-      fRedoList.AddGroupBreak;
-    end;
-  end;
-
 begin
   if ReadOnly then                                                              //jcr 2001-01-16
     exit;
 
   RemoveGroupBreak;                                                             //ek 2000-11-04
 
-  FLastChange := FUndoList.GetChangeReason;
+  FLastChange := FUndoList.LastChangeReason;
   FAutoComplete := FLastChange = crAutoCompleteEnd;
   FPasteAction := FLastChange = crPasteEnd;
   FSpecial1 := FLastChange = crSpecial1End;
@@ -5401,13 +5433,13 @@ begin
           FKeepGoing := False
         else begin                                                                   //DDH 10/16/01 for GroupUndo and AutoComplete
           if FAutoComplete then
-             FKeepGoing := (FUndoList.GetChangeReason <> crAutoCompleteBegin)
+             FKeepGoing := (FUndoList.LastChangeReason <> crAutoCompleteBegin)
           else if FPasteAction then
-             FKeepGoing := (FUndoList.GetChangeReason <> crPasteBegin)
+             FKeepGoing := (FUndoList.LastChangeReason <> crPasteBegin)
           else if FSpecial1 then
-             FKeepGoing := (FUndoList.GetChangeReason <> crSpecial1Begin)
+             FKeepGoing := (FUndoList.LastChangeReason <> crSpecial1Begin)
           else if FSpecial2 then
-             FKeepGoing := (FUndoList.GetChangeReason <> crSpecial2Begin)
+             FKeepGoing := (FUndoList.LastChangeReason <> crSpecial2Begin)
           else if Item.ChangeNumber = OldChangeNumber then
              FKeepGoing := True
           else begin
@@ -5420,10 +5452,10 @@ begin
 
       //mr.maX 2003-05-22 - Start
       //we need to eat the last command since it does nothing and also update modified status...
-      if (FAutoComplete and (FUndoList.GetChangeReason = crAutoCompleteBegin)) or
-         (FPasteAction and (FUndoList.GetChangeReason = crPasteBegin)) or
-         (FSpecial1 and (FUndoList.GetChangeReason = crSpecial1Begin)) or
-         (FSpecial2 and (FUndoList.GetChangeReason = crSpecial2Begin)) then
+      if (FAutoComplete and (FUndoList.LastChangeReason = crAutoCompleteBegin)) or
+         (FPasteAction and (FUndoList.LastChangeReason = crPasteBegin)) or
+         (FSpecial1 and (FUndoList.LastChangeReason = crSpecial1Begin)) or
+         (FSpecial2 and (FUndoList.LastChangeReason = crSpecial2Begin)) then
       begin
         UndoItem;
         UpdateModifiedStatus;
@@ -6233,10 +6265,12 @@ end;
 
 procedure TCustomSynEdit.SetMaxLineWidth(Value: integer);
 begin
-  Value := Max( Value, 1 );
+  Value := MinMax( Value, 1, MaxInt -1 );
   if MaxLineWidth <> Value then
   begin
     fMaxLineWidth := Value;
+    if eoScrollPastEol in Options then
+      UpdateScrollBars;
   end;
 end;
 
@@ -7193,13 +7227,16 @@ begin
           SetString(s, PChar(Data), StrLen(Data));
           if SelAvail then begin
             BeginUndoBlock;                                                     //Fiala 2001-12-17
-            fUndoList.AddChange(crDelete, fBlockBegin, fBlockEnd, Helper,
-              smNormal);
-            StartOfBlock := fBlockBegin;
-            SetSelText(s);
-            fUndoList.AddChange(crInsert, fBlockBegin, fBlockEnd, Helper,
-              smNormal);
-            EndUndoBlock;                                                       //Fiala 2001-12-17
+            try
+              fUndoList.AddChange(crDelete, fBlockBegin, fBlockEnd, Helper,
+                smNormal);
+              StartOfBlock := fBlockBegin;
+              SetSelText(s);
+              fUndoList.AddChange(crInsert, fBlockBegin, fBlockEnd, Helper,
+                smNormal);
+            finally
+              EndUndoBlock;                                                     //Fiala 2001-12-17
+            end;
             InvalidateGutterLines(-1, -1);                                      //Fiala 2001-12-17
           end else begin
             Temp := LineText;
@@ -7871,8 +7908,9 @@ begin
               IncPaintLock;
             end;
             bPrompt := False;
-            BeginUndoBlock;                                                   //jcr 2002-04-13
-            bEndUndoBlock:= true;                                             //
+            if bEndUndoBlock = false then
+              BeginUndoBlock;                                                   //jcr 2002-04-13
+            bEndUndoBlock:= true;                                               //
           end;
           //SetSelTextExternal(AReplace);                                       //slm 11/29/02  Let the search engine
           fSearchEngine.Replace(AReplace,Self);                                 //slm 11/29/02  do the replacing
@@ -8182,7 +8220,7 @@ end;
 procedure TCustomSynEdit.MoveCaretAndSelection(ptBefore, ptAfter: TPoint;
   SelectionCommand: boolean);
 begin
-  if (eoGroupUndo in FOptions) then
+  if (eoGroupUndo in FOptions) and UndoList.CanUndo then
     fUndoList.AddGroupBreak;                                                    //ek 2000-11-04
 
   IncPaintLock;
@@ -8358,13 +8396,16 @@ begin
           w := AnsiUpperCase( w[1] ) + AnsiLowerCase(Copy(w, 2, Length(w)));
       end;
       BeginUndoBlock;
-      SelText := w;
-      fUndoList.AddChange( crCaret, oldCaret, oldCaret, '', SelectionMode );
-      if bHadSel then
-        fUndoList.AddChange( crSelection, oldBlockBegin, oldBlockEnd, '', SelectionMode )
-      else
-        fUndoList.AddChange( crSelection, oldCaret, oldCaret, '', SelectionMode );
-      EndUndoBlock;
+      try
+        SelText := w;
+        fUndoList.AddChange( crCaret, oldCaret, oldCaret, '', SelectionMode );
+        if bHadSel then
+          fUndoList.AddChange( crSelection, oldBlockBegin, oldBlockEnd, '', SelectionMode )
+        else
+          fUndoList.AddChange( crSelection, oldCaret, oldCaret, '', SelectionMode );
+      finally
+        EndUndoBlock;
+      end;
     end;
   finally
     { "word" commands do not restore Selection }
@@ -8714,16 +8755,19 @@ begin
     StrPCopy(Run, Spaces);
 
     fUndoList.BeginBlock;
-    InsertionPos.y := BB.y;
-    if SelectionMode = smColumn then
-      InsertionPos.x := Min( BB.x, BE.x )
-    else
-      InsertionPos.x := 1;
-    InsertBlock( InsertionPos, InsertionPos, StrToInsert );
-    fUndoList.AddChange(crIndent, BB, BE, '', smColumn);
-    //We need to save the position of the end block for redo
-    fUndoList.AddChange(crIndent, Point(BB.x + length(Spaces), BB.y), Point(BE.x + length(Spaces), BE.y), '', smColumn);
-    fUndoList.EndBlock;
+    try
+      InsertionPos.y := BB.y;
+      if SelectionMode = smColumn then
+        InsertionPos.x := Min( BB.x, BE.x )
+      else
+        InsertionPos.x := 1;
+      InsertBlock( InsertionPos, InsertionPos, StrToInsert );
+      fUndoList.AddChange(crIndent, BB, BE, '', smColumn);
+      //We need to save the position of the end block for redo
+      fUndoList.AddChange(crIndent, Point(BB.x + length(Spaces), BB.y), Point(BE.x + length(Spaces), BE.y), '', smColumn);
+    finally
+      fUndoList.EndBlock;
+    end;
 
     //adjust the x position of orgcaretpos appropriately
     OrgCaretPos.X := X;
@@ -8938,8 +8982,10 @@ procedure TCustomSynEdit.SetModified(Value: boolean);
 begin
   if Value <> fModified then begin
     fModified := Value;
+    if (eoGroupUndo in Options) and (not Value) and UndoList.CanUndo then
+      UndoList.AddGroupBreak;
+    UndoList.InitialState := not Value;
     StatusChanged([scModified]);
-    UndoList.InitialState := not Modified;
   end;
 end;
 
@@ -9322,35 +9368,21 @@ begin
   end;
 end;
 
-//mr.maX 2003-05-22 - Start
 procedure TCustomSynEdit.UpdateModifiedStatus;
-var
-  FOldModified: Boolean;
 begin
-  if (fUndoList.ItemCount > 0) and not (sfInsideRedo in fStateFlags) then
-    FOldModified := Modified
-  else
-    FOldModified := False;
-
-  Modified := fUndoList.CanUndo or FOldModified or fUndoList.FullUndoImpossible;
+  Modified := not UndoList.InitialState;
 end;
-//mr.maX 2003-05-22 - End
 
 procedure TCustomSynEdit.UndoRedoAdded(Sender: TObject);
 begin
-// Modified needs to be tracked by the editor component, not the undo list.
-//if the undo buffer is to small, for example, then it could be marked as not
-//modified prematurely or never actually come out of the modified state.
-
-//  Modified := not UndoList.InitialState;
-  UpdateModifiedStatus;                                                         //mr.maX 2003-05-22
+  UpdateModifiedStatus;
 
   // we have to clear the redo information, since adding undo info removes
   // the necessary context to undo earlier edit actions
   if (Sender = fUndoList) and not (sfInsideRedo in fStateFlags) and                                //mh 2000-10-30
      (fUndoList.PeekItem<>nil) and (fUndoList.PeekItem.ChangeReason<>crGroupBreak) then            //ek 2000-11-04
     fRedoList.Clear;
-  if (fUndoList.BlockCount = 0) and Assigned(fOnChange) then
+  if (TSynEditUndoList(Sender).BlockCount = 0) and Assigned(fOnChange) then
     fOnChange(Self);
 end;
 

@@ -24,7 +24,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditReg.pas,v 1.2 2003-07-03 07:23:05 billthefish Exp $
+$Id: SynEditReg.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -55,6 +55,7 @@ uses
   QSynEditExport,
   QSynExportHTML,
   QSynExportRTF,
+  QSynExportTeX,
   QSynHighlighterMulti,
   QSynCompletionProposal,
   QSynEditPythonBehaviour,
@@ -75,6 +76,7 @@ uses
   QSynHighlighterCache,
   QSynHighlighterCobol,
   QSynHighlighterCpp,
+  QSynHighlighterCS,
   QSynHighlighterCss,
   QSynHighlighterDfm,
   QSynHighlighterDml,
@@ -82,6 +84,7 @@ uses
   QSynHighlighterFoxpro,
   QSynHighlighterGalaxy,
   QSynHighlighterGeneral,
+  QSynHighlighterHaskell,
   QSynHighlighterHC11,
   QSynHighlighterHP48,
   QSynHighlighterHtml,
@@ -97,10 +100,12 @@ uses
   QSynHighlighterPHP,
   QSynHighlighterProgress,
   QSynHighlighterPython,
+  QSynHighlighterRuby,
   QSynHighlighterSml,
   QSynHighlighterSQL,
   QSynHighlighterTclTk,
   QSynHighlighterTeX,
+  QSynHighlighterUNIXShellScript,
   QSynHighlighterVB,
   QSynHighlighterVBScript,
   QSynHighlighterGWS,
@@ -111,6 +116,7 @@ uses
   QSynHighlighterIDL,
   QSynHighlighterUnreal,
   QSynHighlighterST,
+  QSynHighlighterLDraw,
 {$ELSE}
   // SynEdit components
   SynEdit,
@@ -125,6 +131,7 @@ uses
   SynEditExport,
   SynExportHTML,
   SynExportRTF,
+  SynExportTeX,
   SynHighlighterMulti,
   SynCompletionProposal,
   SynEditPythonBehaviour,
@@ -147,6 +154,7 @@ uses
   SynHighlighterCache,
   SynHighlighterCobol,
   SynHighlighterCpp,
+  SynHighlighterCS,
   SynHighlighterCss,
   SynHighlighterDfm,
   SynHighlighterDml,
@@ -154,6 +162,7 @@ uses
   SynHighlighterFoxpro,
   SynHighlighterGalaxy,
   SynHighlighterGeneral,
+  SynHighlighterHaskell,
   SynHighlighterHC11,
   SynHighlighterHP48,
   SynHighlighterHtml,
@@ -169,10 +178,12 @@ uses
   SynHighlighterPHP,
   SynHighlighterProgress,
   SynHighlighterPython,
+  SynHighlighterRuby,
   SynHighlighterSml,
   SynHighlighterSQL,
   SynHighlighterTclTk,
   SynHighlighterTeX,
+  SynHighlighterUNIXShellScript,
   SynHighlighterVB,
   SynHighlighterVBScript,
   SynHighlighterGWS,
@@ -183,6 +194,7 @@ uses
   SynHighlighterIDL,
   SynHighlighterUnreal,
   SynHighlighterST,
+  SynHighlighterLDraw,
 {$ENDIF}
   Classes;
 
@@ -217,7 +229,7 @@ begin
 
 // SynEdit extra components
   RegisterComponents(SYNS_ComponentsPage, [TSynExporterHTML, TSynExporterRTF,
-    TSynEditPythonBehaviour, TSynMultiSyn,
+    TSynExporterTeX, TSynEditPythonBehaviour, TSynMultiSyn,
     TSynCompletionProposal, TSynAutoComplete, TSynMacroRecorder,
     TSynEditPrint, TSynEditPrintPreview, TSynAutoCorrect,
     TSynEditSearch, TSynEditRegexSearch, TSynEditOptionsDialog]);
@@ -230,13 +242,13 @@ begin
   RegisterComponents(SYNS_HighlightersPage, [
     //classic
     TSynCppSyn, TSynFortranSyn, TSynGeneralSyn, TSynJavaSyn, TSynM3Syn,
-    TSynPasSyn, TSynVBSyn, TSynCobolSyn,
+    TSynPasSyn, TSynVBSyn, TSynCobolSyn, TSynCSSyn,
     // internet
     TSynCssSyn, TSynHTMLSyn, TSynJScriptSyn, TSynPHPSyn, TSynVBScriptSyn,
     TSynXMLSyn,
     //interpreted
     TSynAWKSyn, TSynBATSyn, TSynKixSyn, TSynPerlSyn, TSynPythonSyn,
-    TSynTclTkSyn, TSynGWScriptSyn,
+    TSynTclTkSyn, TSynGWScriptSyn, TSynRubySyn, TSynUNIXShellScriptSyn, 
     //database
     TSynCACSyn, TSynCacheSyn, TSynFoxproSyn, TSynSQLSyn, TSynSDDSyn,
     //assembler
@@ -247,7 +259,8 @@ begin
     TSynDfmSyn, TSynIniSyn, TSynInnoSyn,
     // other
     TSynBaanSyn, TSynGalaxySyn, TSynProgressSyn, TSynMsgSyn,
-    TSynIdlSyn, TSynUnrealSyn, TSynCPMSyn, TSynTeXSyn
+    TSynIdlSyn, TSynUnrealSyn, TSynCPMSyn, TSynTeXSyn, 
+    TSynHaskellSyn, TSynLDRSyn
   ]);
 end;
 

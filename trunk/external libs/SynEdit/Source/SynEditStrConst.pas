@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditStrConst.pas,v 1.2 2003-07-03 07:23:06 billthefish Exp $
+$Id: SynEditStrConst.pas,v 1.3 2003-07-06 11:41:46 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -218,6 +218,8 @@ const
   SYNS_FilterST                 =  'Structured Text Files (*.st)|*.st';
   SYNS_FilterCOBOL              =  'COBOL Files (*.cbl, *.cob)|*.cbl;*.cob';
   SYNS_FilterTeX                =  'TeX Files (*.tex)|*.tex';
+  SYNS_FilterRuby               =  'Ruby Files (*.rb,*.rbw)|*.rb;*.rbw';
+  SYNS_FilterUNIXShellScript    =  'UNIX Shell Scripts (*.sh)|*.sh';
 
   // Language names. Maybe somebody wants them translated / more detailed...
   SYNS_LangHP48                 =  'HP48';
@@ -268,6 +270,8 @@ const
   SYNS_LangST                   =  'Structured Text';
   SYNS_LangCOBOL                =  'COBOL';
   SYNS_LangTeX                  =  'TeX';
+  SYNS_LangRuby                 =  'Ruby';
+  SYNS_LangNameUNIXShellScript  =  'UNIX Shell Script';
 
 implementation
 
