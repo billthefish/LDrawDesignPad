@@ -44,40 +44,6 @@ object frColorDialog: TfrColorDialog
       Height = 13
       Caption = 'Custom Colornr:'
     end
-    object btOldColor: TJvTransparentButton
-      Left = 96
-      Top = 24
-      Width = 113
-      Height = 32
-      Caption = 'Unknown'
-      Down = True
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      FrameStyle = fsRegular
-      ParentFont = False
-      Transparent = False
-      OnClick = btOldCOlorClick
-    end
-    object btNewColor: TJvTransparentButton
-      Left = 96
-      Top = 58
-      Width = 113
-      Height = 32
-      Caption = '0 - Black'
-      Color = clBlack
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clSilver
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      FrameStyle = fsRegular
-      ParentFont = False
-      Transparent = False
-      OnClick = btNewColorClick
-    end
     object JvColorSquare1: TJvColorSquare
       Left = 216
       Top = 24
@@ -223,6 +189,40 @@ object frColorDialog: TfrColorDialog
       BorderStyle = bsSingle
       OnColorClick = JvColorSquare1ColorClick
       OnMouseMove = JvColorSquare1MouseMove
+    end
+    object btOldColor: TPanel
+      Left = 96
+      Top = 24
+      Width = 113
+      Height = 32
+      BevelOuter = bvLowered
+      BevelWidth = 3
+      Caption = 'Unknown'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 6
+      OnClick = btOldCOlorClick
+    end
+    object btNewColor: TPanel
+      Left = 96
+      Top = 58
+      Width = 113
+      Height = 32
+      BevelWidth = 3
+      Caption = '0 - Black'
+      Color = clBlack
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clSilver
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 7
+      OnClick = btNewColorClick
     end
     object ScrollBar: TScrollBar
       Left = 376
