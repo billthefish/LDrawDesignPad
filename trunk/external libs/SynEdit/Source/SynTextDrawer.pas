@@ -55,7 +55,7 @@
                         Added BaseStyle property to TheFontFont class.
  ==============================================================================}
 
-// $Id: SynTextDrawer.pas,v 1.4 2003-07-09 16:13:52 c_schmitz Exp $
+// $Id: SynTextDrawer.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 // SynEdit note: The name had to be changed to get SynEdit to install 
 //   together with mwEdit into the same Delphi installation
@@ -72,8 +72,12 @@ uses
   Windows,
   Graphics;
 
+const
+  FontStyleCount = Ord(High(TFontStyle)) +1;
+  FontStyleCombineCount = (1 shl FontStyleCount);
+  
 type
-  TheStockFontPatterns = 0..(1 shl (1 + Ord(High(TFontStyle))));
+  TheStockFontPatterns = 0..FontStyleCombineCount -1;
 
   PheFontData = ^TheFontData;
   TheFontData = record
@@ -743,7 +747,7 @@ begin
   ASSERT(SizeOf(TFontStyles) = 1);
 {$ENDIF}
 
-  idx := PByte(@Value)^;
+  idx := Byte(Value);
   ASSERT(idx <= High(TheStockFontPatterns));
 
   UseFontHandles;

@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynCompletionProposal.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynCompletionProposal.pas,v 1.5 2003-11-11 14:17:40 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -1457,7 +1457,11 @@ begin
       #32..'z':
         begin
           if (Key in FWordBreakChars) and Assigned(OnValidate) then
-            OnValidate(Self, [], Key);         //GBN 15/11/2001
+          begin
+            if Key = #32 then
+              OnValidate(Self, [], #0)
+            else OnValidate(Self, [], Key);
+          end;
 
           CurrentString := CurrentString +Key;
 
@@ -2376,6 +2380,14 @@ begin
       Form.FScrollbar.Visible := True;
 
       RecalcFormPlacement;
+
+      //This may seem redundant, but it fixes scrolling bugs for the first time
+      //up when MatchText is not true.  That is the only time these occur
+      if not(scoLimitToMatchedText in Options) then
+      begin
+        Form.AdjustScrollBarPosition;
+        Form.FScrollbar.Position := Form.Position;
+      end;
       Form.Show;
     end;
   ctParams, ctHint:
@@ -2988,7 +3000,7 @@ begin
   ShortCutToKey (fShortCut,ShortCutKey,ShortCutShift);
   with Sender as TCustomSynEdit do
   begin
-    if not ReadOnly and (Shift = ShortCutShift) and (Key = ShortCutKey) then
+    if ((DefaultType <> ctCode) or not(ReadOnly)) and (Shift = ShortCutShift) and (Key = ShortCutKey) then
     begin
       Form.CurrentEditor := Sender as TCustomSynEdit;
       Key := 0;
@@ -3107,8 +3119,10 @@ begin
   if not Assigned(FTimer) then exit;
   FTimer.Enabled := False; //GBN 13/11/2001  
   if Application.Active then
-    DoExecute(Form.CurrentEditor as TCustomSynEdit)
-  else if Form.Visible then Form.Hide;
+  begin
+    DoExecute(Form.CurrentEditor as TCustomSynEdit);
+    FNoNextKey := False;
+  end else if Form.Visible then Form.Hide;
 end;
 
 function TSynCompletionProposal.GetTimerInterval: Integer;
@@ -3240,7 +3254,7 @@ begin
   if i <> -1 then
     with AEditor do
     begin
-      if not ReadOnly then
+      if (DefaultType <> ctCode) or not(ReadOnly) then
       begin
         if DefaultType = ctHint then
           GetCursorPos(P)

@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditStrConst.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynEditStrConst.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -192,7 +192,7 @@ const
   SYNS_FilterRTF                =  'Rich Text Format Documents (*.rtf)|*.rtf';
   SYNS_FilterBatch              =  'MS-DOS Batch Files (*.bat;*.cmd)|*.bat;*.cmd';
   SYNS_FilterDFM                =  'Borland Form Files (*.dfm;*.xfm)|*.dfm;*.xfm';
-  SYNS_FilterX86Asm             =  'x86 Assembly Files (*.asm)|*.asm';
+  SYNS_FilterX86Assembly        =  'x86 Assembly Files (*.asm)|*.asm';
   SYNS_FilterGembase            =  'GEMBASE Files (*.dml,*.gem)|*.dml;*.gem';
   SYNS_FilterINI                =  'INI Files (*.ini)|*.ini';
   SYNS_FilterSML                =  'Standard ML Files (*.sml)|*.sml';

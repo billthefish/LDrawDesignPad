@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterUnreal.pas,v 1.4 2003-07-09 16:13:27 c_schmitz Exp $
+$Id: SynHighlighterUnreal.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -160,6 +160,7 @@ type
     function Func65: TtkTokenKind;
     function Func66: TtkTokenKind;
     function Func69: TtkTokenKind;
+    function Func70: TtkTokenKind;
     function Func71: TtkTokenKind;
     function Func72: TtkTokenKind;
     function Func73: TtkTokenKind;
@@ -174,8 +175,11 @@ type
     function Func84: TtkTokenKind;
     function Func85: TtkTokenKind;
     function Func87: TtkTokenKind;
+    function Func89: TtkTokenKind;
     function Func91: TtkTokenKind;
+    function Func92: TtkTokenKind;
     function Func96: TtkTokenKind;
+    function Func97: TtkTokenKind;
     function Func98: TtkTokenKind;
     function Func99: TtkTokenKind;
     function Func100: TtkTokenKind;
@@ -191,17 +195,22 @@ type
     function Func115: TtkTokenKind;
     function Func120: TtkTokenKind;
     function Func122: TtkTokenKind;
+    function Func126: TtkTokenKind;
     function Func127: TtkTokenKind;
     function Func128: TtkTokenKind;
+    function Func136: TtkTokenKind;
     function Func143: TtkTokenKind;
     function Func144: TtkTokenKind;
+    function Func146: TtkTokenKind;
     function Func147: TtkTokenKind;
     function Func148: TtkTokenKind;
     function Func156: TtkTokenKind;
     function Func167: TtkTokenKind;
+    function Func172: TtkTokenKind;
     function Func174: TtkTokenKind;
     function Func178: TtkTokenKind;
     function Func185: TtkTokenKind;
+    function Func190: TtkTokenKind;
     function Func192: TtkTokenKind;
     function Func193: TtkTokenKind;
     function Func210: TtkTokenKind;
@@ -380,6 +389,7 @@ begin
   fIdentFuncTable[65] := Func65;
   fIdentFuncTable[66] := Func66;
   fIdentFuncTable[69] := Func69;
+  fIdentFuncTable[70] := Func70;
   fIdentFuncTable[71] := Func71;
   fIdentFuncTable[72] := Func72;
   fIdentFuncTable[73] := Func73;
@@ -394,8 +404,11 @@ begin
   fIdentFuncTable[84] := Func84;
   fIdentFuncTable[85] := Func85;
   fIdentFuncTable[87] := Func87;
+  fIdentFuncTable[89] := Func89;
   fIdentFuncTable[91] := Func91;
+  fIdentFuncTable[92] := Func92;
   fIdentFuncTable[96] := Func96;
+  fIdentFuncTable[97] := Func97;
   fIdentFuncTable[98] := Func98;
   fIdentFuncTable[99] := Func99;
   fIdentFuncTable[100] := Func100;
@@ -411,17 +424,22 @@ begin
   fIdentFuncTable[115] := Func115;
   fIdentFuncTable[120] := Func120;
   fIdentFuncTable[122] := Func122;
+  fIdentFuncTable[126] := Func126;
   fIdentFuncTable[127] := Func127;
   fIdentFuncTable[128] := Func128;
+  fIdentFuncTable[136] := Func136;
   fIdentFuncTable[143] := Func143;
   fIdentFuncTable[144] := Func144;
+  fIdentFuncTable[146] := Func146;
   fIdentFuncTable[147] := Func147;
   fIdentFuncTable[148] := Func148;
   fIdentFuncTable[156] := Func156;
   fIdentFuncTable[167] := Func167;
+  fIdentFuncTable[172] := Func172;
   fIdentFuncTable[174] := Func174;
   fIdentFuncTable[178] := Func178;
   fIdentFuncTable[185] := Func185;
+  fIdentFuncTable[190] := Func190;
   fIdentFuncTable[192] := Func192;
   fIdentFuncTable[193] := Func193;
   fIdentFuncTable[210] := Func210;
@@ -501,7 +519,8 @@ end;
 function TSynUnrealSyn.Func39: TtkTokenKind;
 begin
   if KeyComp('DOT') then Result := tkSymbol else
-    if KeyComp('FOR') then Result := tkKey else Result := tkIdentifier;
+    if KeyComp('FOR') then Result := tkKey else
+      if KeyComp('RNG') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func40: TtkTokenKind;
@@ -520,7 +539,8 @@ function TSynUnrealSyn.Func42: TtkTokenKind;
 begin
   if KeyComp('FINAL') then Result := tkKey2 else
     if KeyComp('FOR') then Result := tkKey else
-      if KeyComp('SELF') then Result := tkKey else Result := tkIdentifier;
+      if KeyComp('SELF') then Result := tkKey else
+      if KeyComp('NEW') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func43: TtkTokenKind;
@@ -561,7 +581,8 @@ end;
 
 function TSynUnrealSyn.Func50: TtkTokenKind;
 begin
-  if KeyComp('VOID') then Result := tkKey else Result := tkIdentifier;
+  if KeyComp('VOID') then Result := tkKey else
+    if KeyComp('VECT') then Result := tkKey else Result := tkIdentifier; 
 end;
 
 function TSynUnrealSyn.Func51: TtkTokenKind;
@@ -571,12 +592,14 @@ end;
 
 function TSynUnrealSyn.Func52: TtkTokenKind;
 begin
-  if KeyComp('BYTE') then Result := tkKey else Result := tkIdentifier;
+  if KeyComp('BYTE') then Result := tkKey else
+    if KeyComp('INIT') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func53: TtkTokenKind;
 begin
-  if KeyComp('ENUM') then Result := tkKey else Result := tkIdentifier;
+  if KeyComp('ENUM') then Result := tkKey else
+    if KeyComp('ROT') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func54: TtkTokenKind;
@@ -643,6 +666,11 @@ begin
   if KeyComp('DEFAULT') then Result := tkKey else Result := tkIdentifier;
 end;
 
+function TSynUnrealSyn.Func70: TtkTokenKind;
+begin
+  if KeyComp('STOP') then Result := tkKey else Result := tkIdentifier;
+end;
+
 function TSynUnrealSyn.Func71: TtkTokenKind;
 begin
   if KeyComp('CONST') then Result := tkKey2 else
@@ -690,12 +718,14 @@ end;
 
 function TSynUnrealSyn.Func81: TtkTokenKind;
 begin
-  if KeyComp('DEPRECATED') then Result := tkKey2 else Result := tkIdentifier;
+  if KeyComp('DEPRECATED') then Result := tkKey2 else
+    if KeyComp('ALWAYS') then Result := tkKey2 else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func82: TtkTokenKind;
 begin
-  if KeyComp('SWITCH') then Result := tkKey else Result := tkIdentifier;
+  if KeyComp('SWITCH') then Result := tkKey else
+    if KeyComp('ASSERT') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func83: TtkTokenKind;
@@ -718,20 +748,37 @@ end;
 function TSynUnrealSyn.Func87: TtkTokenKind;
 begin
   if KeyComp('LOCALIZED') then Result := tkKey2 else
-    if KeyComp('STRING') then Result := tkKey else Result := tkIdentifier;
+    if KeyComp('STRING') then Result := tkKey else
+      if KeyComp('IGNORES') then Result := tkKey else Result := tkIdentifier;
+end;
+
+function TSynUnrealSyn.Func89: TtkTokenKind;
+begin
+  if KeyComp('INSTANCED') then Result := tkKey2 else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func91: TtkTokenKind;
 begin
   if KeyComp('EXTENDS') then Result := tkKey else
     if KeyComp('PRIVATE') then Result := tkKey2 else
-      if KeyComp('SAFEREPLACE') then Result := tkKey2 else Result := tkIdentifier;
+      if KeyComp('SAFEREPLACE') then Result := tkKey2 else
+        if KeyComp('IMPORT') then Result := tkKey else Result := tkIdentifier;
+end;
+
+function TSynUnrealSyn.Func92: TtkTokenKind;
+begin
+  if KeyComp('BUTTON') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func96: TtkTokenKind;
 begin
   if KeyComp('RETURN') then Result := tkKey else
     if KeyComp('DEPENDSON') then Result := tkKey else Result := tkIdentifier;
+end;
+
+function TSynUnrealSyn.Func97: TtkTokenKind;
+begin
+  if KeyComp('POINTER') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func98: TtkTokenKind;
@@ -747,7 +794,8 @@ end;
 
 function TSynUnrealSyn.Func100: TtkTokenKind;
 begin
-  if KeyComp('HIDEPARENT') then Result := tkKey else Result := tkIdentifier;
+  if KeyComp('HIDEPARENT') then Result := tkKey else
+    if KeyComp('AUTOMATED') then Result := tkKey else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func101: TtkTokenKind;
@@ -791,7 +839,8 @@ end;
 
 function TSynUnrealSyn.Func108: TtkTokenKind;
 begin
-  if KeyComp('OPERATOR') then Result := tkKey else Result := tkIdentifier;
+  if KeyComp('OPERATOR') then Result := tkKey else
+    if KeyComp('INVARIANT') then Result := tkKey2 else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func109: TtkTokenKind;
@@ -819,6 +868,11 @@ begin
   if KeyComp('REPLICATION') then Result := tkKey2 else Result := tkIdentifier;
 end;
 
+function TSynUnrealSyn.Func126: TtkTokenKind;
+begin
+  if KeyComp('ENUMCOUNT') then Result := tkKey else Result := tkIdentifier;
+end;
+
 function TSynUnrealSyn.Func127: TtkTokenKind;
 begin
   if KeyComp('NOEXPORT') then Result := tkKey2 else
@@ -830,6 +884,11 @@ begin
   if KeyComp('HIDECATEGORIES') then Result := tkKey else Result := tkIdentifier;
 end;
 
+function TSynUnrealSyn.Func136: TtkTokenKind;
+begin
+  if KeyComp('ARRAYCOUNT') then Result := tkKey else Result := tkIdentifier;
+end;
+
 function TSynUnrealSyn.Func143: TtkTokenKind;
 begin
   if KeyComp('EDITINLINENEW') then Result := tkKey2 else Result := tkIdentifier;
@@ -838,6 +897,11 @@ end;
 function TSynUnrealSyn.Func144: TtkTokenKind;
 begin
   if KeyComp('NOUSERCREATE') then Result := tkKey2 else Result := tkIdentifier;
+end;
+
+function TSynUnrealSyn.Func146: TtkTokenKind;
+begin
+  if KeyComp('EDITINLINEUSE') then Result := tkKey2 else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func147: TtkTokenKind;
@@ -860,6 +924,11 @@ begin
   if KeyComp('SHOWCATEGORIES') then Result := tkKey else Result := tkIdentifier;
 end;
 
+function TSynUnrealSyn.Func172: TtkTokenKind;
+begin
+  if KeyComp('EDITCONSTARRAY') then Result := tkKey2 else Result := tkIdentifier;
+end;
+
 function TSynUnrealSyn.Func174: TtkTokenKind;
 begin
   if KeyComp('BOUNDINGVOLUME') then Result := tkKey else Result := tkIdentifier;
@@ -873,6 +942,11 @@ end;
 function TSynUnrealSyn.Func185: TtkTokenKind;
 begin
   if KeyComp('COLLAPSECATEGORIES') then Result := tkKey else Result := tkIdentifier;
+end;
+
+function TSynUnrealSyn.Func190: TtkTokenKind;
+begin
+  if KeyComp('EDITINLINENOTIFY') then Result := tkKey2 else Result := tkIdentifier;
 end;
 
 function TSynUnrealSyn.Func192: TtkTokenKind;

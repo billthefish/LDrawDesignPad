@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterIni.pas,v 1.4 2003-07-09 16:13:27 c_schmitz Exp $
+$Id: SynHighlighterIni.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -259,6 +259,10 @@ begin
   else begin
     fTokenID := tkText;
     inc(Run);
+    while FLine[Run] <> #0 do
+      if FLine[Run] in ['a'..'z', 'A'..'Z', '0'..'9'] then
+        inc(Run)
+      else break;
   end;
 end;
 
@@ -281,6 +285,7 @@ begin
     inc(Run);
     fTokenID := tkNumber;
     while FLine[Run] in ['0'..'9', '.', 'e', 'E'] do inc(Run);
+    if FLine[Run] in ['a'..'z','A'..'Z'] then TextProc;
   end;
 end;
 

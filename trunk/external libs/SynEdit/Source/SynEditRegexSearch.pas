@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditRegexSearch.pas,v 1.4 2003-07-09 16:13:26 c_schmitz Exp $
+$Id: SynEditRegexSearch.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -43,12 +43,10 @@ interface
 
 uses
 {$IFDEF SYN_CLX}
-  QSynEdit,
   QSynEditTypes,
   QSynRegExpr,
   QSynEditMiscClasses,
 {$ELSE}
-  SynEdit,
   SynEditTypes,
   SynRegExpr,
   SynEditMiscClasses,
@@ -72,7 +70,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function FindAll(const NewText: string): integer; override;
-    procedure Replace(Replacement: string; ASynEdit :TObject); override;        //slm 11/29/02    
+    function Replace(const aOccurrence, aReplacement: string): string; override;
   end;
 
 implementation
@@ -96,10 +94,10 @@ end;
 
 destructor TSynEditRegexSearch.Destroy;
 begin
+  inherited;
   fRegex.Free;
   fPositions.Free;
   fLengths.Free;
-  inherited;
 end;
 
 function TSynEditRegexSearch.FindAll(const NewText: string): integer;
@@ -127,10 +125,9 @@ begin
     Result := 0;
 end;
 
-procedure TSynEditRegexSearch.Replace(Replacement: string; ASynEdit :TObject);  //slm 11/29/02 begin
+function TSynEditRegexSearch.Replace(const aOccurrence, aReplacement: string): string;   
 begin
-    TSynEdit(ASynEdit).SelText:=
-        fRegex.Replace(TSynEdit(ASynEdit).SelText,Replacement,True);
+  Result := fRegex.Replace( aOccurrence, aReplacement, True );
 end;   
 
 function TSynEditRegexSearch.GetLength(aIndex: integer): integer;

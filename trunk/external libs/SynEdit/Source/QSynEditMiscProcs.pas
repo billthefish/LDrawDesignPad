@@ -4,3 +4,5 @@ unit QSynEditMiscProcs;
 {$DEFINE QSYNEDITMISCPROCS}
 
 {$I SynEditMiscProcs.pas}
+
+
