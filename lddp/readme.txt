@@ -1,4 +1,4 @@
-LDDesignPad v1.4 for LDraw
+LDDesignPad for LDraw
 ----------------------------
 
 Contents
@@ -47,17 +47,24 @@ and the great programs they wrote to make LDRAWing a lot easier:
 
 ( no particular order) and the others not mentioned ;)
 
+We especially thank you, the user, for downloading our program
+
+   -The LDDP Development Team:
+      Carsten Schmitz
+      Stephen Schonberg
+      Orion Pobursky
+
 
 3. Plugin Capability
 --------------------
 
-There is a Delphi Sample Source in the PluginDir.
+There is a Delphi/C++ Sample Source in the PluginDir.
 
 You should be able to write your own plugin with this in a breeze.
 
 If you need any help writing a plugin or need a new yet unsupported function
-in the plugin header/call then don't hesitate to contact me.
-Plugins have always to be in the \Plugins Dir.
+in the plugin header/call then don't hesitate to contact the LDDP team.
+All Plugin dll's are required be in the \Plugins directory.
 
 
 4. Comments and Bugs
@@ -66,32 +73,50 @@ Plugins have always to be in the \Plugins Dir.
 
 LDDesignPad is distributed under the GPL.
 
-Source code and the newest version always provided at http://www.sourceforge.net/projects/lddp
+We invite you to contribute to this project.
 
-Surely you can contribute to his program too.
+Source code and the newest version can be found at 
+ http://www.sourceforge.net/projects/lddp
 
-You will find there a forum for discussion 
-and trackers for bugs and suggestions for features.
+There you will find forums for discussion and trackers for bugs and 
+suggestions for features.
+
+Note to all plugin authors:
+  As of Version 1.5, LDDP no longer uses the Registry. It now uses the LDraw INI 
+  file for it's configuration settings.  If you used settings other than the 
+  InstallDir in the Registry, your plugin will have to be updated to work.
+
 
 
 Remarks:
 
 - The palette file (colors.pal) isn't complete.
   Some colors are missing, some have to be renamed. Use normal texteditor
-  or LDDP to edit this file. Feel free to do this and please send me any updates
-  to this file so I will include it in the next release.
+  or LDDP to edit this file. Feel free to do this and please send us any updates
+  to this file so we can include it in the next release.
 
-- If you have some good templates then send me your templates.bin file.
-  I will be happy to include it in the next release!
+- If you wrote a plugin for LDDP we will be happy to a put a link or the
+  plugin itself on the LDDP website!
 
-- If you wrote a plugin for LDDP I will be happy to a put a link or the
-  plugin itself on my website!
-
+- Search and Replace works but it's still not perfect (e.g. replace doesn't prompt)
 
 5. Version History
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
+
+v1.5b 31 July 2003
++ Entire program overhauled and rewritten.
++ Integrated L3P check into the program.  Now called Error Check
++ Integrated BMP2DAT into the program.
++ Ability to reverse the winding of a polygon
++ A model tree veiwer
++ Auto error fix now fixes 'Row N All Zeros' errors
++ Moved all configuration settings to the LDraw.ini.  This file should be located in your
+  Windows directory. If not LDDP will create it there.
++ Ability to change default decimal places when Inlining
++ Ability to define icons for plugins
+ 
 
 v1.5a 05/22/2003  
 

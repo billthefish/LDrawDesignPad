@@ -1,9 +1,14 @@
 Hello!
 
+Note to all plugin authors:
+  As of Version 1.5, LDDP no longer uses the Registry. It now uses the LDraw INI 
+  file for it's configuration settings.  If you used settings other than the 
+  InstallDir in the Registry, your plugin will have to be updated to work.
+
 A few hints for plugin-authors:
 
 - LDDP saves its settings including the paths to LDDP, LDRAW and other external programs in
-  an INI file called LDDP.ini in the LDDP Dir.
+  the Ldraw.ini file, usually located the the Windows folder.
 
 - For window plugins LDDP saves a "InstallDir" key containing the actual dir of the lddp executable 
   (its updated everytime LDDP is started).
@@ -17,7 +22,8 @@ A few hints for plugin-authors:
   plugin.  The mask color is Delphi clFuchsia, RGB 255,0,255, any pixel with this color will be
   considered transparent by LDDesignPad
 
-If you have any further questions please don't hesitate to write email to casz@gmx.de
+If you have any further questions please don't hesitate to post a message to the forums at:
+ http://www.sourceforge.net/projects/lddp
 
 Play well
 
