@@ -676,8 +676,11 @@ Parameter: Standard
 Return value: none
 ----------------------------------------------------------------------}
 begin
-  if FIleExists((Sender as TMenuItem).Caption) then
-    CreateMDIChild((Sender as TMenuItem).Caption , false)
+  if FileExists((Sender as TMenuItem).Caption) then
+  begin
+    CreateMDIChild((Sender as TMenuItem).Caption , false);
+    ActiveMDIChild.Tag := 0;
+  end
   else
     MessageDlg('File '''+ (Sender as TMenuItem).Caption +''' not found!', mtError, [mbOK], 0);
 end;
@@ -1124,7 +1127,7 @@ var sr:TSearchRec;
 
 begin
   plgBitmap := TBitMap.Create;
-  PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins\';
+  PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
   i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
   frOptions.cblPlugins.clear;
   slPlugins.clear;
@@ -1285,7 +1288,7 @@ begin
  with (activeMDICHild as TfrEditorChild).memo do
  begin
    seltext:='0 Part name'+#13#10+
-            '0 Name: ' + ExtractFileName(ActiveMDIChild.Caption) +#13#10+
+            '0 Name: ' + ExtractFileName(ActiveMDIChild.Caption) + #13#10 +
             '0 Author: ' + frOptions.edName.text + ' <'+frOptions.edEmail.text+'>' + #13#10 +
             '0 Unofficial Element'+#13#10+
             '0 KEYWORDS your keywords'+#13#10;
@@ -1316,7 +1319,7 @@ var st:TStringList;
     ver:Tversion;
     vers:string;
 begin
-  ver:=TVersion.Create(paramstr(0));
+  ver:=TVersion.Create(Application.ExeName);
   Vers:=IntToStr (ver.HauptVersion) + '.' +
               IntToStr (ver.NebenVersion);
   ver.free;
@@ -1617,12 +1620,12 @@ var opt:byte;
       short:=GetShortFileName(long);
       toparse:=ReplaceStr(toparse,'%0',long);
       toparse:=ReplaceStr(toparse,'%1',ExtractFilePath(long));
-      toparse:=ReplaceStr(toparse,'%2',copy(ExtractFileName(long),1,pos('.',ExtractFileName(long))-1));
-      toparse:=ReplaceStr(toparse,'%3',ExtractFilePath(long)+copy(ExtractFileName(long),1,pos('.',ExtractFileName(long))-1));
+      toparse:=ReplaceStr(toparse,'%2',ChangeFileExt(ExtractFileName(long),''));
+      toparse:=ReplaceStr(toparse,'%3',ChangeFileExt(long,''));
       toparse:=ReplaceStr(toparse,'%4',short);
       toparse:=ReplaceStr(toparse,'%5',ExtractFilePath(short));
-      toparse:=ReplaceStr(toparse,'%6',copy(ExtractFileName(short),1,pos('.',ExtractFileName(short))-1));
-      toparse:=ReplaceStr(toparse,'%7',ExtractFilePath(short)+copy(ExtractFileName(short),1,pos('.',ExtractFileName(short))-1));
+      toparse:=ReplaceStr(toparse,'%6',ChangeFileExt(ExtractFileName(short),''));
+      toparse:=ReplaceStr(toparse,'%7',ChangeFileExt(short,''));
       Result:=toParse;
     end;
 
