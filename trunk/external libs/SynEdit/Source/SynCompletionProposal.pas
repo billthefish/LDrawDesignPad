@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynCompletionProposal.pas,v 1.5 2003-11-11 14:17:40 c_schmitz Exp $
+$Id: SynCompletionProposal.pas,v 1.6 2004-03-01 22:12:05 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -419,7 +419,6 @@ type
     FShortCut: TShortCut;
     FNoNextKey: Boolean;
     FCompletionStart: Integer;
-    FAdjustCompletionStart: Boolean;
     {$IFDEF SYN_CLX} // Missing-ShowWindow-Workaround
     FIgnoreFocusCommands: Boolean;
     {$ENDIF}
@@ -1725,7 +1724,7 @@ end;
 
 function TSynBaseCompletionProposalForm.LogicalToPhysicalIndex(Index: Integer): Integer;
 begin
-  if FMatchText and (Index >= 0) then
+  if FMatchText and (Index >= 0) and (Index < FAssignedList.Count) then
     Result := Integer(FAssignedList.Objects[Index])
   else
     Result := Index;
@@ -2325,7 +2324,7 @@ procedure TSynBaseCompletionProposal.ExecuteEx(s: string; x, y: integer; Kind : 
 
     if tmpX + tmpWidth > GetWorkAreaWidth then
     begin
-      tmpX := tmpX - tmpWidth;
+      tmpX := GetWorkAreaWidth - tmpWidth - 5;  //small space buffer
       if tmpX < 0 then
         tmpX := 0;
     end;
@@ -2837,13 +2836,11 @@ begin
       BeginUpdate;
       BeginUndoBlock;
       try
-        if FAdjustCompletionStart then
-          FCompletionStart := PhysicalToLogicalPos(Point(FCompletionStart, CaretY)).X;
-        BlockBegin := Point(FCompletionStart, CaretY);
+        BlockBegin := TBufferCoord(Point(FCompletionStart, CaretY));
         if EndToken = #0 then
-          BlockEnd := Point(WordEnd.X, CaretY)
+          BlockEnd := TBufferCoord(Point(WordEnd.Char, CaretY))
         else
-          BlockEnd := Point(CaretX, CaretY);
+          BlockEnd := TBufferCoord(Point(CaretX, CaretY));
 
         if scoUseInsertList in FOptions then
         begin
@@ -3021,13 +3018,12 @@ begin
     i := AEditor.CaretX - 1;
     if i <= Length(s) then
     begin
-      FAdjustCompletionStart := False;
       while (i > 0) and (s[i] > #32) and (not (s[i] in Form.FWordBreakChars)) do
         dec(i);
 
       FCompletionStart := i+1;
       Result := Copy(s, i+1, AEditor.CaretX -i-1);
-    end else FAdjustCompletionStart := True;
+    end;
 
     FCompletionStart := i+1;
   end;
@@ -3043,8 +3039,8 @@ begin
   if not Assigned(AEditor) then
     exit;
 
-  Line := AEditor.Lines[AEditor.CaretXY.Y - 1];
-  X := AEditor.CaretXY.X-1;
+  Line := AEditor.Lines[AEditor.CaretXY.Line - 1];
+  X := AEditor.CaretXY.Char-1;
   if (X = 0) or (X > Length(Line)) or (Length(Line) = 0) then
     exit;
 
@@ -3054,7 +3050,7 @@ begin
 
   BreakChars := BreakChars + [#9, #32];
 
-  while (X > 0) and (not (Line[X] in BreakChars)) do 
+  while (X > 0) and (not (Line[X] in BreakChars)) do
   begin
     Result := Line[X] + Result;
     dec(x);
@@ -3258,8 +3254,10 @@ begin
       begin
         if DefaultType = ctHint then
           GetCursorPos(P)
-        else
-          p := ClientToScreen(Point(CaretXPix, CaretYPix + LineHeight));
+        else begin
+          p := ClientToScreen( RowColumnToPixels(DisplayXY) );
+          Inc(p.y, LineHeight);
+        end;
 
         Form.CurrentEditor := AEditor;
 
@@ -3440,7 +3438,7 @@ procedure TSynAutoComplete.Execute(token: string; Editor: TCustomSynEdit);
 var
   Temp: string;
   i, j: integer;
-  StartOfBlock: tpoint;
+  StartOfBlock: TBufferCoord;
   ChangedIndent   : Boolean;
   ChangedTrailing : Boolean;
   TmpOptions : TSynEditorOptions;
@@ -3476,7 +3474,8 @@ begin
       else Spacing:=StringOfChar(' ',BeginningSpaceCount);
 
       inc(i);
-      StartOfBlock := Point(-1, -1);
+      StartOfBlock.Char := -1;
+      StartOfBlock.Line := -1;
       while (i < AutoCompleteList.Count) and
             (length(AutoCompleteList[i]) > 0) and
             (AutoCompleteList[i][1] = '=') do
@@ -3501,7 +3500,7 @@ begin
              else Editor.CommandProcessor (ecChar, ' ', nil);
         end;
       end;
-      if (StartOfBlock.x <> -1) and (StartOfBlock.y <> -1) then begin
+      if (StartOfBlock.Char <> -1) and (StartOfBlock.Line <> -1) then begin
         Editor.CaretXY := StartOfBlock;
         Editor.CommandProcessor(ecDeleteLastChar, ' ', nil);
       end;

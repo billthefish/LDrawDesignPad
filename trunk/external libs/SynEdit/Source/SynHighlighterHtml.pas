@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterHtml.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterHtml.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -338,7 +338,7 @@ type
     Temp: PChar;
     fStringLen: Integer;
     fToIdent: PChar;
-    fIdentFuncTable: array[0..243] of TIdentFuncTableFunc;
+    fIdentFuncTable: array[0..250] of TIdentFuncTableFunc;
     fTokenPos: Integer;
     fTokenID: TtkTokenKind;
     fAndAttri: TSynHighlighterAttributes;
@@ -427,6 +427,7 @@ type
     function Func121: TtkTokenKind;
     function Func123: TtkTokenKind;
     function Func124: TtkTokenKind;
+    function Func128: TtkTokenKind;
     function Func130: TtkTokenKind;
     function Func131: TtkTokenKind;
     function Func132: TtkTokenKind;
@@ -489,6 +490,7 @@ type
     function Func229: TtkTokenKind;
     function Func236: TtkTokenKind;
     function Func243: TtkTokenKind;
+    function Func250: TtkTokenKind;
     function AltFunc: TtkTokenKind;
     function IdentKind(MayBe: PChar): TtkTokenKind;
     procedure InitIdent;
@@ -509,8 +511,7 @@ type
     function GetIdentChars: TSynIdentChars; override;
     function GetSampleSource : String; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
@@ -579,7 +580,7 @@ procedure TSynHTMLSyn.InitIdent;
 var
   i: Integer;
 begin
-  for i := 0 to 243 do
+  for i := 0 to 250 do
     case i of
       1:   fIdentFuncTable[i] := Func1;
       2:   fIdentFuncTable[i] := Func2;
@@ -654,6 +655,7 @@ begin
       121: fIdentFuncTable[i] := Func121;
       123: fIdentFuncTable[i] := Func123;
       124: fIdentFuncTable[i] := Func124;
+      128: fIdentFuncTable[i] := Func128;
       130: fIdentFuncTable[i] := Func130;
       131: fIdentFuncTable[i] := Func131;
       132: fIdentFuncTable[i] := Func132;
@@ -716,6 +718,7 @@ begin
       229: fIdentFuncTable[i] := Func229;
       236: fIdentFuncTable[i] := Func236;
       243: fIdentFuncTable[i] := Func243;
+      250: fIdentFuncTable[i] := Func250;
       else fIdentFuncTable[i] := AltFunc;
     end;
 end;
@@ -881,7 +884,7 @@ end;
 
 function TSynHTMLSyn.Func21: TtkTokenKind;
 begin
-  if KeyComp('DEL') Or KeyComp('LI') Or KeyComp('U') then begin
+  if KeyComp('DEL') Or KeyComp('LI') Or KeyComp('U') Or KeyComp('BDO') then begin
     Result := tkKey;
   end else begin
     Result := tkUndefKey;
@@ -1410,6 +1413,15 @@ begin
   end;
 end;
 
+function TSynHTMLSyn.Func128: TtkTokenKind;
+begin
+  if KeyComp('OPTGROUP') then begin
+    Result := tkKey;
+  end else begin
+    Result := tkUndefKey;
+  end;
+end;
+
 function TSynHTMLSyn.Func130: TtkTokenKind;
 begin
   if KeyComp('/DD') then begin
@@ -1511,7 +1523,7 @@ end;
 
 function TSynHTMLSyn.Func143: TtkTokenKind;
 begin
-  if KeyComp('/DEL') Or KeyComp('/LI') Or KeyComp('/U') then begin
+  if KeyComp('/DEL') Or KeyComp('/LI') Or KeyComp('/U') Or KeyComp('/BDO') then begin
     Result := tkKey;
   end else begin
     Result := tkUndefKey;
@@ -1968,6 +1980,15 @@ begin
   end;
 end;
 
+function TSynHTMLSyn.Func250: TtkTokenKind;
+begin
+  if KeyComp('/OPTGROUP') then begin
+    Result := tkKey;
+  end else begin
+    Result := tkUndefKey;
+  end;
+end;
+
 function TSynHTMLSyn.AltFunc: TtkTokenKind;
 begin
   Result := tkUndefKey;
@@ -2138,7 +2159,7 @@ var
 begin
   fToIdent := MayBe;
   hashKey := KeyHash(MayBe);
-  if (hashKey < 244) then begin
+  if (hashKey < 251) then begin
     Result := fIdentFuncTable[hashKey];
   end else begin
     Result := tkIdentifier;
@@ -2427,8 +2448,7 @@ begin
   Result := TSynValidStringChars;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynHTMLSyn.GetLanguageName: string;
+class function TSynHTMLSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangHTML;
 end;

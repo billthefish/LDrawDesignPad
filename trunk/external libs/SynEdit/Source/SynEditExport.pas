@@ -29,7 +29,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditExport.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditExport.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -58,11 +58,13 @@ uses
   Types,
   QClipbrd,
   QSynEditHighlighter,
+  QSynEditTypes,
 {$ELSE}
   Windows,
   Graphics,
   Clipbrd,
   SynEditHighlighter,
+  SynEditTypes,
 {$ENDIF}
   Classes,
   SysUtils;
@@ -180,7 +182,7 @@ type
     { Exports everything in the strings parameter to the output buffer. }
     procedure ExportAll(ALines: TStrings);
     { Exports the given range of the strings parameter to the output buffer. }
-    procedure ExportRange(ALines: TStrings; Start, Stop: TPoint);
+    procedure ExportRange(ALines: TStrings; Start, Stop: TBufferCoord);
     { Saves the contents of the output buffer to a file. }
     procedure SaveToFile(const AFileName: string);
     { Saves the contents of the output buffer to a stream. }
@@ -330,10 +332,10 @@ end;
 
 procedure TSynCustomExporter.ExportAll(ALines: TStrings);
 begin
-  ExportRange(ALines, Point(1, 1), Point(MaxInt, MaxInt));
+  ExportRange(ALines, MakeBufferCoord(1, 1), MakeBufferCoord(MaxInt, MaxInt));
 end;
 
-procedure TSynCustomExporter.ExportRange(ALines: TStrings; Start, Stop: TPoint);
+procedure TSynCustomExporter.ExportRange(ALines: TStrings; Start, Stop: TBufferCoord);
 var
   i: integer;
   Line, Token: string;
@@ -342,17 +344,17 @@ var
 begin
   // abort if not all necessary conditions are met
   if not Assigned(ALines) or not Assigned(Highlighter) or (ALines.Count = 0)
-    or (Start.Y > ALines.Count) or (Start.Y > Stop.Y)
+    or (Start.Line > ALines.Count) or (Start.Line > Stop.Line)
   then
   {$IFDEF SYN_CLX}
     exit;
   {$ELSE}
     Abort;
   {$ENDIF}
-  Stop.Y := Max(1, Min(Stop.Y, ALines.Count));
-  Stop.X := Max(1, Min(Stop.X, Length(ALines[Stop.Y - 1]) + 1));
-  Start.X := Max(1, Min(Start.X, Length(ALines[Start.Y - 1]) + 1));
-  if (Start.Y = Stop.Y) and (Start.X >= Stop.X) then
+  Stop.Line := Max(1, Min(Stop.Line, ALines.Count));
+  Stop.Char := Max(1, Min(Stop.Char, Length(ALines[Stop.Line - 1]) + 1));
+  Start.Char := Max(1, Min(Start.Char, Length(ALines[Start.Line - 1]) + 1));
+  if (Start.Line = Stop.Line) and (Start.Char >= Stop.Char) then
   {$IFDEF SYN_CLX}
     exit;
   {$ELSE}
@@ -361,17 +363,18 @@ begin
   // initialization
   fBuffer.Position := 0;
   // Size is ReadOnly in Delphi 2
-  fBuffer.SetSize(Max($1000, (Stop.Y - Start.Y) * 128));
+  fBuffer.SetSize(Max($1000, (Stop.Line - Start.Line) * 128));
   Highlighter.ResetRange;
   // export all the lines into fBuffer
   fFirstAttribute := TRUE;
-  for i := Start.Y to Stop.Y do begin
+  for i := Start.Line to Stop.Line do
+  begin
     Line := ALines[i - 1];
     // order is important, since Start.Y might be equal to Stop.Y
-    if i = Stop.Y then
-      Delete(Line, Stop.X, MaxInt);
-    if (i = Start.Y) and (Start.X > 1) then
-      Delete(Line, 1, Start.X - 1);
+    if i = Stop.Line then
+      Delete(Line, Stop.Char, MaxInt);
+    if (i = Start.Line) and (Start.Char > 1) then
+      Delete(Line, 1, Start.Char - 1);
     // export the line
     Highlighter.SetLine(Line, i);
     while not Highlighter.GetEOL do begin

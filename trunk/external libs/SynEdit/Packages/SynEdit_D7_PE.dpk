@@ -1,6 +1,4 @@
-package SynEdit_D6;
-
-{ $Id: SynEdit_D6.dpk,v 1.4 2004-03-01 22:10:28 billthefish Exp $ }
+package SynEdit_D7_PE;
 
 {$R *.res}
 {$R '..\Source\SynEditReg.dcr'}
@@ -26,16 +24,16 @@ package SynEdit_D6;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit component suite'}
-{$DESIGNONLY}
 {$IMPLICITBUILD OFF}
+{$DEFINE SYN_DELPHI_PE}
 
 requires
-  designide,
-  SynEdit_R6;
+  vcl,
+  vclx,
+  designide;
 
 contains
   SynEditReg in '..\Source\SynEditReg.pas',
-  SynEditPropertyReg in '..\Source\SynEditPropertyReg.pas',
-  SynHighlighterManager in '..\Source\SynHighlighterManager.pas';
+  SynEditPropertyReg in '..\Source\SynEditPropertyReg.pas';
 
 end.

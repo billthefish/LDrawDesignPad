@@ -24,7 +24,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynAutoCorrect.pas,v 1.5 2003-11-11 14:17:40 c_schmitz Exp $
+$Id: SynAutoCorrect.pas,v 1.6 2004-03-01 22:12:05 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -640,7 +640,7 @@ var
   StartPos: LongInt;
   EndPos: Integer;
   FoundText, ReplaceDefText: string;
-  p: TPoint;
+  p: TBufferCoord;
   Action: TAutoCorrectAction;
 
   function FirstCapCase(S: string): string;
@@ -692,7 +692,7 @@ begin
         if Assigned(FOnAutoCorrect) then
         begin
           Action := aaCorrect;
-          FOnAutoCorrect(Self, Original, Correction, P.y, P.x, Action);
+          FOnAutoCorrect(Self, Original, Correction, P.Line, P.Char, Action);
 
           if Action = aaAbort then Break;
         end;
@@ -700,10 +700,10 @@ begin
         Editor.BeginUpdate;
 
         try
-          if p.x = 0 then
-            Editor.BlockBegin := Point(p.x - 1 - EndPos, p.y)
+          if p.Char = 0 then
+            Editor.BlockBegin := TBufferCoord( Point(p.Char - 1 - EndPos, p.Line) )
           else
-            Editor.BlockBegin := Point(p.x - EndPos, p.y);
+            Editor.BlockBegin := TBufferCoord( Point(p.Char - EndPos, p.Line) );
 
           Editor.BlockEnd := p;
           p := Editor.BlockBegin;

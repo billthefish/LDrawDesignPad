@@ -36,4 +36,4 @@ of appearance):
     Eden Kirin,  Max Horváth,  riceball,  Ewart Nijburg,  Nils Springob,
     Jeff D. Smith,  Pavel Krehula,  Peter Wolters
 
-$Id: Contributors.txt,v 1.5 2003-11-11 14:17:40 c_schmitz Exp $
+$Id: Contributors.txt,v 1.6 2004-03-01 22:12:05 billthefish Exp $

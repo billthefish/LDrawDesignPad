@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditWildcardSearch.pas,v 1.1 2003-11-11 14:21:04 c_schmitz Exp $
+$Id: SynEditWildcardSearch.pas,v 1.2 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net

@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditStrConst.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditStrConst.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -173,19 +173,19 @@ const
                                    'shortcut for this item has not been changed.';
 
   // Filters used for open/save dialog
-  SYNS_FilterPascal             =  'Pascal Files (*.pas,*.dpr,*.dpk,*.inc)|*.pas;*.dpr;*.dpk;*.inc';
-  SYNS_FilterHP48               =  'HP48 Files (*.s,*.sou,*.a,*.hp)|*.s;*.sou;*.a;*.hp';
-  SYNS_FilterCAClipper          =  'CA-Clipper Files (*.prg,*.ch,*.inc)|*.prg;*.ch;*.inc';
+  SYNS_FilterPascal             =  'Pascal Files (*.pas;*.pp;*.dpr;*.dpk;*.inc)|*.pas;*.pp;*.dpr;*.dpk;*.inc';
+  SYNS_FilterHP48               =  'HP48 Files (*.s;*.sou;*.a;*.hp)|*.s;*.sou;*.a;*.hp';
+  SYNS_FilterCAClipper          =  'CA-Clipper Files (*.prg;*.ch;*.inc)|*.prg;*.ch;*.inc';
   SYNS_FilterCORBAIDL           =  'CORBA IDL Files (*.idl)|*.idl';
-  SYNS_FilterCPM                =  'CPM Reports (*.rdf,*.rif,*.rmf,*.rxf)|*.rdf;*.rif;*.rmf;*.rxf';
-  SYNS_FilterCPP                =  'C++ Files (*.c,*.cpp,*.h,*.hpp)|*.c;*.cpp;*.h;*.hpp';
+  SYNS_FilterCPM                =  'CPM Reports (*.rdf;*.rif;*.rmf;*.rxf)|*.rdf;*.rif;*.rmf;*.rxf';
+  SYNS_FilterCPP                =  'C/C++ Files (*.c;*.cpp;*.h;*.hpp)|*.c;*.cpp;*.h;*.hpp';
   SYNS_FilterCS                 =  'C# Files (*.cs)|*.cs';
   SYNS_FilterJava               =  'Java Files (*.java)|*.java';
-  SYNS_FilterPerl               =  'Perl Files (*.pl,*.pm,*.cgi)|*.pl;*.pm;*.cgi';
+  SYNS_FilterPerl               =  'Perl Files (*.pl;*.pm;*.cgi)|*.pl;*.pm;*.cgi';
   SYNS_FilterAWK                =  'AWK Scripts (*.awk)|*.awk';
-  SYNS_FilterHTML               =  'HTML Documents (*.htm,*.html)|*.htm;*.html';
+  SYNS_FilterHTML               =  'HTML Documents (*.htm;*.html)|*.htm;*.html';
   SYNS_FilterVBScript           =  'VBScript Files (*.vbs)|*.vbs';
-  SYNS_FilterGalaxy             =  'Galaxy Files (*.gtv,*.galrep,*.txt)|*.gtv;*.galrep;*.txt';
+  SYNS_FilterGalaxy             =  'Galaxy Files (*.gtv;*.galrep;*.txt)|*.gtv;*.galrep;*.txt';
   SYNS_FilterPython             =  'Python Files (*.py)|*.py';
   SYNS_FilterSQL                =  'SQL Files (*.sql)|*.sql';
   SYNS_FilterTclTk              =  'Tcl/Tk Files (*.tcl)|*.tcl';
@@ -193,39 +193,39 @@ const
   SYNS_FilterBatch              =  'MS-DOS Batch Files (*.bat;*.cmd)|*.bat;*.cmd';
   SYNS_FilterDFM                =  'Borland Form Files (*.dfm;*.xfm)|*.dfm;*.xfm';
   SYNS_FilterX86Assembly        =  'x86 Assembly Files (*.asm)|*.asm';
-  SYNS_FilterGembase            =  'GEMBASE Files (*.dml,*.gem)|*.dml;*.gem';
+  SYNS_FilterGembase            =  'GEMBASE Files (*.dml;*.gem)|*.dml;*.gem';
   SYNS_FilterINI                =  'INI Files (*.ini)|*.ini';
   SYNS_FilterSML                =  'Standard ML Files (*.sml)|*.sml';
   SYNS_FilterVisualBASIC        =  'Visual Basic Files (*.bas)|*.bas';
-  SYNS_FilterADSP21xx           =  'DSP Files (*.dsp,*.inc)|*.dsp;*.inc';
-  SYNS_FilterPHP                =  'PHP Files (*.php,*.php3,*.phtml,*.inc)|*.php;*.php3;*.phtml;*.inc';
-  SYNS_FilterCache              =  'Cache Files (*.mac,*.inc,*.int)|*.mac;*.inc;*.int';
+  SYNS_FilterADSP21xx           =  'DSP Files (*.dsp;*.inc)|*.dsp;*.inc';
+  SYNS_FilterPHP                =  'PHP Files (*.php;*.php3;*.phtml;*.inc)|*.php;*.php3;*.phtml;*.inc';
+  SYNS_FilterCache              =  'Cache Files (*.mac;*.inc;*.int)|*.mac;*.inc;*.int';
   SYNS_FilterCSS                =  'Cascading Stylesheets (*.css)|*.css';
   SYNS_FilterJScript            =  'Javascript Files (*.js)|*.js';
   SYNS_FilterKIX                =  'KiXtart Scripts (*.kix)|*.kix';
   SYNS_FilterBaan               =  'Baan 4GL Files (*.cln)|*.cln';
   SYNS_FilterFoxpro             =  'Foxpro Files (*.prg)|*.prg';
   SYNS_FilterFortran            =  'Fortran Files (*.for)|*.for';
-  SYNS_FilterAsm68HC11          =  '68HC11 Assembler Files (*.hc11,*.asm,*.asc)|*.hc11;*.asm;*.asc';
-  SYNS_FilterProgress           =  'Progress Files (*.w,*.p,*.i)|*.w;*.p;*.i';
+  SYNS_FilterAsm68HC11          =  '68HC11 Assembler Files (*.hc11;*.asm;*.asc)|*.hc11;*.asm;*.asc';
+  SYNS_FilterProgress           =  'Progress Files (*.w;*.p;*.i)|*.w;*.p;*.i';
   SYNS_FilterInno               =  'Inno Setup Scripts (*.iss)|*.iss';
   SYNS_FilterModelica           =  'Modelica Files (*.mo)|*.mo';
   SYNS_FilterModula3            =  'Modula-3 Files (*.m3)|*.m3';
   SYNS_FilterSDD                =  'Semanta DD Files (*.sdd)|*.sdd';
-  SYNS_FilterXML                =  'XML Files (*.xml,*.xsd,*.xsl,*.xslt,*.dtd)|*.xml;*.xsd;*.xsl;*.xslt;*.dtd';
+  SYNS_FilterXML                =  'XML Files (*.xml;*.xsd;*.xsl;*.xslt;*.dtd)|*.xml;*.xsd;*.xsl;*.xslt;*.dtd';
   SYNS_FilterGWS                =  'GW-TEL Scripts (*.gws)|*.gws';
   SYNS_FilterSynGenMsgfiles     =  'Msg Files (*.msg)|*.msg';
   SYNS_FilterST                 =  'Structured Text Files (*.st)|*.st';
-  SYNS_FilterCOBOL              =  'COBOL Files (*.cbl, *.cob)|*.cbl;*.cob';
+  SYNS_FilterCOBOL              =  'COBOL Files (*.cbl;*.cob)|*.cbl;*.cob';
   SYNS_FilterTeX                =  'TeX Files (*.tex)|*.tex';
-  SYNS_FilterRuby               =  'Ruby Files (*.rb,*.rbw)|*.rb;*.rbw';
+  SYNS_FilterRuby               =  'Ruby Files (*.rb;*.rbw)|*.rb;*.rbw';
   SYNS_FilterUNIXShellScript    =  'UNIX Shell Scripts (*.sh)|*.sh';
 
   // Language names. Maybe somebody wants them translated / more detailed...
   SYNS_LangHP48                 =  'HP48';
   SYNS_LangCAClipper            =  'CA-Clipper';
   SYNS_LangCPM                  =  'COAS Product Manager Report';
-  SYNS_LangCPP                  =  'C++';
+  SYNS_LangCPP                  =  'C/C++';
   SYNS_LangCS                   =  'C#';
   SYNS_LangJava                 =  'Java';
   SYNS_LangPerl                 =  'Perl';

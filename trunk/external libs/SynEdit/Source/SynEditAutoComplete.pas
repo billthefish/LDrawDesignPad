@@ -29,7 +29,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditAutoComplete.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditAutoComplete.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -121,6 +121,11 @@ type
 implementation
 
 uses
+{$IFDEF SYN_CLX}
+  QSynEditTypes,
+{$ELSE}
+  SynEditTypes,
+{$ENDIF}
   SysUtils;
 
 { TCustomSynAutoComplete }
@@ -210,7 +215,7 @@ var
   i, j, Len, IndentLen: integer;
   s: string;
   IdxMaybe, NumMaybe: integer;
-  p: TPoint;
+  p: TBufferCoord;
   NewCaretPos: boolean;
   Temp: TStringList;
 begin
@@ -255,10 +260,10 @@ begin
 {begin}                                                                         //mh 2000-11-08
       AEditor.BeginUpdate;
       try
-        AEditor.BlockBegin := Point(p.x - Len, p.y);
+        AEditor.BlockBegin := TBufferCoord( Point(p.Char - Len, p.Line) );
         AEditor.BlockEnd := p;
         // indent the completion string if necessary, determine the caret pos
-        IndentLen := p.x - Len - 1;
+        IndentLen := p.Char - Len - 1;
         p := AEditor.BlockBegin;
         NewCaretPos := FALSE;
         Temp := TStringList.Create;
@@ -280,12 +285,12 @@ begin
 //              if j > 1 then
 //                Dec(j);
               NewCaretPos := TRUE;
-              Inc(p.y, i);
+              Inc(p.Line, i);
               if i = 0 then
 //                Inc(p.x, j)
-                Inc(p.x, j - 1)
+                Inc(p.Char, j - 1)
               else
-                p.x := j;
+                p.Char := j;
               break;
             end;
           end;

@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditMiscProcs.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditMiscProcs.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -70,11 +70,11 @@ function Min(x, y: integer): integer;
 {$ENDIF}
 function MinMax(x, mi, ma: integer): integer;
 procedure SwapInt(var l, r: integer);
-function maxPoint(P1, P2: TPoint): TPoint;
-function minPoint(P1, P2: TPoint): TPoint;
+function MaxPoint(const P1, P2: TPoint): TPoint;
+function MinPoint(const P1, P2: TPoint): TPoint;
 
-procedure IncrementPoint(var aPoint: TPoint; const aInc: TPoint);
-procedure DecrementPoint(var aPoint: TPoint; const aDec: TPoint);
+function MakeBufferCoord(aCharIndex, aLineIndex: integer): TBufferCoord;
+function MakeDisplayCoord(aColumn, aRow: integer): TDisplayCoord;
 
 function GetIntArray(Count: Cardinal; InitialValue: integer): PIntArray;
 
@@ -118,22 +118,27 @@ function StrRScanForCharInSet(const Line: string; Start: integer;
   AChars: TSynIdentChars): integer;
 
 {$IFDEF SYN_MBCSSUPPORT}
+type
+  TStringType = (stNone, stHalfNumAlpha, stHalfSymbol, stHalfKatakana,
+    stWideNumAlpha, stWideSymbol, stWideKatakana, stHiragana, stIdeograph,
+    stControl, stKashida);
+
 // search for first multibyte char in Line, starting at index Start
 function StrScanForMultiByteChar(const Line: string; Start: Integer): Integer;
 // the same, but searching backwards
 function StrRScanForMultiByteChar(const Line: string; Start: Integer): Integer;
+// convert a type returned from GetStringTypeEx() to something friendlier 
+function IsStringType(Value: Word): TStringType;
 {$ENDIF}
 
 function GetEOL(Line: PChar): PChar;
 
-{begin}                                                                         //gp 2000-06-24
 // Remove all '/' characters from string by changing them into '\.'.
 // Change all '\' characters into '\\' to allow for unique decoding.
 function EncodeString(s: string): string;
 
 // Decodes string, encoded with EncodeString.
 function DecodeString(s: string): string;
-{end}                                                                           //gp 2000-06-24
 
 {$IFNDEF SYN_COMPILER_5_UP}
 procedure FreeAndNil(var Obj);
@@ -195,30 +200,32 @@ begin
   l := tmp;
 end;
 
-function maxPoint(P1, P2: TPoint): TPoint;
+function MaxPoint(const P1, P2: TPoint): TPoint;
 begin
-  Result := P1;
   if (P2.y > P1.y) or ((P2.y = P1.y) and (P2.x > P1.x)) then
-    Result := P2;
+    Result := P2
+  else
+    Result := P1;
 end;
 
-function minPoint(P1, P2: TPoint): TPoint;
+function MinPoint(const P1, P2: TPoint): TPoint;
 begin
-  Result := P1;
   if (P2.y < P1.y) or ((P2.y = P1.y) and (P2.x < P1.x)) then
-    Result := P2;
+    Result := P2
+  else
+    Result := P1;
 end;
 
-procedure IncrementPoint(var aPoint: TPoint; const aInc: TPoint);
+function MakeBufferCoord(aCharIndex, aLineIndex: integer): TBufferCoord;
 begin
-  Inc( aPoint.X, aInc.X );
-  Inc( aPoint.Y, aInc.Y );
+  Result.Char := aCharIndex;
+  Result.Line := aLineIndex;
 end;
 
-procedure DecrementPoint(var aPoint: TPoint; const aDec: TPoint);
+function MakeDisplayCoord(aColumn, aRow: integer): TDisplayCoord;
 begin
-  Dec( aPoint.X, aDec.X );
-  Dec( aPoint.Y, aDec.Y );
+  Result.Column := aColumn;
+  Result.Row := aRow;
 end;
 
 {***}
@@ -837,6 +844,40 @@ end;
 function GetBValue(RGBValue: TColor): byte;
 begin
   Result := TColorRec(RGBValue).Blue;
+end;
+{$ENDIF}
+
+{$IFDEF SYN_MBCSSUPPORT}
+function IsStringType(Value: Word): TStringType;
+begin
+  Result := stNone;
+
+  (***  Controls  ***)
+  if (Value = C3_SYMBOL) then
+    Result := stControl
+  (*** singlebyte ***)
+  else if ((Value and C3_HALFWIDTH) <> 0) then
+  begin
+    if (Value = C3_HALFWIDTH) or (Value = (C3_ALPHA or C3_HALFWIDTH)) then
+      Result := stHalfNumAlpha { Number & Alphabet }
+    else if ((Value and C3_SYMBOL) <> 0) or ((Value and C3_LEXICAL) <> 0) then
+      Result := stHalfSymbol { Symbol }
+    else if ((Value and C3_KATAKANA) <> 0) then
+      Result := stHalfKatakana; { Japanese-KATAKANA }
+  end
+  (*** doublebyte ***)
+  else begin
+    if (Value = C3_FULLWIDTH) or (Value = (C3_ALPHA or C3_FULLWIDTH)) then
+      Result := stWideNumAlpha { Number & Alphabet }
+    else if ((Value and C3_SYMBOL) <> 0) or ((Value and C3_LEXICAL) <> 0) then
+      Result := stWideSymbol { Symbol }
+    else if ((Value and C3_KATAKANA) <> 0) then
+      Result := stWideKatakana { Japanese-KATAKANA }
+    else if ((Value and C3_HIRAGANA) <> 0) then
+      Result := stHiragana { Japanese-HIRAGANA }
+    else if ((Value and C3_IDEOGRAPH) <> 0) then
+      Result := stIdeograph; { Ideograph }
+  end;
 end;
 {$ENDIF}
 

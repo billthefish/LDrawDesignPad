@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditPrintPreview.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditPrintPreview.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -702,16 +702,22 @@ begin
               pt := ClientToScreen(Point(ClientWidth - rc.Right - 4, 10));
               OffsetRect(rc, pt.x, pt.y);
               ScrollHint.ActivateHint(rc, s);
+{$IFDEF SYN_COMPILER_3}
+              SendMessage(ScrollHint.Handle, WM_NCPAINT, 1, 0);
+{$ENDIF}
+{$IFNDEF SYN_COMPILER_3_UP}
               ScrollHint.Invalidate;
+{$ENDIF}
               ScrollHint.Update;
             end;
           end;
         SB_ENDSCROLL: begin
             if FShowScrollHint then
-              with GetScrollHint do begin
-                Visible := False;
-                ActivateHint(Rect(0, 0, 0, 0), '');
-              end;
+            begin
+              ScrollHint := GetScrollHint;
+              ScrollHint.Visible := False;
+              ShowWindow(ScrollHint.Handle, SW_HIDE);
+            end;
           end;
       end;
       {Updating scroll position and redrawing}

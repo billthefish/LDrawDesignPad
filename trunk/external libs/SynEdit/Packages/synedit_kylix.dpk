@@ -90,6 +90,7 @@ contains
   QSynHighlighterSQL in '../Source/QSynHighlighterSQL.pas',
   QSynHighlighterSml in '../Source/QSynHighlighterSml.pas',
   QSynHighlighterTclTk in '../Source/QSynHighlighterTclTk.pas',
+  QSynHighlighterURI in '../Source/QSynHighlighterURI.pas',
   QSynHighlighterVB in '../Source/QSynHighlighterVB.pas',
   QSynHighlighterVBScript in '../Source/QSynHighlighterVBScript.pas',
   QSynHighlighterXML in '../Source/QSynHighlighterXML.pas',

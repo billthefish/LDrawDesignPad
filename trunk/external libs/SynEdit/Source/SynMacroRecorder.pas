@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynMacroRecorder.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynMacroRecorder.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -54,6 +54,7 @@ uses
   QSynEdit,
   QSynEditKeyCmds,
   QSynEditPlugins,
+  QSynEditTypes,
 {$ELSE}
   StdCtrls,
   Controls,
@@ -64,6 +65,7 @@ uses
   SynEdit,
   SynEditKeyCmds,
   SynEditPlugins,
+  SynEditTypes,
 {$ENDIF}
   Classes;
 
@@ -146,7 +148,7 @@ type
 
   TSynPositionEvent = class(TSynBasicEvent)
   protected
-    fPosition: TPoint;
+    fPosition: TBufferCoord;
     function GetAsString : string; override;
     procedure InitEventParameters(aStr : string); override;
   public
@@ -156,7 +158,7 @@ type
     procedure SaveToStream(aStream: TStream); override;
     procedure Playback(aEditor: TCustomSynEdit); override;
   public
-    property Position: TPoint read fPosition write fPosition;
+    property Position: TBufferCoord read fPosition write fPosition;
   end;
 
   TSynDataEvent = class(TSynBasicEvent)
@@ -266,11 +268,9 @@ uses
 {$IFDEF SYN_CLX}
   QForms,
   QSynEditMiscProcs,
-  QSynEditTypes,
 {$ELSE}
   Forms,
   SynEditMiscProcs,
-  SynEditTypes,
 {$IFDEF SYN_COMPILER_6_UP}
   RTLConsts,
 {$ENDIF}
@@ -838,7 +838,7 @@ function TSynPositionEvent.GetAsString: string;
 begin
   Result := inherited GetAsString;
   // add position data here
-  Result := Result + Format(' (%d, %d)', [Position.x, Position.y]);
+  Result := Result + Format(' (%d, %d)', [Position.Char, Position.Line]);
   if RepeatCount > 1 then
     Result := Result + ' ' + IntToStr(RepeatCount);
 end;
@@ -864,7 +864,7 @@ begin
     c := Pos(')', aStr);
     valStr := Copy(aStr, 1, c-1);
     y := StrToIntDef(valStr, 1);
-    Position := Point(x, y);
+    Position := TBufferCoord( Point(x,y) );
     Delete(aStr, 1, c);
     aStr := Trim(aStr);
     RepeatCount := StrToIntDef(aStr, 1);
@@ -876,9 +876,9 @@ procedure TSynPositionEvent.Initialize(aCmd: TSynEditorCommand;
 begin
   inherited;
   if aData <> nil then
-    Position := PPoint( aData )^
+    Position := TBufferCoord( aData^ )
   else
-    Position := Point( 0, 0 );
+    Position := TBufferCoord( Point(0,0) );
 end;
 
 procedure TSynPositionEvent.LoadFromStream(aStream: TStream);
@@ -888,7 +888,7 @@ end;
 
 procedure TSynPositionEvent.Playback(aEditor: TCustomSynEdit);
 begin
-  if (Position.x <> 0) or (Position.y <> 0) then
+  if (Position.Char <> 0) or (Position.Line <> 0) then
     aEditor.CommandProcessor( Command, #0, @Position )
   else
     aEditor.CommandProcessor( Command, #0, nil );

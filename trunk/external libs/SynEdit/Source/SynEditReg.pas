@@ -24,7 +24,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditReg.pas,v 1.6 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditReg.pas,v 1.7 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -118,6 +118,7 @@ uses
   QSynHighlighterUnreal,
   QSynHighlighterST,
   QSynHighlighterLDraw,
+  QSynURIOpener,
 {$ELSE}
   // SynEdit components
   SynEdit,
@@ -197,6 +198,7 @@ uses
   SynHighlighterUnreal,
   SynHighlighterST,
   SynHighlighterLDraw,
+  SynURIOpener,
 {$ENDIF}
   Classes;
 
@@ -227,6 +229,7 @@ begin
   GroupDescendentsWith( TSynEditPythonBehaviour, TSynEdit );
   GroupDescendentsWith( TSynHighlighterManager, TSynEdit );
   GroupDescendentsWith( TSynEditOptionsDialog, TSynEdit );
+  GroupDescendentsWith( TSynURIOpener, TSynEdit );
 {$ENDIF}
 
 // SynEdit extra components
@@ -234,8 +237,7 @@ begin
     TSynExporterTeX, TSynEditPythonBehaviour, TSynMultiSyn,
     TSynCompletionProposal, TSynAutoComplete, TSynMacroRecorder,
     TSynEditPrint, TSynEditPrintPreview, TSynAutoCorrect,
-    TSynEditSearch, TSynEditRegexSearch, TSynEditOptionsDialog]);
-
+    TSynEditSearch, TSynEditRegexSearch, TSynEditOptionsDialog, TSynURIOpener]);
 {$IFDEF SYN_COMPILER_4_UP}
   RegisterComponents(SYNS_ComponentsPage, [TSynHighlighterManager]);
 {$ENDIF}

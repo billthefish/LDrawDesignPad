@@ -25,7 +25,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterInno.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterInno.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -115,8 +115,7 @@ type
   protected
     function GetIdentChars: TSynIdentChars; override;
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -659,8 +658,7 @@ begin
   Result := TSynValidStringChars;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynInnoSyn.GetLanguageName: string;
+class function TSynInnoSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangInno;
 end;

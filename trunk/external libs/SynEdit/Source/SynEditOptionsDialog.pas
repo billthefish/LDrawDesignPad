@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditOptionsDialog.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditOptionsDialog.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -261,7 +261,7 @@ type
     InChanging: Boolean;
     FExtended: Boolean;
 
-    {$IFNDEF SYN_DELPHI_4_UP}
+    {$IFNDEF SYN_COMPILER_4_UP}
     FOldWndProc: TWndMethod;
     procedure OverridingWndProc(var Message: TMessage);
     {$ENDIF}
@@ -320,7 +320,7 @@ type
     FMaxUndo: Integer;
     FExtraLineSpacing: Integer;
     FTabWidth: Integer;
-    FMaxLineWidth: Integer;
+    FMaxScrollWidth: Integer;
     FRightEdge: Integer;
     FSelectedColor: TSynSelectedColor;
     FRightEdgeColor: TColor;
@@ -356,7 +356,7 @@ type
     property InsertCaret : TSynEditCaretType read FInsertCaret write FInsertCaret;
     property OverwriteCaret : TSynEditCaretType read FOverwriteCaret write FOverwriteCaret;
     property HideSelection : Boolean read FHideSelection write FHideSelection;
-    property MaxLineWidth : Integer read FMaxLineWidth write FMaxLineWidth;
+    property MaxScrollWidth : Integer read FMaxScrollWidth write FMaxScrollWidth;
     property MaxUndo : Integer read FMaxUndo write FMaxUndo;
     property SelectedColor : TSynSelectedColor read FSelectedColor write FSelectedColor;
     property TabWidth : Integer read FTabWidth write FTabWidth;
@@ -444,7 +444,7 @@ begin
     Self.HideSelection := TCustomSynEdit(Source).HideSelection;
     Self.InsertCaret := TCustomSynEdit(Source).InsertCaret;
     Self.OverwriteCaret := TCustomSynEdit(Source).OverwriteCaret;
-    Self.MaxLineWidth := TCustomSynEdit(Source).MaxLineWidth;
+    Self.MaxScrollWidth := TCustomSynEdit(Source).MaxScrollWidth;
     Self.MaxUndo := TCustomSynEdit(Source).MaxUndo;
     Self.RightEdge := TCustomSynEdit(Source).RightEdge;
     Self.RightEdgeColor := TCustomSynEdit(Source).RightEdgeColor;
@@ -471,7 +471,7 @@ begin
     TCustomSynEdit(Dest).HideSelection := Self.HideSelection;
     TCustomSynEdit(Dest).InsertCaret := Self.InsertCaret;
     TCustomSynEdit(Dest).OverwriteCaret := Self.OverwriteCaret;
-    TCustomSynEdit(Dest).MaxLineWidth := Self.MaxLineWidth;
+    TCustomSynEdit(Dest).MaxScrollWidth := Self.MaxScrollWidth;
     TCustomSynEdit(Dest).MaxUndo := Self.MaxUndo;
     TCustomSynEdit(Dest).RightEdge := Self.RightEdge;
     TCustomSynEdit(Dest).RightEdgeColor := Self.RightEdgeColor;
@@ -501,7 +501,7 @@ begin
   HideSelection := False;
   InsertCaret := ctVerticalLine;
   OverwriteCaret := ctBlock;
-  MaxLineWidth := 1024;
+  MaxScrollWidth := 1024;
   MaxUndo := 1024;
   RightEdge := 80;
   RightEdgeColor := clSilver;
@@ -645,7 +645,7 @@ var SynEditOptions : TSynEditorOptions;
 begin
   //Gutter
   FSynEdit.Gutter.Visible:= ckGutterVisible.Checked;
-  FSynEdit.Gutter.Visible:= ckGutterAutosize.Checked;
+  FSynEdit.Gutter.AutoSize := ckGutterAutosize.Checked;
   FSynEdit.Gutter.ShowLineNumbers:= ckGutterShowLineNumbers.Checked;
   FSynEdit.Gutter.LeadingZeros:= ckGutterShowLeaderZeros.Checked;
   FSynEdit.Gutter.ZeroStart:= ckGutterStartAtZero.Checked;
@@ -1042,7 +1042,7 @@ begin
   InChanging := False;
 end;
 
-{$IFNDEF SYN_DELPHI_4_UP}
+{$IFNDEF SYN_COMPILER_4_UP}
 procedure TfmEditorOptionsDialog.OverridingWndProc(var Message: TMessage);
 var
   Item: TListItem;

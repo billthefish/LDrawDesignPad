@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynEditMiscClasses.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynEditMiscClasses.pas,v 1.6 2004-03-01 22:17:01 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -82,7 +82,7 @@ type
     procedure SetFG(Value: TColor);
   public
     constructor Create;
-    procedure Assign(Source: TPersistent); override;                            //jcr 2000-12-08
+    procedure Assign(Source: TPersistent); override;
   published
     property Background: TColor read fBG write SetBG default clHighLight;
     property Foreground: TColor read fFG write SetFG default clHighLightText;
@@ -93,7 +93,7 @@ type
 
   TSynGutter = class(TPersistent)
   private
-    fFont: TFont;                                                               //DDH 10/16/01
+    fFont: TFont;
     fColor: TColor;
     fWidth: integer;
     fShowLineNumbers: boolean;
@@ -120,12 +120,12 @@ type
     procedure SetVisible(Value: boolean);
     procedure SetWidth(Value: integer);
     procedure SetZeroStart(const Value: boolean);
-    procedure SetFont(Value: TFont);                                            //DDH 10/16/01
+    procedure SetFont(Value: TFont);
     procedure OnFontChange(Sender: TObject);
-    procedure SetBorderStyle(const Value: TSynGutterBorderStyle);                                    //DDH 10/16/01
+    procedure SetBorderStyle(const Value: TSynGutterBorderStyle);
   public
     constructor Create;
-    destructor Destroy; override;                                               //DDH 10/16/01
+    destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure AutoSizeDigitCount(LinesCount: integer);
     function FormatLineNumber(Line: integer): string;
@@ -138,7 +138,7 @@ type
     property Cursor: TCursor read fCursor write fCursor default crDefault;
     property DigitCount: integer read fDigitCount write SetDigitCount
       default 4;
-    property Font: TFont read fFont write SetFont;                              //DDH 10/16/01
+    property Font: TFont read fFont write SetFont;
     property LeadingZeros: boolean read fLeadingZeros write SetLeadingZeros
       default FALSE;
     property LeftOffset: integer read fLeftOffset write SetLeftOffset
@@ -148,7 +148,7 @@ type
     property ShowLineNumbers: boolean read fShowLineNumbers
       write SetShowLineNumbers default FALSE;
     property UseFontStyle: boolean read fUseFontStyle write SetUseFontStyle
-      default TRUE;                                                             //DDH 10/16/01
+      default TRUE;
     property Visible: boolean read fVisible write SetVisible default TRUE;
     property Width: integer read fWidth write SetWidth default 30;
     property ZeroStart: boolean read fZeroStart write SetZeroStart
@@ -188,18 +188,44 @@ type
     property OnChange: TNotifyEvent read fOnChange write fOnChange;
   end;
 
+  TSynGlyph = class(TPersistent)
+  private
+    fVisible: boolean;
+    fInternalGlyph, fGlyph: TBitmap;
+    fInternalMaskColor, fMaskColor: TColor;
+    fOnChange: TNotifyEvent;
+    procedure SetGlyph(Value: TBitmap);
+    procedure GlyphChange(Sender: TObject);
+    procedure SetMaskColor(Value: TColor);
+    procedure SetVisible(Value: boolean);
+    function GetWidth : integer;
+    function GetHeight : integer;
+  public
+    constructor Create(aModule: THandle; const aName: string; aMaskColor: TColor);
+    destructor Destroy; override;
+    procedure Assign(aSource: TPersistent); override;
+    procedure Draw(aCanvas: TCanvas; aX, aY, aLineHeight: integer);
+    property Width : integer read GetWidth;
+    property Height : integer read GetHeight;
+  published
+    property Glyph: TBitmap read fGlyph write SetGlyph;
+    property MaskColor: TColor read fMaskColor write SetMaskColor default clNone;
+    property Visible: boolean read fVisible write SetVisible default True;
+    property OnChange: TNotifyEvent read fOnChange write fOnChange;
+  end;
+
   { TSynMethodChain }
 
   ESynMethodChain = class(Exception);
   TSynExceptionEvent = procedure (Sender: TObject; E: Exception;
     var DoContinue: Boolean) of object;
 
-  TSynMethodChain = class
+  TSynMethodChain = class(TObject)
   private
     FNotifyProcs: TList;
     FExceptionHandler: TSynExceptionEvent;
   protected
-    procedure DoFire(AEvent: TMethod); virtual; abstract;
+    procedure DoFire(const AEvent: TMethod); virtual; abstract;
     function DoHandleException(E: Exception): Boolean; virtual;
     property ExceptionHandler: TSynExceptionEvent read FExceptionHandler
       write FExceptionHandler;
@@ -217,7 +243,7 @@ type
   private
     FSender: TObject;
   protected
-    procedure DoFire(AEvent: TMethod); override;
+    procedure DoFire(const AEvent: TMethod); override;
   public
     constructor CreateEx(ASender: TObject);
     procedure Add(AEvent: TNotifyEvent);
@@ -240,8 +266,8 @@ type
   public
     constructor Create(aModule: THandle; const Name: string; Count: integer);
     destructor Destroy; override;
-    procedure DrawMark(ACanvas: TCanvas; Number, X, Y, LineHeight: integer);
-    procedure DrawMarkTransparent(ACanvas: TCanvas; Number, X, Y,
+    procedure Draw(ACanvas: TCanvas; Number, X, Y, LineHeight: integer);
+    procedure DrawTransparent(ACanvas: TCanvas; Number, X, Y,
       LineHeight: integer; TransparentColor: TColor);
   end;
 
@@ -308,7 +334,7 @@ begin
   fFG := clHighLightText;
 end;
 
-procedure TSynSelectedColor.Assign(Source: TPersistent);                        //jcr 2000-12-08
+procedure TSynSelectedColor.Assign(Source: TPersistent);
 var
   Src: TSynSelectedColor;
 begin
@@ -371,8 +397,8 @@ var
 begin
   if Assigned(Source) and (Source is TSynGutter) then begin
     Src := TSynGutter(Source);
-    fFont.Assign(src.Font);                                                     //DDH 10/16/01
-    fUseFontStyle := src.fUseFontStyle;                                         //DDH 10/16/01
+    fFont.Assign(src.Font);
+    fUseFontStyle := src.fUseFontStyle;
     fColor := Src.fColor;
     fVisible := Src.fVisible;
     fWidth := Src.fWidth;
@@ -443,7 +469,6 @@ begin
   end;
 end;
 
-//DDH 10/16/01 Start
 procedure TSynGutter.SetFont(Value: TFont);
 begin
   fFont.Assign(Value);
@@ -453,7 +478,6 @@ procedure TSynGutter.OnFontChange(Sender: TObject);
 begin
   if Assigned(fOnChange) then fOnChange(Self);
 end;
-//DDH 10/16/01 End
 
 procedure TSynGutter.SetDigitCount(Value: integer);
 begin
@@ -543,7 +567,7 @@ end;
 constructor TSynBookMarkOpt.Create(AOwner: TComponent);
 begin
   inherited Create;
-  fDrawBookmarksFirst := TRUE;                                          
+  fDrawBookmarksFirst := TRUE;
   fEnableKeys := True;
   fGlyphsVisible := True;
   fLeftMargin := 2;
@@ -551,7 +575,7 @@ begin
   fXOffset := 12;
 end;
 
-procedure TSynBookMarkOpt.Assign(Source: TPersistent);                          //jcr 2000-12-08
+procedure TSynBookMarkOpt.Assign(Source: TPersistent);
 var
   Src: TSynBookMarkOpt;
 begin
@@ -607,6 +631,146 @@ begin
     fXOffset := Value;
     if Assigned(fOnChange) then fOnChange(Self);
   end;
+end;
+
+{ TSynGlyph }
+
+constructor TSynGlyph.Create(aModule: THandle; const aName: string; aMaskColor: TColor);
+begin
+  inherited Create;
+
+  if aName <> '' then
+  begin
+    fInternalGlyph := TBitmap.Create;
+    fInternalGlyph.LoadFromResourceName(aModule, aName);
+    fInternalMaskColor := aMaskColor;
+  end
+  else
+    fInternalMaskColor := clNone;
+
+  fVisible := True;
+  fGlyph := TBitmap.Create;
+  fGlyph.OnChange := GlyphChange;
+  fMaskColor := clNone;
+end;
+
+destructor TSynGlyph.Destroy;
+begin
+  if Assigned(fInternalGlyph) then
+    FreeAndNil(fInternalGlyph);
+
+  fGlyph.Free;
+
+  inherited Destroy;
+end;
+
+procedure TSynGlyph.Assign(aSource: TPersistent);
+var
+  vSrc : TSynGlyph;
+begin
+  if Assigned(aSource) and (aSource is TSynGlyph) then
+  begin
+    vSrc := TSynGlyph(aSource);
+    fInternalGlyph := vSrc.fInternalGlyph;
+    fInternalMaskColor := vSrc.fInternalMaskColor;
+    fVisible := vSrc.fVisible;
+    fGlyph := vSrc.fGlyph;
+    fMaskColor := vSrc.fMaskColor;
+    if Assigned(fOnChange) then fOnChange(Self);
+  end
+  else
+    inherited;
+end;
+
+procedure TSynGlyph.Draw(aCanvas: TCanvas; aX, aY, aLineHeight: integer);
+var
+  rcSrc, rcDest : TRect;
+  vGlyph : TBitmap;
+  vMaskColor : TColor;
+begin
+  if not fGlyph.Empty then
+  begin
+    vGlyph := fGlyph;
+    vMaskColor := fMaskColor;
+  end
+  else
+  if Assigned(fInternalGlyph) then
+  begin
+    vGlyph := fInternalGlyph;
+    vMaskColor := fInternalMaskColor;
+  end
+  else
+    Exit;
+
+  if aLineHeight >= vGlyph.Height then
+  begin
+    rcSrc := Rect(0, 0, vGlyph.Width, vGlyph.Height);
+    Inc(aY, (aLineHeight - vGlyph.Height) div 2);
+    rcDest := Rect(aX, aY, aX + vGlyph.Width, aY + vGlyph.Height);
+  end
+  else
+  begin
+    rcDest := Rect(aX, aY, aX + vGlyph.Width, aY + aLineHeight);
+    aY := (vGlyph.Height - aLineHeight) div 2;
+    rcSrc := Rect(0, aY, vGlyph.Width, aY + aLineHeight);
+  end;
+
+{$IFDEF SYN_CLX}
+  aCanvas.CopyMode := cmMergeCopy;
+  aCanvas.CopyRect(rcDest, vGlyph.Canvas, rcSrc);
+{$ELSE}
+  aCanvas.BrushCopy(rcDest, vGlyph, rcSrc, vMaskColor);
+{$ENDIF}
+end;
+
+procedure TSynGlyph.SetGlyph(Value: TBitmap);
+begin
+  fGlyph.Assign(Value);
+end;
+
+procedure TSynGlyph.GlyphChange(Sender: TObject);
+begin
+  if Assigned(fOnChange) then fOnChange(Self);
+end;
+
+procedure TSynGlyph.SetMaskColor(Value: TColor);
+begin
+  if fMaskColor <> Value then
+  begin
+    fMaskColor := Value;
+    if Assigned(fOnChange) then fOnChange(Self);
+  end;
+end;
+
+procedure TSynGlyph.SetVisible(Value: boolean);
+begin
+  if fVisible <> Value then
+  begin
+    fVisible := Value;
+    if Assigned(fOnChange) then fOnChange(Self);
+  end;
+end;
+
+function TSynGlyph.GetWidth : integer;
+begin
+  if not fGlyph.Empty then
+    Result := fGlyph.Width
+  else
+  if Assigned(fInternalGlyph) then
+    Result := fInternalGlyph.Width
+  else
+    Result := 0;
+end;
+
+function TSynGlyph.GetHeight : integer;
+begin
+  if not fGlyph.Empty then
+    Result := fGlyph.Height
+  else
+  if Assigned(fInternalGlyph) then
+    Result := fInternalGlyph.Height
+  else
+    Result := 0;
 end;
 
 { TSynMethodChain }
@@ -715,7 +879,7 @@ begin
   FSender := ASender;
 end;
 
-procedure TSynNotifyEventChain.DoFire(AEvent: TMethod);
+procedure TSynNotifyEventChain.DoFire(const AEvent: TMethod);
 begin
   TNotifyEvent(AEvent)(FSender);
 end;
@@ -754,7 +918,8 @@ begin
   inherited Destroy;
 end;
 
-function TSynInternalImage.CreateBitmapFromInternalList(aModule: THandle; const Name: string): TBitmap;
+function TSynInternalImage.CreateBitmapFromInternalList(aModule: THandle;
+  const Name: string): TBitmap;
 var
   idx: Integer;
   newIntRes: TInternalResource;
@@ -822,7 +987,7 @@ begin
   end;
 end;
 
-procedure TSynInternalImage.DrawMark(ACanvas: TCanvas;
+procedure TSynInternalImage.Draw(ACanvas: TCanvas;
   Number, X, Y, LineHeight: integer);
 var
   rcSrc, rcDest: TRect;
@@ -843,7 +1008,7 @@ begin
   end;
 end;
 
-procedure TSynInternalImage.DrawMarkTransparent(ACanvas: TCanvas; Number, X, Y,
+procedure TSynInternalImage.DrawTransparent(ACanvas: TCanvas; Number, X, Y,
   LineHeight: integer; TransparentColor: TColor);
 var
   rcSrc, rcDest: TRect;
@@ -980,8 +1145,9 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF SYN_WIN32}
+{$IFNDEF SYN_CLX}
   {$IFNDEF SYN_COMPILER_4_UP}
+
 { TBetterRegistry }
 
 function TBetterRegistry.OpenKeyReadOnly(const Key: string): Boolean;
@@ -1009,8 +1175,9 @@ begin
     ChangeKey(TempKey, S);
   end;
 end; { TBetterRegistry.OpenKeyReadOnly }
-  {$ENDIF}
-{$ENDIF}
+
+  {$ENDIF SYN_COMPILER_4_UP}
+{$ENDIF SYN_CLX}
 
 begin
   InternalResources := nil;

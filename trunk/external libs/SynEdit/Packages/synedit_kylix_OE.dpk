@@ -82,7 +82,6 @@ contains
   QSynHighlighterJava in '../Source/QSynHighlighterJava.pas',
   QSynHighlighterKix in '../Source/QSynHighlighterKix.pas',
   QSynHighlighterM3 in '../Source/QSynHighlighterM3.pas',
-  QSynHighlighterMPerl in '../Source/QSynHighlighterMPerl.pas',
   QSynHighlighterModelica in '../Source/QSynHighlighterModelica.pas',
   QSynHighlighterMsg in '../Source/QSynHighlighterMsg.pas',
   QSynHighlighterMulti in '../Source/QSynHighlighterMulti.pas',
@@ -125,6 +124,7 @@ contains
   QSynHighlighterHaskell in '../Source/QSynHighlighterHaskell.pas',
   QSynHighlighterUNIXShellScript in '../Source/QSynHighlighterUNIXShellScript.pas',
   QSynHighlighterRuby in '../Source/QSynHighlighterRuby.pas',
-  QSynExportTeX in '../Source/QSynExportTeX.pas';
+  QSynExportTeX in '../Source/QSynExportTeX.pas',
+  QSynHighlighterURI in '../Source/QSynHighlighterURI.pas';
 
 end.

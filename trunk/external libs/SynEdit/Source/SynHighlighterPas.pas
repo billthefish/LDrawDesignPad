@@ -28,7 +28,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterPas.pas,v 1.5 2003-11-11 14:17:41 c_schmitz Exp $
+$Id: SynHighlighterPas.pas,v 1.6 2004-03-01 22:17:18 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -220,10 +220,8 @@ type
     function GetSampleSource: string; override;                                 //pp 2001-08-13
     function IsFilterStored: boolean; override;                                 //mh 2000-10-08
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetCapabilities: TSynHighlighterCapabilities; override;
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
-    function GetLanguageName: string; override;
+    class function GetCapabilities: TSynHighlighterCapabilities; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
@@ -1606,18 +1604,18 @@ function TSynPasSyn.UseUserSettings(VersionIndex: integer): boolean;
       
     if Result then
     begin
-      fAsmAttri.Assign    ( tmpAsmAttri );
-      fCharAttri.Assign   ( tmpStringAttri ); { Delphi lacks Char attribute }
-      fCommentAttri.Assign( tmpCommentAttri );
-      fDirecAttri.Assign  ( tmpCommentAttri ); { Delphi lacks Directive attribute }
-      fFloatAttri.Assign  ( tmpNumberAttri ); { Delphi lacks Float attribute }
-      fHexAttri.Assign    ( tmpNumberAttri ); { Delphi lacks Hex attribute }
-      fIdentifierAttri.Assign( tmpIdentAttri );
-      fKeyAttri.Assign    ( tmpKeyAttri );
-      fNumberAttri.Assign ( tmpNumberAttri );
-      fSpaceAttri.Assign  ( tmpSpaceAttri );
-      fStringAttri.Assign ( tmpStringAttri );
-      fSymbolAttri.Assign ( tmpSymbolAttri );
+      fAsmAttri.AssignColorAndStyle( tmpAsmAttri );
+      fCharAttri.AssignColorAndStyle( tmpStringAttri ); { Delphi lacks Char attribute }
+      fCommentAttri.AssignColorAndStyle( tmpCommentAttri );
+      fDirecAttri.AssignColorAndStyle( tmpCommentAttri ); { Delphi lacks Directive attribute }
+      fFloatAttri.AssignColorAndStyle( tmpNumberAttri ); { Delphi lacks Float attribute }
+      fHexAttri.AssignColorAndStyle( tmpNumberAttri ); { Delphi lacks Hex attribute }
+      fIdentifierAttri.AssignColorAndStyle( tmpIdentAttri );
+      fKeyAttri.AssignColorAndStyle( tmpKeyAttri );
+      fNumberAttri.AssignColorAndStyle( tmpNumberAttri );
+      fSpaceAttri.AssignColorAndStyle( tmpSpaceAttri );
+      fStringAttri.AssignColorAndStyle( tmpStringAttri );
+      fSymbolAttri.AssignColorAndStyle( tmpSymbolAttri );
     end;
     tmpAsmAttri.Free;
     tmpCommentAttri.Free;
@@ -1669,14 +1667,12 @@ begin
 end; { GetSampleSource }
 
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynPasSyn.GetLanguageName: string;
+class function TSynPasSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangPascal;
 end;
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}
-function TSynPasSyn.GetCapabilities: TSynHighlighterCapabilities;
+class function TSynPasSyn.GetCapabilities: TSynHighlighterCapabilities;
 begin
   Result := inherited GetCapabilities + [hcUserSettings];
 end;

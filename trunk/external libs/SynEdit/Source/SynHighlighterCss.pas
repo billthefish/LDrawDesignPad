@@ -132,10 +132,10 @@ type
     function GetSampleSource: string; override;                                 //pp 2001-08-13
     function IsFilterStored: boolean; override;                                 //mh 2000-10-08
   public
-    {$IFNDEF SYN_CPPB_1} class {$ENDIF}                                         //mh 2000-07-14
-    function GetLanguageName: string; override;
+    class function GetLanguageName: string; override;
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
 	  override;
 	function GetEol: Boolean; override;
@@ -357,6 +357,12 @@ begin
 
   fRange := rsText;
   fDefaultFilter := SYNS_FilterCSS;
+end;
+
+destructor TSynCssSyn.Destroy;
+begin
+  fKeywords.free;
+  inherited Destroy;
 end;
 
 procedure TSynCssSyn.SetLine(NewValue: string; LineNumber:Integer);
@@ -645,8 +651,7 @@ begin
   			'H1 { font-size: 18pt; color: #000099; made-up-property: 1 }';
 end; { GetSampleSource }
 
-{$IFNDEF SYN_CPPB_1} class {$ENDIF}                                             //mh 2000-07-14
-function TSynCssSyn.GetLanguageName: string;
+class function TSynCssSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangCSS;
 end;
