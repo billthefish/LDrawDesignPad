@@ -25,7 +25,8 @@ uses
   windowsspecific,
   Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, Synedit,
   SynHighlighterLDraw, ExtCtrls, Classes, Types, ComCtrls, Controls,
-  SyneditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch, SynEditMiscProcs;
+  SyneditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch, SynEditMiscProcs,
+  DATBase, DATModel;
 
 type
   TfrEditorChild = class(TForm)
@@ -130,8 +131,12 @@ Description: Update all controls on the action list depeding on the type of line
 Parameter: none
 Return value: none
 ----------------------------------------------------------------------}
-var clr: string;
-    i:integer;
+var
+  clr: string;
+  i: Integer;
+  DLine: TDATType;
+  DModel: TDATModel;
+
 begin
   If Memo.modified then
   begin
@@ -142,15 +147,23 @@ begin
   frMain.acRedo.Enabled:=Memo.CanRedo;
   frMain.StatusBar.Panels[1].text:=inttostr(memo.CaretY)+':'+inttostr(memo.CaretX);
           
-  if memo.lines[memo.CaretY-1] <> '' then
+  if memo.SelLength = 0 then
   begin
-    clr:=Trim(memo.lines[memo.CaretY-1]);
-    frMain.acInline.enabled := copy(clr,1,1)='1';
+    DLine := StrToDAT(memo.Lines[memo.CaretY - 1]);
+    frMain.acInline.enabled := DLine.LineType = 1;
+    DLine.Free;
   end
   else
-    frMain.acInline.enabled := False;
+  begin
+    DModel := TDATModel.Create;
+    frMain.ExpandSelection;
+    DModel.ModelText := memo.SelText;
+    for i := 0 to DModel.Count - 1 do
+      if DModel[i].LineType = 1 then
+        frMain.acInline.enabled := True;
+    DModel.Free;
+  end;
 
-  {$IFDEF MSWINDOWS}
   if frMain.slPlugins.Count > 0 then
   for i:=0 to frMain.plugins3.Count-1 do
     begin
@@ -169,7 +182,6 @@ begin
           end;
       end;
     end;
-  {$ENDIF}  
 end;
 
 procedure TfrEditorChild.MemoChange(Sender: TObject);

@@ -147,6 +147,7 @@ object frMain: TfrMain
       object ToolButton13: TToolButton
         Left = 5
         Top = 0
+        Hint = 'Create a new file (Ctrl-N)'
         Action = acFileNew
       end
       object ToolButton14: TToolButton
