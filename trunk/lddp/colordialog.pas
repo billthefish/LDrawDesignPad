@@ -17,28 +17,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 -------------------------------------------------------------------------------}
-
 unit colordialog;
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows, Messages, Classes, QGraphics, QControls, QForms,
-  QStdCtrls, QButtons, QExtCtrls,
-  {$ENDIF}
-  {$IFDEF LINUX}
-  Types, QTypes, Classes, Variants, QTypes, QGraphics, QControls, QForms,
-  QDialogs, QStdCtrls, QExtCtrls, QButtons,
-  {$ENDIF}
-  JvColorBox,
-  JvComponent,
-  SysUtils;
+  QForms, QStdCtrls, QButtons, QExtCtrls,QControls, QComCtrls, Classes,
+  QActnList, QDialogs, QGraphics, SysUtils, Math;
 
 type
   TfrColorDialog = class(TForm)
     GroupBox1: TGroupBox;
-    ScrollBar: TScrollBar;
     Label1: TLabel;
     Label2: TLabel;
     edColornumber: TEdit;
@@ -46,24 +35,41 @@ type
     Panel3: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-    rbReplaceLine: TRadioButton;
-    rbReplaceSelection: TRadioButton;
-    rbReplaceAll: TRadioButton;
     edDescription: TEdit;
     btOldColor: TPanel;
     btNewColor: TPanel;
-    procedure FormShow(Sender: TObject);
+    Shape11: TShape;
+    Shape12: TShape;
+    Shape22: TShape;
+    Shape32: TShape;
+    Shape42: TShape;
+    Shape43: TShape;
+    Shape14: TShape;
+    Shape24: TShape;
+    Shape34: TShape;
+    Shape33: TShape;
+    Shape44: TShape;
+    Shape13: TShape;
+    Shape23: TShape;
+    Shape21: TShape;
+    Shape31: TShape;
+    Shape41: TShape;
+    ScrollBar1: TScrollBar;
+    rgOptions: TRadioGroup;
     procedure btOldCOlorClick(Sender: TObject);
     procedure btNewColorClick(Sender: TObject);
-    procedure JvColorSquare1MouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure JvColorSquare1ColorClick(Sender: TObject;
-      Button: TMouseButton; Color: TColor);
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure ScrollBar1Change(Sender: TObject);
+    procedure Shape11MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
     { Public declarations }
     slColors:TStringlist;
+    procedure SetColorBoxes;
   end;
 
 var
@@ -73,22 +79,41 @@ implementation
 
 {$R *.xfm}
 
+
 procedure TfrColorDialog.FormShow(Sender: TObject);
-var i:integer;
-    color:TColor;
-    name,tmp:string;
+
 begin
-  scrollbar.max:=round((slColors.count/4)+0.5)-4;
-  for i:=0 to 15 do begin
-    if scrollbar.Position*4+i<=slColors.count-1 then tmp:=slColors[scrollbar.Position*4+i]
-      else tmp:='';
-    tmp:=copy(tmp,pos('=',tmp)+1,30);
-    name:=copy(tmp,1,pos(' ',tmp)-1);
-    tmp:=copy(tmp,pos(' ',tmp)+1,30);
-    color:=strtoint('$00'+copy(tmp,5,2)+copy(tmp,3,2)+copy(tmp,1,2));
-    (FindComponent('JVColorSquare'+inttostr(i+1)) as tJVColorSquare).Color:=color;
-    (FindComponent('JVColorSquare'+inttostr(i+1)) as tJVColorSquare).helpkeyword:=name;
-    (FindComponent('JVColorSquare'+inttostr(i+1)) as tJVColorSquare).tag:=i;
+  scrollbar1.max := Ceil(slColors.count / 4)-4;
+  ScrollBar1.Min := 0;
+  ScrollBar1.Position := 0;
+  SetColorBoxes;
+end;
+
+procedure TfrColorDialog.SetColorBoxes;
+
+var
+  i,j:integer;
+  color:TColor;
+  name,tmp:string;
+  ShapePtr: TShape;
+
+begin
+  for i := 1 to 4 do
+  begin
+    for j := 1 to 4 do
+    begin
+      if (((ScrollBar1.Position + i) - 1)*4) + (j-1) <= slColors.Count-1 then
+        tmp := slColors.ValueFromIndex[(((ScrollBar1.Position + i) - 1)*4) + (j-1)]
+      else
+        tmp := '';  
+      name := copy(tmp,1,pos(' ',tmp)-1);
+      tmp:=copy(tmp,pos(' ',tmp)+1,30);
+      color:=strtoint('$00'+copy(tmp,5,2)+copy(tmp,3,2)+copy(tmp,1,2));
+      ShapePtr := FindComponent('Shape'+IntToStr(i)+IntToStr(j)) as TShape;
+      ShapePtr.Color := color;
+      ShapePtr.HelpKeyword := name;
+      ShapePtr.tag:=((i-1)*4) + (j-1);
+    end;
   end;
 end;
 
@@ -105,40 +130,45 @@ begin
   btOldcolor.BevelOuter:=bvRaised;
 end;
 
-procedure TfrColorDialog.JvColorSquare1MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-var cname,tmp,nr:string;
+procedure TfrColorDialog.FormCreate(Sender: TObject);
 begin
-  if (Sender as TJvColorSquare).tag+scrollbar.position*4<slColors.count then
-    tmp:=slColors[(Sender as TJvColorSquare).tag+scrollbar.position*4];
-  nr:=copy(tmp,1,pos('=',tmp)-1);
-  tmp:=copy(tmp,pos('=',tmp)+1,30);
-  cname:=copy(tmp,1,pos(' ',tmp)-1);
-  edDescription.text:='Nr: '+nr+' - '+cname;
+  slColors := TStringList.Create;
 end;
 
-procedure TfrColorDialog.JvColorSquare1ColorClick(Sender: TObject;
-  Button: TMouseButton; Color: TColor);
-var cname,nr,tmp:string;
+procedure TfrColorDialog.FormDestroy(Sender: TObject);
 begin
-  tmp:=slColors[(Sender as TJvColorSquare).tag+scrollbar.position*4];
-  nr:=copy(tmp,1,pos('=',tmp)-1);
-  tmp:=copy(tmp,pos('=',tmp)+1,20);
+  slColors.Free;
+end;
+
+procedure TfrColorDialog.ScrollBar1Change(Sender: TObject);
+begin
+  SetColorBoxes;
+end;
+
+procedure TfrColorDialog.Shape11MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+
+var
+  cname,nr,tmp:string;
+
+begin
+  nr:=slColors.Names[(Sender as TShape).tag+scrollbar1.position*4];
+  tmp:=slColors.ValueFromIndex[(Sender as TShape).tag+scrollbar1.position*4];
   cname:=copy(tmp,1,pos(' ',tmp)-1);
 
   if btnewColor.BevelOuter=bvLowered then
   begin
-    btNewColor.color:=color;
+    btNewColor.color:=(Sender as TShape).color;
     btNewColor.tag:=strtoint(nr);
     btNewcolor.caption:=nr+' - '+cname;
-    btNewColor.Font.Color:=abs($00999999-color);
+    btNewColor.Font.Color:=abs($00999999-(Sender as TShape).color);
     edColornumber.Text:=nr;
   end
     else begin
-      btOldColor.color:=color;
+      btOldColor.color:=(Sender as TShape).Color;
       btOldColor.tag:=strtoint(nr);
       btOldColor.caption:=nr+' - '+cname;
-      btOldColor.Font.Color:=abs($00999999-color);
+      btOldColor.Font.Color:=abs($00999999-(Sender as TShape).color);
     end
 end;
 

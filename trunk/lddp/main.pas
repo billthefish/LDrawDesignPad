@@ -40,8 +40,6 @@ type TLDrawArray= record
   partname:string;
 end;
 
-
-
 type
   TfrMain = class(TForm)
     acCommentBlock: TAction;
@@ -1390,103 +1388,122 @@ Description: Replace Colors using a color dialogue
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var clr:TLDrawArray;
-    i,j,l:integer;
-    st:Tstringlist;
-    cname,tmp,nr:string;
-    cvalue:integer;
-    bCR:boolean;
+var
+  i, lengthsel, startsel, endsel:integer;
+  cname,tmp,nr:string;
+  cvalue:integer;
+  EditCh: TfrEditorChild;
+  clr: TDATModel;
+
 begin
-    if not Assigned(frColorDialog.slColors) then
+  EditCh := ActiveMDIChild as TfrEditorChild;
+
+  with frColorDialog do
+  begin
+    slColors.LoadFromFile(ExtractFilePath(Application.ExeName)+'colors.pal');
+
+    rgOptions.Items.Clear;
+
+    rgOptions.Items.Add('Replace All');
+    rgOptions.ItemIndex := 0;
+
+    clr := TDATModel.Create;
+
+    if EditCh.memo.lines[EditCh.memo.CaretY-1] <> '' then
+      clr.Add(Trim(EditCh.memo.lines[EditCh.memo.CaretY-1]));
+
+    if ((clr[0] is TDATElement) and (EditCh.memo.SelLength = 0)) then
     begin
-      frColorDialog.slColors:=TStringlist.create;
-    end;
-    frColorDialog.slColors.LoadFromFile(ExtractFilePath(Application.ExeName)+'colors.pal');
-    if ((activeMDICHild as TfrEditorChild).memo.selstart-(activeMDICHild as TfrEditorChild).memo.selend=0) then begin
-      frColorDialog.rbreplaceselection.enabled:=false;
-      frColorDialog.rbreplaceLine.checked:=true;;
+      rgOptions.Items.Add('Replace Current Line Only');
+      rgOptions.ItemIndex := 1;
     end
-      else begin
-        frColorDialog.rbreplaceselection.enabled:=true;
-        frColorDialog.rbreplaceSelection.checked:=true;
-      end;
-    clr:=LDrawParse((activeMDICHild as TfrEditorChild).memo.lines[(activeMDICHild as TfrEditorChild).memo.CaretY-1]);
-    if clr.color=-1 then
+    else if EditCh.memo.SelLength <> 0 then
     begin
-      frColorDialog.rbReplaceAll.checked:=true;
-      frColorDialog.rbReplaceLine.enabled:=false;
-      clr.color:=0;
-    end
-     else begin
-       frColorDialog.rbReplaceLine.checked:=true;
-     end;
-    try
-      tmp:=frColorDialog.slColors[frColorDialog.slColors.IndexOfName(inttostr(clr.color))];
-    except
-      MessageDlg('Invalid colornumber!', mtError, [mbOK], 0);
-      exit;
+      rgOptions.ItemIndex := rgOptions.Items.Add('Replace For Selection');
+      rgOptions.ItemIndex := 1;
     end;
-    nr:=copy(tmp,1,pos('=',tmp)-1);
-    tmp:=copy(tmp,pos('=',tmp)+1,20);
-    cname:=copy(tmp,1,pos(' ',tmp)-1);
-    tmp:=copy(tmp,pos(' ',tmp)+1,20);
-    cvalue:=strtoint('$'+copy(tmp,5,2)+copy(tmp,3,2)+copy(tmp,1,2));
-    frColorDialog.btOldColor.color:=cvalue;
-    frColorDialog.btOldColor.tag:=strtoint(nr);
-    frColorDialog.btOldColor.caption:=nr+' - '+cname;
-    if cvalue>$00999999 then  frColorDialog.btOldColor.Font.Color:=0
-     else frColorDialog.btOldColor.Font.Color:=$FFFFFF;
-    if frColorDialog.showmodal=mrOK then
-    begin
-      if frColorDialog.rbReplaceLine.checked then
-      begin
-        tmp:=(activeMDICHild as TfrEditorChild).memo.lines[(activeMDICHild as TfrEditorChild).memo.CaretY-1];
-        ExtractWordPos(2,tmp,[' '],l);
-        tmp:=copy(tmp,1,l-1)+inttostr(frColorDialog.btNewColor.tag)+copy(tmp,l+length(inttostr(clr.color)),length(tmp));
-        (activeMDICHild as TfrEditorChild).memo.lines[(activeMDICHild as TfrEditorChild).memo.CaretY-1]:=tmp;
-        (activeMDICHild as TfrEditorChild).memo.Modified:=true;
+
+    if clr[0] is TDATElement then
+      try
+        tmp:=slColors[slColors.IndexOfName(IntToStr((clr[0] as TDATElement).Color))];
+        nr:=copy(tmp,1,pos('=',tmp)-1);
+        tmp:=copy(tmp,pos('=',tmp)+1,20);
+        cname:=copy(tmp,1,pos(' ',tmp)-1);
+        tmp:=copy(tmp,pos(' ',tmp)+1,20);
+        cvalue:=strtoint('$'+copy(tmp,5,2)+copy(tmp,3,2)+copy(tmp,1,2));
+        btOldColor.color:=cvalue;
+        btOldColor.tag:=strtoint(nr);
+        btOldColor.caption:=nr+' - '+cname;
+
+        if cvalue>$00999999 then
+          btOldColor.Font.Color:=0
+        else
+          btOldColor.Font.Color:=$FFFFFF;
+      except
+        MessageDlg('Invalid colornumber!', mtError, [mbOK], 0);
+        exit;
       end;
-      if frColorDialog.rbReplaceAll.checked then
+
+    if ShowModal=mrOK then
+    begin
+      if rgOptions.ItemIndex = 0 then
       begin
-        for i:=0 to (activeMDICHild as TfrEditorChild).memo.lines.count-1 do
+        for i:=0 to EditCh.memo.lines.count-1 do
         begin
-          clr:=LDrawParse((activeMDICHild as TfrEditorChild).memo.lines[i]);
-          if (clr.color>-1) and (clr.color=frColorDialog.btOldColor.tag) then
-          begin
-            tmp:=(activeMDICHild as TfrEditorChild).memo.lines[i];
-            ExtractWordPos(2,tmp,[' '],l);
-            tmp:=copy(tmp,1,l-1)+inttostr(frColorDialog.btNewColor.tag)+copy(tmp,l+length(inttostr(clr.color)),length(tmp));
-            (activeMDICHild as TfrEditorChild).memo.lines[i]:=tmp;
-            (activeMDICHild as TfrEditorChild).memo.Modified:=true;
-          end;
+          clr.Clear;
+          clr.Add(EditCh.memo.lines[i]);
+          if (clr[0] is TDATElement) then
+            if ((clr[0] as TDATElement).Color = btOldColor.tag) then
+            begin
+              (clr[0] as TDATElement).Color := btNewColor.Tag;
+              EditCh.memo.lines[i]:=clr[0].DATString;;
+              EditCh.memo.Modified:=true;
+            end;
         end;
-      end;
+      end
+      else if rgOptions.Items[rgOptions.ItemIndex] = 'Replace Current Line Only' then
+      begin
+        (clr[0] as TDATElement).Color := btNewColor.Tag;
+        EditCh.memo.lines[EditCh.memo.CaretY-1]:=clr[0].DATString;;
+        EditCh.memo.Modified:=true;
+      end
       // Replace colors in selection
-      if frColorDialog.rbReplaceSelection.checked then
-      with (activeMDICHild as TfrEditorChild).memo do
+      else if rgOptions.Items[rgOptions.ItemIndex] = 'Replace For Selection' then
+      with EditCh.memo do
       begin
-        st:=TStringlist.create;
-        j:=selstart;
-        bCR:=seltext[length(seltext)]=#10;
-        st.text:=seltext;
-        for i:=st.count-1 downto 0 do
-        begin
-          clr:=LDrawParse(st[i]);
-          if (clr.color>-1) and (clr.color=frColorDialog.btOldColor.tag) then
-          begin
-            tmp:=st[i];
-            ExtractWordPos(2,tmp,[' '],l);
-            tmp:=copy(tmp,1,l-1)+inttostr(frColorDialog.btNewColor.tag)+copy(tmp,l+length(inttostr(clr.color)),length(tmp));
-            st[i]:=tmp;
-          end;
-        end;
-        if not bCR then tmp:=copy(st.text,1,length(st.text)-2)
-          else tmp:=st.text;
-        seltext:=tmp;
-        selstart:=j+length(tmp);
-        selend:=selstart-length(tmp);
+        clr.Clear;
+
+        startsel := selstart;
+        endsel := selend;
+
+        while Text[startsel] <> #10 do
+          dec(startsel);
+        while Text[endsel] <> #10 do
+          inc(endsel);
+
+        SelStart := startsel;
+        SelEnd := endsel;
+
+        lengthsel := SelLength;
+
+        clr.ModelText := SelText;
+
+        for i := 0 to clr.Count-1 do
+          if clr[i] is TDATElement then
+            if (clr[i] as TDATElement).Color = btOldColor.Tag then
+            begin
+              (clr[i] as TDATElement).Color := btNewColor.Tag;
+              Modified := true;
+            end;
+
+        SelText := clr.ModelText;
+
+        SelStart := startsel;
+        SelEnd := endsel + (Length(clr.ModelText) - lengthsel) - clr.Count;
       end;
     end;
+  end;
+  clr.Free;
 end;
 
 
@@ -2096,5 +2113,7 @@ begin
     DATModel1.Free;
   end;
 end;
+
+
 
 end.
