@@ -1707,7 +1707,9 @@ begin
    inlined.add('');
    inlined.add('0 End of Inlined Part');
    k:=carety;
-   lines[carety-1]:=inlined.text;
+   lines.Delete(carety-1);
+   for m := inlined.Count - 1 downto 0 do
+     lines.Insert(carety-1,inlined[m]);
    carety:=k;
  end;
  inlined.free;
