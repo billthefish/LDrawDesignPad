@@ -769,7 +769,7 @@ var
   DatModel1: TDATModel;
 
 begin
-  if frOptions.cboDet.Checked then
+  if (frOptions.cboDet.Checked) then
     DetThreshold := StrToFloat(Trim(frOptions.seDet.Text));
   if frOptions.cboDist.Checked then
     DistThreshold := StrToFloat(Trim(frOptions.seDist.Text));
@@ -1317,37 +1317,37 @@ var
   DATModel1: TDATModel;
 
 begin
- DATModel1 := TDATModel.Create;
+  DATModel1 := TDATModel.Create;
 
- with (activeMDICHild as TfrEditorChild).memo do
- begin
-   LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
 
-   DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
-   DATModel1.Add(Lines[CaretY-1]);
+    DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
+    DATModel1.Add(Lines[CaretY-1]);
+ 
+    (DATModel1[0] as TDATSubPart).RotationDecimalPlaces :=
+      StrToInt(Trim(frOptions.seRotAcc.Text));
+    (DATModel1[0] as TDATSubPart).PositionDecimalPlaces :=
+      StrToInt(Trim(frOptions.sePntAcc.Text));
+    DATModel1.InlinePart(0);
 
-   (DATModel1[0] as TDATSubPart).RotationDecimalPlaces :=
-     StrToInt(Trim(frOptions.seRotAcc.Text));
-   (DATModel1[0] as TDATSubPart).PositionDecimalPlaces :=
-     StrToInt(Trim(frOptions.sePntAcc.Text));
-   DATModel1.InlinePart(0);
+    DATModel1.Insert(0,'');
+    DATModel1.Insert(0,'0 Original Line: '+ Lines[CaretY-1]);
+    DATModel1.Insert(0,'0 Inlined by LDDesignPad');
+    DATModel1.Add('0 End of Inlined Part');
+    DATModel1.Add('');
 
-   DATModel1.Insert(0,'');
-   DATModel1.Insert(0,'0 Original Line: '+ Lines[CaretY-1]);
-   DATModel1.Insert(0,'0 Inlined by LDDesignPad');
-   DATModel1.Add('0 End of Inlined Part');
-   DATModel1.Add('');
+    k:=carety;
+    lines.Delete(carety-1);
 
-   k:=carety;
-   lines.Delete(carety-1);
+    for m := DATModel1.Count - 1 downto 0 do
+      lines.Insert(carety-1,DATModel1[m].DATString);
 
-   for m := DATModel1.Count - 1 downto 0 do
-     lines.Insert(carety-1,DATModel1[m].DATString);
-
-   carety:=k;
-   Modified := true;
- end;
- DATModel1.Free;
+    carety:=k;
+    Modified := true;
+  end;
+  DATModel1.Free;
 end;
 
 procedure TfrMain.acReplaceColorExecute(Sender: TObject);

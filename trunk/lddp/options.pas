@@ -420,10 +420,15 @@ begin
   edName.Text := LDDPini.ReadString(IniSection, 'edName_Text', '');
   edSig.Text := LDDPini.ReadString(IniSection, 'edSig_Text', '');
   seDet.Text := LDDPini.ReadString(IniSection, 'seDet_Text', '0.1');
+  if Trim(seDet.Text) = '' then seDet.Text := '0.1';
   seDist.Text := LDDPini.ReadString(IniSection, 'seDist_Text', '0.001');
+  if Trim(seDist.Text) = '' then seDist.Text := '0.001';
   seCollinear.Text := LDDPini.ReadString(IniSection, 'seCollinear_Text', '0.0001');
-  sePntAcc.Text := LDDPini.ReadString(IniSection, 'sePntAcc_Text', '');
-  seRotAcc.Text := LDDPini.ReadString(IniSection, 'seRotAcc_Text', '');
+  if Trim(seCollinear.Text) = '' then seCollinear.Text := '0.0001';
+  sePntAcc.Text := LDDPini.ReadString(IniSection, 'sePntAcc_Text', '4');
+  if Trim(sePntAcc.Text) = '' then sePntAcc.Text := '4';
+  seRotAcc.Text := LDDPini.ReadString(IniSection, 'seRotAcc_Text', '4');
+  if Trim(seRotAcc.Text) = '' then seRotAcc.Text := '4';
   cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
   cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
   cboWaitForFinish.Checked := LDDPini.ReadBool(IniSection, 'cboWaitForFinish_Checked', false);

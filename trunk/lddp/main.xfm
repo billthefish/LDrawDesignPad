@@ -384,6 +384,7 @@ object frMain: TfrMain
         ImageIndex = 32
       end
       object ToolButton27: TToolButton
+        HelpType = htContext
         Left = 222
         Top = 2
         Height = 23
