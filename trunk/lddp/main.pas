@@ -179,7 +179,6 @@ type
     CopyItem: TMenuItem;
     PasteItem: TMenuItem;
     SelectAll1: TMenuItem;
-    N13: TMenuItem;
     Comment1: TMenuItem;
     Uncomment1: TMenuItem;
     Toolbars: TMenuItem;
@@ -305,6 +304,7 @@ type
     RandomizeColorsinSelection2: TMenuItem;
     Pollonrequest1: TMenuItem;
     Pollonrequest2: TMenuItem;
+    N24: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -1585,7 +1585,8 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 var
-  k, m: Integer;
+  i: Integer;
+  tmpBlEnd: TBufferCoord;
   DATModel1: TDATModel;
 
 begin
@@ -1595,31 +1596,35 @@ begin
   begin
     LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
 
+    tmpBlEnd := BlockEnd;
+    BlockBegin := BufferCoord(1, BlockBegin.Line);
+    if tmpBlEnd.Char > 1 then
+      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 1]) + 1, tmpBlEnd.Line)
+    else
+      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 2]) + 1, tmpBlEnd.Line - 1);
+
     DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
-    DATModel1.Add(Lines[CaretY-1]);
- 
-    (DATModel1[0] as TDATSubPart).RotationDecimalPlaces :=
-      frOptions.seRotAcc.Value;
-    (DATModel1[0] as TDATSubPart).PositionDecimalPlaces :=
-      frOptions.sePntAcc.Value;
-    DATModel1.InlinePart(0);
+    DATModel1.ModelText := SelText;
 
-    DATModel1.Insert(0,'');
-    DATModel1.Insert(0,'0 Original Line: '+ Lines[CaretY-1]);
-    DATModel1.Insert(0,'0 Inlined by LDDesignPad');
-    DATModel1.Add('0 End of Inlined Part');
-    DATModel1.Add('');
-
-    k:=carety;
-    lines.Delete(carety-1);
+    for i := DATModel1.Count - 1 downto 0 do
+      if DATModel1[i] is TDATSubPart then
+      begin
+        (DATModel1[i] as TDATSubPart).RotationDecimalPlaces :=
+          frOptions.seRotAcc.Value;
+        (DATModel1[i] as TDATSubPart).PositionDecimalPlaces :=
+          frOptions.sePntAcc.Value;
+         DATModel1.Insert(i,'');
+         DATModel1.Insert(i,'0 Original Line: ' + DATModel1[i+1].DATString );
+         DATModel1.Insert(i,'0 Inlined by LDDesignPad');
+         DATModel1.Insert(i+4, '0 End of Inlined Part');
+         DATModel1.Insert(i+5, '');
+         DATModel1.InlinePart(i+3);
+      end;
 
     DATModel1.RotationDecimalPlaces := frOptions.seRotAcc.Value;
     DATModel1.PositionDecimalPlaces := frOptions.sePntAcc.Value;
 
-    for m := DATModel1.Count - 1 downto 0 do
-      lines.Insert(carety-1,DATModel1[m].DATString);
-
-    carety:=k;
+    SelText := DATModel1.ModelText;
     Modified := true;
   end;
   (activeMDICHild as TfrEditorChild).UpdateControls;
