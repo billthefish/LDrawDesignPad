@@ -230,7 +230,6 @@ type
     http: TIdHTTP;
     acCheckforUpdate: TAction;
     SynEditSearch: TSynEditSearch;
-    N14: TMenuItem;
     acBMP2LDraw: TAction;
     ConvertBitmaptoLDraw1: TMenuItem;
     acModelTreeView: TAction;
@@ -299,6 +298,8 @@ type
     N22: TMenuItem;
     ProcessthroughLSynth1: TMenuItem;
     acLSynth: TAction;
+    GenrateBendibleObject1: TMenuItem;
+    acBendibleObject: TAction;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -378,6 +379,7 @@ type
     procedure acECUnMarkAllTypedExecute(Sender: TObject);
     procedure acFindNextUpdate(Sender: TObject);
     procedure acLSynthExecute(Sender: TObject);
+    procedure acBendibleObjectExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -418,7 +420,7 @@ implementation
 {$R *.dfm}
 
 uses
-  childwin, about, options, colordialog,
+  childwin, about, options, colordialog, BezWindow,
   BMP2LDraw, modeltreeview, dlgConfirmReplace;
 
 
@@ -2453,6 +2455,30 @@ begin
   TempFile.Free;
   DeleteFile(OutputFile);
   DeleteFile(InputFile);
+end;
+
+procedure TfrMain.acBendibleObjectExecute(Sender: TObject);
+
+var
+  SelectedLines: TStringList;
+
+begin
+  SelectedLines := TStringList.Create;
+  with (ActiveMDIChild as TfrEditorChild) do
+  begin
+    SelectedLines.Text := memo.SelText;
+    if SelectedLines.Count = 2 then
+      try
+        frmDATCurve.Line1.DATString := SelectedLines[0];
+        frmDATCurve.Line2.DATString := SelectedLines[1];
+        if frmDATCurve.ShowModal = mrOk then
+          memo.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
+      except
+        SelectedLines.Free;
+        Exit;
+      end;
+  end;
+  SelectedLines.Free;
 end;
 
 end.
