@@ -131,7 +131,7 @@ type
     ToolButton21: TToolButton;
     ToolButton22: TToolButton;
     ToolButton23: TToolButton;
-    ToolButton24: TToolButton;
+    tbUserDefined: TToolButton;
     ToolButton25: TToolButton;
     ToolButton26: TToolButton;
     ToolButton27: TToolButton;
@@ -203,7 +203,7 @@ type
     acLDView1: TMenuItem;
     acMLCad1: TMenuItem;
     acL3Lab1: TMenuItem;
-    UserDefinedProgram1: TMenuItem;
+    mnuUserDefined: TMenuItem;
     SyntaxHighlighting1: TMenuItem;
     Ldraw2: TMenuItem;
     C2: TMenuItem;
@@ -338,6 +338,10 @@ type
     tbnColor13: TToolButton;
     tbnColor14: TToolButton;
     tbnColor15: TToolButton;
+    UnIndent1: TMenuItem;
+    acincIdent1: TMenuItem;
+    pmExternal: TPopupMenu;
+    ReplaceColorShortcut1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -423,6 +427,7 @@ type
     procedure acMirrorExecute(Sender: TObject);
     procedure acColorToolbarExecute(Sender: TObject);
     procedure acColorReplaceShortcutExecute(Sender: TObject);
+    procedure tbUserDefinedClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1182,7 +1187,7 @@ var
   i: Integer;
 
 begin
-  frOptions.LoadFormValues;
+//  frOptions.LoadFormValues;
 
   if frOptions.showmodal=mrOK then
   begin
@@ -1195,8 +1200,8 @@ begin
         Gutter.Width := frOptions.speMarginWidth.AsInteger;
         RightEdge := frOptions.speRightLine.AsInteger;
       end;
-  end
-  else frOptions.LoadFormValues;
+  end;
+//  else frOptions.LoadFormValues;
 end;
 
 procedure TfrMain.acUndoExecute(Sender: TObject);
@@ -1273,7 +1278,9 @@ Description: Execute user defined program
 Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
-var opt:byte;
+var
+  opt:byte;
+  ExProgram: TStringList;
 
     function ParseString(toparse:string):string;
     var short,long:string;
@@ -1283,8 +1290,8 @@ var opt:byte;
     // %3 is used a place holder for the path and the filename without extension.
     // %4, %5, %6, %7 are the same as %0 to %3 except they use the short form for paths and file-names that means the 8.3 notation of MS-DOS.
     begin
-      long:=(activeMDICHild as TfrEditorChild).tempFileName;
-      short:=GetShortFileName(long);
+      long := (activeMDICHild as TfrEditorChild).tempFileName;
+      short := ExtractShortPathName(long);
       toparse:=StringReplace(toparse,'%0',long,[rfReplaceAll]);
       toparse:=StringReplace(toparse,'%1',ExtractFilePath(long),[rfReplaceAll]);
       toparse:=StringReplace(toparse,'%2',ChangeFileExt(ExtractFileName(long),''),[rfReplaceAll]);
@@ -1297,25 +1304,28 @@ var opt:byte;
     end;
 
 begin
-  with frOptions do begin
-    if not FileExists(edExternal.text) then
-    begin
-      MessageDlg('You have to specify a valid external program first!', mtError, [mbOK], 0);
-      acOptionsExecute(Sender);
-      exit;
-    end;
-    case rgStyle.ItemIndex of
-      1: opt:=SW_HIDE;
-      2: opt:=SW_SHOWNOACTIVATE;
-      3: opt:=SW_MAXIMIZE;
-      else
-         opt:=SW_SHOWNORMAL;
-    end;
-    if cboShowCommand.checked then
-      ShowMessage(edExternal.text+' '+ParseString(edParameters.text));
-    (Self.activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((Self.activeMDICHild as TfrEditorChild).tempFileName);
-    DoCommand(edExternal.text+' '+ParseString(edParameters.text),opt,cboWaitforFinish.checked);
+  ExProgram := TStringList.Create;
+  ExProgram.CommaText := frOptions.ExternalProgramList[(Sender as TAction).ActionComponent.Tag];
+  if not FileExists(ExProgram[1]) then
+  begin
+    MessageDlg('You have to specify a valid external program first!', mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
   end;
+  case StrToInt(ExProgram[5]) of
+    1: opt:=SW_HIDE;
+    2: opt:=SW_SHOWNOACTIVATE;
+    3: opt:=SW_MAXIMIZE;
+    else
+      opt:=SW_SHOWNORMAL;
+  end;
+
+  if StrToBool(ExProgram[4]) then
+    ShowMessage(ExProgram[1]+' '+ParseString(ExProgram[2]));
+
+  (Self.activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((Self.activeMDICHild as TfrEditorChild).tempFileName);
+  DoCommand(ExProgram[1]+' '+ParseString(ExProgram[2]),opt,StrToBool(ExProgram[3]));
+  ExProgram.Free;
 end;
 
 procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
@@ -2929,32 +2939,34 @@ end;
 procedure TfrMain.acMirrorExecute(Sender: TObject);
 
 var
-  DATLine: TDATType;
-  rows, i: integer;
+  DModel: TDATModel;
+  rows, i, j: integer;
 
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    BlockEnd := BufferCoord(Length(Lines[BlockBegin.Line - 1]) + 1, BlockBegin.Line);
+    ExpandSelection;
 
-    DATLine := StrToDAT(SelText);
+    DModel := TDATModel.Create;
+    DModel.ModelText := SelText;
+    
+    for i := 0 to DModel.Count - 1 do
+      if DModel[i] is TDATElement then
+      begin
+        case DModel[i].LineType of
+          1,3: rows := 3;
+            2: rows := 2;
+          4,5: rows := 4;
+        else
+          rows := 0;
+        end;
 
-
-    case DATLine.LineType of
-      0: rows := 0;
-      1,3: rows := 3;
-      2: rows := 2;
-      4,5: rows := 4;
-    else
-      rows := 0;
-    end;
-
-    if rows > 0 then
-      for i := 1 to rows do
-        (DATLine as TDATElement).RM[i,(Sender as TComponent).Tag] := -(DATLine as TDATElement).RM[i,(Sender as TComponent).Tag];
-
-    SelText := DATLine.DATString;
+        if rows > 0 then
+          for j := 1 to rows do
+            (DModel[i] as TDATElement).RM[j,(Sender as TComponent).Tag] := -(DModel[i] as TDATElement).RM[j,(Sender as TComponent).Tag];
+      end;
+    SelText := DModel.ModelText;
+    DModel.Free;
   end;
 end;
 
@@ -2977,6 +2989,11 @@ begin
     SelText := DModel.ModelText;
   end;
   DModel.Free;
+end;
+
+procedure TfrMain.tbUserDefinedClick(Sender: TObject);
+begin
+// Empty. Required for Button to be enabled
 end;
 
 end.

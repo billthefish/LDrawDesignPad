@@ -2,7 +2,7 @@ object frOptions: TfrOptions
   Left = 360
   Top = 236
   Width = 529
-  Height = 368
+  Height = 400
   VertScrollBar.Range = 37
   ActiveControl = BitBtn1
   AutoScroll = False
@@ -20,7 +20,7 @@ object frOptions: TfrOptions
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 297
+    Top = 329
     Width = 521
     Height = 37
     Align = alBottom
@@ -141,8 +141,8 @@ object frOptions: TfrOptions
     Left = 0
     Top = 0
     Width = 521
-    Height = 297
-    ActivePage = TabSheet7
+    Height = 329
+    ActivePage = TabSheet1
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -155,7 +155,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 240
+        Height = 272
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
@@ -555,23 +555,23 @@ object frOptions: TfrOptions
       Caption = 'User-&defined Program'
       ImageIndex = -1
       object GroupBox7: TGroupBox
-        Left = 0
+        Left = 152
         Top = 0
-        Width = 513
-        Height = 240
-        Align = alClient
-        Caption = 'User Defide Program Configuration'
+        Width = 361
+        Height = 272
+        Align = alRight
+        Caption = 'User Defined Program Configuration'
         TabOrder = 0
         object Label10: TLabel
           Left = 8
-          Top = 51
+          Top = 70
           Width = 56
           Height = 13
           Caption = 'Parameters:'
         end
         object lbExternal: TLabel
-          Left = 428
-          Top = 23
+          Left = 284
+          Top = 95
           Width = 46
           Height = 13
           Caption = 'lbExternal'
@@ -584,15 +584,22 @@ object frOptions: TfrOptions
         end
         object Label11: TLabel
           Left = 8
-          Top = 22
+          Top = 46
           Width = 79
           Height = 13
           Caption = 'Path && Filename:'
         end
+        object Label19: TLabel
+          Left = 8
+          Top = 22
+          Width = 70
+          Height = 13
+          Caption = 'Program Name'
+        end
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 177
-          Width = 509
+          Top = 209
+          Width = 357
           Height = 61
           Align = alBottom
           Caption = 'Style'
@@ -600,13 +607,14 @@ object frOptions: TfrOptions
           Items.Strings = (
             'Normal'
             'Hidden'
-            'Normal but focus remains on LDDP'
+            'Normal, LDDP Retains Focus'
             'Maximized')
           TabOrder = 5
+          OnClick = edExternalNameChange
         end
         object btExternal: TBitBtn
-          Left = 400
-          Top = 18
+          Left = 328
+          Top = 42
           Width = 25
           Height = 22
           TabOrder = 1
@@ -657,34 +665,92 @@ object frOptions: TfrOptions
         end
         object edParameters: TEdit
           Left = 92
-          Top = 45
-          Width = 309
+          Top = 66
+          Width = 237
           Height = 21
           TabOrder = 2
+          OnChange = edExternalNameChange
         end
         object edExternal: TEdit
           Left = 92
-          Top = 18
-          Width = 309
+          Top = 42
+          Width = 237
           Height = 21
           TabOrder = 0
+          OnChange = edExternalNameChange
         end
         object cboShowCommand: TCheckBox
-          Left = 91
+          Left = 11
           Top = 104
           Width = 209
           Height = 17
           Caption = 'Show command line before execution'
           TabOrder = 4
+          OnClick = edExternalNameChange
         end
         object cboWaitForFinish: TCheckBox
-          Left = 91
-          Top = 80
+          Left = 11
+          Top = 88
           Width = 161
           Height = 17
           Caption = 'Wait until program is finished'
           TabOrder = 3
+          OnClick = edExternalNameChange
         end
+        object edExternalName: TEdit
+          Left = 92
+          Top = 18
+          Width = 237
+          Height = 21
+          TabOrder = 6
+          OnChange = edExternalNameChange
+        end
+        object Memo5: TMemo
+          Left = 2
+          Top = 120
+          Width = 357
+          Height = 89
+          Align = alBottom
+          BorderStyle = bsNone
+          Color = clBtnFace
+          Lines.Strings = (
+            'You can use the following shortcuts in the parameters:'
+            '%0: Path and filename of the current file'
+            '%1: Path only'
+            '%2: Filename without extension'
+            '%3: Path and Filename without extension'
+            '%4 - %7: The 8.3 notation of %0 - %3')
+          TabOrder = 7
+        end
+        object btnAddExternal: TButton
+          Left = 232
+          Top = 144
+          Width = 121
+          Height = 33
+          Caption = 'Add New Program'
+          TabOrder = 8
+          OnClick = lbxExternalDblClick
+        end
+        object btnDelExternal: TButton
+          Left = 232
+          Top = 176
+          Width = 121
+          Height = 33
+          Caption = 'Delete Current Program'
+          TabOrder = 9
+          OnClick = btnDelExternalClick
+        end
+      end
+      object lbxExternal: TListBox
+        Left = 0
+        Top = 0
+        Width = 152
+        Height = 272
+        Align = alClient
+        ItemHeight = 13
+        TabOrder = 1
+        OnClick = lbxExternalClick
+        OnDblClick = lbxExternalDblClick
       end
     end
     object TabSheet2: TTabSheet
@@ -859,7 +925,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 169
         Width = 513
-        Height = 71
+        Height = 103
         Align = alClient
         Caption = 'Decimal Accuracy'
         TabOrder = 1
@@ -914,7 +980,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 240
+        Height = 272
         Align = alClient
         Caption = 'User Details For Macros'
         TabOrder = 0
@@ -970,7 +1036,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 240
+        Height = 272
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0
@@ -1031,11 +1097,12 @@ object frOptions: TfrOptions
             400040404000404040004040400040404000FF00FF00FF00FF00}
         end
         object cblPlugins: TCheckListBox
-          Left = 12
-          Top = 24
+          Left = 2
+          Top = 15
           Width = 285
-          Height = 201
+          Height = 255
           OnClickCheck = cblPluginsClickCheck
+          Align = alLeft
           ItemHeight = 13
           TabOrder = 0
         end
@@ -1048,7 +1115,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 240
+        Height = 272
         Align = alClient
         Caption = 'Highlighter Options'
         TabOrder = 0
@@ -1081,10 +1148,11 @@ object frOptions: TfrOptions
           Caption = '&Foreground Color:'
         end
         object lstElement: TListBox
-          Left = 8
-          Top = 16
+          Left = 2
+          Top = 15
           Width = 105
-          Height = 161
+          Height = 255
+          Align = alLeft
           ItemHeight = 13
           Items.Strings = (
             'Default'
@@ -1186,10 +1254,10 @@ object frOptions: TfrOptions
             FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
         end
         object SynMemo1: TSynMemo
-          Left = 120
-          Top = 48
-          Width = 366
-          Height = 129
+          Left = 112
+          Top = 45
+          Width = 393
+          Height = 140
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -1227,7 +1295,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 240
+        Height = 272
         Align = alClient
         Caption = 'Editor Options'
         TabOrder = 0
@@ -1286,7 +1354,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 240
+        Height = 272
         Align = alClient
         Caption = 'Color Bar Colors'
         TabOrder = 0
@@ -1315,7 +1383,7 @@ object frOptions: TfrOptions
           Left = 2
           Top = 15
           Width = 137
-          Height = 223
+          Height = 255
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
@@ -1358,7 +1426,7 @@ object frOptions: TfrOptions
         end
         object btnColorRestore: TBitBtn
           Left = 392
-          Top = 208
+          Top = 16
           Width = 113
           Height = 25
           Caption = '&Restore Defaults'
@@ -1413,7 +1481,7 @@ object frOptions: TfrOptions
   end
   object ImageList1: TImageList
     Left = 40
-    Top = 296
+    Top = 328
     Bitmap = {
       494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
@@ -1560,14 +1628,14 @@ object frOptions: TfrOptions
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Open'
     Left = 7
-    Top = 296
+    Top = 328
   end
   object SynLDRSyn1: TSynLDRSyn
     Left = 72
-    Top = 296
+    Top = 328
   end
   object ColorDialog1: TColorDialog
     Left = 104
-    Top = 296
+    Top = 328
   end
 end

@@ -4,7 +4,7 @@ object frmDATCurve: TfrmDATCurve
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Bendible Objects Creator'
-  ClientHeight = 306
+  ClientHeight = 236
   ClientWidth = 393
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object frmDATCurve: TfrmDATCurve
   PixelsPerInch = 96
   TextHeight = 13
   object lblType: TLabel
-    Left = 16
+    Left = 8
     Top = 8
     Width = 32
     Height = 16
@@ -32,13 +32,6 @@ object frmDATCurve: TfrmDATCurve
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object lblContEnable: TLabel
-    Left = 40
-    Top = 218
-    Width = 138
-    Height = 13
-    Caption = 'Manually Enter Control Points'
-  end
   object lblMessage: TLabel
     Left = 16
     Top = 240
@@ -47,7 +40,7 @@ object frmDATCurve: TfrmDATCurve
     Caption = ' '
   end
   object lblLength: TLabel
-    Left = 16
+    Left = 8
     Top = 32
     Width = 3
     Height = 13
@@ -67,26 +60,26 @@ object frmDATCurve: TfrmDATCurve
     ParentFont = False
   end
   object btnGenerate: TButton
-    Left = 16
-    Top = 264
+    Left = 8
+    Top = 200
     Width = 97
     Height = 28
     Caption = 'Generate Curve'
     Enabled = False
     ModalResult = 1
-    TabOrder = 8
+    TabOrder = 6
   end
   object btnCancel: TButton
-    Left = 280
-    Top = 264
+    Left = 288
+    Top = 200
     Width = 97
     Height = 28
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 7
+    TabOrder = 5
   end
   object gbxStartPoint: TGroupBox
-    Left = 16
+    Left = 8
     Top = 72
     Width = 177
     Height = 41
@@ -115,8 +108,8 @@ object frmDATCurve: TfrmDATCurve
     end
   end
   object gbxCont1: TGroupBox
-    Left = 16
-    Top = 120
+    Left = 200
+    Top = 72
     Width = 177
     Height = 41
     Caption = 'Control Point 1'
@@ -134,9 +127,11 @@ object frmDATCurve: TfrmDATCurve
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
+      EditText = '0'
       TabOrder = 0
       Text = '0.'
       Value = 0.000000000000000000
+      OnChange = feCP1XChange
     end
     object feCP1Y: TJvValidateEdit
       Left = 64
@@ -150,9 +145,11 @@ object frmDATCurve: TfrmDATCurve
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
+      EditText = '0'
       TabOrder = 1
       Text = '0.'
       Value = 0.000000000000000000
+      OnChange = feCP1XChange
     end
     object feCP1Z: TJvValidateEdit
       Left = 120
@@ -166,19 +163,21 @@ object frmDATCurve: TfrmDATCurve
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
+      EditText = '0'
       TabOrder = 2
       Text = '0.'
       Value = 0.000000000000000000
+      OnChange = feCP1XChange
     end
   end
   object gbxCont2: TGroupBox
-    Left = 16
-    Top = 168
+    Left = 200
+    Top = 128
     Width = 177
     Height = 41
     Caption = 'Control Point 2'
     Enabled = False
-    TabOrder = 4
+    TabOrder = 3
     object feCP2X: TJvValidateEdit
       Left = 8
       Top = 16
@@ -191,9 +190,11 @@ object frmDATCurve: TfrmDATCurve
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
+      EditText = '0'
       TabOrder = 0
       Text = '0.'
       Value = 0.000000000000000000
+      OnChange = feCP1XChange
     end
     object feCP2Y: TJvValidateEdit
       Left = 64
@@ -207,9 +208,11 @@ object frmDATCurve: TfrmDATCurve
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
+      EditText = '0'
       TabOrder = 1
       Text = '0.'
       Value = 0.000000000000000000
+      OnChange = feCP1XChange
     end
     object feCP2Z: TJvValidateEdit
       Left = 120
@@ -223,14 +226,16 @@ object frmDATCurve: TfrmDATCurve
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
+      EditText = '0'
       TabOrder = 2
       Text = '0.'
       Value = 0.000000000000000000
+      OnChange = feCP1XChange
     end
   end
   object gbxEndPoint: TGroupBox
-    Left = 200
-    Top = 72
+    Left = 8
+    Top = 128
     Width = 177
     Height = 41
     Caption = 'End Point'
@@ -258,75 +263,17 @@ object frmDATCurve: TfrmDATCurve
     end
   end
   object cbxContEnable: TCheckBox
-    Left = 16
-    Top = 216
-    Width = 17
+    Left = 200
+    Top = 176
+    Width = 177
     Height = 17
-    Caption = 'cbxContEnable'
+    Caption = 'Manually Enter Control Points'
     Enabled = False
-    TabOrder = 6
+    TabOrder = 4
     OnClick = cbxContEnableClick
   end
-  object gbxACont1: TGroupBox
-    Left = 200
-    Top = 120
-    Width = 177
-    Height = 41
-    Caption = 'Adjusted Control Point 1'
-    TabOrder = 3
-    object lblACont11: TLabel
-      Left = 8
-      Top = 16
-      Width = 3
-      Height = 13
-      Caption = ' '
-    end
-    object lblACont13: TLabel
-      Left = 120
-      Top = 16
-      Width = 3
-      Height = 13
-      Caption = ' '
-    end
-    object lblACont12: TLabel
-      Left = 64
-      Top = 16
-      Width = 3
-      Height = 13
-      Caption = ' '
-    end
-  end
-  object gbxACont2: TGroupBox
-    Left = 200
-    Top = 168
-    Width = 177
-    Height = 41
-    Caption = 'Adjusted Control Point 2'
-    TabOrder = 5
-    object lblACont21: TLabel
-      Left = 8
-      Top = 16
-      Width = 3
-      Height = 13
-      Caption = ' '
-    end
-    object lblACont22: TLabel
-      Left = 64
-      Top = 16
-      Width = 3
-      Height = 13
-      Caption = ' '
-    end
-    object lblACont23: TLabel
-      Left = 120
-      Top = 16
-      Width = 3
-      Height = 13
-      Caption = ' '
-    end
-  end
   object feLength: TJvValidateEdit
-    Left = 16
+    Left = 8
     Top = 48
     Width = 105
     Height = 21
@@ -337,9 +284,11 @@ object frmDATCurve: TfrmDATCurve
     TrimDecimals = True
     DisplayFormat = dfFloat
     DecimalPlaces = 9
+    EditText = '0'
     HasMinValue = True
-    TabOrder = 9
+    TabOrder = 7
     Text = '0.'
     Value = 0.000000000000000000
+    OnChange = feLengthChange
   end
 end

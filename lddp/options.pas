@@ -25,7 +25,7 @@ uses
   Dialogs, Forms, sysutils, graphics, windowsspecific, SynEditHighlighter, SynHighlighterLDraw,
   ImgList, Controls, Mask, JvMaskEdit, JvSpin, SynEdit, SynMemo, StdCtrls, Inifiles,
   ExtCtrls, CheckLst, JvEdit, ComCtrls, Buttons, Classes , FileCtrl,
-  JvExMask, JvExStdCtrls, JvValidateEdit;
+  JvExMask, JvExStdCtrls, JvValidateEdit, Menus;
 
 type
   TfrOptions = class(TForm)
@@ -130,10 +130,15 @@ type
     edColorNumber: TJvValidateEdit;
     Label18: TLabel;
     btnColorRestore: TBitBtn;
+    lbxExternal: TListBox;
+    Label19: TLabel;
+    edExternalName: TEdit;
+    Memo5: TMemo;
+    btnAddExternal: TButton;
+    btnDelExternal: TButton;
     procedure FormShow(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure edParametersButtonClick(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
     procedure btLDrawClick(Sender: TObject);
     procedure btLDViewClick(Sender: TObject);
@@ -149,15 +154,21 @@ type
     procedure lbxColorsClick(Sender: TObject);
     procedure edColorNameChange(Sender: TObject);
     procedure btnColorRestoreClick(Sender: TObject);
+    procedure lbxExternalDblClick(Sender: TObject);
+    procedure lbxExternalClick(Sender: TObject);
+    procedure edExternalNameChange(Sender: TObject);
+    procedure btnDelExternalClick(Sender: TObject);
 
   private
     SelectedElement: TSynHighlighterAttributes;
     ColorBarList: TStringList;
     procedure ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
+    procedure MakeExternalMenuItem(ProgIndex:Integer);
 
   public
     IniFileName: string;
     IniSection: string;
+    ExternalProgramList: TStringList;
     procedure UpdateControls;
     procedure LoadFormValues;
     procedure SaveFormValues;
@@ -172,7 +183,7 @@ uses main;
 
 {$R *.dfm}
 
-procedure TfrOptions.UpdateCOntrols;
+procedure TfrOptions.UpdateControls;
 
 begin
   if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
@@ -231,6 +242,10 @@ begin
           lbExternal.font.Color:=clRed;
           lbExternal.Caption:='Not found!';
         end;
+
+  frMain.mnuUserDefined.Enabled := ExternalProgramList.Count > 0;
+  frMain.tbUserDefined.Enabled := ExternalProgramList.Count > 0;
+
 end;
 
 procedure TfrOptions.FormShow(Sender: TObject);
@@ -252,18 +267,6 @@ end;
 procedure TfrOptions.Button1Click(Sender: TObject);
 begin
   frMain.LoadPlugins;
-end;
-
-procedure TfrOptions.edParametersButtonClick(Sender: TObject);
-begin
-  MessageDlg('You can use the following parameters:'+#13#10+
-    '%0 will be replaced by the path and filename of the file you are '+#13+#10+
-    'just editing,'+#13+#10+'%1 is replaced by the path only,'+#13+#10+
-    '%2 will be replaced by the file-name only (without extension),'+#13+#10+
-    '%3 is used a place holder for the path and the filename without '+#13+#10+
-    'extension.'+#13+#10+'%4, %5, %6, %7 are the same as %0 to %3 except they use the short'+
-    #13+#10+'form for paths and file-names that means the 8.3 notation of MS-DOS.',
-    mtInformation, [mbOK], 0);
 end;
 
 procedure TfrOptions.cblPluginsClickCheck(Sender: TObject);
@@ -457,6 +460,9 @@ begin
   for i := 0 to 15 do
     LDDPini.WriteString(IniSection, 'lbxColors_Item' + IntToStr(i), ColorBarList[i]);
 
+  for i := 0 to ExternalProgramList.Count - 1 do
+    LDDPini.WriteString(IniSection, 'lbxExternal_Item' + IntToStr(i), ExternalProgramList[i]);
+
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -465,20 +471,21 @@ procedure TfrOptions.LoadFormValues;
 
 var
   i: Integer;
-  SelectedColor: TStringList;
+  CurrentItem: TStringList;
   LDDPini: TMemIniFile;
 
 begin
   ColorBarList := TStringList.Create;
+  ExternalProgramList := TStringList.Create;
   LDDPini := TMemIniFile.Create(IniFileName);
+
+  //Restore various option parameters
   edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory', '');
   edLDViewDir.Text := LDDPini.ReadString(IniSection, 'edLDViewDir_Text', '');
   edMLCadDir.Text := LDDPini.ReadString(IniSection, 'edMLCadDir_Text', '');
   edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
   edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
   edLSynthDir.Text := LDDPini.ReadString(IniSection, 'edLSynthDir_Text', '');
-  edExternal.Text := LDDPini.ReadString(IniSection, 'edExternal_Text', '');
-  edParameters.Text := LDDPini.ReadString(IniSection, 'edParameters_Text', '');
   edEMail.Text := LDDPini.ReadString(IniSection, 'edEmail_Text', '');
   edName.Text := LDDPini.ReadString(IniSection, 'edName_Text', '');
   edSig.Text := LDDPini.ReadString(IniSection, 'edSig_Text', '');
@@ -497,10 +504,8 @@ begin
   cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
   cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
   cboUnitDet.Checked := LDDPini.ReadBool(IniSection, 'cboUnitDet_Checked', false);
-  cboWaitForFinish.Checked := LDDPini.ReadBool(IniSection, 'cboWaitForFinish_Checked', false);
   cboShowCommand.Checked := LDDPini.ReadBool(IniSection, 'cboShowCommand_Checked', false);
   cboMarginNumbers.Checked := LDDPini.ReadBool(IniSection, 'cboMarginNumbers_Checked', false);
-  rgStyle.ItemIndex := LDDPini.ReadInteger(IniSection, 'rgStyle_ItemIndex', 0);
   SynLDRSyn1.ColorAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ColorAttriBackground', SynLDRSyn1.ColorAttri.Background);
   SynLDRSyn1.ColorAttri.Foreground := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ColorAttriForeground', SynLDRSyn1.ColorAttri.Foreground);
   SynLDRSyn1.CommentAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_CommentAttriBackground', SynLDRSyn1.CommentAttri.Background);
@@ -528,20 +533,21 @@ begin
   speRightLine.AsInteger  := LDDPini.ReadInteger(IniSection, 'speRightLine_Value', 80);
   speMarginWidth.AsInteger := LDDPini.ReadInteger(IniSection, 'speMarginWidth_Value', 30);
 
-  if LDDPini.ReadString(IniSection, 'lbxColors_Item1', 'none') = 'none' then
+  //Read and set up color bar settings
+  if LDDPini.ReadString(IniSection, 'lbxColors_Item0', 'none') = 'none' then
     ColorBarList.Text := 'Black,0,$00212121' + #13#10 +
                          'Blue,1,$00B23300' + #13#10 +
                          'Green,2,$00148C00' + #13#10 +
                          'Teal,3,$009F9900' + #13#10 +
                          'Red,4,$002600C4' + #13#10 +
-                         'Dark_Pink,5,$009566DF' + #13#10 +
+                         '"Dark Pink",5,$009566DF' + #13#10 +
                          'Brown,6,$0000205C' + #13#10 +
                          'Gray,7,$00C1C2C1' + #13#10 +
-                         'Dark_Gray,8,$00525F63' + #13#10 +
-                         'Light_Blue,9,$00DCAB6B' + #13#10 +
-                         'Bright_Green,10,$0090EE6B' + #13#10 +
+                         '"Dark Gray",8,$00525F63' + #13#10 +
+                         '"Light Blue",9,$00DCAB6B' + #13#10 +
+                         '"Bright Green",10,$0090EE6B' + #13#10 +
                          'Turquiose,11,$00A7A633' + #13#10 +
-                         'Light_Red,12,$007A85FF' + #13#10 +
+                         '"Light Red",12,$007A85FF' + #13#10 +
                          'Pink,13,$00C6A4F9' + #13#10 +
                          'Yellow,14,$0000DCFF' + #13#10 +
                          'White,15,$00FFFFFF'
@@ -549,22 +555,30 @@ begin
     for i := 0 to 15 do
       ColorBarList.Add(LDDPini.ReadString(IniSection, 'lbxColors_Item' + IntToStr(i), 'none'));
 
-  SelectedColor := TStringList.Create;
+  CurrentItem := TStringList.Create;
   for i := 0 to 15 do
   begin
-    SelectedColor.CommaText := StringReplace(ColorBarList[i], ' ', '_', [rfReplaceAll]);
+    CurrentItem.CommaText := ColorBarList[i];
     if lbxColors.Items.Count < 16 then
-      lbxColors.Items.Add(StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]));
-    ColorButtonChange(StrToInt(SelectedColor[2]),
-                      StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]),
-                      SelectedColor[1], i);
+      lbxColors.Items.Add(  CurrentItem[0]);
+    ColorButtonChange(StrToInt(CurrentItem[2]),
+                      CurrentItem[0],
+                      CurrentItem[1], i);
   end;
-  SelectedColor.Free;
 
+  //Read and setup external program list
+  i := 0;
+  while LDDPini.ReadString(IniSection, 'lbxExternal_Item' + IntToStr(i), 'none') <> 'none' do
+  begin
+     MakeExternalMenuItem(ExternalProgramList.Add(LDDPini.ReadString(IniSection, 'lbxExternal_Item' + IntToStr(i), 'none')));
+     CurrentItem.CommaText := ExternalProgramList[ExternalProgramList.Count - 1];
+     lbxExternal.Items.Add(CurrentItem[0]);
+     Inc(i);
+  end;
+
+  CurrentItem.Free;
   LDDPini.Free;
 end;
-
-
 
 procedure TfrOptions.btnColorSelectClick(Sender: TObject);
 begin
@@ -586,9 +600,9 @@ begin
   if lbxColors.ItemIndex >= 0 then
     begin
       SelectedColor := TStringList.Create;
-      SelectedColor.CommaText := StringReplace(ColorBarList[lbxColors.ItemIndex], ' ', '_', [rfReplaceAll]);
+      SelectedColor.CommaText := ColorBarList[lbxColors.ItemIndex];
       shpColor.Brush.Color := StrToInt(SelectedColor[2]);
-      edColorName.Text := StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]);
+      edColorName.Text := SelectedColor[0];
       edColorNumber.Value := StrToInt(SelectedColor[1]);
       SelectedColor.Free;
     end;
@@ -629,7 +643,7 @@ procedure TfrOptions.edColorNameChange(Sender: TObject);
 begin
   if lbxColors.ItemIndex >= 0 then
   begin
-    ColorBarList[lbxColors.ItemIndex] := edColorName.Text + ',' +
+    ColorBarList[lbxColors.ItemIndex] := '"' + edColorName.Text + '",' +
                                          IntToStr(edColorNumber.Value) + ',' +
                                          IntToStr(shpColor.Brush.Color);
     ColorButtonChange(shpColor.Brush.Color, edColorName.Text,
@@ -650,14 +664,14 @@ begin
                        'Green,2,$00148C00' + #13#10 +
                        'Teal,3,$009F9900' + #13#10 +
                        'Red,4,$002600C4' + #13#10 +
-                       'Dark_Pink,5,$009566DF' + #13#10 +
+                       '"Dark Pink",5,$009566DF' + #13#10 +
                        'Brown,6,$0000205C' + #13#10 +
                        'Gray,7,$00C1C2C1' + #13#10 +
-                       'Dark_Gray,8,$00525F63' + #13#10 +
-                       'Light_Blue,9,$00DCAB6B' + #13#10 +
-                       'Bright_Green,10,$0090EE6B' + #13#10 +
+                       '"Dark Gray",8,$00525F63' + #13#10 +
+                       '"Light Blue",9,$00DCAB6B' + #13#10 +
+                       '"Bright Green",10,$0090EE6B' + #13#10 +
                        'Turquiose,11,$00A7A633' + #13#10 +
-                       'Light_Red,12,$007A85FF' + #13#10 +
+                       '"Light Red",12,$007A85FF' + #13#10 +
                        'Pink,13,$00C6A4F9' + #13#10 +
                        'Yellow,14,$0000DCFF' + #13#10 +
                        'White,15,$00FFFFFF';
@@ -665,10 +679,10 @@ begin
   SelectedColor := TStringList.Create;
   for i := 0 to 15 do
   begin
-    SelectedColor.CommaText := StringReplace(ColorBarList[i], ' ', '_', [rfReplaceAll]);
-    lbxColors.Items[i] := StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]);
+    SelectedColor.CommaText := ColorBarList[i];
+    lbxColors.Items[i] := SelectedColor[0];
     ColorButtonChange(StrToInt(SelectedColor[2]),
-                      StringReplace(SelectedColor[0], '_', ' ', [rfReplaceAll]),
+                      SelectedColor[0],
                       SelectedColor[1], i);
   end;
   SelectedColor.Free;
@@ -678,6 +692,129 @@ begin
   edColorName.Text := '';
   edColorNumber.Value := 0;
 
+end;
+
+procedure TfrOptions.lbxExternalDblClick(Sender: TObject);
+
+begin
+  lbxExternal.ItemIndex := -1;
+  edExternalName.Text := 'New Program';
+  edParameters.Text := '';
+  edExternal.Text := '';
+  cboShowCommand.Checked := False;
+  cboWaitForFinish.Checked := False;
+  rgStyle.ItemIndex := -1;
+  MakeExternalMenuItem(ExternalProgramList.Add('"New Program",,,0,0,0'));
+  lbxExternal.ItemIndex := lbxExternal.Items.Add('New Program');
+  UpdateControls;
+end;
+
+procedure TfrOptions.MakeExternalMenuItem(ProgIndex:Integer);
+
+var
+  ExProgram: TStringList;
+  MenuItem, MenuItem2: TMenuItem;
+
+begin
+  ExProgram := TStringList.Create;
+  ExProgram.CommaText := ExternalProgramList[ProgIndex];
+  MenuItem := TMenuItem.Create(frMain.mnuUserDefined);
+  MenuItem.Action := frMain.acUserDefined;
+  MenuItem.Caption := ExProgram[0];
+  MenuItem.Tag := ProgIndex;
+  MenuItem2 := TMenuItem.Create(frMain.pmExternal);
+  MenuItem2.Action := frMain.acUserDefined;
+  MenuItem2.Caption := ExProgram[0];
+  MenuItem2.Tag := ProgIndex;
+  frMain.mnuUserDefined.Add(MenuItem);
+  frMAin.pmExternal.Items.Add(MenuItem2);
+  ExProgram.Free;
+end;
+
+procedure TfrOptions.lbxExternalClick(Sender: TObject);
+
+var
+  ExProgram: TStringList;
+
+begin
+  ExProgram := TStringList.Create;
+  ExProgram.CommaText := ExternalProgramList[lbxExternal.ItemIndex];
+  edExternalName.Text := ExProgram[0];
+  edExternal.Text := ExProgram[1];
+  edParameters.Text := ExProgram[2];
+  cboWaitForFinish.Checked := StrToBool(ExProgram[3]);
+  cboShowCommand.Checked := StrToBool(ExProgram[4]);
+  rgStyle.ItemIndex := StrToInt(ExProgram[5]);
+  UpdateControls;
+  ExProgram.Free;
+end;
+
+procedure TfrOptions.edExternalNameChange(Sender: TObject);
+begin
+  if lbxExternal.ItemIndex >= 0 then
+  begin
+    if edExternalName.Text = '' then
+    begin
+      ShowMessage('Program Name cannot be blank');
+      edExternalName.Text := frMain.mnuUserDefined.Items[lbxExternal.ItemIndex].Caption;
+    end
+    else
+    begin
+      ExternalProgramList[lbxExternal.ItemIndex] := '"' + edExternalName.Text + '",';
+
+      if edExternal.Text <> '' then
+        ExternalProgramList[lbxExternal.ItemIndex] := ExternalProgramList[lbxExternal.ItemIndex] +
+                                                      '"' + edExternal.Text + ' ",'
+      else
+        ExternalProgramList[lbxExternal.ItemIndex] := ExternalProgramList[lbxExternal.ItemIndex] +
+                                                      ',';
+      if edParameters.Text <> '' then
+        ExternalProgramList[lbxExternal.ItemIndex] := ExternalProgramList[lbxExternal.ItemIndex] +
+                                                      '"' + edParameters.Text + ' ",'
+      else
+        ExternalProgramList[lbxExternal.ItemIndex] := ExternalProgramList[lbxExternal.ItemIndex] +
+                                                      ',';
+      ExternalProgramList[lbxExternal.ItemIndex] := ExternalProgramList[lbxExternal.ItemIndex] +
+                                                    BoolToStr(cboWaitForFinish.Checked) + ',' +
+                                                    BoolToStr(cboShowCommand.Checked) + ',' +
+                                                    IntToStr(rgStyle.ItemIndex);
+      if (Sender as TComponent).Name = 'edExternalName' then
+      begin
+        lbxExternal.Items[lbxExternal.ItemIndex] := edExternalName.Text;
+        frMain.pmExternal.Items[lbxExternal.ItemIndex].Caption := edExternalName.Text;
+        frMain.mnuUserDefined.Items[lbxExternal.ItemIndex].Caption := edExternalName.Text;
+      end;
+    end;
+  end;
+end;
+
+procedure TfrOptions.btnDelExternalClick(Sender: TObject);
+
+var
+  i: Integer;
+
+begin
+  if lbxExternal.ItemIndex >= 0 then
+  begin
+    if lbxExternal.ItemIndex + 1 < lbxExternal.Items.Count then
+      for i := lbxExternal.ItemIndex + 1 to lbxExternal.Items.Count - 1 do
+      begin
+        frMain.pmExternal.Items[i].Tag := frMain.pmExternal.Items[i].Tag - 1;
+        frMain.mnuUserDefined.Items[i].Tag := frMain.mnuUserDefined.Items[i].Tag - 1;
+      end;
+    frMain.pmExternal.Items.Delete(lbxExternal.ItemIndex);
+    frMain.mnuUserDefined.Delete(lbxExternal.ItemIndex);
+    ExternalProgramList.Delete(lbxExternal.ItemIndex);
+    lbxExternal.Items.Delete(lbxExternal.ItemIndex);
+    lbxExternal.ItemIndex := -1;
+    edExternalName.Text := '';
+    edExternal.Text := '';
+    edParameters.Text := '';
+    cboWaitForFinish.Checked := False;
+    cboShowCommand.Checked := False;
+    rgStyle.ItemIndex := -1;
+    UpdateControls;
+  end;
 end;
 
 end.
