@@ -55,7 +55,6 @@ type
     acHomepage: TAction;
     acincIndent: TAction;
     acInline: TAction;
-    acInsertBFC: TAction;
     acInsertPartHeader: TAction;
     acInsertUpdateLine: TAction;
     acL3Lab: TAction;
@@ -252,6 +251,21 @@ type
     Pollevery1sec1: TMenuItem;
     Pollevery2sec1: TMenuItem;
     Pollevery5sec: TMenuItem;
+    CERTIFY1: TMenuItem;
+    INVERNEXT1: TMenuItem;
+    CERTIFYCCW1: TMenuItem;
+    CLIP1: TMenuItem;
+    NOCLIP1: TMenuItem;
+    acInsertBFCCertifyCW: TAction;
+    acInsertBFCCertifyCCW: TAction;
+    acInsertBFCInvertnext: TAction;
+    acInsertBFCClip: TAction;
+    acInsertBFCNoClip: TAction;
+    CERTIFYCW1: TMenuItem;
+    CERTIFYCCW2: TMenuItem;
+    INVERTNEXT1: TMenuItem;
+    CLIP2: TMenuItem;
+    NOCLIP2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -280,7 +294,6 @@ type
     procedure acHighlightLdrawExecute(Sender: TObject);
     procedure acHighlightPascalExecute(Sender: TObject);
     procedure acincIndentExecute(Sender: TObject);
-    procedure acInsertBFCExecute(Sender: TObject);
     procedure acInsertPartHeaderExecute(Sender: TObject);
     procedure acInsertUpdateLineExecute(Sender: TObject);
     procedure acErrorCheckExecute(Sender: TObject);
@@ -319,6 +332,11 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure acBMP2LDrawExecute(Sender: TObject);
     procedure acModelTreeViewExecute(Sender: TObject);
+    procedure acInsertBFCCertifyCWExecute(Sender: TObject);
+    procedure acInsertBFCCertifyCCWExecute(Sender: TObject);
+    procedure acInsertBFCInvertnextExecute(Sender: TObject);
+    procedure acInsertBFCClipExecute(Sender: TObject);
+    procedure acInsertBFCNoClipExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -1187,11 +1205,8 @@ begin
                 '0 KEYWORDS your keywords'+#13#10;
   with (activeMDICHild as TfrEditorChild).memo do
   begin
-//    BeginUndoBlock;
     Lines.Text := HeaderText + Lines.Text;
-//    UndoList.AddChange(crInsert,Point(1,1),CharIndexToRowCol(Length(HeaderText)), HeaderText, SelectionMode);
     Modified := true;
-//    EndUndoBlock;
   end;
 end;
 
@@ -1265,18 +1280,21 @@ begin
        else
          endcol := BlockEnd.y - 1;
 
+       BlockBegin := Point(1,startcol + 1);
+       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+
        DModel := TDATModel.Create;
-       for j := startcol to endcol do
-       begin
-         DModel.Clear;
-         DModel.Add(Lines[j]);
-         DModel.UnCommentLine(0);
-         Lines[j] := DModel[0].DATString;
-       end;
-       DModel.Free;
+       DModel.ModelText := SelText;
+
+       for j := 0 to DModel.Count-1 do
+         DModel.UnCommentLine(j);
+
+       SelText := DModel.ModelText;
 
        BlockBegin := Point(1,startcol + 1);
-       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1)
+       BlockEnd := Point(Length(Lines[endcol]) + 1, endcol + 1);
+
+       DModel.Free;
      end;
    end;
 end;
@@ -1380,7 +1398,6 @@ var
   cvalue:integer;
   EditCh: TfrEditorChild;
   clr: TDATModel;
-  tmpPoint: TPoint;
 
 begin
   EditCh := ActiveMDIChild as TfrEditorChild;
@@ -1760,21 +1777,6 @@ begin
  end;
 end;
 
-procedure TfrMain.acInsertBFCExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Insert BFC line
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
- with (activeMDICHild as TfrEditorChild).memo do
- begin
-   Lines.Insert(CaretY-1 , '0 BFC CERTIFY|NOCERTIFY CLIP|NOCLIP CW|CCW INVERTNEXT');
-   Modified := true;
- end;
-end;
-
-
 procedure TfrMain.mnPollToSelectedClick(Sender: TObject);
 {---------------------------------------------------------------------
 Description: switch polling to selected line
@@ -1987,9 +1989,6 @@ begin
   frMain.Tile;
 end;
 
-
-
-
 procedure TfrMain.acReverseWindingExecute(Sender: TObject);
 {---------------------------------------------------------------------
 Description: Reverse the winding of a block
@@ -1999,7 +1998,6 @@ Return value: None
 var
   startcol, endcol, i : Integer;
   DATModel1: TDATModel;
-  tmpPoint: TPoint;
 
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
@@ -2109,6 +2107,55 @@ end;
 procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
 begin
   frModelTreeView.ShowModal;
+end;
+
+procedure TfrMain.acInsertBFCCertifyCWExecute(Sender: TObject);
+begin
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Insert(CaretY-1, '0 BFC CERTIFY CW');
+    Modified := true;
+  end;
+end;
+
+procedure TfrMain.acInsertBFCCertifyCCWExecute(Sender: TObject);
+begin
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Insert(CaretY-1, '0 BFC CERTIFY CCW');
+    Modified := true;
+  end;
+
+end;
+
+procedure TfrMain.acInsertBFCInvertnextExecute(Sender: TObject);
+begin
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Insert(CaretY-1, '0 BFC INVERTNEXT');
+    Modified := true;
+  end;
+
+end;
+
+procedure TfrMain.acInsertBFCClipExecute(Sender: TObject);
+begin
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Insert(CaretY-1, '0 BFC CLIP');
+    Modified := true;
+  end;
+
+end;
+
+procedure TfrMain.acInsertBFCNoClipExecute(Sender: TObject);
+begin
+  with (activeMDICHild as TfrEditorChild).memo do
+  begin
+    Lines.Insert(CaretY-1, '0 BFC NOCLIP');
+    Modified := true;
+  end;
+
 end;
 
 end.
