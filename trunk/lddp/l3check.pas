@@ -91,11 +91,16 @@ begin
 end;
 
 function CheckLinearPoints(p1,p2,p3: TDATPoint): Extended;
+
+var
+  sp1, sp2, cp1: TDATPoint;
+
 begin
-  Result := PointDotProduct(PointCrossProduct(PointSubtract(p1,p2),
-                                              PointSubtract(p2,p3)),
-                            PointCrossProduct(PointSubtract(p1,p2),
-                                              PointSubtract(p2,p3)));
+  sp1 := PointSubtract(p1,p2);
+  sp2 := PointSubtract(p2,p3);
+  cp1 := PointCrossProduct(sp1,sp2);
+
+  Result := PointDotProduct(cp1,cp1);
   if Result < 0 then Result := -Result;
 end;
 
@@ -142,7 +147,9 @@ begin
                  begin
                    Result := 'Y column all zeros';
                    Break;
-                 end;
+                 end
+                 else
+                   RM[i,2] := 0;
                end;
              if det = 0 then Result := 'Singular matrix (unfixable)';
          end
