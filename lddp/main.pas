@@ -27,7 +27,7 @@ uses
   linuxspecific,
   {$IFEND}
   QDialogs, QSynEditPrint, QSynEditHighlighter, QForms, SysUtils, QSynedit,
-  QSynHighlighterLDraw, QExtCtrls, HttpProt, QMenus, QImgList, QStdActns,
+  QSynHighlighterLDraw, QExtCtrls, QMenus, QImgList, QStdActns,
   Classes, QActnList, QTypes, QComCtrls, QControls, Inifiles, splash, jvstrutils,
   QSyneditTypes, IdBaseComponent, IdComponent, IdTCPConnection, QGraphics, QSyneditKeyCmds,
   QSynHighlighterCpp, QSynHighlighterPas, IdTCPClient, IdHTTP, l3check, DATModel, DATBase;
@@ -333,7 +333,6 @@ type
 
     procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
     Function  GetTMPFileName: String;
-    function  LDrawConstruct(line:TLDrawArray):string;
     function  LDrawParse(line:String): TLDrawArray;
     procedure LoadFile(fname:string);
     procedure LoadPlugins(AppInit:Boolean = false);
@@ -374,30 +373,6 @@ var
 
 resourcestring
   STextNotFound = 'Text not found';
-
-function TfrMain.LDrawConstruct(line:TLDrawArray):string;
-{---------------------------------------------------------------------
-Description: Assembles a string in LDraw format from the abstract TLDrawArray
-Parameter: TLDrawArray
-Return value: Line in LDRaw format
-----------------------------------------------------------------------}
-var tmp:string;
-    m,j,k:integer;
-begin
-  tmp:=inttostr(line.typ)+' '+inttostr(line.color);
-  m:=line.typ;
-  if m=1 then m:=4;
-  for j:=1 to m do
-    for k:=1 to 3 do
-    begin
-      tmp:=tmp+' '+Formatfloat('0.####',line.xyz[j,k]);
-    end;
-  if line.typ=1 then tmp:=tmp+' '+line.partname;
-  Result:=tmp;
-end;
-
-
-
 
 function ExtractWordPos(N: Integer; const S: string; const WordDelims: TSysCharSet; var Pos: Integer): string;
 {---------------------------------------------------------------------
@@ -720,6 +695,9 @@ begin
     {$ENDIF}
 
     UpdateMRU;
+
+    // Set initial directory to that of the last opened file
+    OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption);
 
     {$IFDEF MSWINDOWS}
      regT:=Tregistry.create;
@@ -1136,9 +1114,12 @@ begin
  begin
    seltext:='0 Part name'+#13#10+
             '0 Name: ' + ExtractFileName(ActiveMDIChild.Caption) + #13#10 +
-            '0 Author: ' + frOptions.edName.text + ' <'+frOptions.edEmail.text+'>' + #13#10 +
-            '0 Unofficial Element'+#13#10+
-            '0 KEYWORDS your keywords'+#13#10;
+            '0 Author: ' + frOptions.edName.text;
+   if frOptions.edEmail.text <> '' then
+   seltext := seltext + ' <'+frOptions.edEmail.text+'>';
+
+   seltext := seltext + + #13#10 + '0 Unofficial Element'+#13#10+
+                                   '0 KEYWORDS your keywords'+#13#10;
  end;
 
 end;
@@ -1305,8 +1286,10 @@ begin
  with (activeMDICHild as TfrEditorChild).memo do
  begin
    LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
+
    DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
    DATModel1.Add(Lines[carety-1]);
+
    DATModel1.InlinePart(0);
 
    DATModel1.Insert(0,'');
@@ -1317,8 +1300,10 @@ begin
 
    k:=carety;
    lines.Delete(carety-1);
+
    for m := DATModel1.Count - 1 downto 0 do
      lines.Insert(carety-1,DATModel1[m].DATString);
+
    carety:=k;
    Modified := true;
  end;
@@ -1411,7 +1396,7 @@ begin
     begin
       frColorDialog.slColors:=TStringlist.create;
     end;
-    frColorDialog.slColors.LoadFromFile(ExtractFilePath(paramstr(0))+'colors.pal');
+    frColorDialog.slColors.LoadFromFile(ExtractFilePath(Application.ExeName)+'colors.pal');
     if ((activeMDICHild as TfrEditorChild).memo.selstart-(activeMDICHild as TfrEditorChild).memo.selend=0) then begin
       frColorDialog.rbreplaceselection.enabled:=false;
       frColorDialog.rbreplaceLine.checked:=true;;
@@ -1507,8 +1492,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  with (activeMDICHild as TfrEditorChild).memo do
-    selectall;
+  (activeMDICHild as TfrEditorChild).memo.SelectAll;
 end;
 
 
@@ -2061,5 +2045,6 @@ procedure TfrMain.acWindowTileExecute(Sender: TObject);
 begin
   frMain.Tile;
 end;
+
 
 end.
