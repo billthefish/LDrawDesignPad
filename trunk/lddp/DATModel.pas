@@ -46,8 +46,6 @@ type
       property Count:Integer read GetCount;
       function GetModelText: string; virtual;
       procedure SetModelText(mText: string); virtual;
-      procedure SetPointAcc(PAcc: Byte);
-      procedure SetRotAcc(RAcc: Byte);
       procedure Add(strLine: string); overload; virtual;
       procedure Add(objLine: TDATType); overload; virtual;
       procedure Insert(Index: Integer; strLine: string); overload; virtual;
@@ -60,8 +58,8 @@ type
     public
       constructor Create; virtual;
       destructor Destroy; override;
-      property PositionDecimalPlaces: Byte read FPntAcc write SetPointAcc;
-      property RotationDecimalPlaces: Byte read FRotAcc write SetRotAcc;
+      property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc;
+      property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc;
   end;
 
 { An Object for holding and manipulating a DAT model }
@@ -218,34 +216,17 @@ begin
   inherited Destroy;
 end;
 
-procedure TDATCustomModel.SetPointAcc(PAcc: Byte);
-
-var
-  i: Integer;
-
-begin
-  FPntAcc := PAcc;
-  for i := 0 to Count - 1 do
-    if Lines[i] is TDATElement then
-      (Lines[i] as TDATElement).PositionDecimalPlaces := PAcc;
-end;
-
-procedure TDATCustomModel.SetRotAcc(RAcc: Byte);
-
-var
-  i: Integer;
-
-begin
-  FRotAcc := RAcc;
-  for i := 0 to Count - 1 do
-    if Lines[i] is TDATElement then
-      (Lines[i] as TDATElement).RotationDecimalPlaces := RAcc;
-end;
-
 function TDATCustomModel.GetLine(Idx:Integer): TDATType;
 begin
   if (Idx >= 0) and (Idx < Count) then
-    Result := (FModelCollection[Idx] as TDATType)
+  begin
+    Result := (FModelCollection[Idx] as TDATType);
+    if Result.LineType > 0 then
+    begin
+      (Result as TDATElement).RotationDecimalPlaces := RotationDecimalPlaces;
+      (Result as TDATElement).PositionDecimalPlaces := PositionDecimalPlaces;
+    end;
+  end
   else
     Result := nil;
 end;
@@ -265,7 +246,7 @@ begin
   Result := '';
   if Count > 0 then
   begin
-    for i := 0 to Count - 2 do
+    for i := 0 to Count - 1 do
       Result := Result + Lines[i].DATString + #13#10;
     Result := Result + Lines[Count-1].DATString;
   end;
@@ -309,11 +290,6 @@ end;
 procedure TDATCustomModel.Insert(Index: Integer; objLine: TDATType);
 
 begin
-  if objLine.LineType > 0 then
-  begin
-    (objLine as TDATElement).RotationDecimalPlaces := FRotAcc;
-    (objLine as TDATElement).PositionDecimalPlaces := FPntAcc;
-  end;
   FModelCollection.Insert(Index, objLine);
 end;
 
@@ -413,6 +389,8 @@ var
   i: Integer;
 
 begin
+  ModelObj.PositionDecimalPlaces := PositionDecimalPlaces;
+  ModelObj.RotationDecimalPlaces := RotationDecimalPlaces;
   if Index < 0 then Index := Count;
   for i := ModelObj.Count - 1 downto 0 do
     Insert(Index, ModelObj[i].DATString);
@@ -434,6 +412,9 @@ begin
   if Count > 0 then
   begin
     InlineFile := TDATModel.Create;
+    InlineFile.PositionDecimalPlaces := PositionDecimalPlaces;
+    InlineFile.RotationDecimalPlaces := RotationDecimalPlaces;
+
     if (Lines[Index] is TDATSubPart) then
     begin
       with (Lines[Index] as TDATSubPart) do
@@ -454,10 +435,6 @@ begin
           begin
             if (InlineFile[i] as TDATElement).Color = 16 then
               (InlineFile[i] as TDATElement).Color := (Lines[Index] as TDATElement).Color;
-            (InlineFile[i] as TDATElement).PositionDecimalPlaces :=
-              (Lines[Index] as TDATElement).PositionDecimalPlaces;
-            (InlineFile[i] as TDATElement).RotationDecimalPlaces :=
-              (Lines[Index] as TDATElement).RotationDecimalPlaces;
           end;
         InlineFile.Transform((Lines[Index] as TDATSubPart).RotationMatrix);
         Delete(Index);
