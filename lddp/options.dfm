@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 264
-    ActivePage = TabSheet2
+    ActivePage = tsExternal
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -728,6 +728,7 @@ object frOptions: TfrOptions
           Height = 33
           TabStop = False
           BorderStyle = bsNone
+          Color = clBtnFace
           Lines.Strings = (
             'General files (parts, subparts and some '
             'primitives) typically use a value of 0.1.')
@@ -741,6 +742,7 @@ object frOptions: TfrOptions
           Height = 33
           TabStop = False
           BorderStyle = bsNone
+          Color = clBtnFace
           Lines.Strings = (
             'Geometric primitives typically use 0.01. '
             'Hi-res primitives typically use 0.001.')
@@ -754,6 +756,7 @@ object frOptions: TfrOptions
           Height = 41
           TabStop = False
           BorderStyle = bsNone
+          Color = clBtnFace
           Lines.Strings = (
             'Only adjust this value if you want to change '
             'the pecent deviation used for collinear point '
@@ -860,7 +863,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 210
+        Height = 207
         Align = alClient
         Caption = 'User Details For Macros'
         TabOrder = 0
@@ -916,7 +919,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 210
+        Height = 207
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0

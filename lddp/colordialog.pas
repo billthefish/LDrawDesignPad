@@ -56,6 +56,7 @@ type
     Shape41: TShape;
     ScrollBar1: TScrollBar;
     rgOptions: TRadioGroup;
+    cbxReplaceEverything: TCheckBox;
     procedure btOldCOlorClick(Sender: TObject);
     procedure btNewColorClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -66,6 +67,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure Shape11MouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure cbxReplaceEverythingClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -187,6 +189,17 @@ begin
     edDescription.text:='Nr: '+nr+' - '+cname;
   end
    else edDescription.text:='';
+end;
+
+procedure TfrColorDialog.cbxReplaceEverythingClick(Sender: TObject);
+begin
+  btOldColor.Enabled := not (cbxReplaceEverything.Checked);
+  Label1.Enabled := not (cbxReplaceEverything.Checked);
+  if cbxReplaceEverything.Checked then
+  begin
+    btNewColor.BevelOuter := bvLowered;
+    btOldColor.BevelOuter := bvRaised;
+  end;
 end;
 
 end.
