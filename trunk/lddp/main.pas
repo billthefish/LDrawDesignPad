@@ -31,7 +31,7 @@ uses
 
   SynEdit, SynEditHighlighter, SynHighlighterLDraw,
   SynEditPrint, SynHighlighterPas,  SynHighlighterCpp, SynEditKeyCmds,
-  SynEditTypes,
+  SynEditTypes, SynEditMiscClasses, SynEditSearch,
   {$ENDIF}
 
 // Linux Units
@@ -42,6 +42,7 @@ uses
 
   QSynHighlighterPas, QSynHighlighterCpp, QSynEditPrint,
   QSynEditHighlighter, QSynHighlighterLDraw, QSynEditTypes,
+  QSynEditMiscClasses, QSynEditSearch,
   {$ENDIF}
 
 // Common Units
@@ -49,7 +50,7 @@ uses
   IniFiles,
   JvStrUtils,
   SysUtils, //for TSearchRec & TFileName
-  splash, SynEditMiscClasses, SynEditSearch;   //splash screen
+  splash;   //splash screen
 
 type TLDrawArray= record
   typ:integer;
@@ -268,6 +269,8 @@ type
     acFileSaveAs: TAction;
     acFilePrint: TAction;
     SynEditSearch1: TSynEditSearch;
+    CloseAll1: TMenuItem;
+    acFileCloseAll: TAction;
 
     {$IFDEF MSWINDOWS}  //NOT IN KYLIX RIGHT NOW
     procedure acHomepageExecute(Sender: TObject);
@@ -333,6 +336,7 @@ type
     procedure tmPollTimer(Sender: TObject);
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
+    procedure acFileCloseAllExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -575,7 +579,7 @@ END ;
 {$ENDIF}
 
 
-procedure TfrMain.UpdateControls;
+procedure TfrMain.UpdateControls(closing:boolean);
 {---------------------------------------------------------------------
 Description: Updated the action controls depending on the EditorCHilds
 Parameter: none
@@ -585,6 +589,7 @@ var mdicount:integer;
 begin
   mdicount:=mdiChildcount;
   if closing then mdicount:=mdicount-1;
+  acFileCloseAll.Enabled := mdicount>0;
   acFileSaveAs.Enabled:=mdicount>0;
   acFilePrint.Enabled:=mdicount>0;
   acFileSave.Enabled:=mdicount>0;
@@ -2389,6 +2394,15 @@ begin
   LDDPini.UpdateFile;
   LDDPini.Free;
   MRUSectionList.Free;
+end;
+
+procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
+begin
+  while MDIChildCount > 0 do
+  begin
+    MDIChildren[0].Close;
+    MDIChildren[0].Free;
+  end;
 end;
 
 end.
