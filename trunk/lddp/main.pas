@@ -1384,7 +1384,7 @@ Return value: None
 var j:integer;
     tmp:string;
 begin
- LockWindowUPdate(frMain.handle);
+ LockWindowUpdate(frMain.handle);
  try
    with (activeMDICHild as TfrEditorChild).memo do
    begin
@@ -1398,7 +1398,7 @@ begin
      end;
    end;
  finally
-   LockWindowUPdate(0);
+   LockWindowUpdate(0);
  end;
 
 
@@ -1413,7 +1413,7 @@ Return value: None
 var j:integer;
     tmp:string;
 begin
- LockWindowUPdate(frMain.handle);
+ LockWindowUpdate(frMain.handle);
  try
    with (activeMDICHild as TfrEditorChild).memo do
    begin
@@ -1427,7 +1427,7 @@ begin
      end;
    end;
  finally
-   LockWindowUPdate(0);
+   LockWindowUpdate(0);
  end;
 
 end;
@@ -1453,7 +1453,7 @@ var i,j,k:integer;
     st:TStringlist;
     bCR:boolean;
 begin
- LockWindowUPdate(frMain.handle);
+ LockWindowUpdate(frMain.handle);
  try
    with (activeMDICHild as TfrEditorChild).memo do
    begin
@@ -1473,7 +1473,7 @@ begin
      end;
    end;
  finally
-   LockWindowUPdate(0);
+   LockWindowUpdate(0);
  end;
 end;
 
