@@ -61,7 +61,6 @@ const
 function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
 //function GetDOSVar (VarName: string): string;
 function GetShortFileName(Const FileName : String) : String;
-//procedure FileIsDropped ( VAR Msg : TMessage ) ; Message WM_DropFiles ;
 function WindowsDir:string;
 function GetTempDir:string;
 function PluginInfo(fname:string; nr:integer):string;
@@ -152,30 +151,6 @@ begin
 end;
 
 
-//procedure FileIsDropped ( VAR Msg : TMessage ) ;
-//{---------------------------------------------------------------------
-//Description: Accepts files dropped from explorer
-//Parameter: msg:TMessage : not needed
-//Return value: msg:TMessage : not needed
-//----------------------------------------------------------------------}
-//VAR
-//   hDrop : THandle ;
-//   fName : string ;
-//   NumberOfFiles : INTEGER ;
-//   fCounter : INTEGER ;
-//BEGIN
-//   hDrop := Msg.WParam ;
-//   NumberOfFiles := DragQueryFile(hDrop,$FFFFFFFF, nil, 0);
-//   FOR fCounter := 1 TO NumberOfFiles DO
-//   BEGIN
-//     SetLength(fname, MAX_PATH); // Anticipate largest string size
-//     SetLength(fname, DragQueryFile(HDrop, fCounter-1, PChar(fname),MAX_PATH));
-//     if (lowercase(extractFIleExt(fname)) <> '.exe') and
-//        (lowercase(extractFIleExt(fname)) <> '.com') then
-//       CreateMDIChild(fName,false);
-//   END ;
-//   DragFinish ( hDrop);
-//END ;
 
 function WindowsDir:string;
 var

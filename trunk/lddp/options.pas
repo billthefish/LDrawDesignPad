@@ -22,11 +22,9 @@ unit options;
 interface
 
 uses
-  windowsspecific,
-  QDialogs, Dialogs, Forms, ImgList, ExtCtrls, StdCtrls, CheckLst, Mask, Buttons,
-  Controls, ComCtrls, QGraphics, Graphics, Classes, SysUtils, IniFiles, SynEdit,
-  SynMemo, SynEditHighlighter, SynHighlighterLDraw, JvMaskEdit, JvSpin,
-  JvTypedEdit, JvEdit;
+  Dialogs, Forms, sysutils, graphics, windowsspecific, SynEditHighlighter, SynHighlighterLDraw,
+  ImgList, Controls, Mask, JvMaskEdit, JvSpin, SynEdit, SynMemo, StdCtrls, Inifiles,
+  ExtCtrls, CheckLst, JvTypedEdit, JvEdit, ComCtrls, Buttons, Classes , FileCtrl;
 
 type
   TfrOptions = class(TForm)
@@ -203,8 +201,8 @@ begin
   OpenDialog.Filter := 'Executibles (*.*)|*.exe';
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
-  shForeground.Brush.Color := clButton;
-  shBackground.Brush.Color := clButton;
+  shForeground.Brush.Color := clBtnFace;
+  shBackground.Brush.Color := clBtnFace;
   UpdateCOntrols;
   PageControl1.ActivePage:=tsExternal;
 end;
@@ -251,7 +249,7 @@ begin
 end;
 
 procedure TfrOptions.btLDrawClick(Sender: TObject);
-var strDir:Widestring;
+var strDir:string;
 begin
   strDir:=edLdrawDir.Text;
   if SelectDirectory('Choose LDraw Library Location','',strDir) then edLdrawDir.Text:=strDir;
@@ -259,7 +257,7 @@ begin
 end;
 
 procedure TfrOptions.btLDViewClick(Sender: TObject);
-var strDir:Widestring;
+var strDir:string;
 begin
   strDir:=edLDViewDir.Text;
   if SelectDirectory('Choose LDView Location','',strDir) then edLDViewDir.Text:=strDir;
@@ -267,7 +265,7 @@ begin
 end;
 
 procedure TfrOptions.btMLCadClick(Sender: TObject);
-var strDir:Widestring;
+var strDir:string;
 begin
   strDir:=edMLCadDir.Text;
   if SelectDirectory('Choose LDView Location','',strDir) then edMLCadDir.Text:=strDir;
@@ -275,7 +273,7 @@ begin
 end;
 
 procedure TfrOptions.btL3LabClick(Sender: TObject);
-var strDir:Widestring;
+var strDir:string;
 begin
   strDir:=edL3LabDir.Text;
   if SelectDirectory('Choose LDView Location','',strDir) then edL3LabDir.Text:=strDir;
@@ -346,8 +344,8 @@ begin
   NewHighLighter.Free;
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
-  shForeground.Brush.Color := clButton;
-  shBackground.Brush.Color := clButton;
+  shForeground.Brush.Color := clBtnFace;
+  shBackground.Brush.Color := clBtnFace;
 end;
 
 procedure TfrOptions.SaveFormValues;
