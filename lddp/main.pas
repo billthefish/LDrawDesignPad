@@ -594,13 +594,19 @@ end;
 
 procedure TfrMain.acFileOpenExecute(Sender: TObject);
 {---------------------------------------------------------------------
-Description: Opens an existing filename in a new editor child window
+Description: Opens chosen existing filenames in a new editor child windows
 Parameter: Standard
 Return value: none
 ----------------------------------------------------------------------}
+var i:integer;
 begin
   if OpenDialog.Execute then
-    CreateMDIChild(OpenDialog.FileName, false);
+  begin
+    for i:=0 to OpenDialog.files.Count-1 do
+    begin
+      CreateMDIChild(OpenDialog.files[i], false);
+    end;
+  end;
 end;
 
 procedure TfrMain.HelpAbout1Execute(Sender: TObject);

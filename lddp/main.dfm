@@ -16,6 +16,7 @@ object frMain: TfrMain
   Position = poDefault
   WindowMenu = Window1
   OnCreate = FormCreate
+  OnDblClick = acFileOpenExecute
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -532,6 +533,7 @@ object frMain: TfrMain
     Filter = 
       'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
       'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
+    Options = [ofHideReadOnly, ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
     Title = 'Choose LDraw File...'
     Left = 8
     Top = 344
