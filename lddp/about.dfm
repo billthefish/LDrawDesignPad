@@ -254,14 +254,11 @@ object frAboutBox: TfrAboutBox
       Caption = 'Version'
       IsControl = True
     end
-    object JvMemo1: TJvMemo
-      Left = 6
+    object Memo1: TMemo
+      Left = 8
       Top = 72
-      Width = 347
+      Width = 345
       Height = 89
-      AutoSize = False
-      MaxLines = 0
-      HideCaret = False
       Lines.Strings = (
         'LDDP, Copyright (C) 2002 Carsten Schmitz and LDDP Contributors.'
         ''
@@ -271,24 +268,20 @@ object frAboutBox: TfrAboutBox
         'either version 2 of the License, or (at your option) any later '
         'version.'
         ''
-        
-          'This program is distributed in the hope that it will be useful, ' +
-          'but WITHOUT ANY WARRANTY; without even the implied warranty of M' +
-          'ERCHANTABILITY or FITNESS '
-        
-          'FOR A PARTICULAR PURPOSE.  See the GNU General Public License fo' +
-          'r '
-        'more details.'
+        'This program is distributed in the hope that it will be useful, '
+        'but WITHOUT ANY WARRANTY; without even the implied '
+        'warranty of MERCHANTABILITY or FITNESS FOR A '
+        'PARTICULAR PURPOSE.  See the GNU General Public License '
+        'for more details.'
         ''
         'You should have received a copy of the GNU General '
         'Public License along with this program; if not, write to the '
         'Free Software'
         'Foundation, Inc., 59 Temple Place - Suite 330, Boston, '
-        'MA  02111-1307, USA.')
-      ReadOnly = False
-      ScrollBars = ssBoth
+        'MA  02111-1307, USA.'
+        '')
+      ScrollBars = ssVertical
       TabOrder = 0
-      Wordwrap = False
     end
   end
   object OKButton: TButton

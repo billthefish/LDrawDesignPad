@@ -23,7 +23,7 @@ unit about;
 interface
 
 uses Windows, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls, version, JvMemo;
+  Buttons, ExtCtrls, version;
 
 type
   TfrAboutBox = class(TForm)
@@ -32,7 +32,7 @@ type
     ProgramIcon: TImage;
     ProductName: TLabel;
     Version: TLabel;
-    JvMemo1: TJvMemo;
+    Memo1: TMemo;
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
@@ -50,7 +50,7 @@ implementation
 procedure TfrAboutBox.FormShow(Sender: TObject);
 var ver:Tversion;
 begin
-  ver:=TVersion.Create(paramstr(0));
+  ver:=TVersion.Create(Application.ExeName);
   Version.Caption:='Version '+ver.FileVersionStr;
   ver.free;
 end;
