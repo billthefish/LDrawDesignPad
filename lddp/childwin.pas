@@ -63,7 +63,7 @@ type
 
 implementation
 
-uses main, preview, dlgConfirmReplace;
+uses main, preview, dlgConfirmReplace, commonprocs;
 
 {$R *.dfm}
 
@@ -130,7 +130,6 @@ Parameter: none
 Return value: none
 ----------------------------------------------------------------------}
 var
-  clr: string;
   i: Integer;
   DLine: TDATType;
   DModel: TDATModel;
@@ -158,7 +157,7 @@ begin
     tempBB := memo.BlockBegin;
     tempBE := memo.BlockEnd;
 
-    frMain.ExpandSelection;
+    ExpandSelection;
     DModel.ModelText := memo.SelText;
     for i := 0 to DModel.Count - 1 do
       if DModel[i].LineType = 1 then

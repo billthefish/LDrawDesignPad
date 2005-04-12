@@ -459,7 +459,6 @@ type
     procedure LoadFormValues;
     procedure SaveFormValues;
     procedure CreateMDIChild(const CaptionName: string; new: Boolean);
-    procedure ExpandSelection;
   end;
 
 
@@ -474,7 +473,7 @@ implementation
 
 uses
   childwin, about, options, colordialog, BezWindow, sorting,
-  BMP2LDraw, modeltreeview, dlgConfirmReplace, dlgSubpart;
+  BMP2LDraw, modeltreeview, dlgConfirmReplace, dlgSubpart, commonprocs;
 
 
 var
@@ -490,27 +489,6 @@ var
   gsReplaceTextHistory: string;
 
 
-
-procedure TfrMain.ExpandSelection;
-{-------
-Descrption: If the selected text begins and/or end in the middle of a line
-ExpandSelection will move the beginning of the slected to to the beginning of
-the line and the end of the selected text to the end of the line
---------}
-var
-  tmpBlEnd: TBufferCoord;
-
-begin
-  with (ActiveMDIChild as TfrEditorChild).memo do
-  begin
-    tmpBlEnd := BlockEnd;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    if tmpBlEnd.Char > 1 then
-      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 1]) + 1, tmpBlEnd.Line)
-    else
-      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 2]) + 1, tmpBlEnd.Line - 1);
-  end;
-end;
 
 procedure TfrMain.FileIsDropped(var Msg: TMessage);
 {---------------------------------------------------------------------
@@ -1092,7 +1070,7 @@ begin
 
   (ActiveMDIChild as TfrEditorChild).lbInfo.Items.Clear;
 
-  DATModel1 := TDATModel.Create;
+  DATModel1 := CreateDATModel;
 
   DATModel1.ModelText := (ActiveMDIChild as TfrEditorChild).memo.Lines.Text;
 
@@ -1609,7 +1587,7 @@ begin
        BlockBegin := BufferCoord(1,startcol + 1);
        BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
-       DModel := TDATModel.Create;
+       DModel := CreateDATModel;
        DModel.ModelText := SelText;
 
        for j := 0 to DModel.Count-1 do
@@ -1680,7 +1658,7 @@ var
   DATModel1: TDATModel;
 
 begin
-  DATModel1 := TDATModel.Create;
+  DATModel1 := CreateDATModel;
 
   with (activeMDICHild as TfrEditorChild).memo do
   begin
@@ -1741,7 +1719,7 @@ begin
     rgOptions.Items.Add('Replace All');
     rgOptions.ItemIndex := 0;
 
-    clr := TDATModel.Create;
+    clr := CreateDATModel;
 
     if EditCh.memo.lines[EditCh.memo.CaretY-1] <> '' then
       clr.Add(Trim(EditCh.memo.lines[EditCh.memo.CaretY-1]));
@@ -2391,7 +2369,7 @@ var
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    DATModel1 := TDATModel.Create;
+    DATModel1 := CreateDATModel;
 
     startcol := BlockBegin.Line - 1;
 
@@ -2712,7 +2690,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := TDATModel.Create;
+  DModel := CreateDATModel;
   DModel.RotationDecimalPlaces := frOptions.seRotAcc.Value;
   DModel.PositionDecimalPlaces := frOptions.sePntAcc.Value;
   with (ActiveMDIChild as TfrEditorChild).memo do
@@ -2833,7 +2811,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := TDATModel.Create;
+  DModel := CreateDATModel;
 
   if (frOptions.cboDet.Checked) then
     DetThreshold := frOptions.seDet.Value
@@ -2880,7 +2858,8 @@ var
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    DModel := TDATModel.Create;
+    DModel := CreateDATModel;
+
     if SelLength > 0 then
       fmSort.rgScope.ItemIndex := 1
     else
@@ -2912,7 +2891,7 @@ begin
       // This is sloppy, a better way can be found
       if fmSort.rgSortDirection.ItemIndex < 1 then
       begin
-        DModel2 := TDATModel.Create;
+        DModel2 := CreateDATModel;
 
         for i := DModel.Count - 1 downto 0 do
           DModel2.Add(DModel[i].DATString);
@@ -2934,7 +2913,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := TDATModel.Create;
+  DModel := CreateDATModel;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     DModel.ModelText := SelText;
@@ -2966,7 +2945,7 @@ begin
   begin
     ExpandSelection;
 
-    DModel := TDATModel.Create;
+    DModel := CreateDATModel;
     DModel.ModelText := SelText;
     
     for i := 0 to DModel.Count - 1 do
@@ -2997,7 +2976,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := TDATModel.Create;
+  DModel := CreateDATModel;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     DModel.ModelText := SelText;

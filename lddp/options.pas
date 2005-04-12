@@ -20,11 +20,12 @@ unit options;
 interface
 
 uses
-  Dialogs, Forms, sysutils, graphics, windowsspecific, SynEditHighlighter, SynHighlighterLDraw,
-  ImgList, Controls, Mask, JvMaskEdit, JvSpin, SynEdit, SynMemo, StdCtrls, Inifiles,
-  ExtCtrls, CheckLst, JvEdit, ComCtrls, Buttons, Classes , FileCtrl,
-  JvExMask, JvExStdCtrls, JvValidateEdit, Menus;
-
+  Dialogs, Forms, SysUtils, Graphics,
+  ImgList, Controls, Mask, Inifiles, StdCtrls,
+  ExtCtrls, CheckLst, ComCtrls, Buttons, Classes, FileCtrl,
+  Menus, JvExMask, JvSpin, JvExStdCtrls, JvEdit, JvValidateEdit,
+  SynEditHighlighter, SynHighlighterLDraw, SynEdit, SynMemo;
+  
 type
   TfrOptions = class(TForm)
     Panel1: TPanel;
@@ -177,7 +178,7 @@ var
 
 implementation
 
-uses main;
+uses main, windowsspecific;
 
 {$R *.dfm}
 

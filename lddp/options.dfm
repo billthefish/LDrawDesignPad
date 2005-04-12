@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 329
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -707,9 +707,9 @@ object frOptions: TfrOptions
         end
         object Memo5: TMemo
           Left = 2
-          Top = 120
+          Top = 128
           Width = 357
-          Height = 89
+          Height = 81
           Align = alBottom
           BorderStyle = bsNone
           Color = clBtnFace
