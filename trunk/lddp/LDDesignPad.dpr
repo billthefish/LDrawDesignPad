@@ -38,7 +38,8 @@ uses
   dlgConfirmReplace in 'dlgConfirmReplace.pas' {ConfirmReplaceDialog},
   BezWindow in 'BezWindow.pas' {frmDATCurve},
   dlgSubpart in 'dlgSubpart.pas' {frSubFile},
-  sorting in 'sorting.pas' {fmSort};
+  sorting in 'sorting.pas' {fmSort},
+  commonprocs in 'commonprocs.pas';
 
 {$R *.res}
 
