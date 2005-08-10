@@ -34,10 +34,10 @@ type
 (*
   The general structure of the DAT Classes is:
 
-                        TDATType
-                         /   \
-                        /     \
-           TDATComment--       \
+                        TDATType-------------
+                         /   \               \
+                        /     \               \
+           TDATComment--       \               TDATColor
                       /       TDATElement
      TDATBlankLine----         /   \
                               /     \
@@ -93,6 +93,10 @@ type
       function GetDATString:string; override;
   end;
 
+  (* Represents the !COLOUR Meta Command *)
+  TDATColor=class(TDATType)
+  end;
+  
   TDATElement=class(TDATType)
     private
       intColor: Integer;

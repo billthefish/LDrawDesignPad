@@ -142,11 +142,10 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 329
-    ActivePage = TabSheet1
+    ActivePage = tsExternal
     Align = alClient
     Images = ImageList1
     MultiLine = True
-    Style = tsFlatButtons
     TabOrder = 1
     OnChange = PageControl1Change
     object tsExternal: TTabSheet
@@ -155,7 +154,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 272
+        Height = 281
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
@@ -558,7 +557,7 @@ object frOptions: TfrOptions
         Left = 152
         Top = 0
         Width = 361
-        Height = 272
+        Height = 281
         Align = alRight
         Caption = 'User Defined Program Configuration'
         TabOrder = 0
@@ -598,7 +597,7 @@ object frOptions: TfrOptions
         end
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 209
+          Top = 218
           Width = 357
           Height = 61
           Align = alBottom
@@ -707,7 +706,7 @@ object frOptions: TfrOptions
         end
         object Memo5: TMemo
           Left = 2
-          Top = 128
+          Top = 137
           Width = 357
           Height = 81
           Align = alBottom
@@ -745,7 +744,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 152
-        Height = 272
+        Height = 281
         Align = alClient
         ItemHeight = 13
         TabOrder = 1
@@ -928,7 +927,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 169
         Width = 513
-        Height = 103
+        Height = 112
         Align = alClient
         Caption = 'Decimal Accuracy'
         TabOrder = 1
@@ -983,7 +982,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 272
+        Height = 281
         Align = alClient
         Caption = 'User Details For Macros'
         TabOrder = 0
@@ -1039,7 +1038,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 272
+        Height = 281
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0
@@ -1103,7 +1102,7 @@ object frOptions: TfrOptions
           Left = 2
           Top = 15
           Width = 285
-          Height = 255
+          Height = 264
           OnClickCheck = cblPluginsClickCheck
           Align = alLeft
           ItemHeight = 13
@@ -1118,7 +1117,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 272
+        Height = 281
         Align = alClient
         Caption = 'Highlighter Options'
         TabOrder = 0
@@ -1154,7 +1153,7 @@ object frOptions: TfrOptions
           Left = 2
           Top = 15
           Width = 105
-          Height = 255
+          Height = 264
           Align = alLeft
           ItemHeight = 13
           Items.Strings = (
@@ -1298,7 +1297,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 272
+        Height = 281
         Align = alClient
         Caption = 'Editor Options'
         TabOrder = 0
@@ -1357,7 +1356,7 @@ object frOptions: TfrOptions
         Left = 0
         Top = 0
         Width = 513
-        Height = 272
+        Height = 281
         Align = alClient
         Caption = 'Color Bar Colors'
         TabOrder = 0
@@ -1386,7 +1385,7 @@ object frOptions: TfrOptions
           Left = 2
           Top = 15
           Width = 137
-          Height = 255
+          Height = 264
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
