@@ -209,8 +209,8 @@ constructor TDATCustomModel.Create;
 begin
   inherited Create;
   FModelCollection := TObjectList.Create;
-  FPntAcc := 4;
-  FRotAcc := 4;
+  FPntAcc := 15;
+  FRotAcc := 15;
 end;
 
 destructor TDATCustomModel.Destroy;
