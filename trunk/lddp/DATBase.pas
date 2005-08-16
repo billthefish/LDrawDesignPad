@@ -93,10 +93,20 @@ type
       function GetDATString:string; override;
   end;
 
+  TDATRGBValue = $000000..$FFFFFF;
+
   (* Represents the !COLOUR Meta Command *)
-  TDATColor=class(TDATType)
+  TDATColor=class(TDATComment)
+    private
+      strName: string;
+      intCode: Integer;
+      FMainRGB: TDATRGBValue;
+      FLineRGB: TDATRGBValue;
+      FAlpha: Byte;
+      FLuminance: Byte;
+
   end;
-  
+
   TDATElement=class(TDATType)
     private
       intColor: Integer;
