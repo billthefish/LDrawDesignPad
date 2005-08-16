@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 329
-    ActivePage = tsExternal
+    ActivePage = TabSheet3
     Align = alClient
     Images = ImageList1
     MultiLine = True
