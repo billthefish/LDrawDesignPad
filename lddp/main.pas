@@ -285,7 +285,7 @@ type
     AutoRoundSelection1: TMenuItem;
     AutoRoundSelection2: TMenuItem;
     GenerateBendibleObject1: TMenuItem;
-    acSortByPosition: TAction;
+    acSortSelection: TAction;
     N14: TMenuItem;
     CopyErrorListToClipboard1: TMenuItem;
     N23: TMenuItem;
@@ -345,6 +345,7 @@ type
     SubfileSelection1: TMenuItem;
     N25: TMenuItem;
     SubfileSelection2: TMenuItem;
+    Sort1: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -431,7 +432,7 @@ type
     procedure acColorReplaceShortcutExecute(Sender: TObject);
     procedure tbUserDefinedClick(Sender: TObject);
     procedure acSubFileExecute(Sender: TObject);
-    procedure acSortByPositionExecute(Sender: TObject);
+    procedure acSortSelectionExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -473,7 +474,8 @@ implementation
 
 uses
   childwin, about, options, colordialog, BezWindow, sorting,
-  BMP2LDraw, modeltreeview, dlgConfirmReplace, dlgSubpart, commonprocs;
+  BMP2LDraw, modeltreeview, dlgConfirmReplace, dlgSubpart, commonprocs,
+  ErrorFix;
 
 
 var
@@ -570,7 +572,8 @@ begin
   ErrorCheck1.Enabled := mdicount>0;
   MirrorLineOn1.Enabled := mdicount>0;
   tbrColorReplace.Enabled := mdicount>0;
-
+  acSubfile.Enabled := mdicount>0;
+  acSortSelection.Enabled := mdicount>0;
   if Assigned(ActiveMDICHild) then
   begin
     acUndo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanUndo;
@@ -1070,7 +1073,7 @@ begin
 
   (ActiveMDIChild as TfrEditorChild).lbInfo.Items.Clear;
 
-  DATModel1 := CreateDATModel;
+  DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
   DATModel1.ModelText := (ActiveMDIChild as TfrEditorChild).memo.Lines.Text;
 
@@ -1587,7 +1590,7 @@ begin
        BlockBegin := BufferCoord(1,startcol + 1);
        BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
 
-       DModel := CreateDATModel;
+       DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
        DModel.ModelText := SelText;
 
        for j := 0 to DModel.Count-1 do
@@ -1658,7 +1661,7 @@ var
   DATModel1: TDATModel;
 
 begin
-  DATModel1 := CreateDATModel;
+  DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
   with (activeMDICHild as TfrEditorChild).memo do
   begin
@@ -1719,7 +1722,7 @@ begin
     rgOptions.Items.Add('Replace All');
     rgOptions.ItemIndex := 0;
 
-    clr := CreateDATModel;
+    clr := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
     if EditCh.memo.lines[EditCh.memo.CaretY-1] <> '' then
       clr.Add(Trim(EditCh.memo.lines[EditCh.memo.CaretY-1]));
@@ -1980,19 +1983,11 @@ begin
         with DATElem as TDATQuad do
         begin
           DATString := memo.lines[memo.CaretY-1];
-          tx := x4;
-          ty := y4;
-          tz := z4;
-          x4 := x3;
-          y4 := y3;
-          z4 := z3;
-          x3 := tx;
-          y3 := ty;
-          z3 := tz;
+          FixBowtieQuad0132(DATElem as TDATQuad);
           memo.lines[memo.CaretY-1] := DATString;
-          DATElem.Free;
-          lbInfo.items.delete(lbInfo.ItemIndex);
         end;
+        DATElem.Free;
+        lbInfo.items.delete(lbInfo.ItemIndex);
       end
 
       else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
@@ -2005,7 +2000,7 @@ begin
       begin
         DATElem := TDATSubPart.Create;
         (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        (DATElem as TDATSubPart).RM[1,2] := 1;
+        FixRowAllZeros(DATElem as TDATSubPart, 1);
         memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
         DATElem.Free;
         lbInfo.items.delete(lbInfo.ItemIndex);
@@ -2015,7 +2010,7 @@ begin
       begin
         DATElem := TDATSubPart.Create;
         (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        (DATElem as TDATSubPart).RM[2,2] := 1;
+        FixRowAllZeros(DATElem as TDATSubPart, 2);
         memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
         DATElem.Free;
         lbInfo.items.delete(lbInfo.ItemIndex);
@@ -2025,7 +2020,7 @@ begin
       begin
         DATElem := TDATSubPart.Create;
         (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        (DATElem as TDATSubPart).RM[3,2] := 1;
+        FixRowAllZeros(DATElem as TDATSubPart, 3);
         memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
         DATElem.Free;
         lbInfo.items.delete(lbInfo.ItemIndex);
@@ -2035,7 +2030,7 @@ begin
       begin
         DATElem := TDATSubPart.Create;
         (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        (DATElem as TDATSubPart).RM[2,2] := 1;
+        FixYColumnAllZeros(DATElem as TDATSubPart);
         memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
         DATElem.Free;
         lbInfo.items.delete(lbInfo.ItemIndex);
@@ -2047,22 +2042,11 @@ begin
         with DATElem as TDATQuad do
         begin
           DATString := memo.lines[memo.CaretY-1];
-          tx := x3;
-          ty := y3;
-          tz := z3;
-          x3 := x2;
-          y3 := y2;
-          z3 := z2;
-          x2 := x4;
-          y2 := y4;
-          z2 := z4;
-          x4 := tx;
-          y4 := ty;
-          z4 := tz;
+          FixBowtieQuad0312(DATElem as TDATQuad);
           memo.lines[memo.CaretY-1] := DATString;
-          DATElem.Free;
-          lbInfo.Items.Delete(lbInfo.ItemIndex);
         end;
+        DATElem.Free;
+        lbInfo.items.delete(lbInfo.ItemIndex);
       end;
 
       if lbInfo.Items.Count < 1 then
@@ -2369,7 +2353,7 @@ var
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    DATModel1 := CreateDATModel;
+    DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
     startcol := BlockBegin.Line - 1;
 
@@ -2690,7 +2674,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := CreateDATModel;
+  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
   DModel.RotationDecimalPlaces := frOptions.seRotAcc.Value;
   DModel.PositionDecimalPlaces := frOptions.sePntAcc.Value;
   with (ActiveMDIChild as TfrEditorChild).memo do
@@ -2707,7 +2691,6 @@ var
   i: Integer;
   QuadCombine: TDATQuad;
   ErrorLine: string;
-  tx,ty,tz: Extended;
 
   procedure ProcessTriangles(tri1, tri2: TDATTriangle);
 
@@ -2758,35 +2741,9 @@ var
       ErrorLine := L3CheckLine(QuadCombine.DATString);
 
       if pos('Bad vertex sequence, 0132',ErrorLine)>0 then
-        with QuadCombine do
-        begin
-          tx := x4;
-          ty := y4;
-          tz := z4;
-          x4 := x3;
-          y4 := y3;
-          z4 := z3;
-          x3 := tx;
-          y3 := ty;
-          z3 := tz;
-        end
-
+        FixBowtieQuad0132(QuadCombine)
       else if pos('Bad vertex sequence, 0312',ErrorLine)>0 then
-        with QuadCombine do
-        begin
-          tx := x3;
-          ty := y3;
-          tz := z3;
-          x3 := x2;
-          y3 := y2;
-          z3 := z2;
-          x2 := x4;
-          y2 := y4;
-          z2 := z4;
-          x4 := tx;
-          y4 := ty;
-          z4 := tz;
-        end;
+        FixBowtieQuad0312(QuadCombine);
 
       ErrorLine := L3CheckLine(QuadCombine.DATString);
       flag := true;
@@ -2811,7 +2768,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := CreateDATModel;
+  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
   if (frOptions.cboDet.Checked) then
     DetThreshold := frOptions.seDet.Value
@@ -2849,16 +2806,34 @@ begin
   end;
 end;
 
-procedure TfrMain.acSortByPositionExecute(Sender: TObject);
+procedure TfrMain.acSortSelectionExecute(Sender: TObject);
 
 var
-  DModel, DModel2: TDATModel;
-  i: Integer;
+  DModel: TDATModel;
+
+  function GetSortVar(idx: Integer): TDATSortTerm;
+
+  begin
+    case idx of
+      0: Result := dsNil;
+      1: Result := dsColor;
+      2: Result := dsMidX;
+      3: Result := dsMidY;
+      4: Result := dsMidZ;
+      5: Result := dsMaxX;
+      6: Result := dsMaxY;
+      7: Result := dsMaxZ;
+      8: Result := dsMinX;
+      9: Result := dsMinY;
+      10: Result := dsMinZ;
+      else Result := dsNil;
+    end;
+  end;
 
 begin
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
-    DModel := CreateDATModel;
+    DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
     if SelLength > 0 then
       fmSort.rgScope.ItemIndex := 1
@@ -2874,31 +2849,11 @@ begin
 
       DModel.ModelText := SelText;
 
-      case fmSort.cbSort.ItemIndex of
-        0: DModel.SortModel(SortMinX);
-        1: DModel.SortModel(SortMaxX);
-        2: DModel.SortModel(SortCenterX);
-        3: DModel.SortModel(SortMinY);
-        4: DModel.SortModel(SortMaxY);
-        5: DModel.SortModel(SortCenterY);
-        6: DModel.SortModel(SortMinZ);
-        7: DModel.SortModel(SortMaxZ);
-        8: DModel.SortModel(SortCenterZ);
-        9: DModel.SortModel(SortColor);
-      end;
+      DModel.SortTerm[1] := GetSortVar(fmSort.cbSort.ItemIndex);
+      DModel.SortTerm[2] := GetSortVar(fmSort.cbSort2.ItemIndex);
+      DModel.SortTerm[3] := GetSortVar(fmSort.cbSort3.ItemIndex);
 
-      // Reverse Text if selected
-      // This is sloppy, a better way can be found
-      if fmSort.rgSortDirection.ItemIndex < 1 then
-      begin
-        DModel2 := CreateDATModel;
-
-        for i := DModel.Count - 1 downto 0 do
-          DModel2.Add(DModel[i].DATString);
-
-        DModel.ModelText := DModel2.ModelText;
-        DModel2.Free;
-      end;
+      DModel.Sort(fmSort.rgSortDirection.ItemIndex < 1);
 
       SelText := DModel.ModelText;
     end;
@@ -2913,7 +2868,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := CreateDATModel;
+  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     DModel.ModelText := SelText;
@@ -2945,7 +2900,7 @@ begin
   begin
     ExpandSelection;
 
-    DModel := CreateDATModel;
+    DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
     DModel.ModelText := SelText;
     
     for i := 0 to DModel.Count - 1 do
@@ -2961,7 +2916,7 @@ begin
 
         if rows > 0 then
           for j := 1 to rows do
-            (DModel[i] as TDATElement).RM[j,(Sender as TComponent).Tag] := -(DModel[i] as TDATElement).RM[j,(Sender as TComponent).Tag];
+            (DModel[i] as TDATElement).MatrixVals[j,(Sender as TComponent).Tag] := -(DModel[i] as TDATElement).MatrixVals[j,(Sender as TComponent).Tag];
       end;
     SelText := DModel.ModelText;
     DModel.Free;
@@ -2976,7 +2931,7 @@ var
 
 begin
   ExpandSelection;
-  DModel := CreateDATModel;
+  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     DModel.ModelText := SelText;
@@ -3038,24 +2993,15 @@ begin
                       frSubFile.edComments.Text + #13#10 +
                       memo.SelText;
 
-      if FileExists(ExtractFilePath(Caption) + frSubFile.edFileName.Text) then
-      begin
-        if MessageDlg('File of same name already exists.  Overwrite?',
-                      mtWarning, mbOKCancel, 0) = mrOK then
-        begin
-          SubFile.SaveToFile(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
-          memo.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
-          CreateMDIChild(ExtractFilePath(Caption) + frSubFile.edFileName.Text,false);
-          UpdateMRU(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
-        end;
-      end
-      else
-      begin
-        SubFile.SaveToFile(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
-        memo.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
-        CreateMDIChild(ExtractFilePath(Caption) + frSubFile.edFileName.Text,false);
-        UpdateMRU(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
-      end;
+      if FileExists(ExtractFilePath(Caption) + frSubFile.edFileName.Text) and
+         (MessageDlg('File of same name already exists.  Overwrite?',
+                    mtWarning, mbOKCancel, 0) <> mrOk) then
+        Exit;
+
+      SubFile.SaveToFile(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
+      memo.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
+      CreateMDIChild(ExtractFilePath(Caption) + frSubFile.edFileName.Text,false);
+      UpdateMRU(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
     end;
   end;
 end;

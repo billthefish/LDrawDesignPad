@@ -129,7 +129,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 0
-      Text = '0.'
+      Text = '0'
       Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
@@ -147,7 +147,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 1
-      Text = '0.'
+      Text = '0'
       Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
@@ -165,7 +165,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 2
-      Text = '0.'
+      Text = '0'
       Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
@@ -192,7 +192,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 0
-      Text = '0.'
+      Text = '0'
       Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
@@ -210,7 +210,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 1
-      Text = '0.'
+      Text = '0'
       Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
@@ -228,7 +228,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 2
-      Text = '0.'
+      Text = '0'
       Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
@@ -287,7 +287,7 @@ object frmDATCurve: TfrmDATCurve
     EditText = '0'
     HasMinValue = True
     TabOrder = 7
-    Text = '0.'
+    Text = '0'
     Value = 0.000000000000000000
     OnChange = feLengthChange
   end

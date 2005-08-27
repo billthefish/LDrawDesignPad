@@ -5,20 +5,20 @@ interface
 uses
   DATModel;
 
-function CreateDATModel: TDATModel;
+function CreateDATModel(PAcc, RAcc: Integer): TDATModel;
 procedure ExpandSelection;
 
 implementation
 
 uses
-  childwin, main, options, SynEditTypes;
+  childwin, main, SynEditTypes;
 
-function CreateDATModel: TDATModel;
+function CreateDATModel(PAcc, RAcc: Integer): TDATModel;
 
 begin
   Result := TDATModel.Create;
-  Result.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-  Result.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+  Result.RotationDecimalPlaces := PAcc;
+  Result.PositionDecimalPlaces := RAcc;
 end;
 
 procedure ExpandSelection;

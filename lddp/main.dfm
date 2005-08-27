@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 510
-  Top = 329
+  Left = 457
+  Top = 351
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -731,7 +731,7 @@ object frMain: TfrMain
         Action = acAutoRound
       end
       object SoortByPosition1: TMenuItem
-        Action = acSortByPosition
+        Action = acSortSelection
       end
       object CombineTrianglesIntoQuad1: TMenuItem
         Action = acTriangleCombine
@@ -1275,10 +1275,10 @@ object frMain: TfrMain
       ShortCut = 16452
       OnExecute = acAutoRoundExecute
     end
-    object acSortByPosition: TAction
+    object acSortSelection: TAction
       Category = 'Misc'
-      Caption = 'Sort Selection By Position'
-      OnExecute = acSortByPositionExecute
+      Caption = 'Sort'
+      OnExecute = acSortSelectionExecute
     end
     object acECCopy: TAction
       Category = 'Error Check'
@@ -2879,6 +2879,9 @@ object frMain: TfrMain
     end
     object GenerateBendibleObject1: TMenuItem
       Action = acBendableObject
+    end
+    object Sort1: TMenuItem
+      Action = acSortSelection
     end
     object N9: TMenuItem
       Caption = '-'

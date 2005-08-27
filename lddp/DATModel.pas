@@ -30,6 +30,13 @@ uses
 
 type
 
+  TDATSortTerm = (dsNil, dsLineType, dsColor,
+                  dsMidX, dsMidY, dsMidZ,
+                  dsMaxX, dsMaxY, dsMaxZ,
+                  dsMinX, dsMinY, dsMinZ);
+
+  TDATSortArray = array[1..3] of TDATSortTerm;
+
 { Base class for all DAT Model type Objects
   Essentially this is a specialized Object list for
   DAT Components }
@@ -37,6 +44,11 @@ type
     private
       FModelCollection: TObjectList;
       FPntAcc, FRotAcc: Byte;
+      FSortTerms: TDATSortArray;
+      procedure DoSort(Start, Finish: Integer; Reverse: Boolean = False);
+      function Compare(Line1, Line2: TDATType; Reverse: Boolean = False): Integer;
+      function GetSortTerm(Idx: Byte): TDATSortTerm;
+      procedure SetSortTerm(Idx: Byte; Val: TDATSortTerm);
 
     protected
       procedure SetModelFromStringlist(sList: TStringList);
@@ -51,24 +63,24 @@ type
       procedure Add(objLine: TDATType); overload; virtual;
       procedure Insert(Index: Integer; strLine: string); overload; virtual;
       procedure Insert(Index: Integer; objLine: TDATType); overload; virtual;
+      procedure Exchange(Index1, Index2: Integer); virtual;
       procedure Rotate(w,x,y,z: Extended); virtual;
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; virtual;
       procedure Translate(x,y,z: Extended); virtual;
       procedure Clear; virtual;
-      procedure Sort(Compare: TListSortCompare);
 
     public
       constructor Create; virtual;
       destructor Destroy; override;
       property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc;
       property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc;
+      property SortTerms: TDATSortArray read FSortTerms write FSortTerms;
+      property SortTerm[Idx: Byte]: TDATSortTerm read GetSortTerm write SetSortTerm;
+      procedure Sort(Reverse: Boolean = False);
+
   end;
 
 { An Object for holding and manipulating an LDraw model }
-
-  TDATSortCommand = (SortMaxX, SortMaxY, SortMaxZ,
-                     SortMinX, SortMinY, SortMinZ,
-                     SortCenterX, SortCenterY, SortCenterZ, SortColor);
 
   TDATModel=class(TDATCustomModel)
     private
@@ -100,9 +112,6 @@ type
       {Inline all parts (linetype 1) in the model}
       procedure InlineAll;
 
-      {Sorts lines based on SortCommand }
-      procedure SortModel(SortCommand: TDATSortCommand);
-
       {Finds the first instance of the supplied line starting from the supplied
        index (default 0)}
       function IndexOfLine(strLine: string; StartIndex: Integer = 0): Integer;
@@ -118,6 +127,7 @@ type
       procedure Add(objLine: TDATType); overload; override;
       procedure Insert(Index: Integer; strLine: string); overload; override;
       procedure Insert(Index: Integer; objLine: TDATType); overload; override;
+      procedure Exchange(Index1, Index2: Integer); override;
       procedure Rotate(w,x,y,z: Extended); override;
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; override;
       procedure Translate(x,y,z: Extended); override;
@@ -203,280 +213,6 @@ type
   end;
 
 implementation
-
-constructor TDATCustomModel.Create;
-
-begin
-  inherited Create;
-  FModelCollection := TObjectList.Create;
-  FPntAcc := 15;
-  FRotAcc := 15;
-end;
-
-destructor TDATCustomModel.Destroy;
-begin
-  FModelCollection.Free;
-  inherited Destroy;
-end;
-
-function TDATCustomModel.GetLine(Idx:Integer): TDATType;
-begin
-  if (Idx >= 0) and (Idx < Count) then
-  begin
-    Result := (FModelCollection[Idx] as TDATType);
-    if Result.LineType > 0 then
-    begin
-      (Result as TDATElement).RotationDecimalPlaces := RotationDecimalPlaces;
-      (Result as TDATElement).PositionDecimalPlaces := PositionDecimalPlaces;
-    end;
-  end
-  else
-    Result := nil;
-end;
-
-procedure TDATCustomModel.SetLine(Idx:Integer; Value: TDATType);
-begin
-  if (Idx >= 0) and (Idx < Count) then
-    FModelCollection[Idx] := Value;
-end;
-
-function TDATCustomModel.GetModelText: string;
-
-var
-  i: Integer;
-
-begin
-  Result := '';
-  if Count > 0 then
-  begin
-    for i := 0 to Count - 2 do
-      Result := Result + Lines[i].DATString + #13#10;
-    Result := Result + Lines[Count-1].DATString;
-  end;
-end;
-
-procedure TDATCustomModel.SetModelText(mText: string);
-
-var
-  ModelFile: TStringList;
-
-begin
-  ModelFile := TStringList.Create;
-  Clear;
-
-  ModelFile.Text := mText;
-
-  SetModelFromStringlist(ModelFile);
-  ModelFile.Free;
-end;
-
-procedure TDATCustomModel.SetModelFromStringList(sList: TStringList);
-
-var
-  i: Integer;
-
-begin
-  for i := 0 to sList.Count - 1 do
-    Add(sList[i]);
-end;
-
-procedure TDATCustomModel.Add(objLine: TDATType);
-begin
-  Insert(GetCount, objLine);
-end;
-
-procedure TDATCustomModel.Add(strLine: string);
-begin
-  Insert(Count, strLine);
-end;
-
-procedure TDATCustomModel.Insert(Index: Integer; objLine: TDATType);
-
-begin
-  FModelCollection.Insert(Index, objLine);
-end;
-
-procedure TDATCustomModel.Insert(Index: Integer; strLine: string);
-
-var
-  NewDATType: TDATType;
-
-begin
-  NewDATType := StrToDAT(strLine);
-  Insert(Index, NewDATType)
-end;
-
-procedure TDATCustomModel.Rotate(w,x,y,z: Extended);
-
-var
-  i: Integer;
-
-begin
-  for i := 0 to Count - 1 do
-   if (Lines[i] is TDATElement) then
-     (Lines[i] as TDATElement).Rotate(w,x,y,z);
-end;
-
-procedure TDATCustomModel.Transform(M: TDATMatrix; Reverse: Boolean = false);
-
-var
-  i: Integer;
-
-begin
-  for i := 0 to Count - 1 do
-    if (Lines[i] is TDATElement) then
-      (Lines[i] as TDATElement).Transform(M,Reverse);
-end;
-
-procedure TDATCustomModel.Translate(x,y,z: Extended);
-
-var
-  i: Integer;
-
-begin
-  for i := 0 to Count - 1 do
-   if (Lines[i] is TDATElement) then
-     (Lines[i] as TDATElement).Translate(x,y,z);
-end;
-
-procedure TDATCustomModel.Clear;
-
-begin
-  FModelCollection.Clear;
-end;
-
-function TDATCustomModel.GetCount: Integer;
-begin
-  Result := FModelCollection.Count;
-end;
-
-procedure TDATCustomModel.Sort(Compare: TListSortCompare);
-begin
-  FModelCollection.Sort(Compare);
-end;
-
-{ TDATModel Code }
-procedure TDATModel.SetFilePath(fPath: string);
-begin
-  strFilePath := Lowercase(fPath);
-end;
-
-procedure TDATModel.SetFileName(fName: string);
-begin
-  strFileName := Lowercase(fName);
-end;
-
-procedure TDATModel.LoadModel(DATFile: string);
-
-var
-  ModelFile: TStringList;
-
-begin
-  ModelFile := TStringList.Create;
-  Clear;
-  if FileExists(DATFile) then
-  begin
-    ModelFile.LoadFromFile(DATFile);
-    FilePath := ExtractFilePath(DATFile);
-    FileName := ExtractFileName(DATFile);
-  end;
-
-  SetModelFromStringlist(ModelFile);
-  ModelFile.Free;
-end;
-
-procedure TDATModel.SaveModel(Filename:string);
-
-var
-  ModelFile: TStringList;
-
-begin
-  ModelFile := TStringList.Create;
-  ModelFile.Text := GetModelText;
-  ModelFile.SaveToFile(Filename);
-  ModelFile.Free;
-end;
-
-procedure TDATModel.Delete(Index: Integer);
-begin
-  FModelCollection.Delete(Index);
-end;
-
-procedure TDATModel.AddLines(ModelObj: TDATModel; Index: Integer = -1);
-
-var
-  i: Integer;
-
-begin
-  ModelObj.PositionDecimalPlaces := PositionDecimalPlaces;
-  ModelObj.RotationDecimalPlaces := RotationDecimalPlaces;
-  if Index < 0 then Index := Count;
-  for i := ModelObj.Count - 1 downto 0 do
-    Insert(Index, ModelObj[i].DATString);
-end;
-
-procedure TDATModel.Clear;
-
-begin
-  inherited Clear;
-end;
-
-procedure TDATModel.InlinePart(Index: Integer);
-
-var
-  InlineFile: TDATModel;
-  i: Integer;
-
-begin
-  if Count > 0 then
-  begin
-    InlineFile := TDATModel.Create;
-    InlineFile.PositionDecimalPlaces := PositionDecimalPlaces;
-    InlineFile.RotationDecimalPlaces := RotationDecimalPlaces;
-
-    if (Lines[Index] is TDATSubPart) then
-    begin
-      with (Lines[Index] as TDATSubPart) do
-      begin
-        if FileExists(strFilePath + FileName) then
-          InlineFile.LoadModel(strFilePath + FileName)
-        else if FileExists(LDrawBasePath + 'PARTS' + PathDelim + FileName) then
-          InlineFile.LoadModel(LDrawBasePath + 'PARTS' + PathDelim + FileName)
-        else if FileExists(LDrawBasePath + 'P' + PathDelim + FileName) then
-          InlineFile.LoadModel(LDrawBasePath + 'P' + PathDelim + FileName);
-      end;
-
-
-      if InlineFile.Count > 0 then
-      begin
-        for i := 0 to InlineFile.Count - 1 do
-          if (InlineFile[i] is TDATElement) then
-          begin
-            if (InlineFile[i] as TDATElement).Color = 16 then
-              (InlineFile[i] as TDATElement).Color := (Lines[Index] as TDATElement).Color;
-          end;
-        InlineFile.Transform((Lines[Index] as TDATSubPart).RotationMatrix);
-        Delete(Index);
-        AddLines(InlineFile, Index);
-      end;
-    end;
-    InlineFile.Free;
-  end;
-end;
-
-procedure TDATModel.InlineAll;
-
-var
-  i: Integer;
-
-begin
-  i := 0;
-  while i < Count do
-    if Lines[i] is TDATSubPart then
-      InlinePart(i)
-    else
-      inc(i);
-end;
 
 // Compare Functions
 function CompareColor(Line1, Line2: TDATType): Integer;
@@ -774,24 +510,353 @@ begin
   if (Line2.LineType = 0) and (Line1.LineType > 0) then
     Result := -1;
 end;
-// End Compare functions
 
-procedure TDATModel.SortModel(SortCommand: TDATSortCommand);
+constructor TDATCustomModel.Create;
 
 begin
-  case SortCommand of
-    SortMaxX: Sort(@CompareMaxX);
-    SortMinX: Sort(@CompareMinX);
-    SortCenterX: Sort(@CompareCenterX);
-    SortMaxY: Sort(@CompareMaxY);
-    SortMinY: Sort(@CompareMinY);
-    SortCenterY: Sort(@CompareCenterY);
-    SortMaxZ: Sort(@CompareMaxZ);
-    SortMinZ: Sort(@CompareMinZ);
-    SortCenterZ: Sort(@CompareCenterZ);
-    SortColor: Sort(@CompareColor);
- end;
+  inherited Create;
+  FModelCollection := TObjectList.Create;
+  FPntAcc := 15;
+  FRotAcc := 15;
+end;
 
+destructor TDATCustomModel.Destroy;
+begin
+  FModelCollection.Free;
+  inherited Destroy;
+end;
+
+function TDATCustomModel.GetSortTerm(Idx: Byte): TDATSortTerm;
+begin
+  Result := FSortTerms[Idx];
+end;
+
+procedure TDATCustomModel.SetSortTerm(Idx: Byte; Val: TDATSortTerm);
+begin
+  FSortTerms[Idx] := Val;
+end;
+
+function TDATCustomModel.GetLine(Idx:Integer): TDATType;
+begin
+  if (Idx >= 0) and (Idx < Count) then
+  begin
+    Result := (FModelCollection[Idx] as TDATType);
+    if Result.LineType > 0 then
+    begin
+      (Result as TDATElement).RotationDecimalPlaces := RotationDecimalPlaces;
+      (Result as TDATElement).PositionDecimalPlaces := PositionDecimalPlaces;
+    end;
+  end
+  else
+    Result := nil;
+end;
+
+procedure TDATCustomModel.SetLine(Idx:Integer; Value: TDATType);
+begin
+  if (Idx >= 0) and (Idx < Count) then
+    FModelCollection[Idx] := Value;
+end;
+
+function TDATCustomModel.GetModelText: string;
+
+var
+  i: Integer;
+
+begin
+  Result := '';
+  if Count > 0 then
+  begin
+    for i := 0 to Count - 2 do
+      Result := Result + Lines[i].DATString + #13#10;
+    Result := Result + Lines[Count-1].DATString;
+  end;
+end;
+
+procedure TDATCustomModel.SetModelText(mText: string);
+
+var
+  ModelFile: TStringList;
+
+begin
+  ModelFile := TStringList.Create;
+  Clear;
+
+  ModelFile.Text := mText;
+
+  SetModelFromStringlist(ModelFile);
+  ModelFile.Free;
+end;
+
+procedure TDATCustomModel.SetModelFromStringList(sList: TStringList);
+
+var
+  i: Integer;
+
+begin
+  for i := 0 to sList.Count - 1 do
+    Add(sList[i]);
+end;
+
+procedure TDATCustomModel.Add(objLine: TDATType);
+begin
+  Insert(GetCount, objLine);
+end;
+
+procedure TDATCustomModel.Add(strLine: string);
+begin
+  Insert(Count, strLine);
+end;
+
+procedure TDATCustomModel.Insert(Index: Integer; objLine: TDATType);
+
+begin
+  FModelCollection.Insert(Index, objLine);
+end;
+
+procedure TDATCustomModel.Insert(Index: Integer; strLine: string);
+
+var
+  NewDATType: TDATType;
+
+begin
+  NewDATType := StrToDAT(strLine);
+  Insert(Index, NewDATType)
+end;
+
+procedure TDATCustomModel.Exchange(Index1, Index2: Integer);
+
+begin
+  FModelCollection.Exchange(Index1, Index2);
+end;
+
+procedure TDATCustomModel.Rotate(w,x,y,z: Extended);
+
+var
+  i: Integer;
+
+begin
+  for i := 0 to Count - 1 do
+   if (Lines[i] is TDATElement) then
+     (Lines[i] as TDATElement).Rotate(w,x,y,z);
+end;
+
+procedure TDATCustomModel.Transform(M: TDATMatrix; Reverse: Boolean = false);
+
+var
+  i: Integer;
+
+begin
+  for i := 0 to Count - 1 do
+    if (Lines[i] is TDATElement) then
+      (Lines[i] as TDATElement).Transform(M,Reverse);
+end;
+
+procedure TDATCustomModel.Translate(x,y,z: Extended);
+
+var
+  i: Integer;
+
+begin
+  for i := 0 to Count - 1 do
+   if (Lines[i] is TDATElement) then
+     (Lines[i] as TDATElement).Translate(x,y,z);
+end;
+
+procedure TDATCustomModel.Clear;
+
+begin
+  FModelCollection.Clear;
+end;
+
+function TDATCustomModel.GetCount: Integer;
+begin
+  Result := FModelCollection.Count;
+end;
+
+function TDATCustomModel.Compare(Line1, Line2: TDATType; Reverse: Boolean = False): Integer;
+
+var
+  i: Integer;
+
+begin
+  Result := 0;
+
+  for i := 1 to 3 do
+    if Result = 0 then
+      case FSortTerms[i] of
+        dsMaxX: Result := CompareMaxX(Line1,Line2);
+        dsMinX: Result := CompareMinX(Line1,Line2);
+        dsMidX: Result := CompareCenterX(Line1,Line2);
+        dsMaxY: Result := CompareMaxY(Line1,Line2);
+        dsMinY: Result := CompareMinY(Line1,Line2);
+        dsMidY: Result := CompareCenterY(Line1,Line2);
+        dsMaxZ: Result := CompareMaxZ(Line1,Line2);
+        dsMinZ: Result := CompareMinZ(Line1,Line2);
+        dsMidZ: Result := CompareCenterZ(Line1,Line2);
+        dsColor: Result := CompareColor(Line1,Line2);
+        else Result := 0;
+      end;
+
+  if Reverse then Result := -Result;
+end;
+
+procedure TDATCustomModel.DoSort(Start, Finish: Integer; Reverse: Boolean = False);
+
+var
+  i, j: Integer;
+  Line1: TDATType;
+
+begin
+  repeat
+    i := Start;
+    j := Finish;
+
+    Line1 := Lines[(Start + Finish) shr 1];
+    repeat
+      while Compare(Lines[i], Line1, Reverse) < 0 do
+        Inc(i);
+      while Compare(Lines[j], Line1, Reverse) > 0 do
+        Dec(j);
+      if i <= j then
+      begin
+        Exchange(i,j);
+        Inc(i);
+        Dec(j);
+      end;
+    until i > j;
+    if Start < j then
+      DoSort(Start, j, Reverse);
+    Start := i;
+  until i >= Finish;
+end;
+
+procedure TDATCustomModel.Sort(Reverse: Boolean = False);
+begin
+  DoSort(0, Count-1, Reverse);
+end;
+
+{ TDATModel Code }
+
+procedure TDATModel.SetFilePath(fPath: string);
+begin
+  strFilePath := Lowercase(fPath);
+end;
+
+procedure TDATModel.SetFileName(fName: string);
+begin
+  strFileName := Lowercase(fName);
+end;
+
+procedure TDATModel.LoadModel(DATFile: string);
+
+var
+  ModelFile: TStringList;
+
+begin
+  ModelFile := TStringList.Create;
+  Clear;
+  if FileExists(DATFile) then
+  begin
+    ModelFile.LoadFromFile(DATFile);
+    FilePath := ExtractFilePath(DATFile);
+    FileName := ExtractFileName(DATFile);
+  end;
+
+  SetModelFromStringlist(ModelFile);
+  ModelFile.Free;
+end;
+
+procedure TDATModel.SaveModel(Filename:string);
+
+var
+  ModelFile: TStringList;
+
+begin
+  ModelFile := TStringList.Create;
+  ModelFile.Text := GetModelText;
+  ModelFile.SaveToFile(Filename);
+  ModelFile.Free;
+end;
+
+procedure TDATModel.Delete(Index: Integer);
+begin
+  FModelCollection.Delete(Index);
+end;
+
+procedure TDATModel.AddLines(ModelObj: TDATModel; Index: Integer = -1);
+
+var
+  i: Integer;
+
+begin
+  ModelObj.PositionDecimalPlaces := PositionDecimalPlaces;
+  ModelObj.RotationDecimalPlaces := RotationDecimalPlaces;
+  if Index < 0 then Index := Count;
+  for i := ModelObj.Count - 1 downto 0 do
+    Insert(Index, ModelObj[i].DATString);
+end;
+
+procedure TDATModel.Clear;
+
+begin
+  inherited Clear;
+end;
+
+procedure TDATModel.InlinePart(Index: Integer);
+
+var
+  InlineFile: TDATModel;
+  i: Integer;
+
+begin
+  if Count > 0 then
+  begin
+    InlineFile := TDATModel.Create;
+    InlineFile.PositionDecimalPlaces := PositionDecimalPlaces;
+    InlineFile.RotationDecimalPlaces := RotationDecimalPlaces;
+
+    if (Lines[Index] is TDATSubPart) then
+    begin
+      with (Lines[Index] as TDATSubPart) do
+      begin
+        if FileExists(strFilePath + FileName) then
+          InlineFile.LoadModel(strFilePath + FileName)
+        else if FileExists(LDrawBasePath + 'PARTS' + PathDelim + FileName) then
+          InlineFile.LoadModel(LDrawBasePath + 'PARTS' + PathDelim + FileName)
+        else if FileExists(LDrawBasePath + 'P' + PathDelim + FileName) then
+          InlineFile.LoadModel(LDrawBasePath + 'P' + PathDelim + FileName);
+      end;
+
+
+      if InlineFile.Count > 0 then
+      begin
+        for i := 0 to InlineFile.Count - 1 do
+          if (InlineFile[i] is TDATElement) then
+          begin
+            if (InlineFile[i] as TDATElement).Color = 16 then
+              (InlineFile[i] as TDATElement).Color := (Lines[Index] as TDATElement).Color;
+          end;
+        InlineFile.Transform((Lines[Index] as TDATSubPart).Matrix);
+        Delete(Index);
+        AddLines(InlineFile, Index);
+      end;
+    end;
+    InlineFile.Free;
+  end;
+end;
+
+procedure TDATModel.InlineAll;
+
+var
+  i: Integer;
+
+begin
+  i := 0;
+  while i < Count do
+    if Lines[i] is TDATSubPart then
+      InlinePart(i)
+    else
+      inc(i);
 end;
 
 function TDATModel.IndexOfLine(strLine: string; StartIndex: Integer = 0): Integer;
@@ -861,6 +926,13 @@ procedure TDATModel.Insert(Index: Integer; strLine: string);
 begin
   inherited Insert(Index, strLine);
 end;
+
+procedure TDATModel.Exchange(Index1, Index2: Integer);
+
+begin
+  inherited Exchange(Index1, Index2);
+end;
+
 
 procedure TDATModel.Rotate(w,x,y,z: Extended);
 begin
@@ -945,7 +1017,7 @@ begin
   Result := TempSubPart.Position;
 
   if AssignMatrix then
-    subp.RotationMatrix := TempSubPart.RotationMatrix;
+    subp.Matrix := TempSubPart.Matrix;
 
   TempSubPart.Free;
 end;
@@ -1046,8 +1118,8 @@ begin
   Clear;
   Line1 := TDATSubPart.Create;
   Line2 := TDATSubPart.Create;
-  Line1.RotationMatrix := FStartPoint;
-  Line2.RotationMatrix := FEndPoint;
+  Line1.Matrix := FStartPoint;
+  Line2.Matrix := FEndPoint;
   Line1.Color := FColor;
   Line2.Color := FColor;
 
@@ -1158,13 +1230,13 @@ begin
     if strFileType = '754.dat' then
     begin
       dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '755.dat';
-      dummyPart.RotationMatrix := Line1.RotationMatrix;
+      dummyPart.Matrix := Line1.Matrix;
       dummyPart.Position :=  GetBezierCoordinate(dummyPart,[-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, -1, 0,  0, 0, 0, 1], True, True);
       dummyPart.Position := Line1.Position;
       Add(dummyPart.DATString);
 
       dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '755.dat';
-      dummyPart.RotationMatrix := Line2.RotationMatrix;
+      dummyPart.Matrix := Line2.Matrix;
       dummyPart.Position :=  GetBezierCoordinate(dummyPart,[-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, -1, 0,  0, 0, 0, 1], True, True);
       dummyPart.Position := Line2.Position;
       Add(dummyPart.DATString);
@@ -1172,12 +1244,12 @@ begin
     else if strFileType = '758.dat' then
     begin
       dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '759.dat';
-      dummyPart.RotationMatrix := Line1.RotationMatrix;
+      dummyPart.Matrix := Line1.Matrix;
       dummyPart.Position := GetBezierCoordinate(dummyPart,[1, 0, 0, 0,  0, 1, 0, 16,  0, 0, 1, 0,  0, 0, 0, 1], True, True);
       Add(dummyPart.DATString);
 
       dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + '759.dat';
-      dummyPart.RotationMatrix := Line2.RotationMatrix;
+      dummyPart.Matrix := Line2.Matrix;
       dummyPart.Position :=  GetBezierCoordinate(dummyPart,[-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, -1, 0,  0, 0, 0, 1], True, True);
       dummyPart.Position := Line2.Position;
       Add(dummyPart.DATString);
@@ -1239,7 +1311,7 @@ begin
       BezPoint2 := BezierSum(BezI, BezBegin, pntC1, pntC2, BezEnd);
       dummyPart.DATString := '1 ' + IntToStr(FColor) + ' 0 0 0 1 0 0 0 1 0 0 0 1 ' + strFileType;
       dummyPart.Position := PointMult(PointSum(BezPoint1,BezPoint2), 0.5);
-      dummyPart.RMatrix := BezMakeMatrix(PointSum(BezPoint1,PointMult(BezPoint2,-1.0)));
+      dummyPart.RotationMatrix := BezMakeMatrix(PointSum(BezPoint1,PointMult(BezPoint2,-1.0)));
 
       case ObjectType of
         boHoseTabs, boHoseNoTabs:
