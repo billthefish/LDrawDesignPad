@@ -1,10 +1,10 @@
 object fmSort: TfmSort
-  Left = 226
-  Top = 162
+  Left = 360
+  Top = 307
   BorderStyle = bsDialog
   Caption = 'Sort'
-  ClientHeight = 151
-  ClientWidth = 270
+  ClientHeight = 232
+  ClientWidth = 271
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,19 +17,19 @@ object fmSort: TfmSort
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 107
-    Width = 270
+    Top = 188
+    Width = 271
     Height = 44
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     DesignSize = (
-      270
+      271
       44)
     object BitBtn2: TBitBtn
       Left = 168
       Top = 12
-      Width = 96
+      Width = 97
       Height = 25
       Anchors = [akLeft, akTop, akRight, akBottom]
       Cancel = True
@@ -137,8 +137,8 @@ object fmSort: TfmSort
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 270
-    Height = 107
+    Width = 271
+    Height = 188
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -149,9 +149,23 @@ object fmSort: TfmSort
       Height = 13
       Caption = 'Sort on'
     end
+    object Label2: TLabel
+      Left = 9
+      Top = 41
+      Width = 60
+      Height = 13
+      Caption = 'Then sort on'
+    end
+    object Label3: TLabel
+      Left = 9
+      Top = 81
+      Width = 60
+      Height = 13
+      Caption = 'Then sort on'
+    end
     object rgScope: TRadioGroup
-      Left = 8
-      Top = 48
+      Left = 0
+      Top = 128
       Width = 129
       Height = 57
       Caption = 'Sorting Scope'
@@ -162,7 +176,7 @@ object fmSort: TfmSort
     end
     object rgSortDirection: TRadioGroup
       Left = 136
-      Top = 48
+      Top = 128
       Width = 129
       Height = 57
       Caption = 'Sort Direction'
@@ -179,18 +193,67 @@ object fmSort: TfmSort
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
+      ItemIndex = 0
       TabOrder = 2
+      Text = 'None'
       Items.Strings = (
-        'Min X'
-        'Max X'
+        'None'
+        'Color'
         'Center X'
-        'Min Y'
-        'Max Y'
         'Center Y'
-        'Min Z'
-        'Max Z'
         'Center Z'
-        'Color')
+        'Max X'
+        'Max Y'
+        'Max Z'
+        'Min X'
+        'Min Y'
+        'Min Z')
+    end
+    object cbSort2: TComboBox
+      Left = 9
+      Top = 56
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      ItemIndex = 0
+      TabOrder = 3
+      Text = 'None'
+      Items.Strings = (
+        'None'
+        'Color'
+        'Center X'
+        'Center Y'
+        'Center Z'
+        'Max X'
+        'Max Y'
+        'Max Z'
+        'Min X'
+        'Min Y'
+        'Min Z')
+    end
+    object cbSort3: TComboBox
+      Left = 9
+      Top = 96
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      ItemIndex = 0
+      TabOrder = 4
+      Text = 'None'
+      Items.Strings = (
+        'None'
+        'Color'
+        'Center X'
+        'Center Y'
+        'Center Z'
+        'Max X'
+        'Max Y'
+        'Max Z'
+        'Min X'
+        'Min Y'
+        'Min Z')
     end
   end
 end

@@ -16,6 +16,10 @@ type
     BitBtn2: TBitBtn;
     BitBtn1: TBitBtn;
     rgSortDirection: TRadioGroup;
+    Label2: TLabel;
+    cbSort2: TComboBox;
+    Label3: TLabel;
+    cbSort3: TComboBox;
   private
     { Private declarations }
   public

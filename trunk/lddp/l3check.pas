@@ -97,7 +97,6 @@ var
 
 begin
   cp1 := PointCrossProduct(PointSubtract(p1,p2),PointSubtract(p2,p3));
-
   Result := abs(PointDotProduct(cp1,cp1));
 end;
 
@@ -127,34 +126,34 @@ begin
   Result := '';
   with datsubpart do
   begin
-    det := MatrixDet(RotationMatrix);
+    det := MatrixDet(Matrix);
     if (det = 0) then
       if SubPartIsXZPrimitive(SubPart) then
       begin
         for i := 1 to 3 do
-          if (RM[i,1] = 0) and (RM[i,2] = 0) and (RM[i,3] = 0) then
+          if (MatrixVals[i,1] = 0) and (MatrixVals[i,2] = 0) and (MatrixVals[i,3] = 0) then
           begin
-            RM[i,2] := 1;
-            det := MatrixDet(RotationMatrix);
+            MatrixVals[i,2] := 1;
+            det := MatrixDet(Matrix);
             if det <> 0 then
             begin
               Result := 'Row ' + IntToStr(i-1) + ' all zeros';
               Break;
             end;
           end;
-        if (det = 0) and (RM[1,2] = 0) and (RM[2,2] = 0) and (RM[3,2] = 0) then
+        if (det = 0) and (MatrixVals[1,2] = 0) and (MatrixVals[2,2] = 0) and (MatrixVals[3,2] = 0) then
           for i := 1 to 3 do
           begin
-            tempval := RM[i,2];
-            RM[i,2] := 1;
-            det := MatrixDet(RotationMatrix);
+            tempval := MatrixVals[i,2];
+            MatrixVals[i,2] := 1;
+            det := MatrixDet(Matrix);
             if det <> 0 then
             begin
               Result := 'Y column all zeros';
               Break;
             end
             else
-              RM[i,2] := tempval;
+              MatrixVals[i,2] := tempval;
           end;
         if det = 0 then Result := 'Singular matrix (unfixable)';
       end
@@ -264,7 +263,7 @@ begin
 
     if (DetThreshold > 0) then
     begin
-      det := CoPlanarCheckDet(RotationMatrix);
+      det := CoPlanarCheckDet(Matrix);
       if det > DetThreshold then
       begin
         Result := 'Vertices not coplaner (' + FloatToStr(det) + ')';
@@ -274,14 +273,14 @@ begin
 
     if (DistThreshold > 0)  then
     begin
-      det := CoPlanarCheckDet(RotationMatrix);
+      det := CoPlanarCheckDet(Matrix);
 
       for i := 1 to 4 do
       begin
         j := (i and 3) + 1;
-        TempMatrix[i,1] := RM[i,1] - RM[j,1];
-        TempMatrix[i,2] := RM[i,2] - RM[j,2];
-        TempMatrix[i,3] := RM[i,3] - RM[j,3];
+        TempMatrix[i,1] := MatrixVals[i,1] - MatrixVals[j,1];
+        TempMatrix[i,2] := MatrixVals[i,2] - MatrixVals[j,2];
+        TempMatrix[i,3] := MatrixVals[i,3] - MatrixVals[j,3];
       end;
 
       maxdist := 0;

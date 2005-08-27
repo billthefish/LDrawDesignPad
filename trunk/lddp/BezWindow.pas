@@ -114,8 +114,8 @@ end;
 procedure TfrmDATCurve.FormActivate(Sender: TObject);
 
 begin
-  HoseDATCode.StartMatrix := Line1.RotationMatrix;
-  HoseDATCode.EndMatrix := Line2.RotationMatrix;
+  HoseDATCode.StartMatrix := Line1.Matrix;
+  HoseDATCode.EndMatrix := Line2.Matrix;
   HoseDATCode.Color := Line1.Color;
 
   HoseDATCode.DefinedControlPoints := cbxContEnable.Checked;

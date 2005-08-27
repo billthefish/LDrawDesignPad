@@ -39,7 +39,8 @@ uses
   BezWindow in 'BezWindow.pas' {frmDATCurve},
   dlgSubpart in 'dlgSubpart.pas' {frSubFile},
   sorting in 'sorting.pas' {fmSort},
-  commonprocs in 'commonprocs.pas';
+  commonprocs in 'commonprocs.pas',
+  ErrorFix in 'ErrorFix.pas';
 
 {$R *.res}
 

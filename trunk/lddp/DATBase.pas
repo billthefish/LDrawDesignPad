@@ -92,7 +92,7 @@ type
     protected
       function GetDATString:string; override;
   end;
-
+{
   TDATRGBValue = $000000..$FFFFFF;
 
   (* Represents the !COLOUR Meta Command *)
@@ -104,8 +104,8 @@ type
       FLineRGB: TDATRGBValue;
       FAlpha: Byte;
       FLuminance: Byte;
-
   end;
+}
 
   TDATElement=class(TDATType)
     private
@@ -116,19 +116,19 @@ type
       FDATMatrix: TDATMatrix;
       function GetCoordinate(Index: Integer): Extended;
       procedure SetCoordinate(Index: Integer; Value: Extended);
-      function GetRMVal(idx1,idx2: Integer): Extended;
-      procedure SetRMVal(idx1,idx2: Integer; Value: Extended);
+      function GetMatrixVal(idx1,idx2: Integer): Extended;
+      procedure SetMatrixVal(idx1,idx2: Integer; Value: Extended);
 
     public
       constructor Create; override;
 
       (* Use this property to get or set the matrix (Linetype 1) or
          all points (Linetypes 2-5) in one go using a TDATMatrix type *)
-      property RotationMatrix: TDATMatrix read FDATMatrix write FDATMatrix;
+      property Matrix: TDATMatrix read FDATMatrix write FDATMatrix;
 
       (* Use this property to set individual numbers in the matrix (Linetype 1)
          or point set (Linetypes 2-5) *)
-      property RM[idx1,idx2: Integer]: Extended read GetRMVal write SetRMVal;
+      property MatrixVals[idx1,idx2: Integer]: Extended read GetMatrixVal write SetMatrixVal;
 
       (* Multiply the current Object by the given Matrix *)
       procedure Transform(M: TDATMatrix;
@@ -141,8 +141,8 @@ type
 
     published
       property Color: Integer read intColor write intColor default 0;
-      property RotationDecimalPlaces: ShortInt read RotAcc write RotAcc default 4;
-      property PositionDecimalPlaces: ShortInt read PntAcc write PntAcc default 4;
+      property RotationDecimalPlaces: ShortInt read RotAcc write RotAcc default 15;
+      property PositionDecimalPlaces: ShortInt read PntAcc write PntAcc default 15;
   end;
 
   TDATSubPart=class(TDATElement)
@@ -153,8 +153,8 @@ type
       function GetFileName: string;
       function GetPosition: TDATPoint;
       procedure SetPosition(posit: TDATPoint);
-      function GetRMatrix: TDATRotationMatrix;
-      procedure SetRMatrix(rotmat: TDATRotationMatrix);
+      function GetRotationMatrix: TDATRotationMatrix;
+      procedure SetRotationMatrix(rotmat: TDATRotationMatrix);
       function M4Multiply(M1,M2:TDATMatrix): TDATMatrix;
 
     protected
@@ -177,7 +177,7 @@ type
       procedure Transform(M: array of Extended;
                             Reverse: Boolean = false); overload;
 
-      property RMatrix: TDATRotationMatrix read GetRMatrix write SetRMatrix;
+      property RotationMatrix: TDATRotationMatrix read GetRotationMatrix write SetRotationMatrix;
       property X: Extended index 13 read GetCoordinate write SetCoordinate;
       property Y: Extended index 14 read GetCoordinate write SetCoordinate;
       property Z: Extended index 15 read GetCoordinate write SetCoordinate;
@@ -186,7 +186,6 @@ type
 
   TDATGeometric=class(TDATElement)
     protected
-      function GetDATString:string; override;
       procedure ProcessDATLine(strText:string); override;
       function GetPoint(idx: Integer): TDATPoint;
       procedure SetPoint(idx: Integer; Value: TDATPoint);
@@ -212,6 +211,9 @@ type
   end;
 
   TDATLine=class(TDATGeometric)
+    protected
+      function GetDATString:string; override;
+
     public
       constructor Create; override;
 
@@ -225,6 +227,9 @@ type
   end;
 
   TDATOpLine=class(TDATGeometric)
+    protected
+      function GetDATString:string; override;
+
     public
       constructor Create; override;
 
@@ -249,6 +254,9 @@ type
   end;
 
   TDATTriangle=class(TDATPolygon)
+    protected
+      function GetDATString:string; override;
+
     public
       constructor Create; override;
 
@@ -266,6 +274,9 @@ type
   end;
 
   TDATQuad=class(TDATPolygon)
+    protected
+      function GetDATString:string; override;
+
     public
       constructor Create; override;
 
@@ -368,12 +379,12 @@ begin
   FDATMatrix[4,4] := 1;
 end;
 
-function TDATElement.GetRMVal(idx1,idx2: Integer): Extended;
+function TDATElement.GetMatrixVal(idx1,idx2: Integer): Extended;
 begin
   Result := FDATMatrix[idx1,idx2];
 end;
 
-procedure TDATElement.SetRMVal(idx1,idx2: Integer; Value: Extended);
+procedure TDATElement.SetMatrixVal(idx1,idx2: Integer; Value: Extended);
 begin
   FDATMatrix[idx1,idx2] := Value;
 end;
@@ -527,7 +538,7 @@ constructor TDATSubPart.Create;
 begin
   inherited Create;
   intLineType := 1;
-  RotationMatrix := FDATIdentityMatrix;
+  Matrix := FDATIdentityMatrix;
   FileName := 'dummy.dat'
 end;
 
@@ -547,7 +558,7 @@ begin
   result[3] := FDATMatrix[3,4];
 end;
 
-function TDATSubPart.GetRMatrix: TDATRotationMatrix;
+function TDATSubPart.GetRotationMatrix: TDATRotationMatrix;
 begin
   Result[1,1] := FDATMatrix[1,1];
   Result[1,2] := FDATMatrix[1,2];
@@ -560,7 +571,7 @@ begin
   Result[3,3] := FDATMatrix[3,3];
 end;
 
-procedure TDATSubPart.SetRMatrix(rotmat: TDATRotationMatrix);
+procedure TDATSubPart.SetRotationMatrix(rotmat: TDATRotationMatrix);
 begin
   FDATMatrix[1,1] := rotmat[1,1];
   FDATMatrix[1,2] := rotmat[1,2];
@@ -589,33 +600,27 @@ function TDATSubPart.GetDATString:string;
 
 var
  strSep: Char;
- pacc, racc: string;
 
 begin
   strSep := DecimalSeparator;
 
-  pacc := IntToStr(PntAcc);
-  racc := IntToStr(RotAcc);
+  Result := IntToStr(LineType) + ' ' +
+            IntToStr(Color) + ' ' +
+            FloatToStr(RoundTo(Matrix[1,4], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,4], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,4], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,1], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,2], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,3], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,1], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,2], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,3], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,1], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,2], -Abs(RotationDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,3], -Abs(RotationDecimalPlaces))) + ' ' +
+            FileName;
 
-  Result := Format('%d %d ' +
-                   '%.' + pacc + 'g ' +
-                   '%.' + pacc + 'g ' +
-                   '%.' + pacc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g ' +
-                   '%.' + racc + 'g %s', [LineType, Color,
-                                          RM[1,4], RM[2,4], RM[3,4],
-                                          RM[1,1], RM[1,2], RM[1,3],
-                                          RM[2,1], RM[2,2], RM[2,3],
-                                          RM[3,1], RM[3,2], RM[3,3], FileName]);
   DecimalSeparator := strSep;
-
 end;
 
 procedure TDATSubPart.ProcessDATLine(strText:string);
@@ -659,7 +664,7 @@ begin
 
         intLineType := TmpLnType;
         Color := TmpColor;
-        RMatrix := TmpMatrix;
+        RotationMatrix := TmpMatrix;
         Position := TmpPosit;
         SubPart := TmpSubpart;
       end;
@@ -702,12 +707,12 @@ begin
 
   if j = 5 then j := 2;
 
-  Result := RM[1, coord];
+  Result := MatrixVals[1, coord];
 
   for i := 1 to j do
     case Index of
-      1,3,5: if RM[i, coord] > Result then Result := RM[i, coord];
-      2,4,6: if RM[i, coord] < Result then Result := RM[i, coord];
+      1,3,5: if MatrixVals[i, coord] > Result then Result := MatrixVals[i, coord];
+      2,4,6: if MatrixVals[i, coord] < Result then Result := MatrixVals[i, coord];
     end;
 end;
 
@@ -715,9 +720,9 @@ function TDATGeometric.GetCenterValue(Index: Integer): Extended;
 
 begin
   case LineType of
-    2,5: Result := (RM[1,Index] + RM[2,Index]) / 2;
-    3: Result := (RM[1,Index] + RM[2,Index] + RM[3,Index]) / 3;
-    4: Result := (RM[1,Index] + RM[2,Index] + RM[3,Index] + RM[4,Index]) / 4;
+    2,5: Result := (MatrixVals[1,Index] + MatrixVals[2,Index]) / 2;
+    3: Result := (MatrixVals[1,Index] + MatrixVals[2,Index] + MatrixVals[3,Index]) / 3;
+    4: Result := (MatrixVals[1,Index] + MatrixVals[2,Index] + MatrixVals[3,Index] + MatrixVals[4,Index]) / 4;
     else
       result := 0;
   end;  
@@ -744,33 +749,6 @@ begin
     FDATMatrix[i,1] := M1[1];
     FDATMatrix[i,2] := M1[2];
     FDATMatrix[i,3] := M1[3];
-  end;
-end;
-
-function TDATGeometric.GetDATString:string;
-
-var
- pacc: string;
-
-begin
-  pacc := IntToStr(PntAcc);
-
-  case intLineType of
-    2:  Result := Format('%d %d ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
-                                    '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ',
-                         [LineType, Color, RM[1,1], RM[1,2], RM[1,3], RM[2,1], RM[2,2], RM[2,3]]);
-    3:  Result := Format('%d %d ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
-                                    '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
-                                    '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ',
-                         [LineType, Color, RM[1,1], RM[1,2], RM[1,3], RM[2,1], RM[2,2], RM[2,3],
-                                           RM[3,1], RM[3,2], RM[3,3]]);
-    4,5:  Result := Format('%d %d ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
-                                      '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
-                                      '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ' +
-                                      '%.' + pacc + 'g ' + '%.' + pacc + 'g ' + '%.' + pacc + 'g ',
-                           [LineType, Color, RM[1,1], RM[1,2], RM[1,3], RM[2,1], RM[2,2], RM[2,3],
-                                             RM[3,1], RM[3,2], RM[3,3], RM[4,1], RM[4,2], RM[4,3]]);
-    else Result := '';
   end;
 end;
 
@@ -801,23 +779,22 @@ begin
         TmpMatrix[2,2] := StrToFloat(TempList[6]);
         TmpMatrix[2,3] := StrToFloat(TempList[7]);
 
-        if TmpLnType >= 3 then
-        begin
-          TmpMatrix[3,1] := StrToFloat(TempList[8]);
-          TmpMatrix[3,2] := StrToFloat(TempList[9]);
-          TmpMatrix[3,3] := StrToFloat(TempList[10]);
-        end;
-
-        if TmpLnType >= 4 then
-        begin
-          TmpMatrix[4,1] := StrToFloat(TempList[11]);
-          TmpMatrix[4,2] := StrToFloat(TempList[12]);
-          TmpMatrix[4,3] := StrToFloat(TempList[13]);
+        case TmpLnType of
+          3: begin
+               TmpMatrix[3,1] := StrToFloat(TempList[8]);
+               TmpMatrix[3,2] := StrToFloat(TempList[9]);
+               TmpMatrix[3,3] := StrToFloat(TempList[10]);
+             end;
+          4,5: begin
+                 TmpMatrix[4,1] := StrToFloat(TempList[11]);
+                 TmpMatrix[4,2] := StrToFloat(TempList[12]);
+                 TmpMatrix[4,3] := StrToFloat(TempList[13]);
+               end;
         end;
 
         intLineType := TmpLnType;
         Color := TmpColor;
-        RotationMatrix := TmpMatrix;
+        Matrix := TmpMatrix;
       end;
     except
     end;
@@ -832,10 +809,40 @@ begin
   intLineType := 2;
 end;
 
+function TDATLine.GetDATString:string;
+begin
+  Result := IntToStr(LineType) + ' ' +
+            IntToStr(Color) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,3], -Abs(PositionDecimalPlaces)));
+end;
+
 constructor TDATOpLine.Create;
 begin
   inherited Create;
   intLineType := 5;
+end;
+
+function TDATOpLine.GetDATString:string;
+begin
+  Result := IntToStr(LineType) + ' ' +
+            IntToStr(Color) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[4,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[4,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[4,3], -Abs(PositionDecimalPlaces)));
 end;
 
 procedure TDATPolygon.ReverseWinding;
@@ -862,10 +869,43 @@ begin
   intLineType := 3;
 end;
 
+function TDATTriangle.GetDATString:string;
+begin
+  Result := IntToStr(LineType) + ' ' +
+            IntToStr(Color) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,3], -Abs(PositionDecimalPlaces)));
+end;
+
 constructor TDATQuad.Create;
 begin
   inherited Create;
   intLineType := 4;
+end;
+
+function TDATQuad.GetDATString:string;
+begin
+  Result := IntToStr(LineType) + ' ' +
+            IntToStr(Color) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[1,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[2,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[3,3], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[4,1], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[4,2], -Abs(PositionDecimalPlaces))) + ' ' +
+            FloatToStr(RoundTo(MatrixVals[4,3], -Abs(PositionDecimalPlaces)));
 end;
 
 function StrToDAT(strLine: string): TDATType;
@@ -877,7 +917,8 @@ begin
   strCurrentLine := Trim(strLine);
 
   if (strCurrentLine = '') or (strCurrentLine = #13#10) or
-     (strCurrentLine = #13) or (strCurrentLine = #10) then
+     (strCurrentLine = #13) or (strCurrentLine = #10) or
+     (strCurrentLine = #10#13) then
     Result := TDATBlankLine.Create
   else
     if Length(strCurrentLine) > 1 then
