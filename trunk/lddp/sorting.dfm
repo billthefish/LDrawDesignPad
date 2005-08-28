@@ -182,8 +182,8 @@ object fmSort: TfmSort
       Caption = 'Sort Direction'
       ItemIndex = 0
       Items.Strings = (
-        'Acending'
-        'Decending')
+        'Ascending'
+        'Descending')
       TabOrder = 1
     end
     object cbSort: TComboBox
@@ -207,7 +207,8 @@ object fmSort: TfmSort
         'Max Z'
         'Min X'
         'Min Y'
-        'Min Z')
+        'Min Z'
+        'Linetype')
     end
     object cbSort2: TComboBox
       Left = 9
@@ -230,7 +231,8 @@ object fmSort: TfmSort
         'Max Z'
         'Min X'
         'Min Y'
-        'Min Z')
+        'Min Z'
+        'Linetype')
     end
     object cbSort3: TComboBox
       Left = 9
@@ -253,7 +255,8 @@ object fmSort: TfmSort
         'Max Z'
         'Min X'
         'Min Y'
-        'Min Z')
+        'Min Z'
+        'Linetype')
     end
   end
 end

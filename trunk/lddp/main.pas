@@ -1657,7 +1657,6 @@ Return value: None
 ----------------------------------------------------------------------}
 var
   i: Integer;
-  tmpBlEnd: TBufferCoord;
   DATModel1: TDATModel;
 
 begin
@@ -1667,12 +1666,13 @@ begin
   begin
     LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
 
-    tmpBlEnd := BlockEnd;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    if tmpBlEnd.Char > 1 then
-      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 1]) + 1, tmpBlEnd.Line)
+    if Length(SelText) > 0 then
+      ExpandSelection
     else
-      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 2]) + 1, tmpBlEnd.Line - 1);
+    begin
+      BlockBegin := BufferCoord(1, CaretXY.Line);
+      BlockEnd := BufferCoord(Length(Lines[CaretXY.Line - 1]) + 1, CaretXY.Line);
+    end;
 
     DATModel1.RotationDecimalPlaces := frOptions.seRotAcc.Value;
     DATModel1.PositionDecimalPlaces := frOptions.sePntAcc.Value;
@@ -2675,8 +2675,6 @@ var
 begin
   ExpandSelection;
   DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-  DModel.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-  DModel.PositionDecimalPlaces := frOptions.sePntAcc.Value;
   with (ActiveMDIChild as TfrEditorChild).memo do
   begin
     DModel.ModelText := SelText;
@@ -2826,6 +2824,7 @@ var
       8: Result := dsMinX;
       9: Result := dsMinY;
       10: Result := dsMinZ;
+      11: Result := dsLineType;
       else Result := dsNil;
     end;
   end;

@@ -215,6 +215,17 @@ type
 implementation
 
 // Compare Functions
+function CompareLineType(Line1, Line2: TDATType): Integer;
+
+begin
+  Result := 0;
+
+  if Line1.LineType < Line2.LineType then
+    Result := 1
+  else if Line2.LineType < Line1.LineType then
+    Result := -1;
+end;
+
 function CompareColor(Line1, Line2: TDATType): Integer;
 
 begin
@@ -694,6 +705,7 @@ begin
         dsMinZ: Result := CompareMinZ(Line1,Line2);
         dsMidZ: Result := CompareCenterZ(Line1,Line2);
         dsColor: Result := CompareColor(Line1,Line2);
+        dsLineType: Result := CompareLineType(Line1,Line2);
         else Result := 0;
       end;
 
