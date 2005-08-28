@@ -17,8 +17,8 @@ function CreateDATModel(PAcc, RAcc: Integer): TDATModel;
 
 begin
   Result := TDATModel.Create;
-  Result.RotationDecimalPlaces := PAcc;
-  Result.PositionDecimalPlaces := RAcc;
+  Result.RotationDecimalPlaces := RAcc;
+  Result.PositionDecimalPlaces := PAcc;
 end;
 
 procedure ExpandSelection;

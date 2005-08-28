@@ -308,7 +308,6 @@ var
 begin
   UnFixableError := (Item.SubItems[1] = 'Identical vertices') or
      (pos('Singular matrix',Item.SubItems[1]) > 0) or
-     (Item.SubItems[1] = 'Y column all zeros') or
      (pos('Collinear vertices',Item.SubItems[1]) > 0) or
      (pos('Vertices not coplaner',Item.SubItems[1]) > 0);
   frMain.acECFixError.Enabled := not UnFixableError;

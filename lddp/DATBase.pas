@@ -786,6 +786,9 @@ begin
                TmpMatrix[3,3] := StrToFloat(TempList[10]);
              end;
           4,5: begin
+                 TmpMatrix[3,1] := StrToFloat(TempList[8]);
+                 TmpMatrix[3,2] := StrToFloat(TempList[9]);
+                 TmpMatrix[3,3] := StrToFloat(TempList[10]);
                  TmpMatrix[4,1] := StrToFloat(TempList[11]);
                  TmpMatrix[4,2] := StrToFloat(TempList[12]);
                  TmpMatrix[4,3] := StrToFloat(TempList[13]);
