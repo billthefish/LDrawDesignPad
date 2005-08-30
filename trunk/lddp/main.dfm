@@ -1,6 +1,6 @@
 object frMain: TfrMain
-  Left = 457
-  Top = 351
+  Left = 455
+  Top = 422
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
@@ -1013,13 +1013,13 @@ object frMain: TfrMain
       OnExecute = acDecIndentExecute
     end
     object acInsertPartHeader: TAction
-      Category = 'EditorBlocks'
+      Category = 'Editor'
       Caption = 'Standard Part Header'
       Hint = 'Insert a part header'
       OnExecute = acInsertPartHeaderExecute
     end
     object acInsertUpdateLine: TAction
-      Category = 'EditorBlocks'
+      Category = 'Editor'
       Caption = 'Update Header'
       Hint = 'Insert an update line header'
       ShortCut = 16469

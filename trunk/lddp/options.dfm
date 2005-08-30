@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 329
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -798,7 +798,7 @@ object frOptions: TfrOptions
             'General files (parts, subparts and some '
             'primitives) typically use a value of 0.1.')
           ReadOnly = True
-          TabOrder = 4
+          TabOrder = 3
         end
         object Memo2: TMemo
           Left = 288
@@ -812,7 +812,7 @@ object frOptions: TfrOptions
             'Geometric primitives typically use 0.01. '
             'Hi-res primitives typically use 0.001.')
           ReadOnly = True
-          TabOrder = 6
+          TabOrder = 4
         end
         object Memo3: TMemo
           Left = 288
@@ -829,30 +829,6 @@ object frOptions: TfrOptions
           ReadOnly = True
           TabOrder = 2
         end
-        object cboUnitDet: TCheckBox
-          Left = 20
-          Top = 88
-          Width = 205
-          Height = 17
-          Caption = 'Unit Det Coplanarity Check Threshold:'
-          TabOrder = 3
-          Visible = False
-        end
-        object Memo4: TMemo
-          Left = 288
-          Top = 84
-          Width = 217
-          Height = 33
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            'Geometric primitives typically use 0.01. '
-            'Hi-res primitives typically use 0.001.')
-          ReadOnly = True
-          TabOrder = 5
-          Visible = False
-        end
         object seDist: TJvValidateEdit
           Left = 200
           Top = 20
@@ -866,7 +842,7 @@ object frOptions: TfrOptions
           DisplayFormat = dfFloat
           DecimalPlaces = 9
           EditText = '0.1'
-          TabOrder = 7
+          TabOrder = 5
           Text = '0.1'
           Value = 0.100000000000000000
         end
@@ -883,27 +859,9 @@ object frOptions: TfrOptions
           DisplayFormat = dfFloat
           DecimalPlaces = 9
           EditText = '0.001'
-          TabOrder = 8
+          TabOrder = 6
           Text = '0.001'
           Value = 0.001000000000000000
-        end
-        object seUnitDet: TJvValidateEdit
-          Left = 224
-          Top = 86
-          Width = 57
-          Height = 21
-          CheckChars = '0123456789.'
-          CriticalPoints.CheckPoints = cpNone
-          CriticalPoints.ColorAbove = clBlue
-          CriticalPoints.ColorBelow = clRed
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '0.0001'
-          TabOrder = 9
-          Text = '0.0001'
-          Value = 0.000100000000000000
-          Visible = False
         end
         object seCollinear: TJvValidateEdit
           Left = 200
@@ -918,7 +876,7 @@ object frOptions: TfrOptions
           DisplayFormat = dfFloat
           DecimalPlaces = 9
           EditText = '0.0001'
-          TabOrder = 10
+          TabOrder = 7
           Text = '0.0001'
           Value = 0.000100000000000000
         end

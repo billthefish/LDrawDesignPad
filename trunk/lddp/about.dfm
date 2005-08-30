@@ -185,9 +185,9 @@ object frAboutBox: TfrAboutBox
         ''
         'Copyright (C) 2002-2005 by the LDDP contributors'
         ''
-        '- Orion Pobursky'
-        '- Stephan Schonberg'
-        '- Carsten Schmitz'
+        ' Orion Pobursky'
+        ' Stephan Schonberg'
+        ' Carsten Schmitz'
         ''
         'Special thanks to:'
         ''
@@ -204,6 +204,9 @@ object frAboutBox: TfrAboutBox
         
           '    Copyright (C) 1999-2002  Fredrik Gl'#246'ckner (fredrigl@math.uio' +
           '.no)'
+        ''
+        ' Willy Tschager'
+        ' Anders Isaksson'
         ''
         'This program is free software; you can redistribute it '
         'and/or modify it under the terms of the GNU General '

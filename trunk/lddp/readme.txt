@@ -104,9 +104,9 @@ and the great programs they wrote to make LDRAWing a lot easier:
 - Steve Bliss
 - Lars C. Hassing
 - Tore Eriksson
-- Willy Tschager 
+- Anders Isaksson
 
-Special Thank to:
+Special Thanks to:
 
 Lars C. Hassing
 
@@ -120,6 +120,9 @@ Fredrik Glöckner
    Emacs LDraw Major-Mode
   Copyright (C) 1999-2002  Fredrik Glöckner (fredrigl@math.uio.no)
 
+Willy Tschager 
+  Primary Beta Tester
+
 We especially thank you, the user, for downloading our program
 
    -The LDDP Development Team:
@@ -132,6 +135,13 @@ We especially thank you, the user, for downloading our program
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
+
+v1.5.7
++ Added ability to sort text on various criteria
+* Fixed various problems with rounding
++ Updated metamenu.ini
+- Removed Unit Det from error check (it was experimental and didn't work as intended)
+* Fixed an error with inlining if the cursor was at the beginning of a line
 
 v1.5.6 13 November 2004
 + Added color replace toolbar

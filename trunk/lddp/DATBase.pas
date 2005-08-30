@@ -186,7 +186,6 @@ type
 
   TDATGeometric=class(TDATElement)
     protected
-      procedure ProcessDATLine(strText:string); override;
       function GetPoint(idx: Integer): TDATPoint;
       procedure SetPoint(idx: Integer; Value: TDATPoint);
       function GetExtremeValue(Index: Integer): Extended;
@@ -213,6 +212,7 @@ type
   TDATLine=class(TDATGeometric)
     protected
       function GetDATString:string; override;
+      procedure ProcessDATLine(strText:string); override;
 
     public
       constructor Create; override;
@@ -229,6 +229,7 @@ type
   TDATOpLine=class(TDATGeometric)
     protected
       function GetDATString:string; override;
+      procedure ProcessDATLine(strText:string); override;
 
     public
       constructor Create; override;
@@ -256,6 +257,7 @@ type
   TDATTriangle=class(TDATPolygon)
     protected
       function GetDATString:string; override;
+      procedure ProcessDATLine(strText:string); override;
 
     public
       constructor Create; override;
@@ -276,6 +278,7 @@ type
   TDATQuad=class(TDATPolygon)
     protected
       function GetDATString:string; override;
+      procedure ProcessDATLine(strText:string); override;
 
     public
       constructor Create; override;
@@ -752,60 +755,6 @@ begin
   end;
 end;
 
-procedure TDATGeometric.ProcessDATLine(strText:string);
-
-var
-  TmpMatrix: TDATMatrix;
-  TmpLnType, TmpColor: Integer;
-  TempList: TStringList;
-
-begin
-  TempList:= TStringList.Create;
-  TmpMatrix := FDATIdentityMatrix;
-
-  try
-    ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
-
-    try
-      TmpLnType := StrToInt(TempList[0]);
-      if (TmpLnType >= 2) and (TmpLnType <= 5) then
-      begin
-        TmpColor := StrToInt(TempList[1]);
-
-        TmpMatrix[1,1] := StrToFloat(TempList[2]);
-        TmpMatrix[1,2] := StrToFloat(TempList[3]);
-        TmpMatrix[1,3] := StrToFloat(TempList[4]);
-        TmpMatrix[2,1] := StrToFloat(TempList[5]);
-        TmpMatrix[2,2] := StrToFloat(TempList[6]);
-        TmpMatrix[2,3] := StrToFloat(TempList[7]);
-
-        case TmpLnType of
-          3: begin
-               TmpMatrix[3,1] := StrToFloat(TempList[8]);
-               TmpMatrix[3,2] := StrToFloat(TempList[9]);
-               TmpMatrix[3,3] := StrToFloat(TempList[10]);
-             end;
-          4,5: begin
-                 TmpMatrix[3,1] := StrToFloat(TempList[8]);
-                 TmpMatrix[3,2] := StrToFloat(TempList[9]);
-                 TmpMatrix[3,3] := StrToFloat(TempList[10]);
-                 TmpMatrix[4,1] := StrToFloat(TempList[11]);
-                 TmpMatrix[4,2] := StrToFloat(TempList[12]);
-                 TmpMatrix[4,3] := StrToFloat(TempList[13]);
-               end;
-        end;
-
-        intLineType := TmpLnType;
-        Color := TmpColor;
-        Matrix := TmpMatrix;
-      end;
-    except
-    end;
-  finally
-    TempList.Free;
-  end;
-end;
-
 constructor TDATLine.Create;
 begin
   inherited Create;
@@ -822,6 +771,45 @@ begin
             FloatToStr(RoundTo(MatrixVals[2,1], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[2,2], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[2,3], -Abs(PositionDecimalPlaces)));
+end;
+
+procedure TDATLine.ProcessDATLine(strText:string);
+
+var
+  TmpMatrix: TDATMatrix;
+  TmpLnType, TmpColor: Integer;
+  TempList: TStringList;
+
+begin
+  TempList:= TStringList.Create;
+  TmpMatrix := FDATIdentityMatrix;
+
+  try
+    ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
+
+    try
+      TmpLnType := StrToInt(TempList[0]);
+      if TmpLnType = 2 then
+      begin
+        TmpColor := StrToInt(TempList[1]);
+
+        TmpMatrix[1,1] := StrToFloat(TempList[2]);
+        TmpMatrix[1,2] := StrToFloat(TempList[3]);
+        TmpMatrix[1,3] := StrToFloat(TempList[4]);
+        TmpMatrix[2,1] := StrToFloat(TempList[5]);
+        TmpMatrix[2,2] := StrToFloat(TempList[6]);
+        TmpMatrix[2,3] := StrToFloat(TempList[7]);
+
+        intLineType := TmpLnType;
+        Color := TmpColor;
+        Matrix := TmpMatrix;
+      end;
+    except
+      Exit;
+    end;
+  finally
+    TempList.Free;
+  end;
 end;
 
 constructor TDATOpLine.Create;
@@ -846,6 +834,51 @@ begin
             FloatToStr(RoundTo(MatrixVals[4,1], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[4,2], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[4,3], -Abs(PositionDecimalPlaces)));
+end;
+
+procedure TDATOpLine.ProcessDATLine(strText:string);
+
+var
+  TmpMatrix: TDATMatrix;
+  TmpLnType, TmpColor: Integer;
+  TempList: TStringList;
+
+begin
+  TempList:= TStringList.Create;
+  TmpMatrix := FDATIdentityMatrix;
+
+  try
+    ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
+
+    try
+      TmpLnType := StrToInt(TempList[0]);
+      if TmpLnType = 5 then
+      begin
+        TmpColor := StrToInt(TempList[1]);
+
+        TmpMatrix[1,1] := StrToFloat(TempList[2]);
+        TmpMatrix[1,2] := StrToFloat(TempList[3]);
+        TmpMatrix[1,3] := StrToFloat(TempList[4]);
+        TmpMatrix[2,1] := StrToFloat(TempList[5]);
+        TmpMatrix[2,2] := StrToFloat(TempList[6]);
+        TmpMatrix[2,3] := StrToFloat(TempList[7]);
+        TmpMatrix[3,1] := StrToFloat(TempList[8]);
+        TmpMatrix[3,2] := StrToFloat(TempList[9]);
+        TmpMatrix[3,3] := StrToFloat(TempList[10]);
+        TmpMatrix[4,1] := StrToFloat(TempList[11]);
+        TmpMatrix[4,2] := StrToFloat(TempList[12]);
+        TmpMatrix[4,3] := StrToFloat(TempList[13]);
+
+        intLineType := TmpLnType;
+        Color := TmpColor;
+        Matrix := TmpMatrix;
+      end;
+    except
+      Exit;
+    end;
+  finally
+    TempList.Free;
+  end;
 end;
 
 procedure TDATPolygon.ReverseWinding;
@@ -887,6 +920,48 @@ begin
             FloatToStr(RoundTo(MatrixVals[3,3], -Abs(PositionDecimalPlaces)));
 end;
 
+procedure TDATTriangle.ProcessDATLine(strText:string);
+
+var
+  TmpMatrix: TDATMatrix;
+  TmpLnType, TmpColor: Integer;
+  TempList: TStringList;
+
+begin
+  TempList:= TStringList.Create;
+  TmpMatrix := FDATIdentityMatrix;
+
+  try
+    ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
+
+    try
+      TmpLnType := StrToInt(TempList[0]);
+      if TmpLnType = 3 then
+      begin
+        TmpColor := StrToInt(TempList[1]);
+
+        TmpMatrix[1,1] := StrToFloat(TempList[2]);
+        TmpMatrix[1,2] := StrToFloat(TempList[3]);
+        TmpMatrix[1,3] := StrToFloat(TempList[4]);
+        TmpMatrix[2,1] := StrToFloat(TempList[5]);
+        TmpMatrix[2,2] := StrToFloat(TempList[6]);
+        TmpMatrix[2,3] := StrToFloat(TempList[7]);
+        TmpMatrix[3,1] := StrToFloat(TempList[8]);
+        TmpMatrix[3,2] := StrToFloat(TempList[9]);
+        TmpMatrix[3,3] := StrToFloat(TempList[10]);
+
+        intLineType := TmpLnType;
+        Color := TmpColor;
+        Matrix := TmpMatrix;
+      end;
+    except
+      Exit;
+    end;
+  finally
+    TempList.Free;
+  end;
+end;
+
 constructor TDATQuad.Create;
 begin
   inherited Create;
@@ -909,6 +984,51 @@ begin
             FloatToStr(RoundTo(MatrixVals[4,1], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[4,2], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[4,3], -Abs(PositionDecimalPlaces)));
+end;
+
+procedure TDATQuad.ProcessDATLine(strText:string);
+
+var
+  TmpMatrix: TDATMatrix;
+  TmpLnType, TmpColor: Integer;
+  TempList: TStringList;
+
+begin
+  TempList:= TStringList.Create;
+  TmpMatrix := FDATIdentityMatrix;
+
+  try
+    ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
+
+    try
+      TmpLnType := StrToInt(TempList[0]);
+      if TmpLnType = 4 then
+      begin
+        TmpColor := StrToInt(TempList[1]);
+
+        TmpMatrix[1,1] := StrToFloat(TempList[2]);
+        TmpMatrix[1,2] := StrToFloat(TempList[3]);
+        TmpMatrix[1,3] := StrToFloat(TempList[4]);
+        TmpMatrix[2,1] := StrToFloat(TempList[5]);
+        TmpMatrix[2,2] := StrToFloat(TempList[6]);
+        TmpMatrix[2,3] := StrToFloat(TempList[7]);
+        TmpMatrix[3,1] := StrToFloat(TempList[8]);
+        TmpMatrix[3,2] := StrToFloat(TempList[9]);
+        TmpMatrix[3,3] := StrToFloat(TempList[10]);
+        TmpMatrix[4,1] := StrToFloat(TempList[11]);
+        TmpMatrix[4,2] := StrToFloat(TempList[12]);
+        TmpMatrix[4,3] := StrToFloat(TempList[13]);
+
+        intLineType := TmpLnType;
+        Color := TmpColor;
+        Matrix := TmpMatrix;
+      end;
+    except
+      Exit;
+    end;
+  finally
+    TempList.Free;
+  end;
 end;
 
 function StrToDAT(strLine: string): TDATType;
