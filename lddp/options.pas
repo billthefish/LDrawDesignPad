@@ -111,11 +111,8 @@ type
     edLSynthDir: TEdit;
     btLSynth: TBitBtn;
     lbLSynth: TLabel;
-    cboUnitDet: TCheckBox;
-    Memo4: TMemo;
     seDist: TJvValidateEdit;
     seDet: TJvValidateEdit;
-    seUnitDet: TJvValidateEdit;
     seCollinear: TJvValidateEdit;
     sePntAcc: TJvValidateEdit;
     seRotAcc: TJvValidateEdit;
@@ -417,14 +414,12 @@ begin
   LDDPini.WriteString(IniSection, 'edName_Text', edName.Text);
   LDDPini.WriteString(IniSection, 'edSig_Text', edSig.Text);
   LDDPini.WriteFloat(IniSection, 'seDet_Value', seDet.Value);
-  LDDPini.WriteFloat(IniSection, 'seUnitDet_Value', seUnitDet.Value);
   LDDPini.WriteFloat(IniSection, 'seDist_Value', seDist.Value);
   LDDPini.WriteFloat(IniSection, 'seCollinear_Value', seCollinear.Value);
   LDDPini.WriteInteger(IniSection, 'sePntAcc_Value', sePntAcc.Value);
   LDDPini.WriteInteger(IniSection, 'seRotAcc_Value', seRotAcc.Value);
   LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
   LDDPini.WriteBool(IniSection, 'cboDet_Checked', cboDet.Checked);
-  LDDPini.WriteBool(IniSection, 'cboUnitDet_Checked', cboUnitDet.Checked);
   LDDPini.WriteBool(IniSection, 'cboWaitForFinish_Checked', cboWaitForFinish.Checked);
   LDDPini.WriteBool(IniSection, 'cboShowCommand_Checked', cboShowCommand.Checked);
   LDDPini.WriteBool(IniSection, 'cboMarginNumbers_Checked', cboMarginNumbers.Checked);
@@ -490,8 +485,6 @@ begin
   edSig.Text := LDDPini.ReadString(IniSection, 'edSig_Text', '');
   seDet.Value := LDDPini.ReadFloat(IniSection, 'seDet_Value', 0.01);
   if seDet.Value = 0 then seDet.Value := 0.01;
-  seUnitDet.Value := LDDPini.ReadFloat(IniSection, 'seUnitDet_Value', 0.01);
-  if seUnitDet.Value = 0 then seUnitDet.Value := 0.01;
   seDist.Value := LDDPini.ReadFloat(IniSection, 'seDist_Value', 0.1);
   if seDist.Value = 0 then seDist.Value := 0.1;
   seCollinear.Value := LDDPini.ReadFloat(IniSection, 'seCollinear_Value', 0.0001);
@@ -502,7 +495,6 @@ begin
   if seRotAcc.Value = 0 then seRotAcc.Value := 4;
   cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
   cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
-  cboUnitDet.Checked := LDDPini.ReadBool(IniSection, 'cboUnitDet_Checked', false);
   cboShowCommand.Checked := LDDPini.ReadBool(IniSection, 'cboShowCommand_Checked', false);
   cboMarginNumbers.Checked := LDDPini.ReadBool(IniSection, 'cboMarginNumbers_Checked', false);
   SynLDRSyn1.ColorAttri.Background := LDDPini.ReadInteger(IniSection, 'SynLDRSyn1_ColorAttriBackground', SynLDRSyn1.ColorAttri.Background);

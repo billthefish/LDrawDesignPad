@@ -1130,15 +1130,15 @@ begin
   Clear;
   Line1 := TDATSubPart.Create;
   Line2 := TDATSubPart.Create;
-  Line1.Matrix := FStartPoint;
-  Line2.Matrix := FEndPoint;
-  Line1.Color := FColor;
-  Line2.Color := FColor;
+  Line1.Matrix := StartMatrix;
+  Line2.Matrix := EndMatrix;
+  Line1.Color := Color;
+  Line2.Color := Color;
 
   Segments := 0;
   BezLength := 0;
   LengthMod := 0;
-  
+
   case FObjectType of
     boHoseTabs:
     begin

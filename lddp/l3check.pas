@@ -32,7 +32,6 @@ function L3CheckLine(Line: string): string;
 
 var
   DetThreshold: Extended = 0;
-  UnitDetThreshold: Extended = 0;
   DistThreshold: Extended = 0;
   CollinearPointsThreshold: Extended = 0.0001;
 
@@ -304,11 +303,6 @@ begin
         Result := 'Vertices not coplaner (' + FloatToStr(maxdist) + ')';
         Exit;
       end;
-    end;
-
-    if (UnitDetThreshold > 0)  then
-    begin
-      //Unit Det Check Here
     end;
   end;
 
