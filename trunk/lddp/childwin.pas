@@ -21,10 +21,10 @@ interface
 
 uses
   windowsspecific,
-  Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, Synedit,
+  Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, SynEdit,
   SynHighlighterLDraw, ExtCtrls, Classes, Types, ComCtrls, Controls,
-  SyneditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch, SynEditMiscProcs,
-  DATBase, DATModel;
+  SynEditKeyCmds, SynEditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch,
+  SynEditMiscProcs, DATBase, DATModel;
 
 type
   TfrEditorChild = class(TForm)
@@ -130,10 +130,8 @@ Parameter: none
 Return value: none
 ----------------------------------------------------------------------}
 var
-  i: Integer;
+  i, endline: Integer;
   DLine: TDATType;
-  DModel: TDATModel;
-  tempBB, tempBE: TBufferCoord;
 
 begin
   if memo.modified then
@@ -144,7 +142,7 @@ begin
   frMain.acUndo.Enabled:=Memo.CanUndo;
   frMain.acRedo.Enabled:=Memo.CanRedo;
   frMain.StatusBar.Panels[1].text:=inttostr(memo.CaretY)+':'+inttostr(memo.CaretX);
-          
+
   if memo.SelLength = 0 then
   begin
     DLine := StrToDAT(memo.Lines[memo.CaretY - 1]);
@@ -153,19 +151,23 @@ begin
   end
   else
   begin
-    DModel := TDATModel.Create;
-    tempBB := memo.BlockBegin;
-    tempBE := memo.BlockEnd;
+    if memo.BlockEnd.Char > 1 then
+      endline := memo.BlockEnd.Line - 1
+    else
+      endline := memo.BlockEnd.Line - 2;
 
-    ExpandSelection;
-    DModel.ModelText := memo.SelText;
-    for i := 0 to DModel.Count - 1 do
-      if DModel[i].LineType = 1 then
-        frMain.acInline.enabled := True;
-    DModel.Free;
+    frMain.acInline.Enabled := False;
 
-    memo.BlockBegin := tempBB;
-    memo.BlockEnd := tempBE;
+    for i := memo.BlockBegin.Line - 1 to endline do
+    begin
+      DLine := StrToDAT(memo.Lines[i]);
+      if DLine.LineType = 1 then
+      begin
+        frMain.acInline.Enabled := True;
+        Break;
+      end;
+      DLine.Free;
+    end;
   end;
 
   if frMain.slPlugins.Count > 0 then
@@ -248,7 +250,7 @@ begin
     L3PErrorLine := StrToInt(lbinfo.Items[lbinfo.Itemindex].SubItems[0]);
     memo.TopLine := L3PErrorLine;
     memo.CaretXY := BufferCoord(1, L3PErrorLine);
-    
+
     // Highlight errorline
     memo.BlockBegin := memo.CaretXY;
     memo.BlockEnd := BufferCoord(1, L3PErrorLine + 1);
@@ -292,11 +294,12 @@ end;
 procedure TfrEditorChild.memoGutterClick(Sender: TObject;
   Button: TMouseButton; X, Y, Line: Integer; Mark: TSynEditMark);
 begin
-  with memo do
-  begin
-    BlockBegin := CaretXY;
-    BlockEnd := BufferCoord(Length(Lines[Line-1]) + 1 , CaretY);
-  end;
+  if memo.SelLength = 0 then
+    with memo do
+    begin
+      BlockBegin := CaretXY;
+      BlockEnd := BufferCoord(Length(Lines[Line-1]) + 1 , CaretY);
+    end;
 end;
 
 procedure TfrEditorChild.lbInfoSelectItem(Sender: TObject; Item: TListItem;
