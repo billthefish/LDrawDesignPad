@@ -41,7 +41,6 @@ type
     procedure Button1Click(Sender: TObject);
     procedure lbInfoDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure memoClick(Sender: TObject);
     procedure memoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure memoGutterClick(Sender: TObject; Button: TMouseButton; X, Y,
@@ -100,24 +99,16 @@ Description: Checks if form has been changed outside the editor by
 Parameter: Standard
 Return value: Standard
 ----------------------------------------------------------------------}
-var r : integer;
-    SR : tSearchRec;
+var
+  r : integer;
+  SR : tSearchRec;
 
 begin
   r := FindFirst(self.caption, faAnyFile, SR);
   if r = 0 then
-  begin
-    if (FileDateToDateTime(SR.Time)<>filedatetime) and
+    if (FileDateToDateTime(SR.Time) <> filedatetime) and
        (MessageDlg('File has been changed outside the editor!'+#13+#10+'Reload and loose all changes?', mtWarning, [mbYes, mbNo], 0)=mrYes) then
-        begin
-          Memo.Lines.LoadFromFile(caption);
-          FindFirst(caption, faAnyFile, SR);
-          filedatetime:=FileDateToDateTime(SR.Time);
-          FindClose(sr);
-          Memo.modified:=false;
-          updatecontrols;
-        end;
-  end;
+      frMain.LoadFile(frMain.ActiveMDIChild);
   FindClose(SR);
 
   UpdateControls;
@@ -206,23 +197,23 @@ Description: Save query when closing the editor child form
 Parameter: Standard
 Return value: Standard
 ----------------------------------------------------------------------}
-
 begin
   if memo.modified then
   begin
     case MessageDlg('Save changes to '+caption+'?'+#13+#10+''+#13+#10+'Yes: Saves the changes and closes this document.'+#13+#10+'No: Closes the document without saving any changes.'+#13+#10+'Cancel: Keeps the document open', mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
-
       mrYes: begin
                frMain.acFileSave.Execute;
-               canclose:=true;
+               canclose := true;
              end;
-      mrNo : canclose:=true;
-      mrCancel: canclose:=false;
+      mrNo : canclose := true;
+      mrCancel: canclose := false;
 
     end;
   end
-    else canclose:=true;
-  if ((canclose=true) and (FileExists(tempFilename))) then
+  else
+    canclose := true;
+
+  if canclose and (FileExists(tempFilename)) then
     DeleteFile(tempFilename);
 end;
 
@@ -268,16 +259,6 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   tmpFilename:=frmain.GetTMPFilename+'.tmp';
-end;
-
-procedure TfrEditorChild.memoClick(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Update controls when entering the memo
-Parameter: Standard
-Return value: Standard
-----------------------------------------------------------------------}
-begin
-  UpdateControls;
 end;
 
 procedure TfrEditorChild.memoKeyDown(Sender: TObject; var Key: Word;
