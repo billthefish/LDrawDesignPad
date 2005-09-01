@@ -16,9 +16,11 @@ object frEditorChild: TfrEditorChild
   OldCreateOrder = True
   Position = poDefault
   Visible = True
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnPaint = FormActivate
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
@@ -111,7 +113,7 @@ object frEditorChild: TfrEditorChild
     Font.Style = []
     PopupMenu = frMain.pmMemo
     TabOrder = 0
-    OnClick = memoClick
+    OnClick = MemoChange
     OnKeyDown = MemoKeyDown
     OnKeyUp = MemoKeyDown
     Gutter.Font.Charset = DEFAULT_CHARSET

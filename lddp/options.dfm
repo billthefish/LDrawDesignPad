@@ -142,7 +142,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 521
     Height = 329
-    ActivePage = tsExternal
+    ActivePage = TabSheet1
     Align = alClient
     Images = ImageList1
     MultiLine = True
@@ -723,7 +723,7 @@ object frOptions: TfrOptions
         end
         object btnAddExternal: TButton
           Left = 232
-          Top = 144
+          Top = 152
           Width = 121
           Height = 33
           Caption = 'Add New Program'
@@ -732,7 +732,7 @@ object frOptions: TfrOptions
         end
         object btnDelExternal: TButton
           Left = 232
-          Top = 176
+          Top = 184
           Width = 121
           Height = 33
           Caption = 'Delete Current Program'
