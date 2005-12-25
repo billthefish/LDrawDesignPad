@@ -20,7 +20,7 @@ unit about;
 interface
 
 uses
-  Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  gnugettext, Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
   ExtCtrls, SysUtils, Buttons;
   
 type
@@ -32,6 +32,7 @@ type
     Memo1: TMemo;
     BitBtn1: TBitBtn;
     procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -52,9 +53,14 @@ procedure TfrAboutBox.FormShow(Sender: TObject);
 
 begin
   if GetAppVersion(Application.ExeName) <> '' then
-    Version.Caption := 'Version ' + GetAppVersion(Application.ExeName)
+    Version.Caption := Version.Caption + ': ' + GetAppVersion(Application.ExeName)
   else
-    Version.Caption := 'Version information not available';
+    Version.Caption := _('Version information not available');
+end;
+
+procedure TfrAboutBox.FormCreate(Sender: TObject);
+begin
+  TranslateComponent (self);
 end;
 
 end.

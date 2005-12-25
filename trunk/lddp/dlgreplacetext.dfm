@@ -4,6 +4,7 @@ inherited TextReplaceDialog: TTextReplaceDialog
   Caption = 'Replace text'
   ClientHeight = 168
   OldCreateOrder = True
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Label2: TLabel [1]

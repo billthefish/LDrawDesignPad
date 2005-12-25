@@ -20,12 +20,13 @@ unit splash;
 interface
 
 uses
-  Forms,Controls, StdCtrls, Graphics, Classes, ExtCtrls;
+  gnugettext, Forms,Controls, StdCtrls, Graphics, Classes, ExtCtrls;
 
 type
   TfrSplash = class(TForm)
     Image1: TImage;
     lbState: TLabel;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -38,5 +39,10 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TfrSplash.FormCreate(Sender: TObject);
+begin
+  TranslateComponent (self);
+end;
 
 end.

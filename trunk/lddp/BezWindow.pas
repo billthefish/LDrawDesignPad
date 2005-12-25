@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, DATBase, DATModel, Math, Registry, IniFiles,
   JvEdit, Mask, JvMaskEdit, JvExStdCtrls, JvValidateEdit, Buttons;
 
@@ -56,10 +56,10 @@ type
     feLength: TJvValidateEdit;
     procedure feLengthChange(Sender: TObject);
     procedure cbxContEnableClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure feCP1XChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
 
   public
     HoseDATCode: TDATBendibleObject;
@@ -87,8 +87,7 @@ begin
     end
     else
     begin
-      lblMessage.Caption := 'Distance between the end points is longer than the ' +
-                            'specified length';
+      lblMessage.Caption := _('Distance between the end points is longer than the specified length');
       btnGenerate.Enabled := False;
       cbxContEnable.Enabled := False;
       gbxCont1.Enabled := False;
@@ -106,6 +105,7 @@ end;
 
 procedure TfrmDATCurve.FormCreate(Sender: TObject);
 begin
+  TranslateComponent (self);
   Line1:=TDATSubPart.Create;
   Line2:=TDATSubPart.Create;
   HoseDATCode := TDATBendibleObject.Create;
@@ -123,43 +123,43 @@ begin
 
   if ((Line1.Filename = '750.dat') and (Line2.Filename = '750.dat')) then
   begin
-    lblType2.Caption := 'Hose Flexible 8.5L With Tabs';
+    lblType2.Caption := _('Hose Flexible 8.5L With Tabs');
     feLength.Value := 130;
   end
   else if ((Line1.Filename = '752.dat') and (Line2.Filename = '752.dat')) then
   begin
-    lblType2.Caption := 'Hose Flexible 8.5L Without Tabs';
+    lblType2.Caption := _('Hose Flexible 8.5L Without Tabs');
     HoseDATCode.ObjectType := boHoseNoTabs;
     feLength.Value := 130;
   end
   else if ((Line1.Filename = '757.dat') and (Line2.Filename = '760.dat')) then
   begin
-    lblType2.Caption := 'Hose Flexible 12L';
+    lblType2.Caption := _('Hose Flexible 12L');
     HoseDATCode.ObjectType := boHose12;
     feLength.Value := 188;
   end
   else if ((Line1.Filename = '79.dat') and (Line2.Filename = '79.dat')) then
   begin
-    lblType2.Caption := 'Technic Ribbed Hose';
-    lblLength.Caption := 'Enter number of notches to use:';
+    lblType2.Caption := _('Technic Ribbed Hose');
+    lblLength.Caption := _('Enter number of notches to use:');
     HoseDATCode.ObjectType := boRibbedHose;
     feLength.Visible := True;
   end
 
   else if ((Line1.Filename = 'stud3a.dat') and (Line2.Filename = 'stud3a.dat')) then
   begin
-    lblType2.Caption := 'Technic Flexible Axle';
+    lblType2.Caption := _('Technic Flexible Axle');
     lblLength.Caption :=
-      'Enter total length of the axle in LDU (1 Brick Width = 20 LDU) :';
+      _('Enter total length of the axle in LDU (1 Brick Width = 20 LDU) :');
     feLength.Visible := True;
     HoseDATCode.ObjectType := boFlexAxle;
   end
 
   else if ((Line1.Filename = '76.dat') and (Line2.Filename = '76.dat')) then
   begin
-    lblType2.Caption := 'Technic Flex-System Hose';
+    lblType2.Caption := _('Technic Flex-System Hose');
     lblLength.Caption :=
-      'Enter total length of the hose in LDU (1 Brick Width = 20 LDU) :';
+      _('Enter total length of the hose in LDU (1 Brick Width = 20 LDU) :');
     feLength.Visible := True;
     HoseDATCode.ObjectType := boFlexHose;
   end
@@ -167,7 +167,7 @@ begin
   else
   begin
     lblMessage.Caption :=
-      'Unsupported File Types.  Read the ReadMe file for supported file types';
+      _('Unsupported File Types.  Read the ReadMe file for supported file types');
   end;
 end;
 

@@ -7,7 +7,7 @@ object frAboutBox: TfrAboutBox
   VertScrollBar.Range = 225
   ActiveControl = Memo1
   BorderStyle = bsDialog
-  Caption = 'Info'
+  Caption = 'About LDraw Design Pad'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,6 +16,7 @@ object frAboutBox: TfrAboutBox
   Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -152,9 +153,9 @@ object frAboutBox: TfrAboutBox
     object ProductName: TLabel
       Left = 48
       Top = 13
-      Width = 115
+      Width = 89
       Height = 13
-      Caption = 'LDDesignPad for LDraw'
+      Caption = 'LDraw Design Pad'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -181,9 +182,9 @@ object frAboutBox: TfrAboutBox
       Width = 345
       Height = 121
       Lines.Strings = (
-        'LDraw DesignPad'
+        'LDraw Design Pad'
         ''
-        'Copyright (C) 2002-2005 by the LDDP contributors'
+        'Copyright (C) 2002-2006 by the LDDP contributors'
         ''
         ' Orion Pobursky'
         ' Stephan Schonberg'
@@ -191,22 +192,21 @@ object frAboutBox: TfrAboutBox
         ''
         'Special thanks to:'
         ''
-        ' Lars C. Hassing-'
+        'Lars C. Hassing'
         ''
-        '    Error Check feature derived from L3Check.cpp, L3Math.cpp'
-        '    Part of the L3 project for handling LDraw *.dat files'
-        '    Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)'
+        'Error Check feature derived from L3Check.cpp, L3Math.cpp'
+        'Part of the L3 project for handling LDraw *.dat files'
+        'Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)'
         ''
-        ' Fredrik Gl'#246'ckner-'
+        'Fredrik Gl'#246'ckner'
         ''
-        '    Bendible Object Generator feature derived from '
-        '      Emacs LDraw Major-Mode '
-        
-          '    Copyright (C) 1999-2002  Fredrik Gl'#246'ckner (fredrigl@math.uio' +
-          '.no)'
+        'Bendible Object Generator feature derived from '
+        'Emacs LDraw Major-Mode '
+        'Copyright (C) 1999-2002  Fredrik Gl'#246'ckner (fredrigl@math.uio.no)'
         ''
-        ' Willy Tschager'
-        ' Anders Isaksson'
+        'Willy Tschager'
+        'Anders Isaksson'
+        'Kevin Clague'
         ''
         'This program is free software; you can redistribute it '
         'and/or modify it under the terms of the GNU General '

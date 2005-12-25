@@ -20,7 +20,7 @@ unit BMP2LDraw;
 interface
 
 uses
-  SysUtils, Graphics, Controls, Forms, Menus,
+  gnugettext, SysUtils, Graphics, Controls, Forms, Menus,
   Types, Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls,
   Classes, childwin, DatBase;
 
@@ -72,6 +72,7 @@ type
     procedure BitBtn6Click(Sender: TObject);
     procedure BitBtn4Click(Sender: TObject);
     procedure TabSheet3Show(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private-Deklarationen }
     slConvertColors:Tstringlist;
@@ -180,7 +181,7 @@ begin
     z2:=0; x3:=0; z3:=0;
     y1:=0; y2:=0; y3:=0; y4:=0;
     if strtofloat(edwidth.text)=0 then begin
-      MessageDlg('LDraw unit size can'+#39+'t be 0.0 !', mtError, [mbOK], 0);
+      MessageDlg(_('LDraw unit size cannot be 0.0 !'), mtError, [mbOK], 0);
       Exit;
     end;
   end
@@ -188,7 +189,7 @@ begin
        try
           quad.DATString:=edQuad.text;
         except
-          MessageDlg('You entered an invalid Quadliteral line!', mtError, [mbOK], 0);
+          MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
           exit;
         end;
       try
@@ -210,7 +211,7 @@ begin
 
 
       except
-        MessageDlg('You entered an invalid Quadliteral line!', mtError, [mbOK], 0);
+        MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
         Exit;
       end;
     end;
@@ -327,7 +328,7 @@ begin
     sr.Free;
     pnProgress.Visible:=False;
     frBMP2LDrawMain.Enabled:=true;
-    MessageDlg('Done!', mtInformation, [mbOK], 0);
+    MessageDlg(_('Done!'), mtInformation, [mbOK], 0);
     quad.free;
     ModalResult:=mrOK;
 end;
@@ -368,7 +369,7 @@ end;
 
 procedure TfrBMP2LDrawMain.BitBtn6Click(Sender: TObject);
 begin
-  edit1.Text:='None';
+  edit1.Text:=_('None');
   edit1.Color:=clWindow;
   edit1.Font.Color:=clBlack;
 end;
@@ -387,6 +388,11 @@ begin
     else begin
       btSave.Enabled:=(edQuad.Text<>'');
     end;
+end;
+
+procedure TfrBMP2LDrawMain.FormCreate(Sender: TObject);
+begin
+  TranslateComponent (self);
 end;
 
 end.

@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: dlgreplacetext.pas,v 1.8 2003-11-11 00:29:22 c_schmitz Exp $
+$Id: dlgreplacetext.pas,v 1.9 2005-12-25 23:37:05 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -41,7 +41,7 @@ unit dlgReplaceText;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  gnugettext, Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   dlgSearchText, StdCtrls, ExtCtrls;
 
 type
@@ -49,6 +49,7 @@ type
     Label2: TLabel;
     cbReplaceText: TComboBox;
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCreate(Sender: TObject);
   private
     function GetReplaceText: string;
     function GetReplaceTextHistory: string;
@@ -114,6 +115,12 @@ begin
         cbReplaceText.Items.Insert(0, s);
     end;
   end;
+end;
+
+procedure TTextReplaceDialog.FormCreate(Sender: TObject);
+begin
+  inherited;
+  TranslateComponent (self);
 end;
 
 end.

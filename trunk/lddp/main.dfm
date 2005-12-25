@@ -147,7 +147,6 @@ object frMain: TfrMain
       object ToolButton13: TToolButton
         Left = 5
         Top = 0
-        Hint = 'Create a new file (Ctrl-N)'
         Action = acFileNew
       end
       object ToolButton14: TToolButton
@@ -899,22 +898,25 @@ object frMain: TfrMain
     object acEditCut: TEditCut
       Category = 'Editor'
       Caption = '&Cut'
-      Hint = 'Cut (Ctrl-X)|Cut out the marked text (Ctrl-X)'
+      Hint = 'Cut|Cut out the marked text'
       ImageIndex = 0
+      ShortCut = 16472
       OnExecute = acEditCutExecute
     end
     object acEditCopy: TEditCopy
       Category = 'Editor'
       Caption = 'C&opy'
-      Hint = 'Copy (Ctrl-C)|Copy the marked text to clipboard (Ctrl-C)'
+      Hint = 'Copy|Copy the marked text to clipboard'
       ImageIndex = 1
+      ShortCut = 16451
       OnExecute = acEditCopyExecute
     end
     object acEditPaste: TEditPaste
       Category = 'Editor'
       Caption = '&Paste'
-      Hint = 'Paste (Ctrl-V)|Paste text from clipboard (Ctrl-V)'
+      Hint = 'Paste|Paste text from clipboard'
       ImageIndex = 2
+      ShortCut = 16470
       OnExecute = acEditPasteExecute
     end
     object acWindowCascade: TWindowCascade
@@ -994,7 +996,7 @@ object frMain: TfrMain
     object acMLCad: TAction
       Category = 'Externals'
       Caption = 'MLCad'
-      Hint = 'Start ML-Cad'
+      Hint = 'Start MLCad'
       ImageIndex = 25
       OnExecute = acMLCadExecute
     end
@@ -1289,6 +1291,7 @@ object frMain: TfrMain
     object acTriangleCombine: TAction
       Category = 'Editor'
       Caption = 'Combine &Triangles Into Quad'
+      Hint = 'Combine 2 Triangles into 1 Quad'
       ImageIndex = 40
       ShortCut = 16468
       OnExecute = acTriangleCombineExecute

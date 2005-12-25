@@ -20,7 +20,15 @@ program LDDesignPad;
 {%File 'readme.txt'}
 
 uses
+  gnugettext,
   Forms,
+  //Needed for gnugettext global ignores
+  Graphics,
+  JvValidateEdit,
+  ActnList,
+  Dialogs,
+  IdHTTP,
+  //Program Forms
   main in 'main.pas' {frMain},
   childwin in 'childwin.pas' {frEditorChild},
   about in 'about.pas' {frAboutBox},
@@ -45,6 +53,14 @@ uses
 {$R *.res}
 
 begin
+  TP_GlobalIgnoreClass(TFont);
+  TP_GlobalIgnoreClass(TIdHTTP);
+  TP_GlobalIgnoreClassProperty(TJvValidateEdit,'CheckChars');
+  TP_GlobalIgnoreClassProperty(TContainedAction,'Category');
+  TP_GlobalIgnoreClassProperty(TCustomAction,'SecondaryShortCuts');
+  TP_GlobalIgnoreClassProperty(TOpenDialog,'DefaultExt');
+  TP_GlobalIgnoreClassProperty(TSaveDialog,'DefaultExt');
+
   try
     screen.cursor:=-11;
     Application.Initialize;

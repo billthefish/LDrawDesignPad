@@ -20,7 +20,7 @@ unit modeltreeview;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, ComCtrls, ExtCtrls;
 
 type
@@ -30,6 +30,7 @@ type
     BitBtn1: TBitBtn;
     procedure FormShow(Sender: TObject);
     procedure tvModelDblClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
   public
     procedure AddNodes(ANode: TTreeNode; AString: string);
@@ -92,6 +93,11 @@ procedure TfrModelTreeView.tvModelDblClick(Sender: TObject);
 begin
   frMain.CreateMDIChild(ExtractFilePath(frMain.ActiveMDIChild.Caption) + tvModel.Selected.Text, False);
   ModalResult := mrOK;
+end;
+
+procedure TfrModelTreeView.FormCreate(Sender: TObject);
+begin
+  TranslateComponent (self);
 end;
 
 end.
