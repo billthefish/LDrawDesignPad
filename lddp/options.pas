@@ -20,7 +20,7 @@ unit options;
 interface
 
 uses
-  Dialogs, Forms, SysUtils, Graphics,
+  gnugettext, Dialogs, Forms, SysUtils, Graphics,
   ImgList, Controls, Mask, Inifiles, StdCtrls,
   ExtCtrls, CheckLst, ComCtrls, Buttons, Classes, FileCtrl,
   Menus, JvExMask, JvSpin, JvExStdCtrls, JvEdit, JvValidateEdit,
@@ -154,6 +154,7 @@ type
     procedure lbxExternalClick(Sender: TObject);
     procedure edExternalNameChange(Sender: TObject);
     procedure btnDelExternalClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
 
   private
     SelectedElement: TSynHighlighterAttributes;
@@ -181,50 +182,56 @@ uses main, windowsspecific;
 
 procedure TfrOptions.UpdateControls;
 
+var
+  strFound, strNotFound: string;
+
 begin
+  strFound := _('Found!');
+  strNotFound := _('Not found!');
+
   if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
     lbLDraw.font.Color:=clGreen;
-    lbldraw.Caption:='Found!';
+    lbldraw.Caption:= strFound;
   end
     else begin
       lbLDraw.font.Color:=clRed;
-      lbldraw.Caption:='Not found!';
+      lbldraw.Caption:= strNotFound;
     end;
 
   if FileExists(frOptions.edLDViewDir.text+'\LDView.exe') then begin
     lbLDView.font.Color:=clGreen;
-    lbLDView.Caption:='Found!';
+    lbLDView.Caption:=strFound;
   end
     else begin
       lbLDView.font.Color:=clRed;
-      lbLDView.Caption:='Not found!';
+      lbLDView.Caption:=strNotFound;
     end;
 
   if FileExists(frOptions.edMLCADDir.text+'\MLCAD.exe') then begin
     lbMLCAD.font.Color:=clGreen;
-    lbMLCAD.Caption:='Found!';
+    lbMLCAD.Caption:=strFound;
   end
     else begin
       lbMLCAD.font.Color:=clRed;
-      lbMLCAD.Caption:='Not found!';
+      lbMLCAD.Caption:=strNotFound;
     end;
 
   if FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe') then begin
     lbL3Lab.font.Color:=clGreen;
-    lbL3Lab.Caption:='Found!';
+    lbL3Lab.Caption:=strFound;
   end
     else begin
       lbL3Lab.font.Color:=clRed;
-      lbL3Lab.Caption:='Not found!';
+      lbL3Lab.Caption:=strNotFound;
     end;
 
   if FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe') then begin
     lbLSynth.font.Color:=clGreen;
-    lbLSynth.Caption:='Found!';
+    lbLSynth.Caption:=strFound;
   end
     else begin
       lbLSynth.font.Color:=clRed;
-      lbLSynth.Caption:='Not found!';
+      lbLSynth.Caption:=strNotFound;
     end;
 
 
@@ -232,11 +239,11 @@ begin
     else
       if FileExists(frOptions.edExternal.text) then begin
         lbExternal.font.Color:=clGreen;
-        lbExternal.Caption:='Found!';
+        lbExternal.Caption:=strFound;
       end
         else begin
           lbExternal.font.Color:=clRed;
-          lbExternal.Caption:='Not found!';
+          lbExternal.Caption:=strNotFound;
         end;
 
   frMain.mnuUserDefined.Enabled := ExternalProgramList.Count > 0;
@@ -246,7 +253,7 @@ end;
 
 procedure TfrOptions.FormShow(Sender: TObject);
 begin
-  OpenDialog.Filter := 'Executibles (*.*)|*.exe';
+  OpenDialog.Filter := _('Executibles') + '(*.*)|*.exe';
   lstElement.ItemIndex := -1;
   SelectedElement := nil;
   shForeground.Brush.Color := clBtnFace;
@@ -288,7 +295,7 @@ procedure TfrOptions.btLDrawClick(Sender: TObject);
 var strDir:string;
 begin
   strDir:=edLdrawDir.Text;
-  if SelectDirectory('Choose LDraw Library Location','',strDir) then edLdrawDir.Text:=strDir;
+  if SelectDirectory(_('Choose LDraw Library Location'),'',strDir) then edLdrawDir.Text:=strDir;
   UpdateControls;
 end;
 
@@ -296,7 +303,7 @@ procedure TfrOptions.btLDViewClick(Sender: TObject);
 var strDir:string;
 begin
   strDir:=edLDViewDir.Text;
-  if SelectDirectory('Choose LDView Location','',strDir) then edLDViewDir.Text:=strDir;
+  if SelectDirectory(_('Choose LDView Location'),'',strDir) then edLDViewDir.Text:=strDir;
   UpdateControls;
 end;
 
@@ -304,7 +311,7 @@ procedure TfrOptions.btMLCadClick(Sender: TObject);
 var strDir:string;
 begin
   strDir:=edMLCadDir.Text;
-  if SelectDirectory('Choose LDView Location','',strDir) then edMLCadDir.Text:=strDir;
+  if SelectDirectory(_('Choose LDView Location'),'',strDir) then edMLCadDir.Text:=strDir;
   UpdateControls;
 end;
 
@@ -312,7 +319,7 @@ procedure TfrOptions.btL3LabClick(Sender: TObject);
 var strDir:string;
 begin
   strDir:=edL3LabDir.Text;
-  if SelectDirectory('Choose LDView Location','',strDir) then edL3LabDir.Text:=strDir;
+  if SelectDirectory(_('Choose LDView Location'),'',strDir) then edL3LabDir.Text:=strDir;
   UpdateControls;
 end;
 
@@ -320,14 +327,14 @@ procedure TfrOptions.btLSynthClick(Sender: TObject);
 var strDir:string;
 begin
   strDir:=edLSynthDir.Text;
-  if SelectDirectory('Choose lynthcp Location','',strDir) then edLSynthDir.Text:=strDir;
+  if SelectDirectory(_('Choose lynthcp Location'),'',strDir) then edLSynthDir.Text:=strDir;
   UpdateControls;
 end;
 
 procedure TfrOptions.btExternalClick(Sender: TObject);
 begin
   OpenDialog.InitialDir := ExtractFileDir(edExternal.Text);
-  OpenDialog.Title := 'Select Program Location';
+  OpenDialog.Title := _('Select Program Location');
   if OpenDialog.Execute then edExternal.Text:=OpenDialog.FileName;
   UpdateControls;
 end;
@@ -689,14 +696,14 @@ procedure TfrOptions.lbxExternalDblClick(Sender: TObject);
 
 begin
   lbxExternal.ItemIndex := -1;
-  edExternalName.Text := 'New Program';
+  edExternalName.Text := _('New Program');
   edParameters.Text := '';
   edExternal.Text := '';
   cboShowCommand.Checked := False;
   cboWaitForFinish.Checked := False;
   rgStyle.ItemIndex := -1;
-  MakeExternalMenuItem(ExternalProgramList.Add('"New Program",,,0,0,0'));
-  lbxExternal.ItemIndex := lbxExternal.Items.Add('New Program');
+  MakeExternalMenuItem(ExternalProgramList.Add('"' + _('New Program') + '",,,0,0,0'));
+  lbxExternal.ItemIndex := lbxExternal.Items.Add(_('New Program'));
   UpdateControls;
 end;
 
@@ -746,7 +753,7 @@ begin
   begin
     if edExternalName.Text = '' then
     begin
-      ShowMessage('Program Name cannot be blank');
+      ShowMessage(_('Program Name cannot be blank'));
       edExternalName.Text := frMain.mnuUserDefined.Items[lbxExternal.ItemIndex].Caption;
     end
     else
@@ -806,6 +813,11 @@ begin
     rgStyle.ItemIndex := -1;
     UpdateControls;
   end;
+end;
+
+procedure TfrOptions.FormCreate(Sender: TObject);
+begin
+  TranslateComponent (self);
 end;
 
 end.

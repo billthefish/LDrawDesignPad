@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: dlgconfirmreplace.pas,v 1.10 2003-11-11 00:29:22 c_schmitz Exp $
+$Id: dlgconfirmreplace.pas,v 1.11 2005-12-25 23:37:05 billthefish Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -41,7 +41,7 @@ unit dlgConfirmReplace;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  gnugettext, Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls;
 
 type
@@ -73,6 +73,7 @@ resourcestring
 
 procedure TConfirmReplaceDialog.FormCreate(Sender: TObject);
 begin
+  TranslateComponent (self);
   Image1.Picture.Icon.Handle := LoadIcon(0, IDI_QUESTION);
 end;
 

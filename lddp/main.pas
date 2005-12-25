@@ -20,7 +20,7 @@ unit main;
 interface
 
 uses
-  windows, forms, windowsspecific, registry, messages, Dialogs, SynEditPrint,
+  gnugettext, windows, forms, windowsspecific, registry, messages, Dialogs, SynEditPrint,
   SynEditHighlighter, SysUtils, Synedit, SynHighlighterLDraw, ExtCtrls, Menus,
   ImgList, StdActns, Types, SynHighlighterCpp, SynHighlighterPas,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, Classes,
@@ -614,7 +614,7 @@ begin
       updatecontrols;
     end
     else
-      MessageDlg('File '''+Caption+''' not found!', mtError, [mbOK], 0);
+      MessageDlg(_('File ') + Caption + _(' not found'), mtError, [mbOK], 0);
 end;
 
 procedure TfrMain.CreateMDIChild(const CaptionName: string; new:boolean);
@@ -724,7 +724,7 @@ begin
     ActiveMDIChild.Tag := 0;
   end
   else
-    MessageDlg('File '''+ (Sender as TMenuItem).Caption +''' not found!', mtError, [mbOK], 0);
+    MessageDlg(_('File ') + (Sender as TMenuItem).Caption + _(' not found!'), mtError, [mbOK], 0);
 end;
 
 
@@ -800,7 +800,7 @@ begin
   SplashScreen := TfrSplash.Create(Application);
   try
     //Show splash screen
-    SplashScreen.lbState.Caption:='Initializing plugins...';
+    SplashScreen.lbState.Caption:=_('Initializing plugins...');
     SplashScreen.show;
     SplashScreen.update;
     screen.cursor:=-11;
@@ -920,7 +920,8 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
-  if MessageDlg('Reload last saved version?'+#13+#10+'All changes will be lost!', mtConfirmation, [mbYes, mbNo], 0)=mrYes
+  if MessageDlg(_('Reload last saved version?') + #13#10 +
+                _('All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes
     then LoadFile(ActiveMDIChild);
 end;
 
@@ -932,6 +933,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+  TranslateComponent (self);
   DragAcceptFiles( Handle,True ) ;
 end;
 
@@ -1012,7 +1014,7 @@ Return value: None
 ----------------------------------------------------------------------}
 
 var
-  s: string;
+  s, strid: string;
   i, j: Integer;
   errorfound: Boolean;
   DATModel1: TDATModel;
@@ -1072,6 +1074,7 @@ begin
 
   DATModel1.ModelText := (ActiveMDIChild as TfrEditorChild).memo.Lines.Text;
 
+  strid := 'Identical to line';
   for i := 0 to DATModel1.Count - 1 do
     if DATModel1[i] is TDATElement then
     begin
@@ -1083,26 +1086,26 @@ begin
           if DATModel1[j].LineType = DATModel1[i].LineType then
             case DATModel1[j].LineType of
                1: if DATModel1[i].DATString = DATModel1[j].DATString then
-                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
                2: if CheckIdentPoints([(DATModel1[i] as TDATLine).Point[1], (DATModel1[i] as TDATLine).Point[2]],
                                       [(DATModel1[j] as TDATLine).Point[1], (DATModel1[j] as TDATLine).Point[2]],
                                       2) then
-                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
                3: if CheckIdentPoints([(DATModel1[i] as TDATTriangle).Point[1], (DATModel1[i] as TDATTriangle).Point[2], (DATModel1[i] as TDATTriangle).Point[3]],
                                       [(DATModel1[j] as TDATTriangle).Point[1], (DATModel1[j] as TDATTriangle).Point[2], (DATModel1[j] as TDATTriangle).Point[3]],
                                       3) then
-                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
                4: if CheckIdentPoints([(DATModel1[i] as TDATQuad).Point[1], (DATModel1[i] as TDATQuad).Point[2], (DATModel1[i] as TDATQuad).Point[3], (DATModel1[i] as TDATQuad).Point[4]],
                                       [(DATModel1[j] as TDATQuad).Point[1], (DATModel1[j] as TDATQuad).Point[2], (DATModel1[j] as TDATQuad).Point[3], (DATModel1[j] as TDATQuad).Point[4]],
                                       4) then
-                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
                5: if (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[1], (DATModel1[i] as TDATOpLine).Point[2]],
                                       [(DATModel1[j] as TDATOpLine).Point[1], (DATModel1[j] as TDATOpLine).Point[2]],
                                       2)) and
                      (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[3], (DATModel1[i] as TDATOpLine).Point[4]],
                                       [(DATModel1[j] as TDATOpLine).Point[3], (DATModel1[j] as TDATOpLine).Point[4]],
                                       2)) then
-                    AddError(IntToStr(i+1),'Identical to line ' + IntToStr(j+1));
+                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
             end;
       end;
       // Do not continue if line is identical
@@ -1152,7 +1155,7 @@ begin
       acECMarkAllTyped.Enabled := False;
       acECUnMarkAllTyped.Enabled := False;
       acECCopy.Enabled := False;
-      StatusBar.Panels[0].Text := 'No Errors Found!';
+      StatusBar.Panels[0].Text := _('No Errors Found!');
     end;
   Screen.Cursor := crDefault;
 end;
@@ -1214,7 +1217,7 @@ Return value: None
 
 begin
   if (not FileExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
-    MessageDlg('You have to specify a valid path to LDView.exe first!', mtError, [mbOK], 0);
+    MessageDlg(_('You have to specify a valid path to LDView.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
   end;
@@ -1231,10 +1234,12 @@ Return value: None
 
 begin
  if (activeMDICHild as TfrEditorChild).memo.modified then
-    if MessageDlg('File has been modified. '+#13+#10+'Do you want to save and then view the file in MLCad '+#13+#10+'or cancel the operation?', mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
+    if MessageDlg(_('File has been modified. ' +#13#10+
+                  'Do you want to save and then view the file in MLCad '+#13#10+
+                  'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
   acFileSaveExecute(Sender);
   if (not FIleExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
-    MessageDlg('You have to specify a valid path to MLCad.exe first!', mtError, [mbOK], 0);
+    MessageDlg(_('You have to specify a valid path to MLCad.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
   end;
@@ -1288,7 +1293,7 @@ begin
   ExProgram.CommaText := frOptions.ExternalProgramList[(Sender as TAction).ActionComponent.Tag];
   if not FileExists(ExProgram[1]) then
   begin
-    MessageDlg('You have to specify a valid external program first!', mtError, [mbOK], 0);
+    MessageDlg(_('You have to specify a valid external program first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
   end;
@@ -1346,7 +1351,7 @@ begin
       PluginInfoList.Add(PluginInfo(PluginFile,j));
     if AppInit then
     begin
-      splashscreen.lbState.Caption:='Initializing plugin: '+sr.name;
+      splashscreen.lbState.Caption:=_('Initializing plugin:') + ' '+sr.name;
       splashscreen.update;
     end;
     frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
@@ -1388,12 +1393,12 @@ begin
   if (Plugins1.Count = 0) and (Plugins3.Count = 0) then
   begin
     NewItem := TMenuItem.Create(Plugins3);
-    NewItem.caption:='None Found';
+    NewItem.caption:=_('None Found');
     NewItem.Enabled := false;
     plugins3.Insert(plugins3.count,Newitem);
 
     NewItem := TMenuItem.Create(Plugins1);
-    NewItem.caption:='None Found';
+    NewItem.caption:=_('None Found');
     NewItem.Enabled := false;
     plugins1.Insert(plugins1.count,Newitem);
   end;
@@ -1466,7 +1471,7 @@ Return value: None
 begin
   if (not FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
   begin
-    MessageDlg('You have to specify a valid path to L3Lab.exe first!', mtError, [mbOK], 0);
+    MessageDlg(_('You have to specify a valid path to L3Lab.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
   end;
@@ -1714,7 +1719,7 @@ begin
 
     rgOptions.Items.Clear;
 
-    rgOptions.Items.Add('Replace All');
+    rgOptions.Items.Add(_('Replace All'));
     rgOptions.ItemIndex := 0;
 
     clr := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
@@ -1724,12 +1729,12 @@ begin
 
     if ((clr[0] is TDATElement) and (EditCh.memo.SelLength = 0)) then
     begin
-      rgOptions.Items.Add('Replace Current Line Only');
+      rgOptions.Items.Add(_('Replace Current Line Only'));
       rgOptions.ItemIndex := 1;
     end
     else if EditCh.memo.SelLength <> 0 then
     begin
-      rgOptions.ItemIndex := rgOptions.Items.Add('Replace For Selection');
+      rgOptions.ItemIndex := rgOptions.Items.Add(_('Replace For Selection'));
       rgOptions.ItemIndex := 1;
     end;
 
@@ -1750,7 +1755,7 @@ begin
         else
           btOldColor.Font.Color:=$FFFFFF;
       except
-        MessageDlg('Invalid colornumber!', mtError, [mbOK], 0);
+        MessageDlg(_('Invalid colornumber!'), mtError, [mbOK], 0);
         exit;
       end;
 
@@ -1774,14 +1779,14 @@ begin
         end;
       end
       //Replace Current Line
-      else if rgOptions.Items[rgOptions.ItemIndex] = 'Replace Current Line Only' then
+      else if rgOptions.Items[rgOptions.ItemIndex] = _('Replace Current Line Only') then
       begin
         (clr[0] as TDATElement).Color := btNewColor.Tag;
         EditCh.memo.lines[EditCh.memo.CaretY-1]:=clr[0].DATString;;
         EditCh.memo.Modified:=true;
       end
       // Replace colors in selection
-      else if rgOptions.Items[rgOptions.ItemIndex] = 'Replace For Selection' then
+      else if rgOptions.Items[rgOptions.ItemIndex] = _('Replace For Selection') then
       with EditCh.memo do
       begin
         clr.Clear;
@@ -2163,7 +2168,7 @@ begin
   if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
   begin
     MessageBeep(MB_ICONASTERISK);
-    MessageDlg('Searchtext has not been found.', mtInformation, [mbOK], 0);
+    MessageDlg(_('Searchtext has not been found.'), mtInformation, [mbOK], 0);
     if ssoBackwards in Options then
       (activeMDICHild as TfrEditorChild).memo.BlockEnd := (activeMDICHild as TfrEditorChild).memo.BlockBegin
     else
@@ -2394,10 +2399,10 @@ begin
   strActualVersion := GetAppVersion(Application.ExeName);
   strVersionHTTP := http.Get('http://lddp.sourceforge.net/lddp.ver');
   if trim(strVersionHTTP)=strActualVersion then
-    MessageDlg('There is no newer version available.', mtInformation, [mbOK], 0)
+    MessageDlg(_('There is no newer version available.'), mtInformation, [mbOK], 0)
   else
   begin
-    MessageDlg('There is a newer version available!!!', mtInformation, [mbOK], 0);
+    MessageDlg(_('There is a newer version available!!!'), mtInformation, [mbOK], 0);
     OpenInBrowser('http://www.lddp.net');
   end;
 end;
@@ -2610,7 +2615,7 @@ var
 begin
   if (not FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe')) then
   begin
-    MessageDlg('You have to specify a valid path to lsynthcp.exe first!', mtError, [mbOK], 0);
+    MessageDlg(_('You have to specify a valid path to lsynthcp.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
   end
   else
@@ -2742,12 +2747,12 @@ var
       flag := true;
       if (pos('Collinear vertices',ErrorLine)>0) or
          (pos('Vertices not coplaner',ErrorLine)>0) then
-        if MessageDlg('Combining these triangles:' + #13#10 +
+        if MessageDlg(_('Combining these triangles:') + #13#10 +
                       tri1.DATString + '(Line: ' + IntToStr((ActiveMDIChild as TfrEditorChild).memo.BlockBegin.Line + i) + ')' + #13#10 +
                       tri2.DATString + '(Line: ' + IntToStr((ActiveMDIChild as TfrEditorChild).memo.BlockBegin.Line + i + 1) + ')' + #13#10 +
-                      'will result in a quad with collinear or' + #13#10 +
-                      'not coplaner vertices' + #13#10 +
-                      'Combine anyway?', mtWarning, [mbYes, mbNo], 0) = mrNo then
+                      _('will result in a quad with collinear or') + #13#10 +
+                      _('not coplaner vertices') + #13#10 +
+                      _('Combine anyway?'), mtWarning, [mbYes, mbNo], 0) = mrNo then
           flag := false;
 
       if flag then
@@ -2983,7 +2988,7 @@ begin
                       memo.SelText;
 
       if FileExists(ExtractFilePath(Caption) + frSubFile.edFileName.Text) and
-         (MessageDlg('File of same name already exists.  Overwrite?',
+         (MessageDlg(_('File of same name already exists.  Overwrite?'),
                     mtWarning, mbOKCancel, 0) <> mrOk) then
         Exit;
 

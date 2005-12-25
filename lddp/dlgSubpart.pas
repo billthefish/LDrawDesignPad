@@ -20,7 +20,7 @@ unit dlgSubpart;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, ExtCtrls;
 
 type
@@ -37,6 +37,7 @@ type
     Label3: TLabel;
     Label4: TLabel;
     edTitle: TEdit;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -49,5 +50,10 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TfrSubFile.FormCreate(Sender: TObject);
+begin
+  TranslateComponent (self);
+end;
 
 end.

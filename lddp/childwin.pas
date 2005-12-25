@@ -20,7 +20,7 @@ unit childwin;
 interface
 
 uses
-  windowsspecific,
+  gnugettext, windowsspecific,
   Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, SynEdit,
   SynHighlighterLDraw, ExtCtrls, Classes, Types, ComCtrls, Controls,
   SynEditKeyCmds, SynEditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch,
@@ -107,7 +107,8 @@ begin
   r := FindFirst(self.caption, faAnyFile, SR);
   if r = 0 then
     if (FileDateToDateTime(SR.Time) <> filedatetime) and
-       (MessageDlg('File has been changed outside the editor!'+#13+#10+'Reload and loose all changes?', mtWarning, [mbYes, mbNo], 0)=mrYes) then
+       (MessageDlg(_('File has been changed outside the editor!' + #13#10 +
+                   'Reload and loose all changes?'), mtWarning, [mbYes, mbNo], 0)=mrYes) then
       frMain.LoadFile(frMain.ActiveMDIChild);
   FindClose(SR);
 
@@ -126,10 +127,10 @@ var
 
 begin
   if memo.modified then
-  begin
-    frMain.Statusbar.Panels[2].Text:='Modified'
-  end
-    else frMain.Statusbar.Panels[2].Text:='';
+    frMain.Statusbar.Panels[2].Text:=_('Modified')
+  else
+    frMain.Statusbar.Panels[2].Text:='';
+
   frMain.acUndo.Enabled:=Memo.CanUndo;
   frMain.acRedo.Enabled:=Memo.CanRedo;
   frMain.StatusBar.Panels[1].text:=inttostr(memo.CaretY)+':'+inttostr(memo.CaretX);
@@ -258,6 +259,7 @@ Parameter: Standard
 Return value: None
 ----------------------------------------------------------------------}
 begin
+  TranslateComponent (self);
   tmpFilename:=frmain.GetTMPFilename+'.tmp';
 end;
 

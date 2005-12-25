@@ -20,7 +20,7 @@ unit colordialog;
 interface
 
 uses
-  Forms, StdCtrls, Buttons, ExtCtrls,Controls, ComCtrls, Classes,
+  gnugettext, Forms, StdCtrls, Buttons, ExtCtrls,Controls, ComCtrls, Classes,
   ActnList, Dialogs, Graphics, SysUtils, Math;
 
 type
@@ -134,6 +134,7 @@ end;
 
 procedure TfrColorDialog.FormCreate(Sender: TObject);
 begin
+  TranslateComponent (self);
   slColors := TStringList.Create;
 end;
 

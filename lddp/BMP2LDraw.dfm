@@ -11,6 +11,7 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = True
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13

@@ -3,7 +3,7 @@ unit sorting;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, ExtCtrls;
 
 type
@@ -20,6 +20,7 @@ type
     cbSort2: TComboBox;
     Label3: TLabel;
     cbSort3: TComboBox;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,5 +34,10 @@ implementation
 
 {$R *.dfm}
 
+
+procedure TfmSort.FormCreate(Sender: TObject);
+begin
+  TranslateComponent (self);
+end;
 
 end.
