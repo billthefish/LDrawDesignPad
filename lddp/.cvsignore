@@ -4,3 +4,8 @@
 *.ddp
 *.cfg
 *.~*
+ModelSupport_LDDesignPad
+__history
+*.identcache
+*.drc
+*.bdsproj.local

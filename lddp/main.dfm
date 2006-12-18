@@ -1,10 +1,9 @@
 object frMain: TfrMain
-  Left = 455
-  Top = 422
+  Left = 337
+  Top = 249
   Width = 792
   Height = 434
   VertScrollBar.Range = 49
-  AutoScroll = False
   Caption = 'LDraw Design Pad'
   Color = clAppWorkSpace
   Font.Charset = DEFAULT_CHARSET
@@ -69,10 +68,8 @@ object frMain: TfrMain
       Caption = 'External Programs'
       Color = clBtnFace
       DragMode = dmAutomatic
-      EdgeBorders = []
       EdgeInner = esNone
       EdgeOuter = esNone
-      Flat = True
       Images = ilToolBarColor
       Indent = 5
       ParentColor = False
@@ -133,10 +130,8 @@ object frMain: TfrMain
       Caption = 'Files'
       Color = clBtnFace
       DragMode = dmAutomatic
-      EdgeBorders = []
       EdgeInner = esNone
       EdgeOuter = esNone
-      Flat = True
       Images = ilToolBarColor
       Indent = 5
       ParentColor = False
@@ -181,10 +176,8 @@ object frMain: TfrMain
       Caption = 'Search & Replace'
       Color = clBtnFace
       DragMode = dmAutomatic
-      EdgeBorders = []
       EdgeInner = esNone
       EdgeOuter = esNone
-      Flat = True
       Images = ilToolBarColor
       Indent = 5
       ParentColor = False
@@ -219,10 +212,8 @@ object frMain: TfrMain
       Caption = 'Windows'
       Color = clBtnFace
       DragMode = dmAutomatic
-      EdgeBorders = []
       EdgeInner = esNone
       EdgeOuter = esNone
-      Flat = True
       Images = ilToolBarColor
       Indent = 5
       ParentColor = False
@@ -252,10 +243,8 @@ object frMain: TfrMain
       Caption = 'Editing'
       Color = clBtnFace
       DragMode = dmAutomatic
-      EdgeBorders = []
       EdgeInner = esNone
       EdgeOuter = esNone
-      Flat = True
       Images = ilToolBarColor
       Indent = 5
       ParentColor = False
@@ -373,10 +362,8 @@ object frMain: TfrMain
       Caption = 'Color Replace'
       Color = clBtnFace
       DragMode = dmAutomatic
-      EdgeBorders = []
       EdgeInner = esNone
       EdgeOuter = esNone
-      Flat = True
       Images = ilToolBarColor
       Indent = 5
       ParentColor = False
@@ -3090,15 +3077,10 @@ object frMain: TfrMain
     Top = 296
   end
   object http: TIdHTTP
-    MaxLineAction = maException
-    ReadTimeout = 0
     AllowCookies = True
     ProtocolVersion = pv1_0
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
-    Request.ContentLength = 0
-    Request.ContentRangeEnd = 0
-    Request.ContentRangeStart = 0
     Request.ContentType = 'text/html'
     Request.Accept = 'text/html, */*'
     Request.BasicAuthentication = False

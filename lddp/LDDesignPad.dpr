@@ -18,17 +18,38 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 program LDDesignPad;
 
 {%File 'readme.txt'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\dlgSubpart\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\splash\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\sorting\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\colordialog\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\ErrorFix\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\l3check\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\BMP2LDraw\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\dlgConfirmReplace\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\dlgSearchText\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\windowsspecific\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\BezWindow\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\main\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\LDDesignPad\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\modeltreeview\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\commonprocs\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\about\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\dlgReplaceText\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\DATBase\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\options\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\childwin\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\DATModel\default.txaPackage'}
+{%TogetherDiagram 'ModelSupport_LDDesignPad\default.txvpck'}
 
 uses
   gnugettext,
   Forms,
-  //Needed for gnugettext global ignores
   Graphics,
   JvValidateEdit,
   ActnList,
   Dialogs,
   IdHTTP,
-  //Program Forms
   main in 'main.pas' {frMain},
   childwin in 'childwin.pas' {frEditorChild},
   about in 'about.pas' {frAboutBox},
@@ -41,8 +62,8 @@ uses
   l3check in 'l3check.pas',
   DATBase in 'DATBase.pas',
   DATModel in 'DATModel.pas',
-  dlgSearchText in 'dlgsearchtext.pas' {TextSearchDialog},
-  dlgReplaceText in 'dlgreplacetext.pas' {TextReplaceDialog},
+  dlgsearchtext in 'dlgsearchtext.pas' {TextSearchDialog},
+  dlgreplacetext in 'dlgreplacetext.pas' {TextReplaceDialog},
   dlgConfirmReplace in 'dlgConfirmReplace.pas' {ConfirmReplaceDialog},
   BezWindow in 'BezWindow.pas' {frmDATCurve},
   dlgSubpart in 'dlgSubpart.pas' {frSubFile},

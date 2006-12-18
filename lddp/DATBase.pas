@@ -1,5 +1,5 @@
 (*
-Copyright 2002-2005 Orion Pobursky
+Copyright 2002-2006 Orion Pobursky
 
 The DATTools Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1031,6 +1031,7 @@ begin
   end;
 end;
 
+// Utility Functions
 function StrToDAT(strLine: string): TDATType;
 
 var
