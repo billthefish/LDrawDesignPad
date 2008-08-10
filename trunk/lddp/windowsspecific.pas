@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2005 the LDDP project contributors.
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@ unit windowsspecific;
 
 interface
 
-uses Windows, ShellAPI, Messages, Sysutils, Classes, Forms;
+uses Windows, ShellAPI, Messages, Sysutils, Classes, Forms, Registry;
 
 type
   TLDDPCallBack = procedure(strCBText : PChar );
@@ -60,6 +60,8 @@ const
 function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
 function GetShortFileName(Const FileName : String) : String;
 function WindowsDir:string;
+function GetShellFolderPath(folder: string): string;
+function IniFilePath:string;
 function GetTempDir:string;
 function PluginInfo(fname:string; nr: Byte):string;
 procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
@@ -178,6 +180,27 @@ begin
   Result:= StrPas(WDir);
 end;
 
+function GetShellFolderPath(folder: string): string;
+var
+   Reg: TRegistry;
+   tempstr: String;
+begin
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKey_Current_User;
+    if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion'
+      + '\Explorer\Shell Folders', FALSE) then
+      tempstr := Reg.ReadString(folder);
+  finally
+    Reg.Free;
+  end;
+  Result := tempstr;
+end;
+
+function IniFilePath:string;
+begin
+  Result := GetShellFolderPath('AppData') + '\LDDP';
+end;
 
 function GetTempDir:string;
 {---------------------------------------------------------------------

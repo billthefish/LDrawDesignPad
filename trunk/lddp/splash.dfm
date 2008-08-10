@@ -24,8 +24,8 @@ object frSplash: TfrSplash
   object Image1: TImage
     Left = 0
     Top = 0
-    Width = 333
-    Height = 141
+    Width = 341
+    Height = 154
     Align = alClient
     AutoSize = True
     Picture.Data = {
@@ -851,6 +851,8 @@ object frSplash: TfrSplash
       6666666BBBBBBBBBABBBBAAAAAAAAABBBBBBBADBBDBADBABBBBBBBBBBBBBB666
       66B66666BBBBBBBBBB6BAA6BBBBBBBBBBBBBBBBBBADBBDBADBABBBBBBBBBBBBB
       0000}
+    ExplicitWidth = 333
+    ExplicitHeight = 141
   end
   object lbState: TLabel
     Left = 281

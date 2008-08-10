@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2005 the LDDP project contributors.
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,13 +21,13 @@ interface
 
 uses
   gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, ComCtrls, ExtCtrls;
+  Dialogs, StdCtrls, Buttons, ComCtrls, ExtCtrls, JvComponentBase,
+  JvDockControlForm;
 
 type
   TfrModelTreeView = class(TForm)
-    Panel1: TPanel;
     tvModel: TTreeView;
-    BitBtn1: TBitBtn;
+    JvDockClient1: TJvDockClient;
     procedure FormShow(Sender: TObject);
     procedure tvModelDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -44,7 +44,7 @@ implementation
 {$R *.dfm}
 
 uses
-  main, childwin, DATModel, DATBase;
+  main, DATModel, DATBase;
 
 
 procedure TfrModelTreeView.FormShow(Sender: TObject);
@@ -57,10 +57,10 @@ var
 begin
   tvModel.Items.Clear;
   DModel := TDATModel.Create;
-  DModel.ModelText := (frMain.ActiveMDIChild as TfrEditorChild).memo.Lines.Text;
+  DModel.ModelText := frMain.editor.Lines.Text;
   with tvModel.Items do
   begin
-    RootNode := Add(nil, ExtractFileName(frMain.ActiveMDIChild.Caption));
+    RootNode := Add(nil, ExtractFileName(frMain.DocumentTabs.ActiveDocument.FileName));
     for i := 0 to DModel.Count - 1 do
       if DModel[i] is TDATSubPart then
         AddNodes(RootNode, (DModel[i] as TDATSubPart).FileName);
@@ -77,10 +77,10 @@ var
   DModel: TDATModel;
 
 begin
-  if FileExists(ExtractFilePath(frMain.ActiveMDIChild.Caption) + AString) then
+  if FileExists(ExtractFilePath(frMain.DocumentTabs.ActiveDocument.FileName) + AString) then
   begin
     DModel := TDATModel.Create;
-    DModel.LoadModel(ExtractFilePath(frMain.ActiveMDIChild.Caption) + AString);
+    DModel.LoadModel(ExtractFilePath(frMain.DocumentTabs.ActiveDocument.FileName) + AString);
     CurrentNode := tvModel.Items.AddChild(ANode, AString);
     for I:=0 to DModel.Count - 1 do
       if DModel[i] is TDATSubPart then
@@ -91,8 +91,7 @@ end;
 
 procedure TfrModelTreeView.tvModelDblClick(Sender: TObject);
 begin
-  frMain.CreateMDIChild(ExtractFilePath(frMain.ActiveMDIChild.Caption) + tvModel.Selected.Text, False);
-  ModalResult := mrOK;
+  frMain.OpenFile(ExtractFilePath(frMain.DocumentTabs.ActiveDocument.FileName) + tvModel.Selected.Text);
 end;
 
 procedure TfrModelTreeView.FormCreate(Sender: TObject);

@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2005 the LDDP project contributors.
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@ interface
 uses
   gnugettext, SysUtils, Graphics, Controls, Forms, Menus,
   Types, Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls,
-  Classes, childwin, DatBase;
+  Classes, DatBase;
 
 type
   TfrBMP2LDrawMain = class(TForm)
@@ -321,10 +321,7 @@ begin
       end;
     end;
 
-    with (frMain.activeMDICHild as TfrEditorChild).memo do
-    begin
-      Seltext:=sr.text;
-    end;
+    frMain.editor.Seltext:=sr.text;
     sr.Free;
     pnProgress.Visible:=False;
     frBMP2LDrawMain.Enabled:=true;

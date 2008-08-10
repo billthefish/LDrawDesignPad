@@ -3,7 +3,7 @@ object frSubFile: TfrSubFile
   Top = 376
   BorderStyle = bsDialog
   Caption = 'Move Selection to Subfile'
-  ClientHeight = 277
+  ClientHeight = 304
   ClientWidth = 521
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -39,29 +39,36 @@ object frSubFile: TfrSubFile
   end
   object Label4: TLabel
     Left = 8
-    Top = 80
+    Top = 104
     Width = 90
     Height = 13
     Caption = 'Header Comments:'
   end
+  object Label5: TLabel
+    Left = 8
+    Top = 80
+    Width = 103
+    Height = 13
+    Caption = 'LDraw.org Username:'
+  end
   object edFilename: TEdit
-    Left = 104
+    Left = 115
     Top = 8
-    Width = 409
+    Width = 398
     Height = 21
     TabOrder = 0
   end
   object edAuthor: TEdit
-    Left = 104
+    Left = 115
     Top = 56
-    Width = 409
+    Width = 398
     Height = 21
     TabOrder = 1
   end
   object edComments: TMemo
-    Left = 104
-    Top = 80
-    Width = 409
+    Left = 115
+    Top = 104
+    Width = 398
     Height = 81
     Lines.Strings = (
       '')
@@ -69,30 +76,33 @@ object frSubFile: TfrSubFile
   end
   object rgType: TRadioGroup
     Left = 8
-    Top = 168
+    Top = 192
     Width = 505
     Height = 49
     Caption = 'Model Type'
-    Columns = 5
+    Columns = 6
     Items.Strings = (
       'Model'
       'Submodel'
       'Part'
       'Subpart'
-      'Primitive')
+      'Primitive'
+      '48_Primitive')
     TabOrder = 3
   end
   object cbUnofficial: TCheckBox
     Left = 8
-    Top = 224
+    Top = 248
     Width = 153
     Height = 17
     Caption = 'Mark as Unofficial'
+    Checked = True
+    State = cbChecked
     TabOrder = 4
   end
   object btnCreate: TBitBtn
     Left = 8
-    Top = 248
+    Top = 272
     Width = 75
     Height = 25
     Caption = 'Create'
@@ -144,7 +154,7 @@ object frSubFile: TfrSubFile
   end
   object btnCancel: TBitBtn
     Left = 440
-    Top = 248
+    Top = 272
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -195,10 +205,17 @@ object frSubFile: TfrSubFile
       5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
   end
   object edTitle: TEdit
-    Left = 104
+    Left = 115
     Top = 32
-    Width = 409
+    Width = 398
     Height = 21
     TabOrder = 7
+  end
+  object edUsername: TEdit
+    Left = 115
+    Top = 80
+    Width = 398
+    Height = 21
+    TabOrder = 8
   end
 end

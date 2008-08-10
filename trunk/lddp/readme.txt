@@ -109,16 +109,18 @@ and the great programs they wrote to make LDRAWing a lot easier:
 Special Thanks to:
 
 Lars C. Hassing
-
   Error Check feature derived from L3Check.cpp, L3Math.cpp
   Part of the L3 project for handling LDraw *.dat files
   Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)
 
 Fredrik Glöckner
-
   Bendible Object Generator feature derived from 
-   Emacs LDraw Major-Mode
+  Emacs LDraw Major-Mode
   Copyright (C) 1999-2002  Fredrik Glöckner (fredrigl@math.uio.no)
+
+Philippe "Philo" Hurbain
+  Plane normal check derived from code by:
+  Philippe "Philo" Hurbain - 2007 - www.philohome.com
 
 Willy Tschager 
   Primary Beta Tester

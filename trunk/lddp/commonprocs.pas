@@ -1,45 +1,70 @@
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
+
+This source is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This source is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+-------------------------------------------------------------------------------}
 unit commonprocs;
 
 interface
 
 uses
-  DATModel;
+  DATModel, Menus;
 
-function CreateDATModel(PAcc, RAcc: Integer): TDATModel;
-procedure ExpandSelection;
+function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
+function StripEndingCRLF(const str: string): string;
+function IsBlankLine(line: string): Boolean;
+function GetTmpFileName: string;
 
 implementation
 
 uses
-  childwin, main, SynEditTypes;
+  main, SysUtils;
 
-function CreateDATModel(PAcc, RAcc: Integer): TDATModel;
+function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
+
+var
+  NewMenuItem: TMenuItem;
 
 begin
-  Result := TDATModel.Create;
-  Result.RotationDecimalPlaces := RAcc;
-  Result.PositionDecimalPlaces := PAcc;
+  NewMenuItem := TMenuItem.Create(ParentMenuItem);
+  NewMenuItem.Caption := Caption;
+  NewMenuItem.Hint := Hint;
+  Result := NewMenuItem;
 end;
 
-procedure ExpandSelection;
-{-------
-Descrption: If the selected text begins and/or end in the middle of a line
-ExpandSelection will move the beginning of the slected to to the beginning of
-the line and the end of the selected text to the end of the line
---------}
+function StripEndingCRLF(const str: string): string;
+begin
+  Result := Copy(str, 0, Length(str)-2);
+end;
+
+function IsBlankLine(line: string): Boolean;
+begin
+  Result := (line = '') or (line = #13#10) or (line = #10#13) or
+            (line = #13) or (line = #10);
+end;
+
+function GetTmpFileName: string;
+// Create a unique temporary filename
 var
-  tmpBlEnd: TBufferCoord;
+  Hour, Min, Sec, MSec, Year, Month, Day: Word;
 
 begin
-  with (frMain.ActiveMDIChild as TfrEditorChild).memo do
-  begin
-    tmpBlEnd := BlockEnd;
-    BlockBegin := BufferCoord(1, BlockBegin.Line);
-    if tmpBlEnd.Char > 1 then
-      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 1]) + 1, tmpBlEnd.Line)
-    else
-      BlockEnd := BufferCoord(Length(Lines[tmpBlEnd.Line - 2]) + 1, tmpBlEnd.Line - 1);
-  end;
+  Decodetime(Time, Hour, Min, Sec, MSec);
+  DecodeDate(Date, Year, Month, Day);
+  Result := IntToHex(Hour,2) + IntToHex(Min,2) + IntToHex(Sec,2) +
+            IntToHex(Trunc(MSec/10),2);
 end;
 
 end.

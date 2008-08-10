@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2005 the LDDP project contributors.
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,20 +20,22 @@ unit childwin;
 interface
 
 uses
-  gnugettext, windowsspecific,
-  Dialogs, SynEditPrint, SynEditHighlighter, Forms, SysUtils, SynEdit,
-  SynHighlighterLDraw, ExtCtrls, Classes, Types, ComCtrls, Controls,
-  SynEditKeyCmds, SynEditTypes, StdCtrls, SynEditMiscClasses, SynEditSearch,
-  SynEditMiscProcs, DATBase, DATModel;
+  gnugettext, windowsspecific, Windows,
+  Dialogs, Forms, SysUtils, StdCtrls,
+  ExtCtrls, Classes, Types, ComCtrls, Controls,
+  DATBase, DATModel, SciPropertyMgr, SciScintillaBase, SciScintillaMemo,
+  SciScintillaLDDP, SciStreamDefault, SciScintilla, SciLanguageManager;
 
 type
   TfrEditorChild = class(TForm)
     pnInfo: TPanel;
     Panel2: TPanel;
     Button1: TButton;
-    memo: TSynEdit;
     lbInfo: TListView;
     Splitter1: TSplitter;
+    memo: TScintillaLDDP;
+    MemoPropLoad: TSciPropertyLoader;
+    SciLanguageManager1: TSciLanguageManager;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormActivate(Sender: TObject);
     procedure MemoChange(Sender: TObject);
@@ -41,28 +43,28 @@ type
     procedure Button1Click(Sender: TObject);
     procedure lbInfoDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure memoKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure memoGutterClick(Sender: TObject; Button: TMouseButton; X, Y,
-      Line: Integer; Mark: TSynEditMark);
     procedure lbInfoSelectItem(Sender: TObject; Item: TListItem;
       Selected: Boolean);
-    procedure memoReplaceText(Sender: TObject; const ASearch,
-      AReplace: String; Line, Column: Integer;
-      var Action: TSynReplaceAction);
+    procedure memoMarginClick(Sender: TObject; const modifiers, position,
+      margin: Integer);
+    procedure memoUpdateUI(Sender: TObject);
   private
     { Private declarations }
     tmpFilename:string;
   public
     filedatetime:TDatetime;
+    NewFile: Boolean;
     function tempFileName:string;
     procedure UpdateControls;
+    function AddError(LineNumber, ErrorType: string): Boolean;
+    procedure SaveFile;
+    procedure LoadFile;
     { Public declarations }
   end;
 
 implementation
 
-uses main, preview, dlgConfirmReplace, commonprocs;
+uses main, preview, options, commonprocs, DATUtils;
 
 {$R *.dfm}
 
@@ -85,11 +87,11 @@ Parameter: Standard
 Return value: Standard
 ----------------------------------------------------------------------}
 begin
+  MemoPropLoad.Save;
   Action := caFree;
   UpdateControls;
   frMain.UpdateControls(true);
 end;
-
 
 
 procedure TfrEditorChild.FormActivate(Sender: TObject);
@@ -108,10 +110,9 @@ begin
   if r = 0 then
     if (FileDateToDateTime(SR.Time) <> filedatetime) and
        (MessageDlg(_('File has been changed outside the editor!' + #13#10 +
-                   'Reload and loose all changes?'), mtWarning, [mbYes, mbNo], 0)=mrYes) then
+                   'Reload and lose all changes?'), mtWarning, [mbYes, mbNo], 0)=mrYes) then
       frMain.LoadFile(frMain.ActiveMDIChild);
   FindClose(SR);
-
   UpdateControls;
 end;
 
@@ -122,7 +123,7 @@ Parameter: none
 Return value: none
 ----------------------------------------------------------------------}
 var
-  i, endline: Integer;
+  i: Integer;
   DLine: TDATType;
 
 begin
@@ -133,6 +134,7 @@ begin
 
   frMain.acUndo.Enabled:=Memo.CanUndo;
   frMain.acRedo.Enabled:=Memo.CanRedo;
+
   frMain.StatusBar.Panels[1].text:=inttostr(memo.CaretY)+':'+inttostr(memo.CaretX);
 
   if memo.SelLength = 0 then
@@ -143,14 +145,9 @@ begin
   end
   else
   begin
-    if memo.BlockEnd.Char > 1 then
-      endline := memo.BlockEnd.Line - 1
-    else
-      endline := memo.BlockEnd.Line - 2;
-
     frMain.acInline.Enabled := False;
 
-    for i := memo.BlockBegin.Line - 1 to endline do
+    for i := memo.LineFromPosition(memo.SelStart) to memo.LineFromPosition(memo.SelStart+memo.SelLength) do
     begin
       DLine := StrToDAT(memo.Lines[i]);
       if DLine.LineType = 1 then
@@ -167,12 +164,12 @@ begin
     begin
       case strtoint(copy(frMain.slplugins[frMain.plugins3.Items[i].tag],1,pos(',',frMain.slplugins[frMain.plugins3.Items[i].tag])-1))  of
         2: begin
-             frMain.plugins3.Items[i].enabled:=memo.SelStart-memo.selEnd<>0;
-             frMain.plugins1.Items[i].enabled:=memo.SelStart-memo.selEnd<>0;
+             frMain.plugins3.Items[i].enabled:=memo.SelLength<>0;
+             frMain.plugins1.Items[i].enabled:=memo.SelLength<>0;
            end;
         1: begin
-             frMain.plugins3.Items[i].enabled:=memo.SelStart-memo.selEnd=0;
-             frMain.plugins1.Items[i].enabled:=memo.SelStart-memo.selEnd=0;
+             frMain.plugins3.Items[i].enabled:=memo.SelLength=0;
+             frMain.plugins1.Items[i].enabled:=memo.SelLength=0;
            end;
         0: begin
              frMain.plugins3.Items[i].enabled:=true;
@@ -238,14 +235,13 @@ Return value: None
 var
    L3PErrorLine: Integer;
 begin
-    // Set current postion to errorline
-    L3PErrorLine := StrToInt(lbinfo.Items[lbinfo.Itemindex].SubItems[0]);
-    memo.TopLine := L3PErrorLine;
-    memo.CaretXY := BufferCoord(1, L3PErrorLine);
+    // Line number of errorline. 1 subtracted since lines start
+    // at 0 but error check starts with 1
+    L3PErrorLine := StrToInt(lbinfo.Items[lbinfo.Itemindex].SubItems[0]) - 1;
 
-    // Highlight errorline
-    memo.BlockBegin := memo.CaretXY;
-    memo.BlockEnd := BufferCoord(1, L3PErrorLine + 1);
+    // Highlight errorline.
+    memo.GotoLineEnsureVisible(L3PErrorLine);
+    memo.SelectLine(L3PErrorline);
 
     // Change focus from L3P error pane to editor pane
     memo.setfocus;
@@ -260,29 +256,23 @@ Return value: None
 ----------------------------------------------------------------------}
 begin
   TranslateComponent (self);
-  tmpFilename:=frmain.GetTMPFilename+'.tmp';
+  tmpFilename := GetTMPFilename + '.tmp';
+
+  MemoPropLoad.FileName := ExtractFilePath(Application.ExeName) + MemoPropLoad.FileName;
+  memo.StreamClass := TSciStreamDefault;
+  if FileExists(MemoPropLoad.FileName) then
+    MemoPropLoad.Load;
 end;
 
-procedure TfrEditorChild.memoKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-{---------------------------------------------------------------------
-Description: Update controls when writing in memo
-Parameter: Standard
-Return value: Standard
-----------------------------------------------------------------------}
+procedure TfrEditorChild.memoMarginClick(Sender: TObject; const modifiers,
+  position, margin: Integer);
+begin
+ memo.SelectLine(position);
+end;
+
+procedure TfrEditorChild.memoUpdateUI(Sender: TObject);
 begin
   UpdateControls;
-end;
-
-procedure TfrEditorChild.memoGutterClick(Sender: TObject;
-  Button: TMouseButton; X, Y, Line: Integer; Mark: TSynEditMark);
-begin
-  if memo.SelLength = 0 then
-    with memo do
-    begin
-      BlockBegin := CaretXY;
-      BlockEnd := BufferCoord(Length(Lines[Line-1]) + 1 , CaretY);
-    end;
 end;
 
 procedure TfrEditorChild.lbInfoSelectItem(Sender: TObject; Item: TListItem;
@@ -301,36 +291,46 @@ begin
   frMain.acECFixAllMarkedErrorsTyped.Enabled := not UnFixableError;
 end;
 
+function TfrEditorChild.AddError(LineNumber, ErrorType: string): Boolean;
 
-procedure TfrEditorChild.memoReplaceText(Sender: TObject; const ASearch,
-  AReplace: String; Line, Column: Integer; var Action: TSynReplaceAction);
 var
-  APos: TPoint;
-  EditRect: TRect;
-begin
-  if ASearch = AReplace then
-    Action := raSkip
-  else begin
-//    APos := Point(Column, Line);
-    APos := memo.ClientToScreen(
-      memo.RowColumnToPixels(
-      memo.BufferToDisplayPos(
-        BufferCoord(Column, Line) ) ) );
-    EditRect := ClientRect;
-    EditRect.TopLeft := ClientToScreen(EditRect.TopLeft);
-    EditRect.BottomRight := ClientToScreen(EditRect.BottomRight);
+  error: TListItem;
 
-    if ConfirmReplaceDialog = nil then
-      ConfirmReplaceDialog := TConfirmReplaceDialog.Create(Application);
-    ConfirmReplaceDialog.PrepareShow(EditRect, APos.X, APos.Y,
-      APos.Y + memo.LineHeight, ASearch);
-    case ConfirmReplaceDialog.ShowModal of
-      mrYes: Action := raReplace;
-      mrYesToAll: Action := raReplaceAll;
-      mrNo: Action := raSkip;
-      else Action := raCancel;
-    end;
-  end;
+begin
+  error := lbInfo.Items.Add;
+  error.Checked := True;
+  error.SubItems.Add(LineNumber);
+  error.SubItems.Add(ErrorType);
+  Result := True;
+end;
+
+procedure TfrEditorChild.SaveFile;
+// Saves a file to disk. If window is untitled it executes 'SaveAs' procedure
+// else it saves last savetime to check for changes outside editor
+var
+  sr:TsearchRec;
+
+begin
+  memo.Lines.SaveToFile(Caption);
+  memo.Modified := false;
+  FindFirst(Caption, faAnyFile, SR);
+  filedatetime := FileDateToDateTime(sr.Time);
+  FindClose(sr);
+end;
+
+procedure TfrEditorChild.LoadFile;
+// Loads given Filename into the active MDI editor child
+begin
+  if FileExists(Caption) then
+  begin
+    memo.Lines.LoadFromFile(Caption);
+    FileAge(Caption, filedatetime);
+    memo.EmptyUndoBuffer;
+    memo.SetSavePoint;
+    UpdateControls;
+  end
+  else
+    MessageDlg(_('File ') + Caption + _(' not found'), mtError, [mbOK], 0);
 end;
 
 end.

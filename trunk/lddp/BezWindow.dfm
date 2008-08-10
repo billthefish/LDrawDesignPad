@@ -120,17 +120,13 @@ object frmDATCurve: TfrmDATCurve
       Top = 16
       Width = 49
       Height = 21
-      CheckChars = '0123456789.'
-      CriticalPoints.CheckPoints = cpNone
-      CriticalPoints.ColorAbove = clBlue
-      CriticalPoints.ColorBelow = clRed
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 0
-      Text = '0'
-      Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
     object feCP1Y: TJvValidateEdit
@@ -138,17 +134,13 @@ object frmDATCurve: TfrmDATCurve
       Top = 16
       Width = 49
       Height = 21
-      CheckChars = '0123456789.'
-      CriticalPoints.CheckPoints = cpNone
-      CriticalPoints.ColorAbove = clBlue
-      CriticalPoints.ColorBelow = clRed
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 1
-      Text = '0'
-      Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
     object feCP1Z: TJvValidateEdit
@@ -156,17 +148,13 @@ object frmDATCurve: TfrmDATCurve
       Top = 16
       Width = 49
       Height = 21
-      CheckChars = '0123456789.'
-      CriticalPoints.CheckPoints = cpNone
-      CriticalPoints.ColorAbove = clBlue
-      CriticalPoints.ColorBelow = clRed
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 2
-      Text = '0'
-      Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
   end
@@ -183,17 +171,13 @@ object frmDATCurve: TfrmDATCurve
       Top = 16
       Width = 49
       Height = 21
-      CheckChars = '0123456789.'
-      CriticalPoints.CheckPoints = cpNone
-      CriticalPoints.ColorAbove = clBlue
-      CriticalPoints.ColorBelow = clRed
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 0
-      Text = '0'
-      Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
     object feCP2Y: TJvValidateEdit
@@ -201,17 +185,13 @@ object frmDATCurve: TfrmDATCurve
       Top = 16
       Width = 49
       Height = 21
-      CheckChars = '0123456789.'
-      CriticalPoints.CheckPoints = cpNone
-      CriticalPoints.ColorAbove = clBlue
-      CriticalPoints.ColorBelow = clRed
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 1
-      Text = '0'
-      Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
     object feCP2Z: TJvValidateEdit
@@ -219,17 +199,13 @@ object frmDATCurve: TfrmDATCurve
       Top = 16
       Width = 49
       Height = 21
-      CheckChars = '0123456789.'
-      CriticalPoints.CheckPoints = cpNone
-      CriticalPoints.ColorAbove = clBlue
-      CriticalPoints.ColorBelow = clRed
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
       TrimDecimals = True
       DisplayFormat = dfFloat
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 2
-      Text = '0'
-      Value = 0.000000000000000000
       OnChange = feCP1XChange
     end
   end
@@ -277,18 +253,14 @@ object frmDATCurve: TfrmDATCurve
     Top = 48
     Width = 105
     Height = 21
-    CheckChars = '0123456789.'
-    CriticalPoints.CheckPoints = cpNone
-    CriticalPoints.ColorAbove = clBlue
-    CriticalPoints.ColorBelow = clRed
+    CriticalPoints.MaxValueIncluded = False
+    CriticalPoints.MinValueIncluded = False
     TrimDecimals = True
     DisplayFormat = dfFloat
     DecimalPlaces = 9
     EditText = '0'
     HasMinValue = True
     TabOrder = 7
-    Text = '0'
-    Value = 0.000000000000000000
     OnChange = feLengthChange
   end
 end

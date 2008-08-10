@@ -1,11 +1,10 @@
 object frAboutBox: TfrAboutBox
   Left = 445
   Top = 278
-  Width = 384
-  Height = 271
+  Width = 442
+  Height = 327
   HorzScrollBar.Range = 369
   VertScrollBar.Range = 225
-  ActiveControl = Memo1
   BorderStyle = bsDialog
   Caption = 'About LDraw Design Pad'
   Color = clBtnFace
@@ -21,12 +20,14 @@ object frAboutBox: TfrAboutBox
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
-    Left = 8
-    Top = 8
-    Width = 361
-    Height = 185
+    Left = 0
+    Top = 0
+    Width = 436
+    Height = 49
+    Align = alTop
     BevelOuter = bvLowered
-    TabOrder = 1
+    TabOrder = 0
+    ExplicitWidth = 378
     object ProgramIcon: TImage
       Left = 8
       Top = 12
@@ -176,110 +177,366 @@ object frAboutBox: TfrAboutBox
       Font.Style = []
       ParentFont = False
     end
-    object Memo1: TMemo
-      Left = 8
-      Top = 56
-      Width = 345
-      Height = 121
-      Lines.Strings = (
-        'LDraw Design Pad'
-        ''
-        'Copyright (C) 2002-2006 by the LDDP contributors'
-        ''
-        ' Orion Pobursky'
-        ' Stephan Schonberg'
-        ' Carsten Schmitz'
-        ''
-        'Special thanks to:'
-        ''
-        'Lars C. Hassing'
-        ''
-        'Error Check feature derived from L3Check.cpp, L3Math.cpp'
-        'Part of the L3 project for handling LDraw *.dat files'
-        'Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)'
-        ''
-        'Fredrik Gl'#246'ckner'
-        ''
-        'Bendible Object Generator feature derived from '
-        'Emacs LDraw Major-Mode '
-        'Copyright (C) 1999-2002  Fredrik Gl'#246'ckner (fredrigl@math.uio.no)'
-        ''
-        'Willy Tschager'
-        'Anders Isaksson'
-        'Kevin Clague'
-        ''
-        'This program is free software; you can redistribute it '
-        'and/or modify it under the terms of the GNU General '
-        'Public License as published by the Free Software Foundation; '
-        'either version 2 of the License, or (at your option) any later '
-        'version.'
-        ''
-        'This program is distributed in the hope that it will be useful, '
-        'but WITHOUT ANY WARRANTY; without even the implied '
-        'warranty of MERCHANTABILITY or FITNESS FOR A '
-        'PARTICULAR PURPOSE.  See the GNU General Public License '
-        'for more details.'
-        ''
-        'You should have received a copy of the GNU General '
-        'Public License along with this program; if not, write to the '
-        'Free Software Foundation, Inc., '
-        '59 Temple Place - Suite 330, '
-        'Boston, MA  02111-1307, USA.')
-      ScrollBars = ssVertical
-      TabOrder = 0
+  end
+  object PageControl1: TPageControl
+    Left = 0
+    Top = 49
+    Width = 436
+    Height = 217
+    ActivePage = TabSheet1
+    Align = alClient
+    TabOrder = 1
+    ExplicitWidth = 378
+    object TabSheet1: TTabSheet
+      Caption = 'Credits'
+      ExplicitWidth = 370
+      ExplicitHeight = 133
+      object Memo1: TMemo
+        Left = 0
+        Top = 0
+        Width = 428
+        Height = 189
+        Align = alClient
+        Lines.Strings = (
+          'LDraw Design Pad'
+          ''
+          'Copyright (C) 2002-2008 by the LDDP contributors'
+          ''
+          ' Orion Pobursky'
+          ' Stephan Schonberg'
+          ' Carsten Schmitz'
+          ''
+          'Special thanks to:'
+          ''
+          'Lars C. Hassing'
+          '  Error Check feature derived from L3Check.cpp, L3Math.cpp'
+          '  Part of the L3 project for handling LDraw *.dat files'
+          '  Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)'
+          ''
+          'Fredrik Gl'#246'ckner'
+          '  Bendible Object Generator feature derived from '
+          '  Emacs LDraw Major-Mode '
+          
+            '  Copyright (C) 1999-2002  Fredrik Gl'#246'ckner (fredrigl@math.uio.n' +
+            'o)'
+          ''
+          'Philippe "Philo" Hurbain'
+          '  Plane normal check derived from code by:'
+          '  Philippe "Philo" Hurbain - 2007 - www.philohome.com'
+          ''
+          'Willy Tschager'
+          '  Primary Beta Tester'
+          ''
+          'Anders Isaksson'
+          'Kevin Clague'
+          ''
+          'This program is free software; you can redistribute it '
+          'and/or modify it under the terms of the GNU General '
+          'Public License as published by the Free Software Foundation; '
+          'either version 2 of the License, or (at your option) any later '
+          'version.'
+          ''
+          'This program is distributed in the hope that it will be useful, '
+          'but WITHOUT ANY WARRANTY; without even the implied '
+          'warranty of MERCHANTABILITY or FITNESS FOR A '
+          'PARTICULAR PURPOSE.  See the GNU General Public License '
+          'for more details.'
+          ''
+          'You should have received a copy of the GNU General '
+          'Public License along with this program; if not, write to the '
+          'Free Software Foundation, Inc., '
+          '59 Temple Place - Suite 330, '
+          'Boston, MA  02111-1307, USA.')
+        ScrollBars = ssVertical
+        TabOrder = 0
+        ExplicitWidth = 370
+        ExplicitHeight = 133
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Version History'
+      ImageIndex = 1
+      ExplicitWidth = 370
+      ExplicitHeight = 133
+      object Memo2: TMemo
+        Left = 0
+        Top = 0
+        Width = 428
+        Height = 189
+        Align = alClient
+        Lines.Strings = (
+          '+ = New feature  * = Bugfix   - = Removed feature'
+          ''
+          'v1.5.7'
+          '+ Added ability to sort text on various criteria'
+          '* Fixed various problems with rounding'
+          '+ Updated metamenu.ini'
+          
+            '- Removed Unit Det from error check (it was experimental and did' +
+            'n'#39't work as intended)'
+          
+            '* Fixed an error with inlining if the cursor was at the beginnin' +
+            'g of a line'
+          ''
+          'v1.5.6 13 November 2004'
+          '+ Added color replace toolbar'
+          
+            '+ Added ability to define multiple user defined extarnal program' +
+            's'
+          '+ Added subfile selection feature'
+          '* Fixed mirror to handle mutiple lines'
+          ''
+          'v1.5.5 29 August 2004'
+          '+ Added mirror selected line.'
+          '+ Update inline feature to inline multiple line selection'
+          '+ Added poll on request'
+          '+ Added line numbers to the triangle combine dialog'
+          '+ Added a few toolbar icons and keyboard shortcuts'
+          '* Fixed MRU list to include files that are "Save As"'
+          ''
+          'v1.54 26 February 2004'
+          
+            '+ Added customizable META command menu.  Open the metamenu.ini f' +
+            'ile for details'
+          '+ Added Combine 2 triangles into quad feature'
+          '+ Added Randomize Colors of Selection feature'
+          
+            '+ Added replace color regardless of original color to color repl' +
+            'ace dialog'
+          ''
+          'v1.53 24 January 2004'
+          '+ Updated the colors.pal file (Thanks to Willy Tschager)'
+          '+ Added ability to auto fix '#39'Y column all zeros'#39' errors'
+          '+ Added ability to copy the error check output to the clipboard'
+          '+ Added Hose 12L to Bendible Object Generator'
+          '* Fixed accuracy of identical line check'
+          ''
+          'v1.52 5 December 2003'
+          '+ Added ability to process current text through LSynth'
+          '+ Integrated the Bendible Object Generator'
+          '+ Added Auto Rounding feature'
+          
+            '* Fixed problem with Error Check incorrectly fixing some Bad Ver' +
+            'tex Sequences'
+          ''
+          'v1.51 14 November 2003'
+          '* Drag and Drop from files onto LDDP is working now again'
+          '* Fixed window menu showing active windows'
+          '+ Updated compile instructions'
+          '* Fixed Search and Replace Functions'
+          '* Fixed Word to word jumping (still needs some more fixing)'
+          
+            '* Fixed color replace dialog not showing color names when hoveri' +
+            'ng with mouse over '
+          'palette'
+          '* Numerous small fixes'
+          ''
+          'v1.50 08 October 2003'
+          '+ Ability to insert BFC Statements '
+          '+ Overhauled Error Check. Many new features available'
+          '+ Auto error fix now fixes '#39'Row N All Zeros'#39' errors'
+          '+ Added some editor customization options.'
+          
+            '+ Line is now selected if you click next to it in the left margi' +
+            'n'
+          
+            '* Changed code to more Windows friendly style (Drag and Drop wor' +
+            'ks now)'
+          
+            '* Fixed a problen with Error Check not finding all Bad Vertex Se' +
+            'quences'
+          ''
+          'v1.5b 31 July 2003'
+          '+ Entire program overhauled and rewritten.'
+          '+ Integrated L3P check into the program.  Now called Error Check'
+          '+ Integrated BMP2DAT into the program.'
+          '+ Ability to reverse the winding of a polygon'
+          '+ A model tree veiwer'
+          '+ Auto error fix now fixes '#39'Row N All Zeros'#39' errors'
+          
+            '+ Moved all configuration settings to the LDraw.ini.  This file ' +
+            'should be located in your'
+          '  Windows directory. If not LDDP will create it there.'
+          '+ Ability to change default decimal places when Inlining'
+          '+ Ability to define icons for plugins'
+          ' '
+          'v1.5a 05/22/2003  '
+          ''
+          
+            '+ Published LDDP under open source license. Feel free to contrib' +
+            'ute to this project'
+          '  and help to keep it alive.'
+          ''
+          'v1.4 01/16/2003'
+          '* Fixed some L3P problems with long filenames or -paths'
+          '* Fixed list of recently used files'
+          '* Fixed a problem with wrong Z-Order of replace window'
+          
+            '+ Added Autofix popup menu to L3P errormessages. You can automat' +
+            'ically fix a single'
+          
+            '  or all "Identical Lines" or "Bad Vertex sequence" errors with ' +
+            'that option.'
+          '+ Autohiglighting for Pascal and C++ files added on load'
+          '+ Added ability to change highlighting color of the color tag'
+          
+            '+ New polling option in poll button menu: Poll to selected line ' +
+            'only'
+          '+ Added Shift-Del combination for cutting text'
+          ''
+          'v1.3 10/26/2002'
+          
+            '+ Looking for parts.lst instead of LDraw.exe for location check ' +
+            'of LDraw parts'
+          '* Drag and Drop fixed'
+          '+ Changed Temp Filename location'
+          '+ Changed Polling time options'
+          '* Fixed small bug in Inliner Code'
+          '+ Added Ctrl/Shift-Insert shortcuts for copy and paste'
+          '+ Updated palette file'
+          ''
+          ''
+          'v1.2 09/29/2002'
+          ''
+          '- Removed warning message for plugins if no text was selected'
+          '+ Setup installer'
+          '+ "Send To" entry'
+          
+            '+ Saves LDDP.exe path to registry (check plugins-Readme.txt in S' +
+            'ample folder)'
+          ''
+          ''
+          'v1.19b 08/08/2002'
+          ''
+          '* Fixed problems with long filenames for external programs'
+          '+ Added syntax highlighting support for other languages'
+          '* Revised plugin code (again)'
+          ''
+          ''
+          'v1.1 2002/08/03'
+          ''
+          '* Fixed shortcuts for Cut, Copy, Paste'
+          '+ Redid the search options / added '#39'search'#39' menu'
+          '+ Added '#39'Find next'#39' (F3) option'
+          '+ Undo now possible after plugins that affect the whole text'
+          ''
+          ''
+          'v1.0 2002/07/27'
+          ''
+          '+ '#39'Select All'#39' command'
+          '+ Print command'
+          '* Fixed small bug in color selection'
+          
+            '* Fixed / Expanded Example Plugin-Code. Plugins should work now ' +
+            'properly'
+          '* Fixed bmall bug in find-window'
+          ''
+          'v0.9 2002/03/05'
+          ''
+          '+ Added Change/Replace Color dialog (added palette file)'
+          '+ Undo now possible even after save'
+          '- Reverted to colored speedbuttons. Think they looked better ;-)'
+          '* MRU files list updated when closing main window'
+          '* Fixed Inlining bug where double spaces were parsed as 0.'
+          '* Fixed Inlining calculation bug.'
+          
+            '* Fixed Inlining bug where all colors were replaced by master pa' +
+            'rt color.'
+          '* Code templates are saved now (templates.bin)'
+          '* Fixed ML-CAD starting and loading long filenames with spaces'
+          ''
+          'v0.4 2002/02/27'
+          ''
+          '+ Added self-defined program feature'
+          '+ Added syntax-highlighting for optional lines'
+          '+ Added options to set Username / Email / Signature'
+          '+ Small changes'
+          '+ Changed speedbuttons'
+          '* Fixed Inlining issues:'
+          '  - Uses correct color for inlined parts'
+          '  - Inlining menu entry correctly activated'
+          '  - Fixed inlining of subparts inside subparts'
+          '    Thanks to Tore Eriksson who helped me a lot with this issue!'
+          '* Fixed that OS can change the internal decimalpoint setting'
+          '* Plugins can now be properly disabled'
+          '* Fixed homepage menu entry'
+          ''
+          ''
+          'v0.3 2002/02/25'
+          ''
+          '- First version')
+        ReadOnly = True
+        ScrollBars = ssVertical
+        TabOrder = 0
+        ExplicitTop = 3
+      end
     end
   end
-  object BitBtn1: TBitBtn
-    Left = 153
-    Top = 200
-    Width = 75
-    Height = 25
-    Caption = 'OK'
-    Default = True
-    ModalResult = 1
-    TabOrder = 0
-    Glyph.Data = {
-      36050000424D3605000000000000360400002800000010000000100000000100
-      08000000000000010000120B0000120B00000001000000010000000000000000
-      80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
-      A6000020400000206000002080000020A0000020C0000020E000004000000040
-      20000040400000406000004080000040A0000040C0000040E000006000000060
-      20000060400000606000006080000060A0000060C0000060E000008000000080
-      20000080400000806000008080000080A0000080C0000080E00000A0000000A0
-      200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0
-      200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0
-      200000E0400000E0600000E0800000E0A00000E0C00000E0E000400000004000
-      20004000400040006000400080004000A0004000C0004000E000402000004020
-      20004020400040206000402080004020A0004020C0004020E000404000004040
-      20004040400040406000404080004040A0004040C0004040E000406000004060
-      20004060400040606000406080004060A0004060C0004060E000408000004080
-      20004080400040806000408080004080A0004080C0004080E00040A0000040A0
-      200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0
-      200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0
-      200040E0400040E0600040E0800040E0A00040E0C00040E0E000800000008000
-      20008000400080006000800080008000A0008000C0008000E000802000008020
-      20008020400080206000802080008020A0008020C0008020E000804000008040
-      20008040400080406000804080008040A0008040C0008040E000806000008060
-      20008060400080606000806080008060A0008060C0008060E000808000008080
-      20008080400080806000808080008080A0008080C0008080E00080A0000080A0
-      200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0
-      200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0
-      200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C000
-      2000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C020
-      2000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C040
-      2000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C060
-      2000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C080
-      2000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A0
-      2000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C0
-      2000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000
-      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFD
-      000000FDFDFDFDFDFDFDFDFDFDFDFD00B0A8A800FDFDFDFDFDFDFDFDFDFD00B0
-      B0B0B0A800FDFDFDFDFDFDFDFD00B0A8B0B0B0B000FDFDFDFDFDFDFD00B0A8B0
-      B8B0B0B0B000FDFDFDFDFD00B0A8B8B8A800B0B0B000FDFDFDFDFD00A9B8A8A9
-      00FD00B0B0B000FDFDFDFD00A1A8A900FDFD00B0B8B000FDFDFDFDFD000000FD
-      FDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFD
-      FDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFD
-      FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
-      FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
+  object Panel2: TPanel
+    Left = 0
+    Top = 266
+    Width = 436
+    Height = 29
+    Align = alBottom
+    TabOrder = 2
+    ExplicitTop = 210
+    ExplicitWidth = 378
+    object BitBtn1: TBitBtn
+      Left = 360
+      Top = 1
+      Width = 75
+      Height = 27
+      Align = alRight
+      Caption = 'OK'
+      Default = True
+      ModalResult = 1
+      TabOrder = 0
+      Glyph.Data = {
+        36050000424D3605000000000000360400002800000010000000100000000100
+        08000000000000010000120B0000120B00000001000000010000000000000000
+        80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+        A6000020400000206000002080000020A0000020C0000020E000004000000040
+        20000040400000406000004080000040A0000040C0000040E000006000000060
+        20000060400000606000006080000060A0000060C0000060E000008000000080
+        20000080400000806000008080000080A0000080C0000080E00000A0000000A0
+        200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0
+        200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0
+        200000E0400000E0600000E0800000E0A00000E0C00000E0E000400000004000
+        20004000400040006000400080004000A0004000C0004000E000402000004020
+        20004020400040206000402080004020A0004020C0004020E000404000004040
+        20004040400040406000404080004040A0004040C0004040E000406000004060
+        20004060400040606000406080004060A0004060C0004060E000408000004080
+        20004080400040806000408080004080A0004080C0004080E00040A0000040A0
+        200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0
+        200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0
+        200040E0400040E0600040E0800040E0A00040E0C00040E0E000800000008000
+        20008000400080006000800080008000A0008000C0008000E000802000008020
+        20008020400080206000802080008020A0008020C0008020E000804000008040
+        20008040400080406000804080008040A0008040C0008040E000806000008060
+        20008060400080606000806080008060A0008060C0008060E000808000008080
+        20008080400080806000808080008080A0008080C0008080E00080A0000080A0
+        200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0
+        200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0
+        200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C000
+        2000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C020
+        2000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C040
+        2000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C060
+        2000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C080
+        2000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A0
+        2000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C0
+        2000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFD
+        000000FDFDFDFDFDFDFDFDFDFDFDFD00B0A8A800FDFDFDFDFDFDFDFDFDFD00B0
+        B0B0B0A800FDFDFDFDFDFDFDFD00B0A8B0B0B0B000FDFDFDFDFDFDFD00B0A8B0
+        B8B0B0B0B000FDFDFDFDFD00B0A8B8B8A800B0B0B000FDFDFDFDFD00A9B8A8A9
+        00FD00B0B0B000FDFDFDFD00A1A8A900FDFD00B0B8B000FDFDFDFDFD000000FD
+        FDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFD
+        FDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFD
+        FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
+        FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
+      ExplicitLeft = 294
+      ExplicitTop = 6
+      ExplicitHeight = 25
+    end
   end
 end
