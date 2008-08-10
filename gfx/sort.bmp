@@ -1,0 +1,26 @@
+[LDraw]
+BaseDirectory=C:\Documents and Settings\Orion\My Documents\Lego\ldraw
+
+[LDDP Options]
+edLDViewDir_Text=C:\Documents and Settings\Orion\My Documents\Lego\Programs\LDView
+edMLCadDir_Text=C:\Documents and Settings\Orion\My Documents\Lego\Programs\MLCad 3.00
+edL3LabDir_Text=
+edLSynthDir_Text=C:\Documents and Settings\Orion\My Documents\Lego\Programs\LSynth\bin
+edExternal_Text=
+edParameters_Text=
+edEmail_Text=owp@pobursky.com
+edName_Text=Orion Pobursky
+edUsername_Text=OrionP
+seDet_Value=0.01
+seDist_Value=0.1
+seNormalAngle_Value=1
+seCollinear_Value=0.0001
+sePntAcc_Value=4
+seRotAcc_Value=4
+cboDist_Checked=0
+cboDet_Checked=0
+cboNormalAngle_Checked=1
+cboWaitForFinish_Checked=0
+cboShowCommand_Checked=0
+rgStyle_ItemIndex=-1
+lbxColors_Item0="B

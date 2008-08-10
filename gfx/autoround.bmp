@@ -1,0 +1,37 @@
+[Version]
+Signature="$Windows NT$"
+AdvancedINF=2.5
+CatalogFile=musetup.cat
+
+[UpdateID]
+GUID = 04dd4730-f7bf-4702-b63a-08c389a7e718
+RevisionID = 0
+
+[SourceDisksNames]
+1 = "Microsoft Update Client"
+
+[SourceDisksFiles]
+muauth.cab = 1
+muweb.dll = 1
+mucltui.dll = 1
+
+[DestinationDirs]
+DefaultDestDir = 11 
+CopyFiles_muauth  = 10, softwaredistribution\authcabs\7971f918-a847-4430-9279-4a52d1efe18d
+CopyFiles_wow64_muweb = 10, SysWow64 
+
+[OS]
+5.0.2195.3-5.0.2195.9999.9999 = W2K
+5.1-5.1.9999.9999.9999 = WinXP
+5.2-5.2.9999.9999.9999 = Win2003
+
+; Entry point for "SelfUpdate"; common for all OS'es
+[Common_SelfUpdate]
+mucltui
+muweb
+
+[wow64_Common_SelfUpdate]
+wow64_muweb
+
+; ---------------------------------------------------------------------------------
+; Common sections for files; Maintain 
