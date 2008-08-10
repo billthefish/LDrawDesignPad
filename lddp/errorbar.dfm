@@ -116,7 +116,6 @@ object frErrorWindow: TfrErrorWindow
       Category = 'Error Check'
       Caption = 'Run Error Check'
       Hint = 'Check for errors|Check for errors'
-      ImageIndex = 21
       ShortCut = 121
       OnExecute = acErrorCheckExecute
     end

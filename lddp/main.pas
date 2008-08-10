@@ -205,7 +205,7 @@ type
     acBMP2LDraw: TAction;
     ConvertBitmaptoLDraw1: TMenuItem;
     acModelTreeView: TAction;
-    ViewModelTree1: TMenuItem;
+    mnuModelTree: TMenuItem;
     N15: TMenuItem;
     Polling1: TMenuItem;
     PolltoL3LabLDView1: TMenuItem;
@@ -393,8 +393,7 @@ type
 
   private
     { Private declarations }
-    initialized: boolean;
-    TabRightClickndex: Integer;
+    TabRightClickIndex: Integer;
     procedure AppInitialize;
     procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
     procedure BuildMetaMenu;
@@ -414,7 +413,6 @@ type
     procedure UpdateViewMenu;
     procedure LoadFormValues;
     procedure SaveFormValues;
-    procedure SetToolbarWindows;
   end;
 
 
@@ -1033,8 +1031,8 @@ end;
 
 procedure TfrMain.acFileCloseExecute(Sender: TObject);
 begin
-  if TabRightClickndex >= 0 then
-    DocumentTabs.Close(TabRightClickndex);
+  if TabRightClickIndex >= 0 then
+    DocumentTabs.Close(TabRightClickIndex);
 end;
 
 // Help actions
@@ -1259,13 +1257,16 @@ end;
 procedure TfrMain.acErrorListExecute(Sender: TObject);
 begin
   frErrorWindow.Visible := not frErrorWindow.Visible;
+  frErrorWindow.RestorePosition;;
   UpdateViewMenu;
 end;
 
 procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
 // Shows the model tree dialog
 begin
-  frModelTreeView.Show;
+  frModelTreeView.Visible := not frModelTreeView.Visible;
+  frModelTreeView.RestorePosition;;
+  UpdateViewMenu;
 end;
 
 procedure TfrMain.UpdateViewMenu;
@@ -1277,6 +1278,7 @@ begin
   mnuExternalPrograms.Checked := tbrExternalPrograms.Visible;
   mnuColorReplace.Checked := tbrColorReplace.Visible;
   mnuErrorList.Checked := frErrorWindow.Visible;
+  mnuModelTree.Checked := frModelTreeView.Visible;
 end;
 
 // Window actions
@@ -1458,6 +1460,7 @@ procedure TfrMain.FormShow(Sender: TObject);
 // if app starts for first time this initializes application and updates controls
 begin
   UpdateControls;
+  frModelTreeView.RestorePosition;
 end;
 
 Procedure TfrMain.AppInitialize;
@@ -1627,8 +1630,8 @@ procedure TfrMain.DocumentTabsMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if Button = mbRight then
   begin
-    TabRightClickndex := DocumentTabs.IndexOfTabAt(X,Y);
-  end else TabRightClickndex := -1;
+    TabRightClickIndex := DocumentTabs.IndexOfTabAt(X,Y);
+  end else TabRightClickIndex := -1;
 end;
 
 procedure TfrMain.MetaMenuClick(Sender: TObject);
@@ -1958,33 +1961,10 @@ begin
   LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
 
-  LDDPini.WriteBool(IniSection, 'frErrorWindow_Visible', frErrorWindow.Visible);
-  LDDPini.WriteBool(IniSection, 'frErrorWindow_Floating', frErrorWindow.Floating);
-
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
 
-procedure TfrMain.SetToolbarWindows;
-
-var
-  LDDPini: TMemIniFile;
-  IniSection: string;
-
-begin
-  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
-
-  Inisection := 'LDDP Main';
-
-  frErrorWindow.Visible := LDDPini.ReadBool(IniSection, 'frErrorWindow_Visible', frErrorWindow.Visible);
-
-  if frErrorWindow.Visible and
-     LDDPini.ReadBool(IniSection, 'frErrorWindow_Floating', False) then
-    frErrorWindow.ManualDock(JvDockServer1.BottomDockPanel, nil, alBottom);
-
-  LDDPini.Free;
-
-end;
 function TfrMain.tempFileName:string;
 {---------------------------------------------------------------------
 Description: Creates and returns a unique temporary filename for this editor window

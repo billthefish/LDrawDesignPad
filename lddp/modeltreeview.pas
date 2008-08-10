@@ -31,9 +31,13 @@ type
     procedure FormShow(Sender: TObject);
     procedure tvModelDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
   public
     procedure AddNodes(ANode: TTreeNode; AString: string);
+    procedure LoadFormValues;
+    procedure SaveFormValues;
+    procedure RestorePosition;
   end;
 
 var
@@ -44,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses
-  main, DATModel, DATBase;
+  IniFiles, main, windowsspecific, DATModel, DATBase;
 
 
 procedure TfrModelTreeView.FormShow(Sender: TObject);
@@ -55,6 +59,7 @@ var
   DModel: TDATModel;
 
 begin
+  LoadFormValues;
   tvModel.Items.Clear;
   DModel := TDATModel.Create;
   DModel.ModelText := frMain.editor.Lines.Text;
@@ -97,6 +102,73 @@ end;
 procedure TfrModelTreeView.FormCreate(Sender: TObject);
 begin
   TranslateComponent (self);
+end;
+
+procedure TfrModelTreeView.FormDestroy(Sender: TObject);
+begin
+  SaveFormValues;
+end;
+
+procedure TfrModelTreeView.LoadFormValues;
+// Loads form values from the LDDP.ini file
+var
+  LDDPini: TMemIniFile;
+  IniSection: string;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+
+  Inisection := 'LDDP ErrorWindow';
+
+  Left := LDDPini.ReadInteger(IniSection, 'frErrorWindow_Left', Left);
+  Top := LDDPini.ReadInteger(IniSection, 'frErrorWindow_Top', Top);
+  Width := LDDPini.ReadInteger(IniSection, 'frErrorWindow_Width', Width);
+  Height := LDDPini.ReadInteger(IniSection, 'frErrorWindow_Height', Height);
+
+  LDDPini.Free;
+end;
+
+procedure TfrModelTreeView.SaveFormValues;
+// Saves form values to the LDDP.ini file
+var
+  LDDPini: TMemIniFile;
+  IniSection: string;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+
+  // Save Main position, size, and toolbar visibility
+  Inisection := 'LDDP ErrorWindow';
+  LDDPini.EraseSection(IniSection);
+
+  LDDPini.WriteInteger(IniSection, 'frErrorWindow_Left', Left);
+  LDDPini.WriteInteger(IniSection, 'frErrorWindow_Top', Top);
+  LDDPini.WriteInteger(IniSection, 'frErrorWindow_Width', Width);
+  LDDPini.WriteInteger(IniSection, 'frErrorWindow_Height', Height);
+  LDDPini.WriteBool(IniSection, 'frErrorWindow_Floating', Floating);
+
+  LDDPini.UpdateFile;
+  LDDPini.Free;
+end;
+
+procedure TfrModelTreeView.RestorePosition;
+
+var
+  LDDPini: TMemIniFile;
+  IniSection: string;
+  floating: Boolean;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+
+  Inisection := 'LDDP ErrorWindow';
+
+  floating := LDDPini.ReadBool(IniSection, 'frErrorWindow_Floating', False);
+
+  if Visible and not floating then
+    ManualDock(frMain.JvDockServer1.LeftDockPanel, nil, alLeft);
+
+  LDDPini.Free;
 end;
 
 end.
