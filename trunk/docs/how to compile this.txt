@@ -1,0 +1,16 @@
+HOW TO COMPILE LDDP
+----------------------------------
+
+You'll need:
+
+* Borland Delphi. (Delphi version 6 or up required)
+
+To compile this source successfully, you'll also need to download 
+and install the following component suites:
+
+* SynEdit 2.0.1 
+	http://synedit.sourceforge.net
+
+* JVCL 3.0 with JCL 1.94
+	http://jvcl.sourceforge.net
+	Note: The LDDP code is incompatible with JVCL 2.x
