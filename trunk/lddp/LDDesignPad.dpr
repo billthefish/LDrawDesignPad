@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -------------------------------------------------------------------------------}
 program LDDesignPad;
 
-{%File 'readme.txt'}
+
 
 uses
   gnugettext,
@@ -34,13 +34,13 @@ uses
   dlgSubpart in 'dlgSubpart.pas' {frSubFile},
   sorting in 'sorting.pas' {fmSort},
   commonprocs in 'commonprocs.pas',
-  DATBase in '..\..\DAT Tools\DATBase.pas',
-  DATCheck in '..\..\DAT Tools\DATCheck.pas',
-  DATErrorFix in '..\..\DAT Tools\DATErrorFix.pas',
-  DATMath in '..\..\DAT Tools\DATMath.pas',
-  DATModel in '..\..\DAT Tools\DATModel.pas',
-  DATUtils in '..\..\DAT Tools\DATUtils.pas',
-  errorbar in 'errorbar.pas' {frErrorWindow};
+  errorbar in 'errorbar.pas' {frErrorWindow},
+  DATUtils in '..\DAT Tools\DATUtils.pas',
+  DATBase in '..\DAT Tools\DATBase.pas',
+  DATCheck in '..\DAT Tools\DATCheck.pas',
+  DATErrorFix in '..\DAT Tools\DATErrorFix.pas',
+  DATMath in '..\DAT Tools\DATMath.pas',
+  DATModel in '..\DAT Tools\DATModel.pas';
 
 {$R *.res}
 

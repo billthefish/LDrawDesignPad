@@ -80,6 +80,7 @@ type
     function AddError(LineNumber, ErrorType: string): Boolean;
     procedure LoadFormValues;
     procedure SaveFormValues;
+    procedure RestorePosition;
   end;
 
 var
@@ -481,7 +482,6 @@ procedure TfrErrorWindow.LoadFormValues;
 var
   LDDPini: TMemIniFile;
   IniSection: string;
-  checkfloat: Boolean;
 
 begin
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
@@ -513,8 +513,29 @@ begin
   LDDPini.WriteInteger(IniSection, 'frErrorWindow_Top', Top);
   LDDPini.WriteInteger(IniSection, 'frErrorWindow_Width', Width);
   LDDPini.WriteInteger(IniSection, 'frErrorWindow_Height', Height);
+  LDDPini.WriteBool(IniSection, 'frErrorWindow_Floating', Floating);
 
   LDDPini.UpdateFile;
+  LDDPini.Free;
+end;
+
+procedure TfrErrorWindow.RestorePosition;
+
+var
+  LDDPini: TMemIniFile;
+  IniSection: string;
+  floating: Boolean;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+
+  Inisection := 'LDDP ErrorWindow';
+
+  floating := LDDPini.ReadBool(IniSection, 'frErrorWindow_Floating', False);
+
+  if Visible and not floating then
+    ManualDock(frMain.JvDockServer1.BottomDockPanel, nil, alBottom);
+
   LDDPini.Free;
 end;
 
