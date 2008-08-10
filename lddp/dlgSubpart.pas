@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2005 the LDDP project contributors.
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -37,6 +37,8 @@ type
     Label3: TLabel;
     Label4: TLabel;
     edTitle: TEdit;
+    Label5: TLabel;
+    edUsername: TEdit;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

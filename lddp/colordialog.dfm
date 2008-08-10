@@ -1,10 +1,9 @@
 object frColorDialog: TfrColorDialog
   Left = 709
   Top = 134
-  Width = 423
+  Width = 223
   Height = 313
   VertScrollBar.Range = 41
-  ActiveControl = edColornumber
   BorderStyle = bsDialog
   Caption = 'Search & Replace Color Dialog'
   Color = clBtnFace
@@ -15,266 +14,90 @@ object frColorDialog: TfrColorDialog
   Font.Style = []
   OldCreateOrder = True
   Position = poDesktopCenter
+  OnClose = FormClose
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object GroupBox1: TGroupBox
     Left = 0
     Top = 0
-    Width = 415
-    Height = 238
+    Width = 217
+    Height = 240
     Align = alClient
     Caption = 'Pick your color'
     TabOrder = 0
-    object Shape11: TShape
-      Left = 225
-      Top = 24
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape12: TShape
-      Left = 265
-      Top = 24
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape22: TShape
-      Left = 265
-      Top = 64
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape32: TShape
-      Left = 265
-      Top = 104
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape42: TShape
-      Left = 265
-      Top = 144
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape43: TShape
-      Left = 305
-      Top = 144
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape14: TShape
-      Left = 345
-      Top = 24
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape24: TShape
-      Left = 345
-      Top = 64
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape34: TShape
-      Left = 345
-      Top = 104
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape33: TShape
-      Left = 305
-      Top = 104
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape44: TShape
-      Left = 345
-      Top = 144
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape13: TShape
-      Left = 305
-      Top = 24
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape23: TShape
-      Left = 305
-      Top = 64
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape21: TShape
-      Left = 225
-      Top = 64
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape31: TShape
-      Left = 225
-      Top = 104
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
-    object Shape41: TShape
-      Left = 225
-      Top = 144
-      Width = 40
-      Height = 40
-      OnMouseDown = Shape11MouseDown
-      OnMouseMove = Shape11MouseMove
-    end
     object Label1: TLabel
       Left = 12
-      Top = 35
+      Top = 19
       Width = 45
       Height = 13
       Caption = 'Old color:'
     end
     object Label2: TLabel
       Left = 12
-      Top = 68
+      Top = 64
       Width = 52
       Height = 13
       Caption = 'New Color:'
     end
-    object Label3: TLabel
-      Left = 12
-      Top = 104
-      Width = 79
-      Height = 13
-      Caption = 'Custom Color Nr:'
-    end
-    object btOldColor: TPanel
-      Left = 72
-      Top = 24
-      Width = 137
-      Height = 32
-      BevelOuter = bvLowered
-      BevelWidth = 3
-      Caption = 'Unknown'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 0
-      OnClick = btOldCOlorClick
-    end
-    object btNewColor: TPanel
-      Left = 72
-      Top = 58
-      Width = 137
-      Height = 32
-      BevelWidth = 3
-      Caption = '0 - Black'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 1
-      OnClick = btNewColorClick
-    end
-    object edColornumber: TEdit
-      Left = 105
-      Top = 100
-      Width = 57
-      Height = 21
-      TabOrder = 2
-    end
-    object edDescription: TEdit
-      Left = 225
-      Top = 184
-      Width = 177
-      Height = 21
-      Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      ReadOnly = True
-      TabOrder = 4
-    end
-    object ScrollBar1: TScrollBar
-      Left = 385
-      Top = 24
-      Width = 16
-      Height = 161
-      Kind = sbVertical
-      PageSize = 0
-      TabOrder = 5
-      OnChange = ScrollBar1Change
-    end
     object rgOptions: TRadioGroup
-      Left = 16
-      Top = 144
-      Width = 137
+      Left = 12
+      Top = 132
+      Width = 193
       Height = 89
       Items.Strings = (
         'Replace All')
-      TabOrder = 3
+      TabOrder = 0
     end
     object cbxReplaceEverything: TCheckBox
-      Left = 208
-      Top = 208
+      Left = 12
+      Top = 109
       Width = 193
       Height = 17
       Caption = 'Replace Regardless of Original Color'
-      TabOrder = 6
+      TabOrder = 1
       OnClick = cbxReplaceEverythingClick
+    end
+    object OldColorCombo: TJvColorComboBox
+      Left = 12
+      Top = 38
+      Width = 193
+      Height = 20
+      ColorDialogText = 'Custom...'
+      DroppedDownWidth = 193
+      NewColorText = 'Custom'
+      Options = [coText]
+      Sorted = True
+      TabOrder = 2
+    end
+    object NewColorCombo: TJvColorComboBox
+      Left = 12
+      Top = 83
+      Width = 193
+      Height = 20
+      ColorDialogText = 'Custom...'
+      DroppedDownWidth = 193
+      NewColorText = 'Custom'
+      Options = [coText]
+      Sorted = True
+      TabOrder = 3
     end
   end
   object Panel3: TPanel
     Left = 0
-    Top = 238
-    Width = 415
+    Top = 240
+    Width = 217
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      415
+      217
       41)
     object BitBtn1: TBitBtn
-      Left = 242
-      Top = 8
+      Left = 12
+      Top = 6
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
@@ -327,8 +150,8 @@ object frColorDialog: TfrColorDialog
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
     end
     object BitBtn2: TBitBtn
-      Left = 325
-      Top = 8
+      Left = 128
+      Top = 6
       Width = 77
       Height = 25
       Anchors = [akRight, akBottom]

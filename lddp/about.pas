@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2005 the LDDP project contributors.
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ interface
 
 uses
   gnugettext, Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
-  ExtCtrls, SysUtils, Buttons;
+  ExtCtrls, SysUtils, Buttons, ComCtrls;
   
 type
   TfrAboutBox = class(TForm)
@@ -31,6 +31,11 @@ type
     Version: TLabel;
     Memo1: TMemo;
     BitBtn1: TBitBtn;
+    PageControl1: TPageControl;
+    Panel2: TPanel;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    Memo2: TMemo;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
@@ -56,6 +61,7 @@ begin
     Version.Caption := Version.Caption + ': ' + GetAppVersion(Application.ExeName)
   else
     Version.Caption := _('Version information not available');
+  PageControl1.ActivePageIndex := 0;  
 end;
 
 procedure TfrAboutBox.FormCreate(Sender: TObject);

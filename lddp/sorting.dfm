@@ -13,6 +13,7 @@ object fmSort: TfmSort
   Font.Style = []
   OldCreateOrder = False
   Position = poOwnerFormCenter
+  OnActivate = FormActivate
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -90,6 +91,7 @@ object fmSort: TfmSort
       Default = True
       ModalResult = 1
       TabOrder = 1
+      OnClick = BitBtn1Click
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000

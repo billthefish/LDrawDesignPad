@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2005 the LDDP project contributors.
+{These sources are copyright (C) 2003-2008 the LDDP project contributors.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,14 +20,15 @@ unit main;
 interface
 
 uses
-  gnugettext, windows, forms, windowsspecific, registry, messages, Dialogs, SynEditPrint,
-  SynEditHighlighter, SysUtils, Synedit, SynHighlighterLDraw, ExtCtrls, Menus,
-  ImgList, StdActns, Types, SynHighlighterCpp, SynHighlighterPas,
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, Classes,
-  ActnList, ComCtrls, Controls, Inifiles, splash, SyneditTypes, Graphics,
-  SyneditKeyCmds, l3check, DATModel, DATBase, StdCtrls, Shellapi,
-  dlgReplaceText, SynEditMiscClasses, SynEditSearch, ToolWin, SynEditTextBuffer,
-  dlgSearchText, SynEditRegexSearch, SynEditMiscProcs;
+  gnugettext, Windows, Graphics, Forms, Registry, Messages, Dialogs,
+  SysUtils, ExtCtrls, Menus, ImgList, StdActns, Types, Classes, ActnList,
+  ComCtrls, Controls, Inifiles, splash, StdCtrls, ShellAPI, ToolWin,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+  sciPrint, SciScintillaOptionsFrm, SciScintillaOptionsDlg, SciSearchReplaceBase,
+  SciSearchReplace, SciScintillaBase, SciScintillaMemo, SciScintilla,
+  SciScintillaLDDP, SciDocTabCtrl, SciLanguageManager, SciPropertyMgr,
+  JvDockTree, JvDockControlForm, JvDockDelphiStyle, JvComponentBase,
+  JvDockVIDStyle;
 
 type
   TfrMain = class(TForm)
@@ -36,27 +37,19 @@ type
     acDecIndent: TAction;
     acEditCopy: TEditCopy;
     acEditCut: TEditCut;
-    acEditingToolbar: TAction;
     acEditPaste: TEditPaste;
-    acExternalsToolbar: TAction;
-    acFileClose: TWindowClose;
     acFileExit: TAction;
     acFileNew: TAction;
     acFileRevert: TAction;
     acFileSave: TAction;
-    acFileToolbar: TAction;
     acFind: TAction;
     acFindNext: TAction;
-    acHighlightCpp: TAction;
-    acHighlightLdraw: TAction;
-    acHighlightPascal: TAction;
     acHomepage: TAction;
     acincIndent: TAction;
     acInline: TAction;
     acInsertPartHeader: TAction;
     acInsertUpdateLine: TAction;
     acL3Lab: TAction;
-    acErrorCheck: TAction;
     acLDView: TAction;
     acMLCad: TAction;
     acMRUList: TAction;
@@ -64,7 +57,6 @@ type
     acRedo: TAction;
     acReplace: TAction;
     acReplaceColor: TAction;
-    acSearchToolbar: TAction;
     acSelectAll: TAction;
     ActionList1: TActionList;
     acTrimLines: TAction;
@@ -72,9 +64,7 @@ type
     acUncommentBlock1: TMenuItem;
     acUndo: TAction;
     acUserDefined: TAction;
-    acWindowsToolbar: TAction;
     btPolling: TToolButton;
-    C1: TMenuItem;
     ChangeColor1: TMenuItem;
     ControlBar1: TControlBar;
     Cut1: TMenuItem;
@@ -82,22 +72,17 @@ type
     ExternalPrograms2: TMenuItem;
     Files1: TMenuItem;
     HelpAbout: TAction;
-    Highlighting1: TMenuItem;
     ilToolBarColor: TImageList;
     InlinePart1: TMenuItem;
     Insert2: TMenuItem;
-    Ldraw1: TMenuItem;
     MenuItem2: TMenuItem;
     mnPollL3Lab: TMenuItem;
     mnPollToSelected: TMenuItem;
     N5: TMenuItem;
     N8: TMenuItem;
-    N9: TMenuItem;
     N10: TMenuItem;
-    Pascal1: TMenuItem;
     Paste1: TMenuItem;
     Plugins3: TMenuItem;
-    pmL3P: TPopupMenu;
     pmMemo: TPopupMenu;
     pmPolling: TPopupMenu;
     pmToolbars: TPopupMenu;
@@ -107,14 +92,12 @@ type
     SearchandReplace1: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
-    SynEditPrint: TSynEditPrint;
-    SynLDRSyn: TSynLDRSyn;
     tmPoll: TTimer;
-    ToolBar1: TToolBar;
-    ToolBar2: TToolBar;
-    ToolBar3: TToolBar;
-    ToolBar4: TToolBar;
-    ToolBar5: TToolBar;
+    tbrFile: TToolBar;
+    tbrExternalPrograms: TToolBar;
+    tbrSearchAndReplace: TToolBar;
+    tbrWindows: TToolBar;
+    tbrEditing: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
@@ -155,8 +138,6 @@ type
     acFilePrint: TAction;
     acFileCloseAll: TAction;
     acWindowTile: TAction;
-    SynPasSyn: TSynPasSyn;
-    SynCppSyn: TSynCppSyn;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
     FileNewItem: TMenuItem;
@@ -182,11 +163,11 @@ type
     Comment1: TMenuItem;
     Uncomment1: TMenuItem;
     Toolbars: TMenuItem;
-    FilesToolbar: TMenuItem;
-    Edit2: TMenuItem;
-    SearchReplace1: TMenuItem;
-    Windows2: TMenuItem;
-    ExternalPrograms3: TMenuItem;
+    mnuFile: TMenuItem;
+    mnuEditing: TMenuItem;
+    mnuSearchAndReplace: TMenuItem;
+    mnuWindows: TMenuItem;
+    mnuExternalPrograms: TMenuItem;
     N3: TMenuItem;
     miMiscOptions: TMenuItem;
     Insert1: TMenuItem;
@@ -204,10 +185,6 @@ type
     acMLCad1: TMenuItem;
     acL3Lab1: TMenuItem;
     mnuUserDefined: TMenuItem;
-    SyntaxHighlighting1: TMenuItem;
-    Ldraw2: TMenuItem;
-    C2: TMenuItem;
-    Pascal2: TMenuItem;
     N6: TMenuItem;
     TrimLines1: TMenuItem;
     InlinePart2: TMenuItem;
@@ -224,9 +201,7 @@ type
     ReverseWinding2: TMenuItem;
     ToolButton9: TToolButton;
     ErrorCheck1: TMenuItem;
-    http: TIdHTTP;
     acCheckforUpdate: TAction;
-    SynEditSearch: TSynEditSearch;
     acBMP2LDraw: TAction;
     ConvertBitmaptoLDraw1: TMenuItem;
     acModelTreeView: TAction;
@@ -241,18 +216,6 @@ type
     Pollevery5sec: TMenuItem;
     N7: TMenuItem;
     View1: TMenuItem;
-    AutofixCheckedErrors1: TMenuItem;
-    AutofixAllErrorofSameType1: TMenuItem;
-    AutofixAllCheckedErrorsofSameType1: TMenuItem;
-    N11: TMenuItem;
-    N12: TMenuItem;
-    acECFixError: TAction;
-    acECFixAllErrors: TAction;
-    N17: TMenuItem;
-    MarkAllForFixing1: TMenuItem;
-    UnmarkAll1: TMenuItem;
-    MarkAllofSelectedErrorType1: TMenuItem;
-    UnmarkAllofSelectedType1: TMenuItem;
     MarkAll1: TMenuItem;
     UnmarkAll2: TMenuItem;
     MarkAllofSelectedType1: TMenuItem;
@@ -267,15 +230,6 @@ type
     AutofixAllErrors1: TMenuItem;
     N21: TMenuItem;
     E1: TMenuItem;
-    acECMarkAll: TAction;
-    acECUnMarkAll: TAction;
-    acECFixAllMarkedErrors: TAction;
-    acECFixAllMarkedErrorsTyped: TAction;
-    acECFixAllErrorsTyped: TAction;
-    acECMarkAllTyped: TAction;
-    acECUnMarkAllTyped: TAction;
-    AutofixSelectedError2: TMenuItem;
-    AutofixAllErrors2: TMenuItem;
     N22: TMenuItem;
     ProcessthroughLSynth1: TMenuItem;
     acLSynth: TAction;
@@ -288,15 +242,12 @@ type
     acSortSelection: TAction;
     N14: TMenuItem;
     CopyErrorListToClipboard1: TMenuItem;
-    N23: TMenuItem;
-    CopyErrorListToClipboard2: TMenuItem;
-    acECCopy: TAction;
     mnuMeta: TMenuItem;
     mnuMeta2: TMenuItem;
     acTriangleCombine: TAction;
     CombineTrianglesIntoQuad1: TMenuItem;
     CombineTrianglesIntoQuad2: TMenuItem;
-    SoortByPosition1: TMenuItem;
+    SortByPosition1: TMenuItem;
     acRandomizeColors: TAction;
     Processing1: TMenuItem;
     RandomizeColorsinSelection1: TMenuItem;
@@ -318,8 +269,7 @@ type
     YAxis2: TMenuItem;
     ZAxis2: TMenuItem;
     tbrColorReplace: TToolBar;
-    ColorBar1: TMenuItem;
-    acColorToolbar: TAction;
+    mnuColorReplace: TMenuItem;
     acColorReplaceShortcut: TAction;
     tbnColor0: TToolButton;
     tbnColor1: TToolButton;
@@ -346,13 +296,29 @@ type
     N25: TMenuItem;
     SubfileSelection2: TMenuItem;
     Sort1: TMenuItem;
+    http: TIdHTTP;
+    EditorOptions1: TMenuItem;
+    acEditorOptions: TAction;
+    SearchReplaceDlg: TSciSearchReplace;
+    EditorOptionDlg: TScintillaOptionsDlg;
+    acToolbarVisibility: TAction;
+    DocumentTabs: TSciDocumentTabControl;
+    editor: TScintillaLDDP;
+    EditorPropertyLoader: TSciPropertyLoader;
+    acErrorList: TAction;
+    mnuErrorList: TMenuItem;
+    acFileClose: TAction;
+    JvDockServer1: TJvDockServer;
+    JvDockDelphiStyle1: TJvDockDelphiStyle;
+    pmTab: TPopupMenu;
+    CloseFile1: TMenuItem;
+    SciLanguageManager1: TSciLanguageManager;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
     procedure acLDViewExecute(Sender: TObject);
     procedure acMLCadExecute(Sender: TObject);
     procedure acUserDefinedExecute(Sender: TObject);
-    procedure acFilePrintExecute(Sender: TObject);
     procedure PluginClick(Sender: TObject);
     procedure acOptionsExecute(Sender: TObject);
     procedure acInlineExecute(Sender: TObject);
@@ -360,34 +326,24 @@ type
     procedure acDecIndentExecute(Sender: TObject);
     procedure acEditCopyExecute(Sender: TObject);
     procedure acEditCutExecute(Sender: TObject);
-    procedure acEditingToolbarExecute(Sender: TObject);
     procedure acEditPasteExecute(Sender: TObject);
-    procedure acExternalsToolbarExecute(Sender: TObject);
     procedure acFileExitExecute(Sender: TObject);
     procedure acFileNewExecute(Sender: TObject);
     procedure acFileRevertExecute(Sender: TObject);
     procedure acFileSaveExecute(Sender: TObject);
-    procedure acFileToolbarExecute(Sender: TObject);
     procedure acFindExecute(Sender: TObject);
     procedure acFindNextExecute(Sender: TObject);
-    procedure acHighlightCppExecute(Sender: TObject);
-    procedure acHighlightLdrawExecute(Sender: TObject);
-    procedure acHighlightPascalExecute(Sender: TObject);
     procedure acincIndentExecute(Sender: TObject);
     procedure acInsertPartHeaderExecute(Sender: TObject);
     procedure acInsertUpdateLineExecute(Sender: TObject);
-    procedure acErrorCheckExecute(Sender: TObject);
     procedure acMRUListExecute(Sender: TObject);
     procedure acRedoExecute(Sender: TObject);
     procedure acReplaceColorExecute(Sender: TObject);
     procedure acReplaceExecute(Sender: TObject);
-    procedure acSearchToolbarExecute(Sender: TObject);
     procedure acSelectAllExecute(Sender: TObject);
-    procedure acToolbarUpdate(Sender: TObject);
     procedure acTrimLinesExecute(Sender: TObject);
     procedure acUncommentBlockExecute(Sender: TObject);
     procedure acUndoExecute(Sender: TObject);
-    procedure acWindowsToolbarExecute(Sender: TObject);
     procedure btPollingClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDblClick(Sender: TObject);
@@ -409,1252 +365,240 @@ type
     procedure acModelTreeViewExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure acBMP2LDrawExecute(Sender: TObject);
-    procedure acECFixErrorExecute(Sender: TObject);
-    procedure acECFixAllErrorsExecute(Sender: TObject);
-    procedure acECMarkAllExecute(Sender: TObject);
-    procedure acECUnMarkAllExecute(Sender: TObject);
-    procedure acECFixAllMarkedErrorsExecute(Sender: TObject);
-    procedure acECFixAllMarkedErrorsTypedExecute(Sender: TObject);
-    procedure acECFixAllErrorsTypedExecute(Sender: TObject);
-    procedure acECMarkAllTypedExecute(Sender: TObject);
-    procedure acECUnMarkAllTypedExecute(Sender: TObject);
     procedure acFindNextUpdate(Sender: TObject);
     procedure acLSynthExecute(Sender: TObject);
     procedure acBendableObjectExecute(Sender: TObject);
     procedure acAutoRoundExecute(Sender: TObject);
-    procedure acECCopyExecute(Sender: TObject);
     procedure MetaMenuClick(Sender: TObject);
     procedure acTriangleCombineExecute(Sender: TObject);
     procedure acRandomizeColorsExecute(Sender: TObject);
     procedure Pollonrequest1Click(Sender: TObject);
     procedure acMirrorExecute(Sender: TObject);
-    procedure acColorToolbarExecute(Sender: TObject);
     procedure acColorReplaceShortcutExecute(Sender: TObject);
     procedure tbUserDefinedClick(Sender: TObject);
     procedure acSubFileExecute(Sender: TObject);
     procedure acSortSelectionExecute(Sender: TObject);
+    procedure acEditorOptionsExecute(Sender: TObject);
+    procedure SearchReplaceDlgTextFound(Sender: TObject);
+    procedure SearchReplaceDlgTextNotFound(Sender: TObject);
+    procedure acToolbarVisibilityExecute(Sender: TObject);
+    procedure acErrorListExecute(Sender: TObject);
+    procedure editorUpdateUI(Sender: TObject);
+    procedure acFileCloseExecute(Sender: TObject);
+    procedure DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
+      var AllowClose: Boolean);
+    procedure DocumentTabsMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure DocumentTabsChange(Sender: TObject);
 
   private
     { Private declarations }
-    fSearchFromCaret: boolean;
-    initialized:boolean;
+    initialized: boolean;
+    TabRightClickndex: Integer;
     procedure AppInitialize;
-    procedure SetErrorCheckMarks(State: Boolean; ErrorType: string);
-    procedure ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
     procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
     procedure BuildMetaMenu;
+    function tempFileName:string;
 
   public
     { Public declarations }
     strChangedCompleteText:string;
     strChangedSelText:string;
-    slPlugins:TStringList;
-    IniFileName, IniSection: string;
+    slPlugins: TStringList;
     procedure LoadPlugins(AppInit:Boolean = false);
-    procedure DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
-    function  GetTmpFileName: String;
-    procedure LoadFile(EditCh: TForm);
+    procedure OpenFile(filename: string);
+    procedure LoadFile(filename: string; DocNumber: Integer);
     procedure ShowSearchReplaceDialog(AReplace: boolean);
-    procedure UpdateControls(closing:boolean);
+    procedure UpdateControls(Closing: Boolean = false);
     procedure UpdateMRU(NewFileName: TFileName= '');
+    procedure UpdateViewMenu;
     procedure LoadFormValues;
     procedure SaveFormValues;
-    procedure CreateMDIChild(const CaptionName: string; new: Boolean);
+    procedure SetToolbarWindows;
   end;
 
 
 var
   frMain: TfrMain;
-  splashscreen: TfrSplash;
-
 
 implementation
 
 {$R *.dfm}
 
 uses
-  childwin, about, options, colordialog, BezWindow, sorting,
-  BMP2LDraw, modeltreeview, dlgConfirmReplace, dlgSubpart, commonprocs,
-  ErrorFix;
-
-
-var
-  gbSearchBackwards: boolean;
-  gbSearchCaseSensitive: boolean;
-  gbSearchSelectionOnly: boolean;
-  gbSearchTextAtCaret: boolean;
-  gbSearchWholeWords: boolean;
-
-  gsSearchText: string;
-  gsSearchTextHistory: string;
-  gsReplaceText: string;
-  gsReplaceTextHistory: string;
-
-
-
-procedure TfrMain.FileIsDropped(var Msg: TMessage);
-{---------------------------------------------------------------------
-Description: Accepts files dropped from explorer
-Parameter: msg:TMessage : not needed
-Return value: msg:TMessage : not needed
-----------------------------------------------------------------------}
-var
-   hDrop: THandle ;
-   fName: string ;
-   NumberOfFiles: Integer ;
-   fCounter: Integer ;
-
-begin
-   hDrop := Msg.WParam ;
-   NumberOfFiles := DragQueryFile(hDrop,$FFFFFFFF, nil, 0);
-   for fCounter := 1 to NumberOfFiles do
-   begin
-     SetLength(fname, MAX_PATH); // Anticipate largest string size
-     SetLength(fname, DragQueryFile(HDrop, fCounter-1, PChar(fname),MAX_PATH));
-     if (lowercase(extractFIleExt(fname)) <> '.exe') and
-        (lowercase(extractFIleExt(fname)) <> '.com') then
-     begin
-       CreateMDIChild(fName,false);
-       UpdateMRU(fName);
-     end;
-   end;
-   DragFinish (hDrop);
-end;
-
-
-
-procedure TfrMain.UpdateControls(closing:boolean);
-{---------------------------------------------------------------------
-Description: Updated the action controls depending on the EditorCHilds
-Parameter: none
-Return value: none
-----------------------------------------------------------------------}
-var mdicount:integer;
-begin
-  mdicount:=mdiChildcount;
-  if closing then mdicount:=mdicount-1;
-  acFileCloseAll.Enabled := mdicount>0;
-  acFileSaveAs.Enabled:=mdicount>0;
-  acFilePrint.Enabled:=mdicount>0;
-  acFileSave.Enabled:=mdicount>0;
-  acFileRevert.Enabled:=mdicount>0;
-  acErrorCheck.Enabled:=mdicount>0;
-  acldview.Enabled:=mdicount>0;
-  acl3Lab.Enabled:=mdicount>0;
-  acmlcad.Enabled:=mdicount>0;
-  acEditCut.Enabled:=mdicount>0;
-  acEditCopy.Enabled:=mdicount>0;
-  acEditPaste.Enabled:=mdicount>0;
-  btPolling.Enabled:=mdicount>0;
-  acSelectAll.Enabled:=mdicount>0;
-  acFind.Enabled:=mdicount>0;
-  acReplace.Enabled:=mdicount>0;
-  Plugins1.Enabled:=mdicount>0;
-  Insert1.Enabled:=mdicount>0;
-  Edit1.Enabled := mdicount>0;
-  Window1.Enabled := mdicount>0;
-  acCommentBlock.Enabled:=mdicount>0;
-  acUnCommentBlock.Enabled:=mdicount>0;
-  acIncIndent.Enabled:=mdicount>0;
-  acDecIndent.Enabled:=mdicount>0;
-  acTrimLines.Enabled:=mdicount>0;
-  acReverseWinding.Enabled := mdicount>0;
-  acTriangleCombine.Enabled := mdicount>0;
-  acMirrorX.Enabled := mdicount>0;
-  acMirrorY.Enabled := mdicount>0;
-  acMirrorZ.Enabled := mdicount>0;
-  acAutoRound.Enabled := mdicount>0;
-  acLSynth.Enabled := mdicount>0;
-  acBendableObject.Enabled := mdicount>0;
-  acModelTreeView.Enabled := mdicount>0;
-  acBMP2LDraw.Enabled := mdicount>0;
-  Mirror1.Enabled := mdicount>0;
-  ErrorCheck1.Enabled := mdicount>0;
-  MirrorLineOn1.Enabled := mdicount>0;
-  tbrColorReplace.Enabled := mdicount>0;
-  acSubfile.Enabled := mdicount>0;
-  acSortSelection.Enabled := mdicount>0;
-  if Assigned(ActiveMDICHild) then
-  begin
-    acUndo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanUndo;
-    acRedo.Enabled:=(mdicount>0) and (activeMDICHild as TfrEditorChild).Memo.CanRedo;
-  end
-  else if mdicount > 0 then
-  begin
-    acUndo.Enabled:=(mdicount>0) and
-                    (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanUndo;
-    acRedo.Enabled:=(mdicount>0) and
-                    (MDICHildren[mdicount-1] as TfrEditorChild).Memo.CanRedo;
-  end
-  else
-  begin
-    acUndo.Enabled:= false;
-    acRedo.Enabled:= false;
-  end;
-
-  acUserDefined.Enabled:=mdicount>0;
-  if mdicount=0 then acInline.enabled:=false;
-  acReplaceColor.enabled:=mdicount>0;
-  acWindowTile.enabled:=mdicount>0;
-end;
-
-procedure tfrMain.LoadFile(EditCh: TForm);
-{---------------------------------------------------------------------
-Description: Loads given Filename into the active MDI editor child
-Parameter: fname: Filename
-Return value: none
-----------------------------------------------------------------------}
-begin
-  with (EditCh as TfrEditorChild) do
-    if FileExists(Caption) then
-    begin
-      filedatetime:=FileDateToDateTime(FileAge(Caption));
-      Memo.Lines.LoadFromFile(Caption);
-      Memo.modified:=false;
-      updatecontrols;
-    end
-    else
-      MessageDlg(_('File ') + Caption + _(' not found'), mtError, [mbOK], 0);
-end;
-
-procedure TfrMain.CreateMDIChild(const CaptionName: string; new:boolean);
-{---------------------------------------------------------------------
-Description: Creates a new MDI child
-Parameter: new: if new is false, then File 'name' is loaded automatically
-           name: name of the child - if you load an existing file 'name' MUST
-                 be the path and filename of  that file
-Return value: none
-----------------------------------------------------------------------}
-var
-  Child: TfrEditorChild;
-  FileExt: string;
-
-begin
-  { create a new MDI child window }
-  Child := TfrEditorChild.Create(Application);
-  with Child do
-  begin
-    Caption := CaptionName;
-    Tag := 1;
-    pnInfo.height:=1;
-    if not new then
-    begin
-      Tag := 0;
-      FileExt := LowerCase(ExtractFileExt(name));
-      if (FileExt = '.c') or (FileExt = '.cpp') or
-         (FileExt = '.h') or (FileExt = '.hpp') then
-        Memo.Highlighter:=SynCppSyn
-      else if (FileExt = '.pas') or (FileExt = '.dpr') then
-        Memo.Highlighter:=SynPasSyn;
-      LoadFile(Child);
-    end;
-    memo.Gutter.ShowLineNumbers := frOptions.cboMarginNumbers.Checked;
-    memo.Gutter.Width := frOptions.speMarginWidth.AsInteger;
-    memo.RightEdge := frOptions.speRightLine.AsInteger;
-  end;
-  UpdateControls(false);
-end;
-
-procedure TfrMain.FormDblClick(Sender: TObject);
-begin
-  acFileOpen.Execute;
-end;
-
-procedure TfrMain.acFileNewExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Creates a new untitled Editor child window
-Parameter: Standard
-Return value: none
-----------------------------------------------------------------------}
-begin
-  CreateMDIChild('Untitled' + IntToStr(MDIChildCount + 1),true);
-end;
-
-procedure TfrMain.acFileOpenExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Opens chosen existing filenames in a new editor child windows
-Parameter: Standard
-Return value: none
-----------------------------------------------------------------------}
+  about, options, colordialog, BezWindow, sorting, errorbar,
+  BMP2LDraw, modeltreeview, dlgSubpart, commonprocs, windowsspecific,
+  DATBase, DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
+  STRUtils;
 
 var
-  i: Integer;
-
-begin
-  if OpenDialog1.Execute then
-  begin
-    for i:=0 to OpenDialog1.Files.Count - 1 do
-    begin
-      CreateMDIChild(OpenDialog1.Files[i], false);
-      UpdateMRU(OpenDialog1.Files[i]);
-    end;
-  end;
-end;
-
-procedure TfrMain.HelpAboutExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Show 'About' Box
-Parameter: Standard
-Return value: none
-----------------------------------------------------------------------}
-begin
-  frAboutBox.ShowModal;
-end;
-
-procedure TfrMain.acFileExitExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Close application
-Parameter: fname: Standard
-Return value: none
-----------------------------------------------------------------------}
-begin
-  Close;
-end;
-
-procedure TfrMain.acMRUListExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Opens a file from the MRU Manager
-Parameter: Standard
-Return value: none
-----------------------------------------------------------------------}
-begin
-  if FileExists((Sender as TMenuItem).Caption) then
-  begin
-    CreateMDIChild((Sender as TMenuItem).Caption , false);
-    ActiveMDIChild.Tag := 0;
-  end
-  else
-    MessageDlg(_('File ') + (Sender as TMenuItem).Caption + _(' not found!'), mtError, [mbOK], 0);
-end;
-
-
-procedure TfrMain.acFileSaveExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Saves a file to disk. If window is untitled it executes 'SaveAs' procedure
-             else it saves last savetime to check for changes outside editor
-Parameter: FileTime : Standard
-Return value: None
-----------------------------------------------------------------------}
-var sr:TsearchRec;
-begin
-  if ActiveMDIChild.Tag > 0 then acFileSaveAs.Execute
-    else
-    begin
-      (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(activeMDICHild.caption);
-      (activeMDICHild as TfrEditorChild).memo.Modified:=false;
-      FindFirst(activeMDICHild.caption, faAnyFile, SR);
-      (activeMDICHild as TfrEditorChild).filedatetime:=FileDateToDateTime(SR.Time);
-      FindClose(sr);
-    end;
-end;
-
-procedure TfrMain.acFileSaveAsExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Saves a file to disk after asking for filename
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  SaveDialog1.FileName := ActiveMDIChild.Caption;
-  if SaveDialog1.Execute then
-  begin
-    if ((ActiveMDIChild.Tag > 0) or (ActiveMDIChild.caption <> SaveDialog1.FileName)) then UpdateMRU(SaveDialog1.FileName);
-      ActiveMDIChild.Tag := 0;
-    ActiveMDIChild.caption := SaveDialog1.FileName;
-    acFileSaveExecute(Sender);
-  end;
-end;
-
-procedure TfrMain.FormShow(Sender: TObject);
-{---------------------------------------------------------------------
-Description: if app starts for first time this initializes application
-             and updates controls
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  if not initialized then
-  begin
-    AppInitialize;
-    initialized:=true;
-  end;
-  UpdateControls( false);
-end;
-
-Procedure TfrMain.AppInitialize;
-{---------------------------------------------------------------------
-Description: Initializes Application:
-             1.) Show Splash
-             2.) Save Installdir (for plugins)
-             3.) Save no. of items in empty plugin list in pmmemo.tag
-             4.) Loads plugins
-             5.) assumes any params are files to load and loads them
-Parameter: None
-Return value: None
-----------------------------------------------------------------------}
-var
-  i:integer;
-  regT:TRegistry;
-
-begin
-  SplashScreen := TfrSplash.Create(Application);
-  try
-    //Show splash screen
-    SplashScreen.lbState.Caption:=_('Initializing plugins...');
-    SplashScreen.show;
-    SplashScreen.update;
-    screen.cursor:=-11;
-
-    //Set INI file varibles
-    IniFileName := WindowsDir + '\LDraw.ini';
-    IniSection := 'LDDP Main';
-    frOptions.IniFileName := IniFileName;
-    frOptions.IniSection := 'LDDP Options';
-
-    //Load form parameters from INI file
-    LoadFormValues;
-    frOptions.LoadFormValues;
-
-    //Set InstallDIR in registry for legacy plugin support
-    regT:=Tregistry.create;
-    regt.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
-    regt.WriteString('InstallDir', application.ExeName);
-    regt.free;
-    slPlugins:=TStringlist.create;
-    LoadPlugins(true);
-
-    //Set META menu commands
-    BuildMetaMenu;
-
-    //Build the MRU list
-    UpdateMRU;
-
-    // Set initial directory to that of the last opened file
-    // (but only if a previous file is listed)
-    if LastOpen1.count > 0 then
-    OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption);
-
-    //Restore highlighter settings
-    SynLDRSyn.Assign(frOptions.SynLDRSyn1);
-    pmMemo.tag:=pmMemo.items.count;
-
-    //Load files listed on the command line
-    if paramcount>0 then
-      for i:=1 to paramcount do
-      begin
-        CreateMDIChild(paramstr(i),false);
-        UpdateMRU(paramstr(i));
-      end;
-
-  finally
-    sleep(1500);
-    screen.cursor:=0;
-    SplashScreen.Free;
-  end;
-end;
-
-procedure TfrMain.BuildMetaMenu;
-
-var
-  MetaMenuIni: TInifile;
-  ParentMenuItem, ParentMenuItem2, ChildMenuItem: TMenuItem;
-  MetaSections, CurrentSection: TStringList;
-  i,j: Integer;
-
-begin
-  MetaSections := TStringList.Create;
-  CurrentSection := TStringList.Create;
-  MetaMenuIni := TInifile.Create(ExtractFileDir(Application.ExeName) + '\metamenu.ini');
-
-  MetaMenuIni.ReadSections(MetaSections);
-
-  if MetaSections.Count > 0 then
-    for i := 0 to MetaSections.Count - 1 do
-    begin
-      MetaMenuIni.ReadSection(MetaSections[i],CurrentSection);
-      if CurrentSection.Count > 0 then
-      begin
-        ParentMenuItem := TMenuItem.Create(mnuMeta);
-        ParentMenuItem.Caption := MetaSections[i];
-        ParentMenuItem2 := TMenuItem.Create(mnuMeta2);
-        ParentMenuItem2.Caption := MetaSections[i];
-        mnuMeta.Add(ParentMenuItem);
-        mnuMeta2.Add(ParentMenuItem2);
-        for j := 0 to CurrentSection.Count - 1 do
-        begin
-          ChildMenuItem := TMenuItem.Create(ParentMenuItem);
-          ChildMenuItem.Caption := CurrentSection[j];
-          ChildMenuItem.Hint := MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],'');
-          ChildMenuItem.OnClick := MetaMenuClick;
-          ParentMenuItem.Add(ChildMenuItem);
-          ChildMenuItem := TMenuItem.Create(ParentMenuItem2);
-          ChildMenuItem.Caption := CurrentSection[j];
-          ChildMenuItem.Hint := MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],'');
-          ChildMenuItem.OnClick := MetaMenuClick;
-          ParentMenuItem2.Add(ChildMenuItem);
-        end;
-      end;
-    end
-  else
-    mnuMeta.Enabled := False;
-
-  CurrentSection.Free;
-  MetaSections.Free;
-  MetaMenuIni.Free;
-end;
-
-procedure TfrMain.MetaMenuClick(Sender: TObject);
-begin
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    CaretX := 1;
-    SelText := '0 ' + (Sender as TMenuItem).Hint + #13#10;
-    Modified := true;
-  end;
-end;
-
-procedure TfrMain.acFileRevertExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Reloads active MDI child loosing any changes
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  if MessageDlg(_('Reload last saved version?') + #13#10 +
-                _('All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes
-    then LoadFile(ActiveMDIChild);
-end;
-
-procedure TfrMain.FormCreate(Sender: TObject);
-{---------------------------------------------------------------------
-Description: -Setting standard Separators for other OS languages than english
-             -creates Drag and Drop handle
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  TranslateComponent (self);
-  DragAcceptFiles( Handle,True ) ;
-end;
+  splashscreen: TfrSplash;
+// General Editor Actions
 
 procedure TfrMain.acEditCutExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Cut text from actual editor window
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
+// Cut text from active editor window
 begin
- (activeMDICHild as TfrEditorChild).memo.CutToClipboard;
+ editor.Cut;
 end;
 
 procedure TfrMain.acEditCopyExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Copy text from actual editor window
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Copy text from active editor window
 begin
- (activeMDICHild as TfrEditorChild).memo.CopyToClipboard;
+ editor.Copy;
 end;
 
 procedure TfrMain.acEditPasteExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Paste text into actual editor window
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Paste text into active editor window
 begin
-  (activeMDICHild as TfrEditorChild).memo.PasteFromClipboard;
-end;
-
-procedure TfrMain.acFindExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute Find Dialogue
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  ShowSearchReplaceDialog(FALSE);
-end;
-
-
-procedure TfrMain.acReplaceExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: ExeCute Replace Dialogue
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  ShowSearchReplaceDialog(TRUE);
-end;
-
-
-Function TfrMain.GetTmpFileName: String;
-{---------------------------------------------------------------------
-Description: Create a unique temporal filename
-Parameter: None
-Return value: temp file name
-----------------------------------------------------------------------}
-var
-  Hour, Min, Sec, MSec : Word;
-      Year, Month, Day : Word;
-begin
-  Decodetime(Time, Hour, Min, Sec, MSec);
-  DecodeDate(Date, Year, Month, Day);
-  Result:=inttohex(hour,2)+inttohex(Min,2)+inttohex(Sec,2)+inttohex(trunc(MSec/10),2);
-end;
-
-
-procedure TfrMain.acErrorCheckExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Perform L3P Check
-Parameter: None
-Return value: None
-----------------------------------------------------------------------}
-
-var
-  s, strid: string;
-  i, j: Integer;
-  errorfound: Boolean;
-  DATModel1: TDATModel;
-
-  procedure AddError(LineNumber, ErrorType: string);
-
-  var
-    error: TListItem;
-
-  begin
-    error := (ActiveMDIChild as TfrEditorChild).lbInfo.Items.Add;
-    error.Checked := True;
-    error.SubItems.Add(LineNumber);
-    error.SubItems.Add(ErrorType);
-    errorfound := True;
-  end;
-
-  function CheckIdentPoints(points1, points2: array of TDATPoint; numpoints: Integer): Boolean;
-
-  var
-    i,j, samecount: Integer;
-    samepoints: set of 1..4;
-  begin
-    samecount := 0;
-    samepoints := [];
-    for i := 0 to numpoints - 1 do
-      for j := 0 to numpoints - 1 do
-        if (CheckSamePoint(points1[i], points2[j])) and
-           (not (j in samepoints)) then
-        begin
-          inc(samecount);
-          samepoints := samepoints + [j];
-          Break;
-        end;
-     Result := (samecount = numpoints);
-  end;
-
-begin
-  Screen.Cursor := crHourGlass;
-
-  if (frOptions.cboDet.Checked) then
-    DetThreshold := frOptions.seDet.Value
-  else
-    DetThreshold := 0;
-
-  if frOptions.cboDist.Checked then
-    DistThreshold := frOptions.seDist.Value
-  else
-    DistThreshold := 0;
-
-  if frOptions.seCollinear.Text <> '' then
-    CollinearPointsThreshold := frOptions.seCollinear.Value;
-
-  (ActiveMDIChild as TfrEditorChild).lbInfo.Items.Clear;
-
-  DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-
-  DATModel1.ModelText := (ActiveMDIChild as TfrEditorChild).memo.Lines.Text;
-
-  strid := 'Identical to line';
-  for i := 0 to DATModel1.Count - 1 do
-    if DATModel1[i] is TDATElement then
-    begin
-      // Check for Identical Lines
-      if i <> 0 then
-      begin
-        errorfound := false;
-        for j := 0 to i - 1 do
-          if DATModel1[j].LineType = DATModel1[i].LineType then
-            case DATModel1[j].LineType of
-               1: if DATModel1[i].DATString = DATModel1[j].DATString then
-                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               2: if CheckIdentPoints([(DATModel1[i] as TDATLine).Point[1], (DATModel1[i] as TDATLine).Point[2]],
-                                      [(DATModel1[j] as TDATLine).Point[1], (DATModel1[j] as TDATLine).Point[2]],
-                                      2) then
-                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               3: if CheckIdentPoints([(DATModel1[i] as TDATTriangle).Point[1], (DATModel1[i] as TDATTriangle).Point[2], (DATModel1[i] as TDATTriangle).Point[3]],
-                                      [(DATModel1[j] as TDATTriangle).Point[1], (DATModel1[j] as TDATTriangle).Point[2], (DATModel1[j] as TDATTriangle).Point[3]],
-                                      3) then
-                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               4: if CheckIdentPoints([(DATModel1[i] as TDATQuad).Point[1], (DATModel1[i] as TDATQuad).Point[2], (DATModel1[i] as TDATQuad).Point[3], (DATModel1[i] as TDATQuad).Point[4]],
-                                      [(DATModel1[j] as TDATQuad).Point[1], (DATModel1[j] as TDATQuad).Point[2], (DATModel1[j] as TDATQuad).Point[3], (DATModel1[j] as TDATQuad).Point[4]],
-                                      4) then
-                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               5: if (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[1], (DATModel1[i] as TDATOpLine).Point[2]],
-                                      [(DATModel1[j] as TDATOpLine).Point[1], (DATModel1[j] as TDATOpLine).Point[2]],
-                                      2)) and
-                     (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[3], (DATModel1[i] as TDATOpLine).Point[4]],
-                                      [(DATModel1[j] as TDATOpLine).Point[3], (DATModel1[j] as TDATOpLine).Point[4]],
-                                      2)) then
-                    AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-            end;
-      end;
-      // Do not continue if line is identical
-      if (not errorfound) then
-      begin
-        // Check For Illegal Color Number
-        if (DATModel1[i] is TDATSubPart) and
-           ((DATModel1[i] as TDATElement).Color = 24) then
-          AddError(IntToStr(i+1),'Color 24 Illegal for this linetype');
-
-        // Check for All Other L3P Errors
-        s := L3CheckLine(DATModel1[i].DATString);
-        if s <> '' then
-          AddError(IntToStr(i+1),s);
-      end;
-    end;
-
-  DATModel1.Free;
-
-  with (ActiveMDIChild as TfrEditorChild) do
-    if lbInfo.Items.Count > 0 then
-    begin
-      pnInfo.Visible := True;
-      Splitter1.Visible := True;
-      pnInfo.Height := 91;
-      acECFixAllErrors.Enabled := True;
-      acECFixAllMarkedErrors.Enabled := True;
-      acECMarkAll.Enabled := True;
-      acECUnMarkAll.Enabled := True;
-      acECMarkAllTyped.Enabled := True;
-      acECUnMarkAllTyped.Enabled := True;
-      acECCopy.Enabled := True;
-      lbInfo.ItemIndex := 0;
-      lbInfo.OnSelectItem(nil, lbInfo.Items[lbInfo.ItemIndex], True);
-    end
-    else
-    begin
-      pnInfo.Visible := False;
-      Splitter1.Visible := False;
-      acECFixError.Enabled := False;
-      acECFixAllErrors.Enabled := False;
-      acECFixAllErrorsTyped.Enabled := False;
-      acECFixAllMarkedErrors.Enabled := False;
-      acECFixAllMarkedErrorsTyped.Enabled := False;
-      acECMarkAll.Enabled := False;
-      acECUnMarkAll.Enabled := False;
-      acECMarkAllTyped.Enabled := False;
-      acECUnMarkAllTyped.Enabled := False;
-      acECCopy.Enabled := False;
-      StatusBar.Panels[0].Text := _('No Errors Found!');
-    end;
-  Screen.Cursor := crDefault;
-end;
-
-procedure TfrMain.acOptionsExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Show modal option window
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var
-  i: Integer;
-
-begin
-//  frOptions.LoadFormValues;
-
-  if frOptions.showmodal=mrOK then
-  begin
-    frOptions.SaveFormValues;
-    SynLDRSyn.Assign(frOptions.SynLDRSyn1);
-    for i := 0 to MDIChildCount - 1 do
-      with (MDIChildren[i] as TfrEditorChild).memo do
-      begin
-        Gutter.ShowLineNumbers := frOptions.cboMarginNumbers.Checked;
-        Gutter.Width := frOptions.speMarginWidth.AsInteger;
-        RightEdge := frOptions.speRightLine.AsInteger;
-      end;
-  end;
-//  else frOptions.LoadFormValues;
+  editor.Paste;
 end;
 
 procedure TfrMain.acUndoExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Undo in avtive editor child
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Undo in active editor child
 begin
-  (activeMDICHild as TfrEditorChild).memo.undo;
+  editor.Undo;
 end;
 
 procedure TfrMain.acRedoExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Redo in active editor child
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Redo in active editor child
 begin
-  (activeMDICHild as TfrEditorChild).memo.Redo;
+  editor.Redo;
 end;
 
-
-procedure TfrMain.acLDViewExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute LDView
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-begin
-  if (not FileExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
-    MessageDlg(_('You have to specify a valid path to LDView.exe first!'), mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
-  end;
-  (activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((activeMDICHild as TfrEditorChild).tempFileName);
-  DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-end;
-
-procedure TfrMain.acMLCadExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute ML-Cad with active MDI-Child file
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-begin
- if (activeMDICHild as TfrEditorChild).memo.modified then
-    if MessageDlg(_('File has been modified. ' +#13#10+
-                  'Do you want to save and then view the file in MLCad '+#13#10+
-                  'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
-  acFileSaveExecute(Sender);
-  if (not FIleExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
-    MessageDlg(_('You have to specify a valid path to MLCad.exe first!'), mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
-  end;
-  DOCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "'+(activeMDICHild as TfrEditorChild).caption+'"',SW_SHOWNA,false);
-end;
-
-
-procedure TfrMain.acHomepageExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Open LDDP project homepage
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  OpenInBrowser('http://www.lddp.net');
-end;
-
-procedure TfrMain.acUserDefinedExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute user defined program
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+procedure TfrMain.acIncIndentExecute(Sender: TObject);
+// Indent line/selection based on tabWidth
 var
-  opt:byte;
-  ExProgram: TStringList;
-
-    function ParseString(toparse:string):string;
-    var short,long:string;
-    // %0 will be replaced by the path and filename of the exported file LDDP has generated,
-    // %1 is replaced by the path only,
-    // %2 will be replaced by the file-name only (without extension),
-    // %3 is used a place holder for the path and the filename without extension.
-    // %4, %5, %6, %7 are the same as %0 to %3 except they use the short form for paths and file-names that means the 8.3 notation of MS-DOS.
-    begin
-      long := (activeMDICHild as TfrEditorChild).tempFileName;
-      short := ExtractShortPathName(long);
-      toparse:=StringReplace(toparse,'%0',long,[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%1',ExtractFilePath(long),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%2',ChangeFileExt(ExtractFileName(long),''),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%3',ChangeFileExt(long,''),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%4',short,[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%5',ExtractFilePath(short),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%6',ChangeFileExt(ExtractFileName(short),''),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%7',ChangeFileExt(short,''),[rfReplaceAll]);
-      Result:=toParse;
-    end;
+  currentindent, lineindent, startline, endline, i: Integer;
 
 begin
-  ExProgram := TStringList.Create;
-  ExProgram.CommaText := frOptions.ExternalProgramList[(Sender as TAction).ActionComponent.Tag];
-  if not FileExists(ExProgram[1]) then
+  editor.ExpandSelection(startline, endline);
+  currentindent:= editor.GetIndent;
+  if currentindent = 0 then
+    currentindent := editor.GetTabWidth;
+  for i := startline to endline do
   begin
-    MessageDlg(_('You have to specify a valid external program first!'), mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
+    lineindent := editor.GetLineIndentation(i);
+    editor.SetLineIndentation(i, lineindent + currentindent);
   end;
-  case StrToInt(ExProgram[5]) of
-    1: opt:=SW_HIDE;
-    2: opt:=SW_SHOWNOACTIVATE;
-    3: opt:=SW_MAXIMIZE;
-    else
-      opt:=SW_SHOWNORMAL;
-  end;
-
-  if StrToBool(ExProgram[4]) then
-    ShowMessage(ExProgram[1]+' '+ParseString(ExProgram[2]));
-
-  (Self.activeMDICHild as TfrEditorChild).memo.Lines.SaveToFile((Self.activeMDICHild as TfrEditorChild).tempFileName);
-  DoCommand(ExProgram[1]+' '+ParseString(ExProgram[2]),opt,StrToBool(ExProgram[3]));
-  ExProgram.Free;
 end;
 
-procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
-{---------------------------------------------------------------------
-Description: Load all plugins and create menu entries, add names to a stringlist and enumerate entries by tag
-Parameter: AppInit:  specified if app is initailizing, default is false
-Return value: None
-----------------------------------------------------------------------}
+procedure TfrMain.acDecIndentExecute(Sender: TObject);
+// Un-indent line/selection based on tabWidth
 var
-  sr: TSearchRec;
-  i, j, imgix: Integer;
-  newitem:TMenuItem;
-  PluginPath, PluginFile: string;
-  plgBitmap: TBitMap;
-  PluginInfoList: TStringList;
-
+  currentindent, startline, endline, i: Integer;
+  newindent : Cardinal;
 begin
-  PluginInfoList := TStringList.Create;
-  PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
-  i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
-  frOptions.cblPlugins.clear;
-  slPlugins.clear;
-  frOptions.cblPlugins.sorted:=false;
-  while Plugins1.Count>0 do plugins1.items[Plugins1.Count-1].free;
-  while plugins3.Count>0 do
+  editor.ExpandSelection(startline, endline);
+  currentindent:= editor.GetIndent;
+  if currentindent = 0 then
+    currentindent := editor.GetTabWidth;
+
+  for i := startline to endline do
   begin
-    if plugins3.items[Plugins3.Count-1].ImageIndex <> -1 then
-      ilToolBarColor.Delete(plugins3.items[Plugins3.Count-1].ImageIndex);
-    plugins3.items[Plugins3.Count-1].free;
-  end;
-
-  while i=0 do
-  begin
-    PluginFile := PluginPath + sr.Name;
-    PluginInfoList.Clear;
-    PluginInfoList.Add('');
-    for j := 1 to 6 do
-      PluginInfoList.Add(PluginInfo(PluginFile,j));
-    if AppInit then
-    begin
-      splashscreen.lbState.Caption:=_('Initializing plugin:') + ' '+sr.name;
-      splashscreen.update;
-    end;
-    frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
-                                   ' - ' + PluginInfoList[3]);
-    slplugins.Add(PluginInfoList[6]+','+PluginFile);
-
-    if ExtractfileExt(lowercase(sr.name))='.dll' then
-    begin
-      imgix := -1;
-      if FileExists(ChangeFileExt(PluginFile, '.bmp')) then
-        try
-          plgBitmap := TBitMap.Create;
-          plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
-          imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
-          plgBitmap.Free;
-        except
-          imgix := -1;
-        end;
-      NewItem := TMenuItem.Create(Plugins3);
-      Newitem.tag:=slplugins.count-1;
-      NewItem.caption:= PluginInfoList[1];
-      NewItem.hint:= PluginInfoList[3];
-      newItem.onclick:=PluginClick;
-      NewItem.ImageIndex := imgix;
-      plugins3.Insert(plugins3.count,Newitem);
-
-      NewItem := TMenuItem.Create(Plugins1);
-      Newitem.tag:=slplugins.count-1;
-      NewItem.caption:= PluginInfoList[1];
-      NewItem.hint:= PluginInfoList[3];
-      newItem.onclick:=PluginClick;
-      NewItem.ImageIndex := imgix;
-      plugins1.Insert(plugins1.count,Newitem);
-    end;
-    frOptions.cblPlugins.checked[frOptions.cblPlugins.Items.count-1] :=
-      (ExtractfileExt(lowercase(sr.name))='.dll');
-    i:=FindNext(sr);
-  end;
-  if (Plugins1.Count = 0) and (Plugins3.Count = 0) then
-  begin
-    NewItem := TMenuItem.Create(Plugins3);
-    NewItem.caption:=_('None Found');
-    NewItem.Enabled := false;
-    plugins3.Insert(plugins3.count,Newitem);
-
-    NewItem := TMenuItem.Create(Plugins1);
-    NewItem.caption:=_('None Found');
-    NewItem.Enabled := false;
-    plugins1.Insert(plugins1.count,Newitem);
-  end;
-  Findclose(sr);
-  frOptions.cblPlugins.sorted:=true;
-  PluginInfoList.Free;
-end;
-
-
-procedure TfrMain.PluginClick(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Start Plugin related to the tag of the menu entry
-Parameter: Fname: path and filename of dll, nr: no. of Info to get
-Return value: None
-----------------------------------------------------------------------}
-var
- st,libname:string;
- s1,s2,s3,s4:longword;
-
-begin
-  libname:=copy(slplugins[(Sender as TMenuItem).tag],pos(',',slplugins[(Sender as TMenuItem).tag])+1, length(slplugins[(Sender as TMenuItem).tag]));
-
-  with (activeMDICHild as TfrEditorChild) do
-  begin
-     s1:=memo.selstart;
-     s2:=memo.SelLength;
-     s3:=memo.caretY;
-     s4:=memo.caretX;
-     if memo.seltext<>'' then
-     begin
-       CallPlugin(libname, PChar(memo.Text),PChar(memo.seltext),s1,s2,s3,s4);
-       if strChangedSelText<>'' then memo.SelText:=frMain.strChangedSelText
-          else
-          begin
-            memo.SelectAll;
-            memo.SelText:=frMain.strChangedCompleteText;
-          end;
-     end
-        else
-        begin
-           st:=memo.text;
-           CallPlugin(libname, PChar(memo.Text),PChar(memo.seltext),s1,s2,s3,s4);
-
-           if strChangedSelText<>'' then memo.SelText:=frMain.strChangedSelText
-            else
-            begin
-              memo.SelectAll;
-              memo.SelText:=frMain.strChangedCompleteText;
-            end;
-        end;
-     if (s1=0) and (S2=0) then
-     begin
-         memo.CaretX:=s4;
-         memo.CaretY:=s3;
-     end
-       else
-       begin
-         memo.selstart:=s1;
-         memo.selend:=s1+s2;
-       end;
+    newindent := editor.GetLineIndentation(i) - currentindent;
+    editor.SetLineIndentation(i, newindent);
   end;
 end;
-
-procedure TfrMain.acL3LabExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Execute L3Lab
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  if (not FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
-  begin
-    MessageDlg(_('You have to specify a valid path to L3Lab.exe first!'), mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-    exit;
-  end;
-  (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-  DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "'+(activeMDICHild as TfrEditorChild).tempFileName+'"',SW_SHOWNA,false);
-end;
-
-procedure TfrMain.acincIndentExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Insert indent based on tabWidth
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).memo.ExecuteCommand(ecBlockIndent,' ',nil);
-end;
-
 
 procedure TfrMain.acInsertPartHeaderExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Insert standard part header
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Insert standard LDraw part header
 var
   HeaderText: string;
 
 begin
-  HeaderText := '0 Part name'+#13#10+
-                '0 Name: ' + ExtractFileName(ActiveMDIChild.Caption) + #13#10 +
+  HeaderText := '0 Part name'+ #13#10 +
+                '0 Name: ' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + #13#10 +
                 '0 Author: ' + frOptions.edName.text;
-  if frOptions.edEmail.text <> '' then
-    HeaderText := HeaderText + ' <'+frOptions.edEmail.text+'>';
+  if frOptions.edUsername.text <> '' then
+    HeaderText := HeaderText + ' [' + frOptions.edUsername.text + ']';
 
-  HeaderText := HeaderText + #13#10 + '0 Unofficial Element'+#13#10+
-                '0 KEYWORDS your keywords'+#13#10;
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    CaretXY := BufferCoord(1,1);
-    SelText := HeaderText;
-    Modified := true;
-  end;
+  HeaderText := HeaderText + #13#10 + '0 !LDRAW_ORG Unofficial Part';
+
+  editor.Lines.Insert(0, HeaderText);
+  editor.Modified := true;
 end;
 
-
 procedure TfrMain.acInsertUpdateLineExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Insert update line
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Insert standard update line
 begin
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    CaretX := 1;
-    SelText := '0 // ' + FormatDateTime('yyyy-mm-dd',now) + ' ' +
-                           frOptions.edSIG.text + ' Update description' + #13#10;
-    Modified := true;
-  end;
+  editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos),
+               '0 !HISTORY ' + FormatDateTime('yyyy-mm-dd', Now) + ' [' +
+               frOptions.edUsername.text + '] Update description');
+  editor.Modified := true;
 end;
 
 procedure TfrMain.acCommentBlockExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Comment a block using zero's
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Comment selected text
 var
   j:integer;
-  startcol,endcol: Integer;
+  commenttext: TStringList;
+  startline, endline: Integer;
 
 begin
-   with (activeMDICHild as TfrEditorChild).memo do
-   begin
-     if seltext<>'' then
-     begin
-       startcol := BlockBegin.Line - 1;
-       if BlockEnd.Char = 1 then
-         endcol := BlockEnd.Line - 2
-       else
-         endcol := BlockEnd.Line - 1;
+  //Expand Selection block
+  editor.ExpandSelection(startline, endline);
 
-       for j := startcol to endcol do
-        if (Lines[j] <> '') and (Lines[j] <> #13#10) and
-           (Lines[j] <> #13) and (Lines[j] <> #10) then
-          Lines[j] := '0 ' + Lines[j];
-       BlockBegin := BufferCoord(1,startcol + 1);
-       BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1)
-     end;
-   end;
+  commenttext := TStringList.Create;
+  commenttext.Text := editor.SelText;
+
+  for j := 0 to commenttext.Count - 1 do
+    if not IsBlankLine(commenttext[j]) then
+      commenttext[j] := '0 ' + commenttext[j];
+
+  editor.SelText := StripEndingCRLF(commenttext.Text);
+
+  editor.SelectLines(startline, endline);
+  commenttext.Free;
 end;
 
-
 procedure TfrMain.acUncommentBlockExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Uncomment a zero'ed block
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Uncomment selected text
 var
-  j:integer;
-  startcol,endcol: Integer;
+  j: Integer;
+  startline,endline: Integer;
   DModel: TDATModel;
 
 begin
-   with (activeMDICHild as TfrEditorChild).memo do
-   begin
-     if seltext<>'' then
-     begin
-       startcol := BlockBegin.Line - 1;
-       if BlockEnd.Char = 1 then
-         endcol := BlockEnd.Line - 2
-       else
-         endcol := BlockEnd.Line - 1;
+  editor.ExpandSelection(startline, endline);
 
-       BlockBegin := BufferCoord(1,startcol + 1);
-       BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+  DModel.ModelText := editor.SelText;
 
-       DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-       DModel.ModelText := SelText;
+  for j := 0 to DModel.Count-1 do
+    DModel.UnCommentLine(j);
 
-       for j := 0 to DModel.Count-1 do
-         DModel.UnCommentLine(j);
+  editor.SelText := DModel.ModelText;
 
-       SelText := DModel.ModelText;
-
-       BlockBegin := BufferCoord(1,startcol + 1);
-       BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
-
-       DModel.Free;
-     end;
-   end;
+  editor.SelectLines(startline, endline);
+  DModel.Free;
 end;
-
-
-procedure TfrMain.acDecIndentExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: remove indent
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).memo.ExecuteCommand(ecBlockUnIndent,' ',nil);
-end;
-
 
 procedure TfrMain.acTrimLinesExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Trim empty Lines
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var i,j,k:integer;
-    tmp:string;
-    st:TStringlist;
-    bCR:boolean;
+// Trim empty Lines
+var
+  j:integer;
+  trimtext: TStringList;
+  startline, endline: Integer;
+
 begin
-   with (activeMDICHild as TfrEditorChild).memo do
-   begin
-     if seltext<>'' then begin
-        st:=TStringlist.create;
-        j:=selstart;
-        bCR:=seltext[length(seltext)]=#10;
-        st.text:=seltext;
-        for i:=st.count-1 downto 0 do
-          if trim(st[i])='' then st.delete(i);
-        if not bCR then tmp:=copy(st.text,1,length(st.text)-2)
-          else tmp:=st.text;
-        k:=length(StringReplace(tmp,#13,'',[rfReplaceAll]));
-        seltext:=tmp;
-        selstart:=j+k;
-        selend:=selstart-k;
-     end;
-   end;
+  //Expand Selection block
+  editor.ExpandSelection(startline, endline);
+
+  trimtext := TStringList.Create;
+  trimtext.Text := editor.SelText;
+
+  for j := trimtext.Count - 1 downto 0 do
+    if IsBlankLine(trimtext[j]) then
+      trimtext.Delete(j);
+
+  editor.SelText := StripEndingCRLF(trimtext.Text);
+
+  editor.SelectLines(startline, endline);
+  trimtext.Free;
 end;
 
-
 procedure TfrMain.acInlineExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Inline - Transform a sub-file command into an expanded list of the sub-files contents
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Inline - Transform a subfile command into an expanded list of the subfiles contents
 var
   i: Integer;
   DATModel1: TDATModel;
@@ -1662,1031 +606,68 @@ var
 begin
   DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
-  with (activeMDICHild as TfrEditorChild).memo do
-  begin
-    LDrawBasePath := frOptions.edLdrawDir.Text + PathDelim;
+  editor.ExpandSelection(i, i);
 
-    if Length(SelText) > 0 then
-      ExpandSelection
-    else
+  DATModel1.FilePath := ExtractFilePath(Caption);
+  DATModel1.ModelText := editor.SelText;
+
+  for i := DATModel1.Count - 1 downto 0 do
+    if DATModel1[i] is TDATSubPart then
     begin
-      BlockBegin := BufferCoord(1, CaretXY.Line);
-      BlockEnd := BufferCoord(Length(Lines[CaretXY.Line - 1]) + 1, CaretXY.Line);
-    end;
-
-    DATModel1.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-    DATModel1.PositionDecimalPlaces := frOptions.sePntAcc.Value;
-    DATModel1.FilePath := ExtractFilePath((activeMDICHild as TfrEditorChild).Caption);
-    DATModel1.ModelText := SelText;
-
-    for i := DATModel1.Count - 1 downto 0 do
-      if DATModel1[i] is TDATSubPart then
-      begin
-         DATModel1.Insert(i,'');
-         DATModel1.Insert(i,'0 Original Line: ' + DATModel1[i+1].DATString );
-         DATModel1.Insert(i,'0 Inlined by LDDesignPad');
-         DATModel1.Insert(i+4, '0 End of Inlined Part');
-         DATModel1.Insert(i+5, '');
-         DATModel1.InlinePart(i+3);
+      DATModel1.Insert(i,'');
+      DATModel1.Insert(i,'0 Inlined by LDDesignPad');
+      DATModel1.Insert(i,'0 Original Line: ' + DATModel1[i+2].DATString );
+      DATModel1.Insert(i+4, '0 End of Inlined Part');
+      DATModel1.Insert(i+5, '');
+      DATModel1.InlinePart(i+3);
       end;
 
-    SelText := DATModel1.ModelText;
-    Modified := true;
-  end;
-  (activeMDICHild as TfrEditorChild).UpdateControls;
+  editor.SelText := DATModel1.ModelText;
+  editor.Modified := true;
+  UpdateControls(false);
+
   DATModel1.Free;
 end;
 
-procedure TfrMain.acReplaceColorExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Replace Colors using a color dialogue
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var
-  i, startcol, endcol:integer;
-  cname,tmp,nr:string;
-  cvalue:integer;
-  EditCh: TfrEditorChild;
-  clr: TDATModel;
-
-begin
-  EditCh := ActiveMDIChild as TfrEditorChild;
-
-  with frColorDialog do
-  begin
-    slColors.LoadFromFile(ExtractFilePath(Application.ExeName)+'colors.pal');
-
-    rgOptions.Items.Clear;
-
-    rgOptions.Items.Add(_('Replace All'));
-    rgOptions.ItemIndex := 0;
-
-    clr := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-
-    if EditCh.memo.lines[EditCh.memo.CaretY-1] <> '' then
-      clr.Add(Trim(EditCh.memo.lines[EditCh.memo.CaretY-1]));
-
-    if ((clr[0] is TDATElement) and (EditCh.memo.SelLength = 0)) then
-    begin
-      rgOptions.Items.Add(_('Replace Current Line Only'));
-      rgOptions.ItemIndex := 1;
-    end
-    else if EditCh.memo.SelLength <> 0 then
-    begin
-      rgOptions.ItemIndex := rgOptions.Items.Add(_('Replace For Selection'));
-      rgOptions.ItemIndex := 1;
-    end;
-
-    if clr[0] is TDATElement then
-      try
-        tmp:=slColors[slColors.IndexOfName(IntToStr((clr[0] as TDATElement).Color))];
-        nr:=copy(tmp,1,pos('=',tmp)-1);
-        tmp:=copy(tmp,pos('=',tmp)+1,20);
-        cname:=copy(tmp,1,pos(' ',tmp)-1);
-        tmp:=copy(tmp,pos(' ',tmp)+1,20);
-        cvalue:=strtoint('$'+copy(tmp,5,2)+copy(tmp,3,2)+copy(tmp,1,2));
-        btOldColor.color:=cvalue;
-        btOldColor.tag:=strtoint(nr);
-        btOldColor.caption:=nr+' - '+cname;
-
-        if cvalue>$00999999 then
-          btOldColor.Font.Color:=0
-        else
-          btOldColor.Font.Color:=$FFFFFF;
-      except
-        MessageDlg(_('Invalid colornumber!'), mtError, [mbOK], 0);
-        exit;
-      end;
-
-    if ShowModal=mrOK then
-    begin
-      // Replace all
-      if rgOptions.ItemIndex = 0 then
-      begin
-        for i:=0 to EditCh.memo.lines.count-1 do
-        begin
-          clr.Clear;
-          clr.Add(EditCh.memo.lines[i]);
-          if (clr[0] is TDATElement) then
-            if (((clr[0] as TDATElement).Color = btOldColor.tag) or
-               (cbxReplaceEverything.Checked)) then
-            begin
-              (clr[0] as TDATElement).Color := btNewColor.Tag;
-              EditCh.memo.lines[i]:=clr[0].DATString;;
-              EditCh.memo.Modified:=true;
-            end;
-        end;
-      end
-      //Replace Current Line
-      else if rgOptions.Items[rgOptions.ItemIndex] = _('Replace Current Line Only') then
-      begin
-        (clr[0] as TDATElement).Color := btNewColor.Tag;
-        EditCh.memo.lines[EditCh.memo.CaretY-1]:=clr[0].DATString;;
-        EditCh.memo.Modified:=true;
-      end
-      // Replace colors in selection
-      else if rgOptions.Items[rgOptions.ItemIndex] = _('Replace For Selection') then
-      with EditCh.memo do
-      begin
-        clr.Clear;
-
-        startcol := BlockBegin.Line - 1;
-        if BlockEnd.Char = 1 then
-          endcol := BlockEnd.Line - 2
-        else
-          endcol := BlockEnd.Line - 1;
-
-        BlockBegin := BufferCoord(1,startcol + 1);
-        BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
-
-        clr.ModelText := SelText;
-
-        for i := 0 to clr.Count-1 do
-          if clr[i] is TDATElement then
-            if (((clr[i] as TDATElement).Color = btOldColor.Tag) or
-               (cbxReplaceEverything.Checked)) then
-            begin
-              (clr[i] as TDATElement).Color := btNewColor.Tag;
-              Modified := true;
-            end;
-
-        SelText := clr.ModelText;
-
-        BlockBegin := BufferCoord(1,startcol + 1);
-        BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
-      end;
-    end;
-  end;
-  clr.Free;
-end;
-
-
 procedure TfrMain.acSelectAllExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Select all text in active editor child
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Select all text in active editor child
 begin
-  (activeMDICHild as TfrEditorChild).memo.SelectAll;
-end;
-
-
-procedure TfrMain.acFilePrintExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: print active editor child
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  SynEditPrint.SynEdit := (activeMDICHild as TfrEditorChild).memo;
-  SynEditPrint.Title := activeMDICHild.caption;
-  SynEditPrint.Print;
-end;
-
-
-procedure TfrMain.acFindNextExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Find Next occurence of a previous find procedure
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  DoSearchReplaceText(FALSE, FALSE);
-end;
-
-procedure TfrMain.btPollingClick(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Does nothing.. but needed so the polling button isn't deactivated
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
- // do nothing
-end;
-
-procedure TfrMain.Pollevery1sec2Click(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set polling interval to 1 sec
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
- Pollevery1sec1.Checked := true;
- Pollevery1sec2.Checked := true;
- Pollonrequest2.ShortCut := 0;
- tmPoll.Enabled:=false;
- tmPoll.Interval:=1000;
- tmPoll.Enabled:=true;
-end;
-
-
-procedure TfrMain.Pollevery2sec2Click(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set polling interval to 2 secs
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
- Pollevery2sec1.Checked := true;
- Pollevery2sec2.Checked := true;
- Pollonrequest2.ShortCut := 0;
- tmPoll.Enabled:=false;
- tmPoll.Interval:=2000;
- tmPoll.Enabled:=true;
-
-end;
-
-procedure TfrMain.Pollevery5sec2Click(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set polling interval to 5 secs
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
- Pollevery5sec.Checked := true;
- Pollevery5sec2.Checked := true;
- Pollonrequest2.ShortCut := 0;
- tmPoll.Enabled:=false;
- tmPoll.Interval:=5000;
- tmPoll.Enabled:=true;
-end;
-
-procedure TfrMain.Pollonrequest1Click(Sender: TObject);
-begin
-  Pollonrequest1.Checked := true;
-  Pollonrequest2.Checked := true;
-  Pollonrequest2.ShortCut := TextToShortcut('F11');
-  tmPoll.Enabled:=false;
-  tmPollTimer(nil);
-end;
-
-procedure TfrMain.tmPollTimer(Sender: TObject);
-{---------------------------------------------------------------------
-Description: if polling time triggers the actual editor window is written to its firm assigned temp filename
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-var st:Tstringlist;
-begin
-  if mnPollL3Lab.Checked and (activeMDICHild<>nil) then
-   if mnPolltoSelected.checked then
-   begin
-     st:=Tstringlist.Create;
-     st.Text:=(activeMDICHild as TfrEditorChild).memo.Text;
-     while st.count>(activeMDICHild as TfrEditorChild).memo.carety do st.delete(st.Count-1);
-     st.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-   end
-     else (activeMDICHild as TfrEditorChild).memo.lines.savetofile((activeMDICHild as TfrEditorChild).tempFileName);
-end;
-
-
-procedure TfrMain.mnPollL3LabClick(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Activate Polling
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  mnPollL3Lab.checked:= not mnPollL3Lab.checked;
-  PolltoL3LabLDView1.Checked := not PolltoL3LabLDView1.Checked;
-  if (Pollonrequest1.Checked) and (not mnPollL3Lab.checked) then
-    Pollonrequest1.ShortCut := 0;
-end;
-
-
-procedure TfrMain.acECFixErrorExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Fix an L3P Error depending on the error
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-var
-  tx,ty,tz: Extended;
-  strTemp: string;
-  DATElem: TDATElement;
-
-begin
-  with (activeMDICHild as TfrEditorChild) do
-  begin
-    if lbInfo.ItemIndex >= 0 then
-      // Set postion to line with error
-      lbInfoDblClick(Sender);
-
-      // Fix the error
-      if pos('Bad vertex sequence, 0132',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATQuad.Create;
-        with DATElem as TDATQuad do
-        begin
-          DATString := memo.lines[memo.CaretY-1];
-          FixBowtieQuad0132(DATElem as TDATQuad);
-          memo.lines[memo.CaretY-1] := DATString;
-        end;
-        DATElem.Free;
-        lbInfo.items.delete(lbInfo.ItemIndex);
-      end
-
-      else if pos('Identical to line',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-      begin
-        memo.lines[memo.CaretY-1]:='';
-        lbInfo.items.delete(lbInfo.ItemIndex);
-      end
-
-      else if pos('Row 0 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        FixRowAllZeros(DATElem as TDATSubPart, 1);
-        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        lbInfo.items.delete(lbInfo.ItemIndex);
-      end
-
-      else if pos('Row 1 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        FixRowAllZeros(DATElem as TDATSubPart, 2);
-        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        lbInfo.items.delete(lbInfo.ItemIndex);
-      end
-
-      else if pos('Row 2 all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        FixRowAllZeros(DATElem as TDATSubPart, 3);
-        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        lbInfo.items.delete(lbInfo.ItemIndex);
-      end
-
-      else if pos('Y column all zeros',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := memo.lines[memo.CaretY-1];
-        FixYColumnAllZeros(DATElem as TDATSubPart);
-        memo.lines[memo.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        lbInfo.items.delete(lbInfo.ItemIndex);
-      end
-
-      else if pos('Bad vertex sequence, 0312',lbInfo.Items[lbInfo.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATQuad.Create;
-        with DATElem as TDATQuad do
-        begin
-          DATString := memo.lines[memo.CaretY-1];
-          FixBowtieQuad0312(DATElem as TDATQuad);
-          memo.lines[memo.CaretY-1] := DATString;
-        end;
-        DATElem.Free;
-        lbInfo.items.delete(lbInfo.ItemIndex);
-      end;
-
-      if lbInfo.Items.Count < 1 then
-      begin
-        pnInfo.Visible := False;
-        Splitter1.Visible := False;
-        acECFixError.Enabled := False;
-        acECFixAllErrors.Enabled := False;
-        acECFixAllErrorsTyped.Enabled := False;
-        acECFixAllMarkedErrors.Enabled := False;
-        acECFixAllMarkedErrorsTyped.Enabled := False;
-        acECMarkAll.Enabled := False;
-        acECUnMarkAll.Enabled := False;
-        acECMarkAllTyped.Enabled := False;
-        acECUnMarkAllTyped.Enabled := False;
-        acECCopy.Enabled := False;
-      end;
-  end;
-end;
-
-procedure TfrMain.acECFixAllErrorsExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Fix all errors in L3P error list
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  ErrorCheckErrorFix(False,'');
-end;
-
-procedure TfrMain.mnPollToSelectedClick(Sender: TObject);
-{---------------------------------------------------------------------
-Description: switch polling to selected line
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  mnPollToSelected.Checked:=not mnPollToSelected.Checked;
-  Polltoselectedlineonly1.Checked := not Polltoselectedlineonly1.Checked;
-end;
-
-
-procedure TfrMain.ShowSearchReplaceDialog(AReplace: boolean);
-{---------------------------------------------------------------------
-Description: Show Search and Replace dialogue
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var
-  dlg: TTextSearchDialog;
-begin
-  Statusbar.SimpleText := '';
-  if AReplace then
-    dlg := TTextReplaceDialog.Create(Self)
-  else
-    dlg := TTextSearchDialog.Create(Self);
-  with dlg do try
-    // assign search options
-    SearchBackwards := gbSearchBackwards;
-    SearchCaseSensitive := gbSearchCaseSensitive;
-    SearchInSelectionOnly := gbSearchSelectionOnly;
-    // start with last search text
-    SearchText := gsSearchText;
-    if gbSearchTextAtCaret then begin
-      // if something is selected search for that text
-      if (activeMDICHild as TfrEditorChild).memo.SelAvail and ((activeMDICHild as TfrEditorChild).memo.BlockBegin.Line = (activeMDICHild as TfrEditorChild).memo.BlockEnd.Line)
-      then
-        SearchText := (activeMDICHild as TfrEditorChild).memo.SelText
-      else
-        SearchText := (activeMDICHild as TfrEditorChild).memo.GetWordAtRowCol((activeMDICHild as TfrEditorChild).memo.CaretXY);
-    end;
-    SearchTextHistory := gsSearchTextHistory;
-    if AReplace then with dlg as TTextReplaceDialog do begin
-      ReplaceText := gsReplaceText;
-      ReplaceTextHistory := gsReplaceTextHistory;
-    end;
-    SearchWholeWords := gbSearchWholeWords;
-    if ShowModal = mrOK then begin
-      gbSearchBackwards := SearchBackwards;
-      gbSearchCaseSensitive := SearchCaseSensitive;
-      gbSearchSelectionOnly := SearchInSelectionOnly;
-      gbSearchWholeWords := SearchWholeWords;
-      gsSearchText := SearchText;
-      gsSearchTextHistory := SearchTextHistory;
-      if AReplace then with dlg as TTextReplaceDialog do begin
-        gsReplaceText := ReplaceText;
-        gsReplaceTextHistory := ReplaceTextHistory;
-      end;
-      if gsSearchText <> '' then begin
-        DoSearchReplaceText(AReplace, gbSearchBackwards);
-        fSearchFromCaret := TRUE;
-      end;
-    end;
-  finally
-    dlg.Free;
-  end;
-end;
-
-procedure TfrMain.DoSearchReplaceText(AReplace: boolean; ABackwards: boolean);
-var
-  Options: TSynSearchOptions;
-begin
-  Statusbar.SimpleText := '';
-  if AReplace then
-    Options := [ssoPrompt, ssoReplace, ssoReplaceAll]
-  else
-    Options := [];
-  if ABackwards then
-    Include(Options, ssoBackwards);
-  if gbSearchCaseSensitive then
-    Include(Options, ssoMatchCase);
-  if gbSearchSelectionOnly then
-    Include(Options, ssoSelectedOnly);
-  if gbSearchWholeWords then
-    Include(Options, ssoWholeWord);
-
-  (activeMDICHild as TfrEditorChild).memo.SearchEngine := SynEditSearch;
-
-  if (activeMDICHild as TfrEditorChild).memo.SearchReplace(gsSearchText, gsReplaceText, Options) = 0 then
-  begin
-    MessageBeep(MB_ICONASTERISK);
-    MessageDlg(_('Searchtext has not been found.'), mtInformation, [mbOK], 0);
-    if ssoBackwards in Options then
-      (activeMDICHild as TfrEditorChild).memo.BlockEnd := (activeMDICHild as TfrEditorChild).memo.BlockBegin
-    else
-      (activeMDICHild as TfrEditorChild).memo.BlockBegin := (activeMDICHild as TfrEditorChild).memo.BlockEnd;
-    (activeMDICHild as TfrEditorChild).memo.CaretXY := (activeMDICHild as TfrEditorChild).memo.BlockBegin;
-  end;
-
-  if ConfirmReplaceDialog <> nil then
-    ConfirmReplaceDialog.Free;
-end;
-
-{---------------------------------------------------------------------
-Description: These toggle the toolbars on and off
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-procedure TfrMain.acFileToolbarExecute(Sender: TObject);
-begin
-  Toolbar1.visible := not(Toolbar1.visible);
-end;
-{---------------------------------------------------------------------}
-procedure TfrMain.acEditingToolbarExecute(Sender: TObject);
-begin
-  Toolbar5.visible := not(Toolbar5.visible);
-end;
-{---------------------------------------------------------------------}
-procedure TfrMain.acSearchToolbarExecute(Sender: TObject);
-begin
-  Toolbar3.visible := not(Toolbar3.visible);
-end;
-{---------------------------------------------------------------------}
-procedure TfrMain.acWindowsToolbarExecute(Sender: TObject);
-begin
-  Toolbar4.visible := not(Toolbar4.visible);
-end;
-{---------------------------------------------------------------------}
-procedure TfrMain.acExternalsToolbarExecute(Sender: TObject);
-begin
-  Toolbar2.visible := not(Toolbar2.visible);
-end;
-{---------------------------------------------------------------------}
-procedure TfrMain.acColorToolbarExecute(Sender: TObject);
-begin
-  tbrColorReplace.visible := not(tbrColorReplace.visible);
-end;
-
-procedure TfrMain.acToolbarUpdate(Sender: TObject);
-begin
-  acFileToolBar.Checked := Toolbar1.visible;
-  acEditingToolBar.Checked := Toolbar5.visible;
-  acSearchToolBar.Checked := Toolbar3.visible;
-  acWindowsToolBar.Checked := Toolbar4.visible;
-  acExternalsToolBar.Checked := Toolbar2.visible;
-  acColorToolBar.Checked := tbrColorReplace.visible;
-end;
-{---------------------------------------------------------------------}
-
-
-procedure TfrMain.acHighlightLdrawExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set highlighting to LDraw
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynLDRSyn;
-end;
-
-
-procedure TfrMain.acHighlightPascalExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set highlighting to Pascal
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynPasSyn;
-end;
-
-
-procedure TfrMain.acHighlightCppExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Set highlighting to Pascal
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  (activeMDICHild as TfrEditorChild).Memo.Highlighter:=SynCPPSyn;
-end;
-
-
-procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
-{---------------------------------------------------------------------
-Description: Update the Most Recently Used list
-Parameter: NewFileName: Full Path and Filename to add, if supplied
-Return value: None
-----------------------------------------------------------------------}
-var
-  MRUSectionList: TStringList;
-  i: integer;
-  mnuNewItem: TMenuItem;
-  LDDPini: TMemIniFile;
-
-begin
-  LDDPini := TMemIniFile.Create(IniFileName);
-  MRUSectionList := TStringList.Create;
-
-  LDDPini.ReadSection('LDDP MRU', MRUSectionList);
-  if ((NewFileName <> '') and (MRUSectionList.Indexof(NewFileName) < 0)) then
-  begin
-    if MRUSectionList.Count >= 10 then
-      MRUSectionList.Delete(9);
-    MRUSectionList.Insert(0, NewFileName);
-  end;
-  while LastOpen1.Count>0 do LastOpen1.items[LastOpen1.Count-1].free;
-
-  LDDPini.EraseSection('LDDP MRU');
-
-  for i := 0 to MRUsectionList.Count - 1 do
-  begin
-    mnuNewItem := TMenuItem.Create(LastOpen1);
-    mnuNewItem.caption:=MRUSectionList[i];
-    mnuNewItem.OnClick := acMRUListExecute;
-    LastOpen1.Insert(LastOpen1.Count, mnuNewItem);
-    LDDPini.WriteString('LDDP MRU', MRUSectionList[i], '');
-  end;
-
-  if LastOpen1.Count > 0 then LastOpen1.Enabled := True;
-
-  LDDPini.UpdateFile;
-  LDDPini.Free;
-  MRUSectionList.Free;
-end;
-
-
-procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Closes all open child windows
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var
-  i: Integer;
-
-begin
-   for i:= MDIChildCount-1 downto 0 do
-     MDIChildren[i].Close;
-end;
-
-
-procedure TfrMain.acWindowCascadeExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Cascades the child windows
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  frMain.Cascade;
-end;
-
-
-procedure TfrMain.acWindowTileExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Tiles the child windows
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  frMain.Tile;
+  editor.SelectAll;
 end;
 
 procedure TfrMain.acReverseWindingExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Reverse the winding of a block of text
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Reverse the winding of a block of text
 var
-  startcol, endcol, i : Integer;
+  startline, endline, i : Integer;
   DATModel1: TDATModel;
 
 begin
-  with (ActiveMDIChild as TfrEditorChild).memo do
-  begin
     DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
-    startcol := BlockBegin.Line - 1;
+    editor.ExpandSelection(startline, endline);
 
-    if BlockEnd.Char = 1 then
-      endcol := BlockEnd.Line - 2
-    else
-      endcol := BlockEnd.Line - 1;
-
-    BlockBegin := BufferCoord(1,startcol + 1);
-    BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
-
-    if SelLength <> 0 then
+    if editor.SelLength <> 0 then
     begin
-      DATModel1.ModelText := SelText;
+      DATModel1.ModelText := editor.SelText;
 
       for i := 0 to DATModel1.Count-1 do
         if DATModel1[i] is TDATPolygon then
           (DATModel1[i] as TDATPolygon).ReverseWinding;
 
-      SelText := DATModel1.ModelText;
+      editor.SelText := DATModel1.ModelText;
 
-      BlockBegin := BufferCoord(1,startcol + 1);
-      BlockEnd := BufferCoord(Length(Lines[endcol]) + 1, endcol + 1);
+      editor.SelectLines(startline, endline);
 
       DATModel1.Free;
     end;
-  end;
-end;
-
-
-
-procedure TfrMain.acCheckforUpdateExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Checks for a newer version looking for a special url
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-var
-  strVersionHTTP:string;
-  strActualVersion:string;
-
-begin
-  strActualVersion := GetAppVersion(Application.ExeName);
-  strVersionHTTP := http.Get('http://lddp.sourceforge.net/lddp.ver');
-  if trim(strVersionHTTP)=strActualVersion then
-    MessageDlg(_('There is no newer version available.'), mtInformation, [mbOK], 0)
-  else
-  begin
-    MessageDlg(_('There is a newer version available!!!'), mtInformation, [mbOK], 0);
-    OpenInBrowser('http://www.lddp.net');
-  end;
-end;
-
-procedure TfrMain.LoadFormValues;
-{---------------------------------------------------------------------
-Description: Loads form values from the LDraw.ini file
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-var
-  LDDPini: TMemIniFile;
-
-begin
-  LDDPini := TMemIniFile.Create(IniFileName);
-  Left := LDDPini.ReadInteger(IniSection, 'frMain_Left', Left);
-  Top := LDDPini.ReadInteger(IniSection, 'frMain_Top', Top);
-  Width := LDDPini.ReadInteger(IniSection, 'frMain_Width', Width);
-  Height := LDDPini.ReadInteger(IniSection, 'frMain_Height', Height);
-  Toolbar1.Visible := LDDPini.ReadBool(IniSection, 'Toolbar1_Visible', Toolbar1.Visible);
-  Toolbar2.Visible := LDDPini.ReadBool(IniSection, 'Toolbar2_Visible', Toolbar2.Visible);
-  Toolbar3.Visible := LDDPini.ReadBool(IniSection, 'Toolbar3_Visible', Toolbar3.Visible);
-  Toolbar4.Visible := LDDPini.ReadBool(IniSection, 'Toolbar4_Visible', Toolbar4.Visible);
-  Toolbar5.Visible := LDDPini.ReadBool(IniSection, 'Toolbar5_Visible', Toolbar5.Visible);
-  tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
-  LDDPini.Free;
-end;
-
-procedure TfrMain.SaveFormValues;
-{---------------------------------------------------------------------
-Description: Saves form values to the LDraw.ini file
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-
-var
-  LDDPini: TMemIniFile;
-
-begin
-  LDDPini := TMemIniFile.Create(IniFileName);
-  LDDPini.EraseSection(IniSection);
-  LDDPini.WriteString(IniSection, 'InstallDir', ExtractFilePath(Application.ExeName));
-  LDDPini.WriteInteger(IniSection, 'frMain_Left', Left);
-  LDDPini.WriteInteger(IniSection, 'frMain_Top', Top);
-  LDDPini.WriteInteger(IniSection, 'frMain_Width', Width);
-  LDDPini.WriteInteger(IniSection, 'frMain_Height', Height);
-  LDDPini.WriteBool(IniSection, 'Toolbar1_Visible', Toolbar1.Visible);
-  LDDPini.WriteBool(IniSection, 'Toolbar2_Visible', Toolbar2.Visible);
-  LDDPini.WriteBool(IniSection, 'Toolbar3_Visible', Toolbar3.Visible);
-  LDDPini.WriteBool(IniSection, 'Toolbar4_Visible', Toolbar4.Visible);
-  LDDPini.WriteBool(IniSection, 'Toolbar5_Visible', Toolbar5.Visible);
-  LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
-  LDDPini.UpdateFile;
-  LDDPini.Free;
-end;
-
-
-procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  SaveFormValues;
-  frOptions.SaveFormValues;
-end;
-
-procedure TfrMain.acBMP2LDrawExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Starts BMP2DAT
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  frBMP2LDrawMain.showmodal;
-end;
-
-procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Shows the model tree form
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
-begin
-  frModelTreeView.ShowModal;
-end;
-
-procedure TfrMain.SetErrorCheckMarks(State: Boolean; ErrorType: string);
-
-var
-  i: Integer;
-  errorstring: string;
-
-begin
-  if pos('Identical to line', ErrorType) > 0 then
-    ErrorType := 'Identical to line'
-  else if pos('Vertices not coplaner', ErrorType) > 0 then
-    ErrorType := 'Vertices not coplaner'
-  else if pos('Collinear vertices', ErrorType) > 0 then
-    ErrorType := 'Collinear vertices';
-
-  with ActiveMDIChild as TfrEditorChild do
-    if lbInfo.Items.Count > 0 then
-      for i := 0 to lbInfo.Items.Count - 1 do
-      begin
-        if pos('Identical to line', lbInfo.Items[i].SubItems[1]) > 0 then
-          errorstring := 'Identical to line'
-        else if pos('Vertices not coplaner', lbInfo.Items[i].SubItems[1]) > 0 then
-          errorstring := 'Vertices not coplaner'
-        else if pos('Collinear vertices', lbInfo.Items[i].SubItems[1]) > 0 then
-          errorstring := 'Collinear vertices'
-        else
-          errorstring := lbInfo.Items[i].SubItems[1];
-
-        if (ErrorType = '') or (ErrorType = errorstring) then
-          lbInfo.Items[i].Checked := State;
-      end;
-end;
-
-procedure TfrMain.acECMarkAllExecute(Sender: TObject);
-
-begin
-  SetErrorCheckMarks(True, '');
-end;
-
-procedure TfrMain.acECUnMarkAllExecute(Sender: TObject);
-begin
-  SetErrorCheckMarks(False, '');
-end;
-
-procedure TfrMain.acECMarkAllTypedExecute(Sender: TObject);
-begin
-  with ActiveMDIChild as TfrEditorChild do
-     SetErrorCheckMarks(True, lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
-end;
-
-procedure TfrMain.acECUnMarkAllTypedExecute(Sender: TObject);
-begin
-  with ActiveMDIChild as TfrEditorChild do
-     SetErrorCheckMarks(False, lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
-end;
-
-procedure TfrMain.ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
-
-var
-  i: Integer;
-
-begin
-  if pos('Identical to line', ErrorType) > 0 then
-    ErrorType := 'Identical to line';
-
-  with (ActiveMDIChild as TfrEditorChild) do
-    if lbInfo.Items.Count > 0 then
-      for i:=lbInfo.Items.Count - 1 downto 0 do
-      begin
-        lbInfo.ItemIndex := i;
-        if pos('Identical to line', lbInfo.Items[lbInfo.ItemIndex].SubItems[1]) > 0 then
-          lbInfo.Items[lbInfo.ItemIndex].SubItems[1] := 'Identical to line';
-        if ((not OnlyMarked) and (ErrorType = '')) or
-           ((not OnlyMarked) and (lbInfo.Items[lbInfo.ItemIndex].SubItems[1] = ErrorType)) or
-           ((OnlyMarked and lbInfo.Items[lbInfo.ItemIndex].Checked) and (ErrorType = '')) or
-           ((OnlyMarked and lbInfo.Items[lbInfo.ItemIndex].Checked) and (lbInfo.Items[lbInfo.ItemIndex].SubItems[1] = ErrorType)) then
-          acECFixErrorExecute(nil);
-      end;
-end;
-
-procedure TfrMain.acECFixAllMarkedErrorsExecute(Sender: TObject);
-begin
-  ErrorCheckErrorFix(True,'');
-end;
-
-procedure TfrMain.acECFixAllMarkedErrorsTypedExecute(Sender: TObject);
-begin
-  with ActiveMDIChild as TfrEditorChild do
-   ErrorCheckErrorFix(True,lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
-end;
-
-procedure TfrMain.acECFixAllErrorsTypedExecute(Sender: TObject);
-begin
-  with ActiveMDIChild as TfrEditorChild do
-   ErrorCheckErrorFix(False,lbInfo.Items[lbInfo.ItemIndex].SubItems[1]);
-end;
-
-procedure TfrMain.acECCopyExecute(Sender: TObject);
-
-var
-  i: Integer;
-  errorlist: string;
-
-begin
-  errorlist := '';
-  with (ActiveMDIChild as TfrEditorChild) do
-  begin
-    for i := 0 to lbInfo.Items.Count - 1 do
-      errorlist := errorlist + 'Line ' + lbInfo.Items[i].SubItems[0] +
-                   ': ' + lbInfo.Items[i].SubItems[1] +
-                   ': ' + memo.Lines[StrToInt(lbInfo.Items[i].SubItems[0]) - 1] + #13#10;
-    memo.DoCopyToClipboard(errorlist);
-  end;
-end;
-
-procedure TfrMain.acFindNextUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := gsSearchText <> '';
-end;
-
-procedure TfrMain.acLSynthExecute(Sender: TObject);
-
-var
-  TempFile: TStringList;
-  CommandFile,CommandLine,InputFile,OutputFile:string;
-
-begin
-  if (not FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe')) then
-  begin
-    MessageDlg(_('You have to specify a valid path to lsynthcp.exe first!'), mtError, [mbOK], 0);
-    acOptionsExecute(Sender);
-  end
-  else
-  begin
-    OutputFile:=GetShortFileName(GetTempDir+GetTmpFileName);
-    TempFile:=TstringList.create;
-    CommandLine:=GetShortFileName(frOptions.edLSynthDir.text)+'\lsynthcp.exe ';
-    InputFile:=GetShortFileName(extractFilePath((activeMDICHild as TfrEditorChild).TempFileName))+ExtractFIleName((activeMDICHild as TfrEditorChild).TempFileName);
-    (activeMDICHild as TfrEditorChild).memo.lines.SaveToFile(InputFile);
-    TempFile.add(CommandLine+' '+InputFile+' '+OutputFile);
-    CommandFile:=GetShortFileName(GetTempDir)+GetTMPFIleName+'.bat';
-    TempFile.SaveToFile(CommandFile);
-    DOCommand(GetDOSVar('COMSPEC')+' /C '+ CommandFile,SW_HIDE,true);
-    DeleteFile(CommandFile);
-    TempFile.loadfromfile(OutputFile);
-    (activeMDICHild as TfrEditorChild).memo.SelectAll;
-    (activeMDICHild as TfrEditorChild).memo.SelText := TempFile.Text;
-    TempFile.Free;
-    DeleteFile(OutputFile);
-    DeleteFile(InputFile);
-  end;
-end;
-
-procedure TfrMain.acBendableObjectExecute(Sender: TObject);
-
-var
-  SelectedLines: TStringList;
-
-begin
-  SelectedLines := TStringList.Create;
-  with (ActiveMDIChild as TfrEditorChild) do
-  begin
-    SelectedLines.Text := memo.SelText;
-    if SelectedLines.Count = 2 then
-      try
-        frmDATCurve.Line1.DATString := SelectedLines[0];
-        frmDATCurve.Line2.DATString := SelectedLines[1];
-        if frmDATCurve.ShowModal = mrOk then
-        begin
-          frmDATCurve.HoseDATCode.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-          frmDATCurve.HoseDATCode.PositionDecimalPlaces := frOptions.sePntAcc.Value;
-          memo.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
-        end;
-      except
-        SelectedLines.Free;
-        Exit;
-      end;
-  end;
-  SelectedLines.Free;
-end;
-
-procedure TfrMain.acAutoRoundExecute(Sender: TObject);
-
-var
-  DModel: TDATModel;
-
-begin
-  ExpandSelection;
-  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-  with (ActiveMDIChild as TfrEditorChild).memo do
-  begin
-    DModel.ModelText := SelText;
-    SelText := DModel.ModelText;
-  end;
 end;
 
 procedure TfrMain.acTriangleCombineExecute(Sender: TObject);
-
+// Combine 2 triangle commnds into a quad command
+// Also checks for non coplanarity and issues a warning
 var
   DModel: TDATModel;
-  i: Integer;
+  i, startline, endline: Integer;
   QuadCombine: TDATQuad;
   ErrorLine: string;
 
@@ -2748,8 +729,8 @@ var
       if (pos('Collinear vertices',ErrorLine)>0) or
          (pos('Vertices not coplaner',ErrorLine)>0) then
         if MessageDlg(_('Combining these triangles:') + #13#10 +
-                      tri1.DATString + '(Line: ' + IntToStr((ActiveMDIChild as TfrEditorChild).memo.BlockBegin.Line + i) + ')' + #13#10 +
-                      tri2.DATString + '(Line: ' + IntToStr((ActiveMDIChild as TfrEditorChild).memo.BlockBegin.Line + i + 1) + ')' + #13#10 +
+                      tri1.DATString + '(Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
+                      tri2.DATString + '(Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
                       _('will result in a quad with collinear or') + #13#10 +
                       _('not coplaner vertices') + #13#10 +
                       _('Combine anyway?'), mtWarning, [mbYes, mbNo], 0) = mrNo then
@@ -2762,242 +743,1285 @@ var
         DModel.Delete(i+1);
       end;
     end;
-  end;
+  end; 
 
 begin
-  ExpandSelection;
   DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 
-  if (frOptions.cboDet.Checked) then
-    DetThreshold := frOptions.seDet.Value
-  else
-    DetThreshold := 0;
+  editor.ExpandSelection(startline, endline);
+  DModel.ModelText := editor.SelText;
 
-  if frOptions.cboDist.Checked then
-    DistThreshold := frOptions.seDist.Value
-  else
-    DistThreshold := 0;
+  i := 0;
 
-  if frOptions.seCollinear.Text <> '' then
-    CollinearPointsThreshold := frOptions.seCollinear.Value;
+  if DModel.Count >= 2 then
+    while i < DModel.Count do
+    begin
+      if i <= DModel.Count - 2 then
+        if (DModel[i] is TDATTriangle) and (DModel[i+1] is TDATTriangle) then
+          ProcessTriangles(DModel[i] as TDATTriangle, DModel[i+1] as TDATTriangle);
+      inc(i);
+    end;
+  editor.SelText := DModel.ModelText;
+end;
 
-  with (ActiveMDIChild as TfrEditorChild).memo do
+procedure TfrMain.acSubFileExecute(Sender: TObject);
+// Save a block of text as a separate file and add the appropriate subfile line
+var
+  SubFile: TStringList;
+  FileType, subfilename: string;
+  i, startline, endline: Integer;
+
+begin
+  editor.ExpandSelection(startline, endline);
+
+  //Init Form Values
+  frSubFile.edFilename.Text := ExtractFileName(Caption);
+  frSubFile.edAuthor.Text := frOptions.edName.Text;
+  frSubFile.edUsername.Text := frOptions.edUsername.Text;
+  frSubFile.edTitle.Text := '';
+  frSubFile.edComments.Clear;
+  frSubFile.rgType.ItemIndex := -1;
+  frSubFile.cbUnofficial.Checked := False;
+
+  //Subfile selected text
+  if frSubfile.ShowModal = mrOK then
   begin
-    DModel.ModelText := SelText;
+    case frSubFile.rgType.ItemIndex of
+      1: FileType := 'Submodel';
+      2: FileType := 'Part';
+      3: FileType := 'Subpart';
+      4: FileType := 'Primitive';
+      5: FileType := '48_Primitive';
+      else FileType := 'Model';
+    end;
 
-    i := 0;
+    if frSubFile.cbUnofficial.Checked then
+      FileType := 'Unofficial ' + FileType;
 
-    if DModel.Count >= 2 then
-      while i < DModel.Count do
-      begin
-        if i <= DModel.Count - 2 then
-          if (DModel[i] is TDATTriangle) and (DModel[i+1] is TDATTriangle) then
-            ProcessTriangles(DModel[i] as TDATTriangle, DModel[i+1] as TDATTriangle);
-        inc(i);
-      end;
-    SelText := DModel.ModelText;
+    for i := 0 to frSubFile.edComments.Lines.Count - 1 do
+      frSubFile.edComments.Lines[i] := '0 ' + frSubFile.edComments.Lines[i];
+
+    SubFile := TStringList.Create;
+    SubFile.Text := '0 ' + frSubFile.edTitle.Text + #13#10 +
+                    '0 Name: ' + frSubFile.edFileName.Text + #13#10 +
+                    '0 Author: ' + frSubFile.edAuthor.Text +
+                    '[' + frSubFile.edUsername.text + ']' + #13#10 +
+                    '0 !LDRAW_ORG ' + FileType + #13#10 +
+                    frSubFile.edComments.Text + #13#10 +
+                    editor.SelText;
+
+    if FileExists(ExtractFilePath(Caption) + frSubFile.edFileName.Text) and
+       (MessageDlg(_('File of same name already exists.  Overwrite?'),
+                   mtWarning, mbOKCancel, 0) <> mrOk) then
+      Exit;
+
+    subfilename := ExtractFilePath(DocumentTabs.ActiveDocument.FileName) + frSubFile.edFileName.Text;
+    SubFile.SaveToFile(subfilename);
+    editor.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
+    OpenFile(subfilename);
+    UpdateMRU(subfilename);
   end;
+end;
+
+// External Program actions
+
+procedure TfrMain.acLDViewExecute(Sender: TObject);
+// Execute LDView with active file
+begin
+  if (not FileExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
+    MessageDlg(_('You have to specify a valid path to LDView.exe first!'), mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
+  end;
+  editor.Lines.SaveToFile(tempFileName);
+  DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "' + tempFileName+'"',SW_SHOWNA,false);
+end;
+
+procedure TfrMain.acMLCadExecute(Sender: TObject);
+// Execute MLCad with active file
+begin
+ if editor.modified then
+    if MessageDlg(_('File has been modified. ' +#13#10+
+                  'Do you want to save and then view the file in MLCad '+#13#10+
+                  'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
+  acFileSaveExecute(Sender);
+  if (not FIleExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
+    MessageDlg(_('You have to specify a valid path to MLCad.exe first!'), mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
+  end;
+  DOCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "' + DocumentTabs.ActiveDocument.FileName + '"',SW_SHOWNA,false);
+end;
+
+procedure TfrMain.acUserDefinedExecute(Sender: TObject);
+// Execute user defined program with active file
+var
+  opt:byte;
+  ExProgram: TStringList;
+
+    function ParseString(toparse:string):string;
+    var short,long:string;
+    // %0 will be replaced by the path and filename of the exported file LDDP has generated,
+    // %1 is replaced by the path only,
+    // %2 will be replaced by the file-name only (without extension),
+    // %3 is used a place holder for the path and the filename without extension.
+    // %4, %5, %6, %7 are the same as %0 to %3 except they use the short form for paths and file-names that means the 8.3 notation of MS-DOS.
+    begin
+      long := tempFileName;
+      short := ExtractShortPathName(long);
+      toparse:=StringReplace(toparse,'%0',long,[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%1',ExtractFilePath(long),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%2',ChangeFileExt(ExtractFileName(long),''),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%3',ChangeFileExt(long,''),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%4',short,[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%5',ExtractFilePath(short),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%6',ChangeFileExt(ExtractFileName(short),''),[rfReplaceAll]);
+      toparse:=StringReplace(toparse,'%7',ChangeFileExt(short,''),[rfReplaceAll]);
+      Result:=toParse;
+    end;
+
+begin
+  ExProgram := TStringList.Create;
+  ExProgram.CommaText := frOptions.ExternalProgramList[(Sender as TAction).ActionComponent.Tag];
+  if not FileExists(ExProgram[1]) then
+  begin
+    MessageDlg(_('You have to specify a valid external program first!'), mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
+  end;
+  case StrToInt(ExProgram[5]) of
+    1: opt:=SW_HIDE;
+    2: opt:=SW_SHOWNOACTIVATE;
+    3: opt:=SW_MAXIMIZE;
+    else
+      opt:=SW_SHOWNORMAL;
+  end;
+
+  if StrToBool(ExProgram[4]) then
+    ShowMessage(ExProgram[1]+' '+ParseString(ExProgram[2]));
+
+  editor.Lines.SaveToFile(tempFileName);
+  DoCommand(ExProgram[1]+' '+ParseString(ExProgram[2]),opt,StrToBool(ExProgram[3]));
+  ExProgram.Free;
+end;
+
+procedure TfrMain.acL3LabExecute(Sender: TObject);
+// Execute L3Lab with active file
+begin
+  if (not FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
+  begin
+    MessageDlg(_('You have to specify a valid path to L3Lab.exe first!'), mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+    exit;
+  end;
+  editor.lines.savetofile(tempFileName);
+  DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "' + tempFileName + '"',SW_SHOWNA,false);
+end;
+
+// File actions
+
+procedure TfrMain.acFileNewExecute(Sender: TObject);
+// Creates a new untitled Editor child window
+begin
+  DocumentTabs.NewDocument;
+end;
+
+procedure TfrMain.acFileOpenExecute(Sender: TObject);
+// Opens chosen existing filenames in a new editor child windows
+var
+  i: Integer;
+
+begin
+  if OpenDialog1.Execute then
+  begin
+    for i:=0 to OpenDialog1.Files.Count - 1 do
+    begin
+      OpenFile(OpenDialog1.Files[i]);
+      UpdateMRU(OpenDialog1.Files[i]);
+    end;
+  end;
+end;
+
+procedure TfrMain.OpenFile(filename: string);
+var
+  DocNumber: Integer;
+
+begin
+  if (DocumentTabs.Count = 1) and
+     (editor.Lines.Count = 0) then
+    DocNumber := 0
+  else
+    DocNumber := DocumentTabs.NewDocument;
+  LoadFile(filename, DocNumber);
+end;
+
+procedure tfrMain.LoadFile(filename: string; DocNumber: Integer);
+// Loads given Filename into the active MDI editor child
+
+begin
+  if FileExists(filename) then
+  begin
+    DocumentTabs.Document[DocNumber].FileName := filename;
+    DocumentTabs.Document[DocNumber].TabName := ExtractFileName(DocumentTabs.Document[DocNumber].FileName);
+    editor.LoadFromFile(filename);
+    editor.EmptyUndoBuffer;
+    editor.SetSavePoint;
+    UpdateControls(false);
+  end
+  else
+    MessageDlg(_('File ') + Caption + _(' not found'), mtError, [mbOK], 0);
+end;
+
+procedure TfrMain.acFileSaveExecute(Sender: TObject);
+var
+  sr:TsearchRec;
+
+begin
+  if DocumentTabs.ActiveDocument.IsUntitled then
+    acFileSaveAs.Execute
+  else
+  begin
+    editor.Lines.SaveToFile(Caption);
+    editor.Modified := false;
+    FindFirst(Caption, faAnyFile, SR);
+    FindClose(sr);
+  end;
+end;
+
+procedure TfrMain.acFileSaveAsExecute(Sender: TObject);
+// Saves a file to disk after asking for filename
+begin
+  SaveDialog1.FileName := DocumentTabs.ActiveDocument.FileName;
+  if SaveDialog1.Execute then
+  begin
+    if (DocumentTabs.ActiveDocument.IsUntitled or
+        (DocumentTabs.ActiveDocument.FileName <> SaveDialog1.FileName)) then
+      UpdateMRU(SaveDialog1.FileName);
+    DocumentTabs.ActiveDocument.FileName := SaveDialog1.FileName;
+    DocumentTabs.ActiveDocument.TabName := ExtractFileName(DocumentTabs.ActiveDocument.FileName);
+    acFileSaveExecute(Sender);
+  end;
+end;
+
+procedure TfrMain.acFileExitExecute(Sender: TObject);
+// Close application
+begin
+  Close;
+end;
+
+procedure TfrMain.acFileRevertExecute(Sender: TObject);
+// Reloads active MDI child losing any changes
+begin
+  if MessageDlg(_('Reload last saved version?') + #13#10 +
+                _('All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes
+    then LoadFile(DocumentTabs.ActiveDocument.FileName, DocumentTabs.ActiveDocument.Index);
+end;
+
+procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
+{---------------------------------------------------------------------
+Description: Closes all open child windows
+Parameter: Standard
+Return value: None
+----------------------------------------------------------------------}
+var
+  i: Integer;
+
+begin
+   for i:= DocumentTabs.Count - 1 downto 0 do
+     DocumentTabs.Close(i, False);
+end;
+
+procedure TfrMain.acFileCloseExecute(Sender: TObject);
+begin
+  if TabRightClickndex >= 0 then
+    DocumentTabs.Close(TabRightClickndex);
+end;
+
+// Help actions
+
+procedure TfrMain.HelpAboutExecute(Sender: TObject);
+// Show the 'About' Box
+begin
+  frAboutBox.ShowModal;
+end;
+
+// Misc actions
+
+procedure TfrMain.acOptionsExecute(Sender: TObject);
+// Show options window
+begin
+  frOptions.ShowModal;
+end;
+
+procedure TfrMain.acHomepageExecute(Sender: TObject);
+// Open LDDP project homepage
+begin
+  OpenInBrowser('http://www.lddp.net');
+end;
+
+procedure TfrMain.acMRUListExecute(Sender: TObject);
+// Opens a file from the MRU Manager
+begin
+  if FileExists((Sender as TMenuItem).Caption) then
+  begin
+    OpenFile((Sender as TMenuItem).Caption);
+  end
+  else
+    MessageDlg(_('File ') + (Sender as TMenuItem).Caption + _(' not found!'), mtError, [mbOK], 0);
+end;
+
+procedure TfrMain.acCheckforUpdateExecute(Sender: TObject);
+// Checks for a newer version looking for a special url
+var
+  strVersionHTTP: string;
+  strActualVersion: string;
+
+begin
+  strActualVersion := GetAppVersion(Application.ExeName);
+  strVersionHTTP := http.Get('http://lddp.sourceforge.net/lddp.ver');
+  if trim(strVersionHTTP) = strActualVersion then
+    MessageDlg(_('There is no newer version available.'), mtInformation, [mbOK], 0)
+  else
+  begin
+    MessageDlg(_('There is a newer version available!!!'), mtInformation, [mbOK], 0);
+    OpenInBrowser('http://www.lddp.net');
+  end;
+end;
+
+procedure TfrMain.acBMP2LDrawExecute(Sender: TObject);
+// Show the BMP2DAT dialog
+begin
+  frBMP2LDrawMain.ShowModal;
+end;
+
+procedure TfrMain.acLSynthExecute(Sender: TObject);
+// Execues LSynth and replaces current text with the output
+var
+  TempFile: TStringList;
+  CommandFile, CommandLine, InputFile, OutputFile:string;
+
+begin
+  if (not FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe')) then
+  begin
+    MessageDlg(_('You have to specify a valid path to lsynthcp.exe first!'), mtError, [mbOK], 0);
+    acOptionsExecute(Sender);
+  end
+  else
+  begin
+    OutputFile := GetShortFileName(GetTempDir + GetTmpFileName);
+    TempFile := TstringList.create;
+    CommandLine := GetShortFileName(frOptions.edLSynthDir.text) + '\lsynthcp.exe ';
+    InputFile := GetShortFileName(ExtractFilePath(TempFileName)) + ExtractFileName(TempFileName);
+    editor.lines.SaveToFile(InputFile);
+    TempFile.Add(CommandLine + ' ' + InputFile + ' ' + OutputFile);
+    CommandFile := GetShortFileName(GetTempDir) + GetTMPFIleName + '.bat';
+    TempFile.SaveToFile(CommandFile);
+    DOCommand(GetDOSVar('COMSPEC') + ' /C ' + CommandFile,SW_HIDE,true);
+    DeleteFile(CommandFile);
+    TempFile.LoadFromFile(OutputFile);
+    editor.SelectAll;
+    editor.SelText := TempFile.Text;
+    TempFile.Free;
+    DeleteFile(OutputFile);
+    DeleteFile(InputFile);
+  end;
+end;
+
+procedure TfrMain.acBendableObjectExecute(Sender: TObject);
+// Show the bendible parts dialog and then insert the object
+var
+  startline, endline: Integer;
+
+begin
+    editor.ExpandSelection(startline, endline);
+    if endline - startline = 1 then
+      frmDATCurve.Line1.DATString := editor.Lines[startline];
+      frmDATCurve.Line2.DATString := editor.Lines[endline];
+      if frmDATCurve.ShowModal = mrOk then
+      begin
+        frmDATCurve.HoseDATCode.RotationDecimalPlaces := frOptions.seRotAcc.Value;
+        frmDATCurve.HoseDATCode.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+        editor.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
+      end;
+end;
+
+procedure TfrMain.acAutoRoundExecute(Sender: TObject);
+// Auto rounds selection to decimal places in the options
+begin
+  editor.AutoRound;
 end;
 
 procedure TfrMain.acSortSelectionExecute(Sender: TObject);
-
-var
-  DModel: TDATModel;
-
-  function GetSortVar(idx: Integer): TDATSortTerm;
-
-  begin
-    case idx of
-      0: Result := dsNil;
-      1: Result := dsColor;
-      2: Result := dsMidX;
-      3: Result := dsMidY;
-      4: Result := dsMidZ;
-      5: Result := dsMaxX;
-      6: Result := dsMaxY;
-      7: Result := dsMaxZ;
-      8: Result := dsMinX;
-      9: Result := dsMinY;
-      10: Result := dsMinZ;
-      11: Result := dsLineType;
-      else Result := dsNil;
-    end;
-  end;
-
+// Show the sort dialog
 begin
-  with (ActiveMDIChild as TfrEditorChild).memo do
-  begin
-    DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-
-    if SelLength > 0 then
-      fmSort.rgScope.ItemIndex := 1
-    else
-      fmSort.rgScope.ItemIndex := 0;
-
-    if fmSort.ShowModal = mrOk then
-    begin
-      if fmSort.rgScope.ItemIndex = 0 then
-        SelectAll
-      else
-        ExpandSelection;
-
-      DModel.ModelText := SelText;
-
-      DModel.SortTerm[1] := GetSortVar(fmSort.cbSort.ItemIndex);
-      DModel.SortTerm[2] := GetSortVar(fmSort.cbSort2.ItemIndex);
-      DModel.SortTerm[3] := GetSortVar(fmSort.cbSort3.ItemIndex);
-
-      DModel.Sort(fmSort.rgSortDirection.ItemIndex < 1);
-
-      SelText := DModel.ModelText;
-    end;
-  end;
+  fmSort.ShowModal;
 end;
 
 procedure TfrMain.acRandomizeColorsExecute(Sender: TObject);
-
+// Randomizes the colors of the selection
 var
-  RandColor, i: Integer;
-  DModel: TDATModel;
+  RandColor, i, startline, endline: Integer;
 
 begin
-  ExpandSelection;
-  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-  with (ActiveMDIChild as TfrEditorChild).memo do
-  begin
-    DModel.ModelText := SelText;
-    for i := 0 to DModel.Count - 1 do
-      if DModel[i] is TDATElement then
-      begin
-        Randomize;
-        if i > 0 then
+    editor.ExpandSelection(startline, endline);
+    editor.BeginUndoAction;
+    for i := startline to endline do
+    begin
+      Randomize;
+        // This if statement ensures that a single line selection is not
+        // assigned its current color.  i.e. the color of the line will change
+        if i = startline then
           repeat
             RandColor := Trunc(Random(16));
-          until RandColor <> (DModel[i] as TDATElement).Color
+          until RandColor <> editor.GetLineColor(i)
         else
           RandColor := Trunc(Random(16));
-        (DModel[i] as TDATElement).Color := RandColor;
-      end;
-    SelText := DModel.ModelText;
-  end;
-  DModel.Free;
+      editor.SetLineColor(i, RandColor);
+    end;
+    editor.EndUndoAction;
+    editor.SelectLines(startline, endline);
 end;
 
 procedure TfrMain.acMirrorExecute(Sender: TObject);
-
-var
-  DModel: TDATModel;
-  rows, i, j: integer;
-
+// Mirrors the selected lines
 begin
-  with (ActiveMDIChild as TfrEditorChild).memo do
-  begin
-    ExpandSelection;
+    case (Sender as TComponent).Tag of
+      1: editor.MirrorSelection(axisX);
+      2: editor.MirrorSelection(axisY);
+      3: editor.MirrorSelection(axisZ);
+    end;
+end;
 
-    DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-    DModel.ModelText := SelText;
-    
-    for i := 0 to DModel.Count - 1 do
-      if DModel[i] is TDATElement then
-      begin
-        case DModel[i].LineType of
-          1,3: rows := 3;
-            2: rows := 2;
-          4,5: rows := 4;
-        else
-          rows := 0;
-        end;
+procedure TfrMain.acEditorOptionsExecute(Sender: TObject);
+// Show the Scintilla editor options
+begin
+  if EditorOptionDlg.Execute then
+    EditorPropertyLoader.Save;
+end;
 
-        if rows > 0 then
-          for j := 1 to rows do
-            (DModel[i] as TDATElement).MatrixVals[j,(Sender as TComponent).Tag] := -(DModel[i] as TDATElement).MatrixVals[j,(Sender as TComponent).Tag];
-      end;
-    SelText := DModel.ModelText;
-    DModel.Free;
-  end;
+// Search actions
+
+procedure TfrMain.acFindExecute(Sender: TObject);
+// Execute Find Dialogue
+begin
+  ShowSearchReplaceDialog(False);
+end;
+
+procedure TfrMain.acReplaceExecute(Sender: TObject);
+// Execute Replace Dialogue
+begin
+  ShowSearchReplaceDialog(True);
+end;
+
+procedure TfrMain.acReplaceColorExecute(Sender: TObject);
+// Replace Colors using a color dialogue
+begin
+  frColorDialog.ShowModal;
+end;
+
+procedure TfrMain.acFindNextExecute(Sender: TObject);
+// Find Next occurence of a previous find procedure
+begin
+  if Assigned(SearchReplaceDlg.Editor) then
+    SearchReplaceDlg.DoSearchReplaceText(false,SearchReplaceDlg.SearchBackwards);
 end;
 
 procedure TfrMain.acColorReplaceShortcutExecute(Sender: TObject);
-
+// Replace the color of the selection with the clicked color on the color bar
 var
-  i: Integer;
-  DModel: TDATModel;
+  i, startline, endline: Integer;
 
 begin
-  ExpandSelection;
-  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-  with (ActiveMDIChild as TfrEditorChild).memo do
-  begin
-    DModel.ModelText := SelText;
-    for i := 0 to DModel.Count - 1 do
-      if DModel[i] is TDATElement then
-        (DModel[i] as TDATElement).Color := (Sender as TComponent).Tag;
+    editor.ExpandSelection(startline, endline);
+    editor.BeginUndoAction;
+    for i := startline to endline do
+      editor.SetLineColor(i, (Sender as TComponent).Tag);
+    editor.EndUndoAction;
+    editor.SelectLines(startline, endline);
+end;
 
-    SelText := DModel.ModelText;
+// View Menu actions
+
+procedure TfrMain.acToolbarVisibilityExecute(Sender: TObject);
+// Toggle the toolbars on and off
+var
+  toolbarname: string;
+  toolbar : TComponent;
+begin
+
+  toolbarname := 'tbr' + Copy( (Sender as TAction).ActionComponent.Name, 4, Length((Sender as TAction).ActionComponent.Name) - 2);
+  toolbar := frMain.FindComponent(toolbarname);
+  if toolbar is TToolbar then
+    (toolbar as TToolbar).Visible := not (toolbar as TToolbar).Visible;
+  UpdateViewMenu;
+end;
+
+procedure TfrMain.acErrorListExecute(Sender: TObject);
+begin
+  frErrorWindow.Visible := not frErrorWindow.Visible;
+  UpdateViewMenu;
+end;
+
+procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
+// Shows the model tree dialog
+begin
+  frModelTreeView.Show;
+end;
+
+procedure TfrMain.UpdateViewMenu;
+begin
+  mnuFile.Checked := tbrFile.Visible;
+  mnuEditing.Checked := tbrEditing.Visible;
+  mnuSearchAndReplace.Checked := tbrSearchAndReplace.Visible;
+  mnuWindows.Checked := tbrWindows.Visible;
+  mnuExternalPrograms.Checked := tbrExternalPrograms.Visible;
+  mnuColorReplace.Checked := tbrColorReplace.Visible;
+  mnuErrorList.Checked := frErrorWindow.Visible;
+end;
+
+// Window actions
+
+procedure TfrMain.acWindowCascadeExecute(Sender: TObject);
+// Cascades the child windows
+begin
+  frMain.Cascade;
+end;
+
+procedure TfrMain.acWindowTileExecute(Sender: TObject);
+// Tiles the child windows
+begin
+  frMain.Tile;
+end;
+
+// Other procedures
+
+procedure TfrMain.FileIsDropped(var Msg: TMessage);
+// Accepts files dropped from explorer
+var
+   hDrop: THandle ;
+   fName: string ;
+   NumberOfFiles: Integer ;
+   fCounter: Integer ;
+
+begin
+   hDrop := Msg.WParam ;
+   NumberOfFiles := DragQueryFile(hDrop,$FFFFFFFF, nil, 0);
+   for fCounter := 1 to NumberOfFiles do
+   begin
+     SetLength(fname, MAX_PATH); // Anticipate largest string size
+     SetLength(fname, DragQueryFile(HDrop, fCounter-1, PChar(fname),MAX_PATH));
+     if (lowercase(extractFIleExt(fname)) = '.dat') or
+        (lowercase(extractFIleExt(fname)) = '.mpd') or
+        (lowercase(extractFIleExt(fname)) = '.ldr') then
+     begin
+       OpenFile(fName);
+       UpdateMRU(fName);
+     end;
+   end;
+   DragFinish (hDrop);
+end;
+
+procedure TfrMain.UpdateControls(Closing: Boolean = false);
+// Updated the action controls depending on the EditorChilds
+var
+  documentcount: Integer;
+
+begin
+  documentcount := DocumentTabs.Count;
+
+  if Closing then documentcount := documentcount - 1;
+  acFileClose.Enabled := documentcount > 0 ;
+  acFileCloseAll.Enabled := documentcount > 0;
+  acFileSaveAs.Enabled := documentcount > 0;
+  acFilePrint.Enabled := documentcount > 0;
+  acFileSave.Enabled := documentcount > 0;
+  acFileRevert.Enabled := documentcount > 0;
+  acldview.Enabled := documentcount > 0;
+  acl3Lab.Enabled := documentcount > 0;
+  acmlcad.Enabled := documentcount > 0;
+  acEditCut.Enabled := documentcount > 0;
+  acEditCopy.Enabled := documentcount > 0;
+  acEditPaste.Enabled := documentcount > 0;
+  btPolling.Enabled := documentcount > 0;
+  acSelectAll.Enabled := documentcount > 0;
+  acFind.Enabled := documentcount > 0;
+  acReplace.Enabled := documentcount > 0;
+  Plugins1.Enabled := documentcount > 0;
+  Insert1.Enabled := documentcount > 0;
+  Edit1.Enabled := documentcount > 0;
+  Window1.Enabled := documentcount > 0;
+  acCommentBlock.Enabled := documentcount > 0;
+  acUnCommentBlock.Enabled := documentcount > 0;
+  acIncIndent.Enabled := documentcount > 0;
+  acDecIndent.Enabled := documentcount > 0;
+  acTrimLines.Enabled := documentcount > 0;
+  acReverseWinding.Enabled := documentcount > 0;
+  acTriangleCombine.Enabled := documentcount > 0;
+  acMirrorX.Enabled := documentcount > 0;
+  acMirrorY.Enabled := documentcount > 0;
+  acMirrorZ.Enabled := documentcount > 0;
+  acAutoRound.Enabled := documentcount > 0;
+  acLSynth.Enabled := documentcount > 0;
+  acBendableObject.Enabled := documentcount > 0;
+  acModelTreeView.Enabled := documentcount > 0;
+  acBMP2LDraw.Enabled := documentcount > 0;
+  Mirror1.Enabled := documentcount > 0;
+  ErrorCheck1.Enabled := documentcount > 0;
+  MirrorLineOn1.Enabled := documentcount > 0;
+  tbrColorReplace.Enabled := documentcount > 0;
+  acSubfile.Enabled := documentcount > 0;
+  acSortSelection.Enabled := documentcount > 0;
+  acUserDefined.Enabled := documentcount > 0;
+  acReplaceColor.enabled := documentcount > 0;
+  acWindowTile.enabled := documentcount > 0;
+  acEditorOptions.Enabled := documentcount > 0;
+
+  acUndo.Enabled := (documentcount>0) and editor.CanUndo;
+  acRedo.Enabled := (documentcount>0) and editor.CanRedo;
+
+  if documentcount = 0 then acInline.enabled:=false;
+end;
+
+procedure TfrMain.editorUpdateUI(Sender: TObject);
+var
+  i: Integer;
+  DLine: TDATType;
+
+begin
+  if editor.modified then
+    Statusbar.Panels[2].Text:=_('Modified')
+  else
+    Statusbar.Panels[2].Text:='';
+
+  acUndo.Enabled:=editor.CanUndo;
+  acRedo.Enabled:=editor.CanRedo;
+
+  StatusBar.Panels[1].text:=inttostr(editor.CaretY)+':'+inttostr(editor.CaretX);
+
+  if editor.SelLength = 0 then
+  begin
+    DLine := StrToDAT(editor.Lines[editor.CaretY - 1]);
+    acInline.enabled := DLine.LineType = 1;
+    DLine.Free;
+  end
+  else
+  begin
+    acInline.Enabled := False;
+
+    for i := editor.LineFromPosition(editor.SelStart) to editor.LineFromPosition(editor.SelStart+editor.SelLength) do
+    begin
+      DLine := StrToDAT(editor.Lines[i]);
+      if DLine.LineType = 1 then
+      begin
+        acInline.Enabled := True;
+        Break;
+      end;
+      DLine.Free;
+    end;
   end;
-  DModel.Free;
+
+  if slPlugins.Count > 0 then
+  for i:=0 to plugins3.Count-1 do
+    begin
+      case strtoint(copy(slplugins[plugins3.Items[i].tag],1,pos(',',slplugins[plugins3.Items[i].tag])-1))  of
+        2: begin
+             plugins3.Items[i].enabled:=editor.SelLength<>0;
+             plugins1.Items[i].enabled:=editor.SelLength<>0;
+           end;
+        1: begin
+             plugins3.Items[i].enabled:=editor.SelLength=0;
+             plugins1.Items[i].enabled:=editor.SelLength=0;
+           end;
+        0: begin
+             plugins3.Items[i].enabled:=true;
+             plugins1.Items[i].enabled:=true;
+          end;
+      end;
+    end;
+    UpdateControls;
+end;
+
+procedure TfrMain.FormDblClick(Sender: TObject);
+// Opens the file open dialog if the background is double clicked
+begin
+  acFileOpen.Execute;
+end;
+
+procedure TfrMain.FormCreate(Sender: TObject);
+begin
+  TranslateComponent(Self);
+  DragAcceptFiles(Handle,True);
+  AppInitialize;
+end;
+
+procedure TfrMain.FormShow(Sender: TObject);
+// if app starts for first time this initializes application and updates controls
+begin
+  UpdateControls;
+end;
+
+Procedure TfrMain.AppInitialize;
+(*
+Description: Initializes Application:
+             1.) Show Splash
+             2.) Save Installdir (for plugins)
+             3.) Save no. of items in empty plugin list in pmmemo.tag
+             4.) Loads plugins
+             5.) assumes any params are files to load and loads them
+*)
+var
+  i: Integer;
+  regT: TRegistry;
+
+begin
+  SplashScreen := TfrSplash.Create(Application);
+  try
+    //Show splash screen
+    SplashScreen.lbState.Caption:=_('Initializing plugins...');
+    SplashScreen.show;
+    SplashScreen.update;
+    Screen.Cursor := crHourGlass;
+
+    // Check if the App Data folder exists and create it if not
+    if not DirectoryExists(GetShellFolderPath('AppData') + '\LDDP') then
+      CreateDir(GetShellFolderPath('AppData') + '\LDDP');
+    if not DirectoryExists(GetShellFolderPath('AppData') + '\LDraw') then
+      CreateDir(GetShellFolderPath('AppData') + '\LDraw');
+
+    //Load form parameters from INI file
+    LoadFormValues;
+
+    //Set editor properties filename and load properties
+    EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
+    if FileExists(EditorPropertyLoader.FileName) then
+      EditorPropertyLoader.Load;
+
+    //Set streamclass so that we can save and load properly
+    editor.StreamClass := TSciStreamDefault;
+
+    //Set InstallDir in registry for legacy plugin support
+    regT := TRegistry.Create;
+    regT.OpenKey('Software\Waterproof Productions\LDDesignPad',true);
+    regT.WriteString('InstallDir', Application.ExeName);
+    regT.Free;
+
+    //Load Plugins
+    slPlugins := TStringlist.create;
+    LoadPlugins(true);
+
+    //Set META menu commands
+    BuildMetaMenu;
+
+    //Build the MRU list
+    UpdateMRU;
+
+    // Set initial directory to that of the last opened file
+    // or home directory if no file is listed
+    if LastOpen1.Count > 0 then
+      OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption)
+    else
+      OpenDialog1.InitialDir := GetShellFolderPath('Personal');
+
+    //Load files listed on the command line
+    if ParamCount > 0 then
+      for i := 1 to ParamCount do
+      begin
+        OpenFile(paramstr(i));
+        UpdateMRU(paramstr(i));
+      end;
+
+  finally
+    Sleep(1500);
+    Screen.Cursor := crDefault;
+    SplashScreen.Release;
+  end;
+end;
+
+procedure TfrMain.BuildMetaMenu;
+// Construct the meta command menu from the ini file
+var
+  MetaMenuIni: TInifile;
+  ParentMenuItem, ParentMenuItem2, ChildMenuItem: TMenuItem;
+  MetaSections, CurrentSection: TStringList;
+  i,j: Integer;
+
+begin
+  MetaSections := TStringList.Create;
+  CurrentSection := TStringList.Create;
+  MetaMenuIni := TInifile.Create(IniFilePath + '\metamenu.ini');
+
+  MetaMenuIni.ReadSections(MetaSections);
+
+  if MetaSections.Count > 0 then
+    for i := 0 to MetaSections.Count - 1 do
+    begin
+      MetaMenuIni.ReadSection(MetaSections[i],CurrentSection);
+      if CurrentSection.Count > 0 then
+      begin
+        ParentMenuItem := CreateMenuItem(MetaSections[i],'',mnuMeta);
+        ParentMenuItem2 := CreateMenuItem(MetaSections[i],'',mnuMeta2);
+        mnuMeta.Add(ParentMenuItem);
+        mnuMeta2.Add(ParentMenuItem2);
+        for j := 0 to CurrentSection.Count - 1 do
+        begin
+          ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],''),ParentMenuItem);
+          ChildMenuItem.OnClick := MetaMenuClick;
+          ParentMenuItem.Add(ChildMenuItem);
+          ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],''),ParentMenuItem);
+          ChildMenuItem.OnClick := MetaMenuClick;
+          ParentMenuItem2.Add(ChildMenuItem);
+        end;
+      end;
+    end
+  else
+    mnuMeta.Enabled := False;
+
+  CurrentSection.Free;
+  MetaSections.Free;
+  MetaMenuIni.Free;
+end;
+
+procedure TfrMain.DocumentTabsChange(Sender: TObject);
+var
+  r : integer;
+  SR : tSearchRec;
+
+begin
+  r := FindFirst(DocumentTabs.ActiveDocument.FileName, faAnyFile, SR);
+  if r = 0 then
+    if (FileDateToDateTime(SR.Time) <> DocumentTabs.ActiveDocument.LastChanged) and
+       (MessageDlg(_('File has been changed outside the editor!' + #13#10 +
+                   'Reload and lose all changes?'), mtWarning, [mbYes, mbNo], 0)=mrYes) then
+    begin
+      LoadFile(DocumentTabs.ActiveDocument.FileName, DocumentTabs.ActiveDocument.Index);
+      DocumentTabs.ActiveDocument.LastChanged := FileDateToDateTime(SR.Time);
+    end;
+  FindClose(SR);
+  UpdateControls;
+end;
+
+
+procedure TfrMain.DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
+  var AllowClose: Boolean);
+begin
+  if editor.modified then
+  begin
+    case MessageDlg('Save changes to ' + DocumentTabs.Document[TabIndex].TabName + '?'+#13+#10+''+#13+#10+'Yes: Saves the changes and closes this document.'+#13+#10+'No: Closes the document without saving any changes.'+#13+#10+'Cancel: Keeps the document open', mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
+      mrYes: begin
+               acFileSave.Execute;
+               AllowClose := true;
+             end;
+      mrNo : AllowClose := true;
+      mrCancel: AllowClose := false;
+    end;
+  end
+  else
+    AllowClose := true;
+
+  if AllowClose and (FileExists(tempFilename)) then
+    DeleteFile(tempFilename);
+end;
+
+procedure TfrMain.DocumentTabsMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbRight then
+  begin
+    TabRightClickndex := DocumentTabs.IndexOfTabAt(X,Y);
+  end else TabRightClickndex := -1;
+end;
+
+procedure TfrMain.MetaMenuClick(Sender: TObject);
+// Insert the selected meta command
+begin
+  editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos), '0 ' +
+                      (Sender as TMenuItem).Hint);
+end;
+
+procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
+// Load all plugins and create menu entries, add names to a stringlist and enumerate entries by tag
+var
+  sr: TSearchRec;
+  i, j, imgix: Integer;
+  newitem:TMenuItem;
+  PluginPath, PluginFile: string;
+  plgBitmap: TBitMap;
+  PluginInfoList: TStringList;
+
+begin
+  PluginInfoList := TStringList.Create;
+  PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
+  i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
+  frOptions.cblPlugins.clear;
+  slPlugins.clear;
+  frOptions.cblPlugins.sorted:=false;
+  while Plugins1.Count>0 do plugins1.items[Plugins1.Count-1].free;
+  while plugins3.Count>0 do
+  begin
+    if plugins3.items[Plugins3.Count-1].ImageIndex <> -1 then
+      ilToolBarColor.Delete(plugins3.items[Plugins3.Count-1].ImageIndex);
+    plugins3.items[Plugins3.Count-1].free;
+  end;
+
+  while i=0 do
+  begin
+    PluginFile := PluginPath + sr.Name;
+    PluginInfoList.Clear;
+    PluginInfoList.Add('');
+    for j := 1 to 6 do
+      PluginInfoList.Add(PluginInfo(PluginFile,j));
+    if AppInit then
+    begin
+      splashscreen.lbState.Caption:=_('Initializing plugin:') + ' '+sr.name;
+      splashscreen.update;
+    end;
+    frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
+                                   ' - ' + PluginInfoList[3]);
+    slplugins.Add(PluginInfoList[6]+','+PluginFile);
+
+    if ExtractfileExt(lowercase(sr.name))='.dll' then
+    begin
+      imgix := -1;
+      if FileExists(ChangeFileExt(PluginFile, '.bmp')) then
+        try
+          plgBitmap := TBitMap.Create;
+          plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
+          imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
+          plgBitmap.Free;
+        except
+          imgix := -1;
+        end;
+      NewItem := CreateMenuItem(PluginInfoList[1],PluginInfoList[3],Plugins3);
+      Newitem.tag:=slplugins.count-1;
+      NewItem.onclick:=PluginClick;
+      NewItem.ImageIndex := imgix;
+      plugins3.Insert(plugins3.count,Newitem);
+
+      NewItem := CreateMenuItem(PluginInfoList[1],PluginInfoList[3],Plugins3);
+      Newitem.tag:=slplugins.count-1;
+      newItem.onclick:=PluginClick;
+      NewItem.ImageIndex := imgix;
+      plugins1.Insert(plugins1.count,Newitem);
+    end;
+    frOptions.cblPlugins.checked[frOptions.cblPlugins.Items.count-1] :=
+      (ExtractfileExt(lowercase(sr.name))='.dll');
+    i:=FindNext(sr);
+  end;
+  if (Plugins1.Count = 0) and (Plugins3.Count = 0) then
+  begin
+    NewItem := TMenuItem.Create(Plugins3);
+    NewItem.caption:=_('None Found');
+    NewItem.Enabled := false;
+    plugins3.Insert(plugins3.count,Newitem);
+
+    NewItem := TMenuItem.Create(Plugins1);
+    NewItem.caption:=_('None Found');
+    NewItem.Enabled := false;
+    plugins1.Insert(plugins1.count,Newitem);
+  end;
+  Findclose(sr);
+  frOptions.cblPlugins.sorted:=true;
+  PluginInfoList.Free;
+end;
+
+
+procedure TfrMain.PluginClick(Sender: TObject);
+// Start Plugin related to the tag of the menu entry
+var
+ st,libname:string;
+ s1,s2,s3,s4: LongWord;
+
+begin
+  libname:=copy(slplugins[(Sender as TMenuItem).tag],pos(',',slplugins[(Sender as TMenuItem).tag])+1, length(slplugins[(Sender as TMenuItem).tag]));
+
+     s1 := editor.SelStart;
+     s2 := editor.SelLength;
+     s3 := editor.CaretY;
+     s4 := editor.CaretX;
+     if editor.seltext<>'' then
+     begin
+       CallPlugin(libname, PChar(editor.Lines.Text),PChar(editor.seltext),s1,s2,s3,s4);
+       if strChangedSelText<>'' then editor.SelText:=frMain.strChangedSelText
+          else
+          begin
+            editor.SelectAll;
+            editor.SelText:=frMain.strChangedCompleteText;
+          end;
+     end
+        else
+        begin
+           st:=editor.Lines.text;
+           CallPlugin(libname, PChar(editor.Lines.Text),PChar(editor.seltext),s1,s2,s3,s4);
+
+           if strChangedSelText<>'' then editor.SelText:=frMain.strChangedSelText
+            else
+            begin
+              editor.SelectAll;
+              editor.SelText:=frMain.strChangedCompleteText;
+            end;
+        end;
+     if (s1=0) and (s2=0) then
+     begin
+//         CaretX := s4;
+//         CaretY := s3;
+     end
+       else
+       begin
+         editor.SetSel(s1, s1 + s2);
+       end;
+end;
+
+// Polling procedures
+
+procedure TfrMain.btPollingClick(Sender: TObject);
+// Does nothing.. but needed so the polling button isn't deactivated
+begin
+ // do nothing
+end;
+
+procedure TfrMain.Pollevery1sec2Click(Sender: TObject);
+// Set polling interval to 1 sec
+begin
+  Pollevery1sec1.Checked := true;
+  Pollevery1sec2.Checked := true;
+  Pollonrequest2.ShortCut := 0;
+  tmPoll.Enabled:=false;
+  tmPoll.Interval:=1000;
+  tmPoll.Enabled:=true;
+end;
+
+
+procedure TfrMain.Pollevery2sec2Click(Sender: TObject);
+// Set polling interval to 2 secs
+begin
+ Pollevery2sec1.Checked := true;
+ Pollevery2sec2.Checked := true;
+ Pollonrequest2.ShortCut := 0;
+ tmPoll.Enabled:=false;
+ tmPoll.Interval:=2000;
+ tmPoll.Enabled:=true;
+
+end;
+
+procedure TfrMain.Pollevery5sec2Click(Sender: TObject);
+// Set polling interval to 5 secs
+begin
+  Pollevery5sec.Checked := true;
+  Pollevery5sec2.Checked := true;
+  Pollonrequest2.ShortCut := 0;
+  tmPoll.Enabled:=false;
+  tmPoll.Interval:=5000;
+  tmPoll.Enabled:=true;
+end;
+
+procedure TfrMain.Pollonrequest1Click(Sender: TObject);
+// Poll on request
+begin
+  Pollonrequest1.Checked := true;
+  Pollonrequest2.Checked := true;
+  Pollonrequest2.ShortCut := TextToShortcut('F11');
+  tmPoll.Enabled:=false;
+  tmPollTimer(nil);
+end;
+
+procedure TfrMain.mnPollToSelectedClick(Sender: TObject);
+// Switch polling to selected line
+begin
+  mnPollToSelected.Checked:=not mnPollToSelected.Checked;
+  Polltoselectedlineonly1.Checked := not Polltoselectedlineonly1.Checked;
+end;
+
+procedure TfrMain.tmPollTimer(Sender: TObject);
+// if polling time triggers the actual editor window is written to its firm assigned temp filename
+var
+  st: TStringList;
+
+begin
+  if mnPollL3Lab.Checked and (DocumentTabs.Count > 0) then
+   if mnPolltoSelected.checked then
+   begin
+     st:=TStringList.Create;
+     st.Text:=editor.Lines.Text;
+     while st.Count>editor.CaretY do
+       st.Delete(st.Count-1);
+     st.SaveToFile(tempFileName);
+   end
+   else editor.lines.SaveToFile(tempFileName);
+end;
+
+
+procedure TfrMain.mnPollL3LabClick(Sender: TObject);
+// Activate Polling for L3Lab
+begin
+  mnPollL3Lab.checked:= not mnPollL3Lab.checked;
+  PolltoL3LabLDView1.Checked := not PolltoL3LabLDView1.Checked;
+  if (Pollonrequest1.Checked) and (not mnPollL3Lab.checked) then
+    Pollonrequest1.ShortCut := 0;
+end;
+
+
+procedure TfrMain.ShowSearchReplaceDialog(AReplace: boolean);
+// Show Search and Replace dialogue
+begin
+  if AReplace then
+    SearchReplaceDlg.ShowReplaceDialog
+  else
+    SearchReplaceDlg.ShowSearchDialog;
+end;
+
+procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
+// Update the Most Recently Used list
+var
+  MRUSectionList: TStringList;
+  i: integer;
+  mnuNewItem: TMenuItem;
+  LDDPini: TMemIniFile;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+  MRUSectionList := TStringList.Create;
+
+  LDDPini.ReadSection('LDDP MRU', MRUSectionList);
+  if ((NewFileName <> '') and (MRUSectionList.Indexof(NewFileName) < 0)) then
+  begin
+    if MRUSectionList.Count >= 10 then
+      MRUSectionList.Delete(9);
+    MRUSectionList.Insert(0, NewFileName);
+  end;
+  while LastOpen1.Count>0 do LastOpen1.items[LastOpen1.Count-1].free;
+
+  LDDPini.EraseSection('LDDP MRU');
+
+  for i := 0 to MRUsectionList.Count - 1 do
+  begin
+    mnuNewItem := TMenuItem.Create(LastOpen1);
+    mnuNewItem.caption:=MRUSectionList[i];
+    mnuNewItem.OnClick := acMRUListExecute;
+    LastOpen1.Insert(LastOpen1.Count, mnuNewItem);
+    LDDPini.WriteString('LDDP MRU', MRUSectionList[i], '');
+  end;
+
+  if LastOpen1.Count > 0 then LastOpen1.Enabled := True;
+
+  LDDPini.UpdateFile;
+  LDDPini.Free;
+  MRUSectionList.Free;
+end;
+
+procedure TfrMain.LoadFormValues;
+// Loads form values from the LDDP.ini file
+var
+  LDDPini: TMemIniFile;
+  IniSection: string;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+
+  Inisection := 'LDDP Main';
+
+  Left := LDDPini.ReadInteger(IniSection, 'frMain_Left', Left);
+  Top := LDDPini.ReadInteger(IniSection, 'frMain_Top', Top);
+  Width := LDDPini.ReadInteger(IniSection, 'frMain_Width', Width);
+  Height := LDDPini.ReadInteger(IniSection, 'frMain_Height', Height);
+  tbrFile.Visible := LDDPini.ReadBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
+  tbrExternalPrograms.Visible := LDDPini.ReadBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
+  tbrSearchAndReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
+  tbrWindows.Visible := LDDPini.ReadBool(IniSection, 'tbrWindows_Visible', tbrWindows.Visible);
+  tbrEditing.Visible := LDDPini.ReadBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
+  tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
+
+  LDDPini.Free;
+end;
+
+procedure TfrMain.SaveFormValues;
+// Saves form values to the LDDP.ini file
+var
+  LDDPini: TMemIniFile;
+  IniSection: string;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+
+  // Save Main position, size, and toolbar visibility
+  Inisection := 'LDDP Main';
+  LDDPini.EraseSection(IniSection);
+
+  LDDPini.WriteString(IniSection, 'InstallDir', ExtractFilePath(Application.ExeName));
+  LDDPini.WriteInteger(IniSection, 'frMain_Left', Left);
+  LDDPini.WriteInteger(IniSection, 'frMain_Top', Top);
+  LDDPini.WriteInteger(IniSection, 'frMain_Width', Width);
+  LDDPini.WriteInteger(IniSection, 'frMain_Height', Height);
+  LDDPini.WriteBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
+  LDDPini.WriteBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
+  LDDPini.WriteBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
+  LDDPini.WriteBool(IniSection, 'tbrWindows_Visible', tbrWindows.Visible);
+  LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
+  LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
+
+  LDDPini.WriteBool(IniSection, 'frErrorWindow_Visible', frErrorWindow.Visible);
+  LDDPini.WriteBool(IniSection, 'frErrorWindow_Floating', frErrorWindow.Floating);
+
+  LDDPini.UpdateFile;
+  LDDPini.Free;
+end;
+
+procedure TfrMain.SetToolbarWindows;
+
+var
+  LDDPini: TMemIniFile;
+  IniSection: string;
+
+begin
+  LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
+
+  Inisection := 'LDDP Main';
+
+  frErrorWindow.Visible := LDDPini.ReadBool(IniSection, 'frErrorWindow_Visible', frErrorWindow.Visible);
+
+  if frErrorWindow.Visible and
+     LDDPini.ReadBool(IniSection, 'frErrorWindow_Floating', False) then
+    frErrorWindow.ManualDock(JvDockServer1.BottomDockPanel, nil, alBottom);
+
+  LDDPini.Free;
+
+end;
+function TfrMain.tempFileName:string;
+{---------------------------------------------------------------------
+Description: Creates and returns a unique temporary filename for this editor window
+Parameter: None
+Return value: Path & Filename of the temporary filename
+---------------------------------------------------------------------}
+begin
+  if ExtractFilePath(DocumentTabs.ActiveDocument.FileName) <> '' then
+    Result := ExtractFilePath(DocumentTabs.ActiveDocument.FileName) //+ tmpFileName
+  else
+    Result := GetTempDir //+ tmpFileName;
+end;
+
+procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  SaveFormValues;
+  EditorPropertyLoader.Save;
+end;
+
+procedure TfrMain.SearchReplaceDlgTextFound(Sender: TObject);
+begin
+  acFindNext.Enabled := true;
+end;
+
+procedure TfrMain.SearchReplaceDlgTextNotFound(Sender: TObject);
+begin
+  acFindNext.Enabled := false;
+end;
+
+procedure TfrMain.acFindNextUpdate(Sender: TObject);
+begin
+//  (Sender as TAction).Enabled := gsSearchText <> '';
 end;
 
 procedure TfrMain.tbUserDefinedClick(Sender: TObject);
 begin
 // Empty. Required for Button to be enabled
-end;
-
-procedure TfrMain.acSubFileExecute(Sender: TObject);
-
-var
-  SubFile: TStringList;
-  FileType: string;
-  i: Integer;
-
-begin
-  ExpandSelection;
-  with (ActiveMDIChild as TfrEditorChild) do
-  begin
-    //Init Form Values
-    frSubFile.edFilename.Text := ExtractFileName(Caption);
-    frSubFile.edAuthor.Text := frOptions.edName.Text;
-    frSubFile.edTitle.Text := '';
-    frSubFile.edComments.Clear;
-    frSubFile.rgType.ItemIndex := -1;
-    frSubFile.cbUnofficial.Checked := False;
-
-    //Subfile selected text
-    if frSubfile.ShowModal = mrOK then
-    begin
-      case frSubFile.rgType.ItemIndex of
-        1: FileType := 'Submodel';
-        2: FileType := 'Part';
-        3: FileType := 'Subpart';
-        4: FileType := 'Primitive';
-        else FileType := 'Model';
-      end;
-
-      if frSubFile.cbUnofficial.Checked then
-        FileType := 'Unofficial ' + FileType;
-
-      for i := 0 to frSubFile.edComments.Lines.Count - 1 do
-        frSubFile.edComments.Lines[i] := '0 ' + frSubFile.edComments.Lines[i];
-
-      SubFile := TStringList.Create;
-      SubFile.Text := '0 ' + frSubFile.edTitle.Text + #13#10 +
-                      '0 Name: ' + frSubFile.edFileName.Text + #13#10 +
-                      '0 Author: ' + frSubFile.edAuthor.Text + #13#10 +
-                      '0 ' + FileType + #13#10 +
-                      frSubFile.edComments.Text + #13#10 +
-                      memo.SelText;
-
-      if FileExists(ExtractFilePath(Caption) + frSubFile.edFileName.Text) and
-         (MessageDlg(_('File of same name already exists.  Overwrite?'),
-                    mtWarning, mbOKCancel, 0) <> mrOk) then
-        Exit;
-
-      SubFile.SaveToFile(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
-      memo.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
-      CreateMDIChild(ExtractFilePath(Caption) + frSubFile.edFileName.Text,false);
-      UpdateMRU(ExtractFilePath(Caption) + frSubFile.edFileName.Text);
-    end;
-  end;
 end;
 
 initialization

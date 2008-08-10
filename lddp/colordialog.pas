@@ -21,57 +21,29 @@ interface
 
 uses
   gnugettext, Forms, StdCtrls, Buttons, ExtCtrls,Controls, ComCtrls, Classes,
-  ActnList, Dialogs, Graphics, SysUtils, Math;
+  ActnList, Dialogs, Graphics, SysUtils, Math, JvExStdCtrls, JvCombobox,
+  JvColorCombo, DATBase;
 
 type
   TfrColorDialog = class(TForm)
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
-    edColornumber: TEdit;
-    Label3: TLabel;
     Panel3: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
-    edDescription: TEdit;
-    btOldColor: TPanel;
-    btNewColor: TPanel;
-    Shape11: TShape;
-    Shape12: TShape;
-    Shape22: TShape;
-    Shape32: TShape;
-    Shape42: TShape;
-    Shape43: TShape;
-    Shape14: TShape;
-    Shape24: TShape;
-    Shape34: TShape;
-    Shape33: TShape;
-    Shape44: TShape;
-    Shape13: TShape;
-    Shape23: TShape;
-    Shape21: TShape;
-    Shape31: TShape;
-    Shape41: TShape;
-    ScrollBar1: TScrollBar;
     rgOptions: TRadioGroup;
     cbxReplaceEverything: TCheckBox;
-    procedure btOldCOlorClick(Sender: TObject);
-    procedure btNewColorClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    OldColorCombo: TJvColorComboBox;
+    NewColorCombo: TJvColorComboBox;
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure ScrollBar1Change(Sender: TObject);
-    procedure Shape11MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure Shape11MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure cbxReplaceEverythingClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
-    { Private declarations }
+    ColourList: TDATColourList;
   public
-    { Public declarations }
-    slColors:TStringlist;
-    procedure SetColorBoxes;
+    procedure UpdateColorCombos;
   end;
 
 var
@@ -81,123 +53,92 @@ implementation
 
 {$R *.dfm}
 
+uses
+  main, options, DATUtils;
 
-procedure TfrColorDialog.FormShow(Sender: TObject);
-
-begin
-  scrollbar1.max := Ceil(slColors.count / 4)-4;
-  ScrollBar1.Min := 0;
-  ScrollBar1.Position := 0;
-  SetColorBoxes;
-end;
-
-procedure TfrColorDialog.SetColorBoxes;
+procedure TfrColorDialog.FormClose(Sender: TObject; var Action: TCloseAction);
 
 var
-  i,j:integer;
-  color:TColor;
-  name,tmp:string;
-  ShapePtr: TShape;
-
+  i, startline, endline: Integer;
+  newcolor, oldcolor: Integer;
 begin
-  for i := 1 to 4 do
-  begin
-    for j := 1 to 4 do
+  if ModalResult = mrOk then
+    with frMain.editor do
     begin
-      if (((ScrollBar1.Position + i) - 1)*4) + (j-1) <= slColors.Count-1 then
-        tmp := slColors.Values[slColors.Names[(((ScrollBar1.Position + i) - 1)*4) + (j-1)]]
-      else
-        tmp := '';  
-      name := copy(tmp,1,pos(' ',tmp)-1);
-      tmp:=copy(tmp,pos(' ',tmp)+1,30);
-      color:=strtoint('$00'+copy(tmp,5,2)+copy(tmp,3,2)+copy(tmp,1,2));
-      ShapePtr := FindComponent('Shape'+IntToStr(i)+IntToStr(j)) as TShape;
-      ShapePtr.Brush.Color := color;
-      ShapePtr.HelpKeyword := name;
-      ShapePtr.tag:=((i-1)*4) + (j-1);
+      oldcolor := StrToInt(System.Copy(OldColorCombo.Text, 0, Pos(':', OldColorCombo.Text) - 1));
+      newcolor := StrToInt(System.Copy(NewColorCombo.Text, 0, Pos(':', NewColorCombo.Text) - 1));
+
+      ExpandSelection(startline, endline);
+
+      if rgOptions.ItemIndex = 0 then
+      begin
+        SelectAll;
+        startline := 0;
+        endline := Lines.Count - 1;
+      end;
+
+      for i := startline to endline do
+        if (cbxReplaceEverything.Checked) or
+           (GetLineColor(i) = oldcolor) then
+          SetLineColor(i, newcolor);
     end;
-  end;
-end;
-
-procedure TfrColorDialog.btOldCOlorClick(Sender: TObject);
-begin
-  btNewcolor.BevelOuter:=bvRaised;
-  btOldcolor.BevelOuter:=bvLowered;
-
-end;
-
-procedure TfrColorDialog.btNewColorClick(Sender: TObject);
-begin
-  btNewcolor.BevelOuter:=bvLowered;
-  btOldcolor.BevelOuter:=bvRaised;
 end;
 
 procedure TfrColorDialog.FormCreate(Sender: TObject);
 begin
-  TranslateComponent (self);
-  slColors := TStringList.Create;
+  TranslateComponent(self);
 end;
 
-procedure TfrColorDialog.FormDestroy(Sender: TObject);
-begin
-  slColors.Free;
-end;
-
-procedure TfrColorDialog.ScrollBar1Change(Sender: TObject);
-begin
-  SetColorBoxes;
-end;
-
-procedure TfrColorDialog.Shape11MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TfrColorDialog.FormShow(Sender: TObject);
 
 var
-  cname,nr,tmp:string;
+  startline, endline: Integer;
+  line: TDATType;
 
 begin
-  nr:=slColors.Names[(Sender as TShape).tag+scrollbar1.position*4];
-  tmp:=slColors.Values[nr];
-  cname:=copy(tmp,1,pos(' ',tmp)-1);
+  UpdateColorCombos;
 
-  if btnewColor.BevelOuter=bvLowered then
+  rgOptions.Items.Clear;
+
+  rgOptions.Items.Add(_('Replace All'));
+  rgOptions.ItemIndex := 0;
+
+  line := StrToDat(frMain.editor.Lines[frMain.editor.CaretY - 1]);
+
+  if frMain.editor.SelLength > 0 then
   begin
-    btNewColor.color:=(Sender as TShape).Brush.color;
-    btNewColor.tag:=strtoint(nr);
-    btNewcolor.caption:=nr+' - '+cname;
-    btNewColor.Font.Color:=abs($00999999-(Sender as TShape).Brush.color);
-    edColornumber.Text:=nr;
+    frMain.editor.ExpandSelection(startline, endline);
+    rgOptions.ItemIndex := rgOptions.Items.Add(_('Replace For Selection'));
+    rgOptions.ItemIndex := 1;
   end
-    else begin
-      btOldColor.color:=(Sender as TShape).Brush.Color;
-      btOldColor.tag:=strtoint(nr);
-      btOldColor.caption:=nr+' - '+cname;
-      btOldColor.Font.Color:=abs($00999999-(Sender as TShape).Brush.color);
-    end
-end;
-
-
-procedure TfrColorDialog.Shape11MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-var cname,tmp,nr:string;
-begin
-  if (Sender as TShape).tag+scrollbar1.position*4<slColors.count then
+  else if line is TDATElement then
   begin
-    nr:=slColors.Names[(Sender as TShape).tag+scrollbar1.position*4];
-    tmp:=slColors.Values[nr];
-    cname:=copy(tmp,1,pos(' ',tmp)-1);
-    edDescription.text:='Nr: '+nr+' - '+cname;
-  end
-   else edDescription.text:='';
+    rgOptions.Items.Add(_('Replace Current Line Only'));
+    rgOptions.ItemIndex := 1;
+  end;
+
+  if line is TDATElement then
+    OldColorCombo.ItemIndex :=
+      OldColorCombo.FindColor(ColourList[ColourList.IndexOfColourCode((line as TDATElement).Color)].MainColor);
 end;
 
 procedure TfrColorDialog.cbxReplaceEverythingClick(Sender: TObject);
 begin
-  btOldColor.Enabled := not (cbxReplaceEverything.Checked);
-  Label1.Enabled := not (cbxReplaceEverything.Checked);
-  if cbxReplaceEverything.Checked then
+  OldColorCombo.Enabled := not cbxReplaceEverything.Checked;
+  Label1.Enabled := not cbxReplaceEverything.Checked;
+end;
+
+procedure TfrColorDialog.UpdateColorCombos;
+//Update the color combo boxs from ldconfig.ldr
+var
+  i: Integer;
+
+begin
+  ColourList := MakeStandardDATColourList;
+  for i := 0 to ColourList.Count - 1 do
   begin
-    btNewColor.BevelOuter := bvLowered;
-    btOldColor.BevelOuter := bvRaised;
+    OldColorCombo.AddColor(ColourList[i].MainColor, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
+    NewColorCombo.AddColor(ColourList[i].MainColor, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
   end;
 end;
 

@@ -71,6 +71,10 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
     TabOrder = 1
     object TabSheet1: TTabSheet
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Bevel1: TBevel
         Left = 4
         Top = 4
@@ -312,6 +316,10 @@ object frBMP2LDrawMain: TfrBMP2LDrawMain
       ImageIndex = 2
       TabVisible = False
       OnShow = TabSheet3Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Bevel3: TBevel
         Left = 4
         Top = 4
