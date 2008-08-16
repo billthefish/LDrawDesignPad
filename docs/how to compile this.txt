@@ -8,9 +8,14 @@ You'll need:
 To compile this source successfully, you'll also need to download 
 and install the following component suites:
 
-* SynEdit 2.0.1 
-	http://synedit.sourceforge.net
+* Delphi Scintilla Interface Components 0.50
+	http://delphisci.sourceforge.net
 
-* JVCL 3.0 with JCL 1.94
+* A bugfix for Delphi Scintilla Interface Components 0.50
+	Located in the lddp source directory.  Simply overwrite the existing file.
+
+* JVCL 3.33 with JCL 1.101
 	http://jvcl.sourceforge.net
 	Note: The LDDP code is incompatible with JVCL 2.x
+
+
