@@ -26,7 +26,8 @@ package ScintillaLDDP;
 
 requires
   rtl,
-  Scit;
+  Scit,
+  vcl;
 
 contains
   SciScintillaLDDP in 'SciScintillaLDDP.pas';

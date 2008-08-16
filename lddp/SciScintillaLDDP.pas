@@ -12,6 +12,7 @@ type
   protected
     { Protected declarations }
   public
+    constructor Create(AOwner: TComponent); override;
     function CaretX: Integer;
     function CaretY: Integer;
     procedure ExpandSelection(out startln, endln: Integer);
@@ -31,7 +32,7 @@ procedure Register;
 implementation
 
 uses
-  DATModel, DATUtils;
+  DATModel, DATUtils, SciStreamDefault;
 
 procedure TScintillaLDDP.SelectLine(Line: Integer);
 begin
@@ -75,6 +76,12 @@ end;
 function TScintillaLDDP.CaretY: Integer;
 begin
   Result := LineFromPosition(GetCurrentPos) + 1;
+end;
+
+constructor TScintillaLDDP.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  StreamClass := TSciStreamDefault;
 end;
 
 procedure TScintillaLDDP.MirrorSelection(axis: TDATAxis);
