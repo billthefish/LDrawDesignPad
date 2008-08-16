@@ -48,7 +48,7 @@ begin
   try
     screen.cursor:=-11;
     Application.Initialize;
-    Application.Title := 'LDraw DesignPad';
+    Application.Title := 'LDraw Design Pad';
 
     Application.CreateForm(TfrMain, frMain);
   Application.CreateForm(TfrAboutBox, frAboutBox);

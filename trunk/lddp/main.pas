@@ -25,10 +25,10 @@ uses
   ComCtrls, Controls, Inifiles, splash, StdCtrls, ShellAPI, ToolWin,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
   sciPrint, SciScintillaOptionsFrm, SciScintillaOptionsDlg, SciSearchReplaceBase,
-  SciSearchReplace, SciScintillaBase, SciScintillaMemo, SciScintilla,
-  SciScintillaLDDP, SciDocTabCtrl, SciLanguageManager, SciPropertyMgr,
-  JvDockTree, JvDockControlForm, JvDockDelphiStyle, JvComponentBase,
-  JvDockVIDStyle;
+  SciScintillaBase, SciScintillaMemo, SciScintilla, SciScintillaLDDP,
+  SciDocTabCtrl, SciLanguageManager, SciPropertyMgr, JvDockTree,
+  JvDockControlForm, JvDockDelphiStyle, JvComponentBase, JvAppInst,
+  SciSearchReplace;
 
 type
   TfrMain = class(TForm)
@@ -96,7 +96,6 @@ type
     tbrFile: TToolBar;
     tbrExternalPrograms: TToolBar;
     tbrSearchAndReplace: TToolBar;
-    tbrWindows: TToolBar;
     tbrEditing: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
@@ -124,12 +123,9 @@ type
     ToolButton30: TToolButton;
     ToolButton32: TToolButton;
     ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
     ToolButton8: TToolButton;
     TrimLines2: TMenuItem;
     UpdateHeader2: TMenuItem;
-    acWindowCascade: TWindowCascade;
     Windows1: TMenuItem;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
@@ -137,7 +133,6 @@ type
     acFileSaveAs: TAction;
     acFilePrint: TAction;
     acFileCloseAll: TAction;
-    acWindowTile: TAction;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
     FileNewItem: TMenuItem;
@@ -188,9 +183,6 @@ type
     N6: TMenuItem;
     TrimLines1: TMenuItem;
     InlinePart2: TMenuItem;
-    Window1: TMenuItem;
-    WindowCascadeItem: TMenuItem;
-    WindowTileItem: TMenuItem;
     Help1: TMenuItem;
     HelpAboutItem: TMenuItem;
     LDDPHomepage1: TMenuItem;
@@ -299,7 +291,6 @@ type
     http: TIdHTTP;
     EditorOptions1: TMenuItem;
     acEditorOptions: TAction;
-    SearchReplaceDlg: TSciSearchReplace;
     EditorOptionDlg: TScintillaOptionsDlg;
     acToolbarVisibility: TAction;
     DocumentTabs: TSciDocumentTabControl;
@@ -313,6 +304,8 @@ type
     pmTab: TPopupMenu;
     CloseFile1: TMenuItem;
     SciLanguageManager1: TSciLanguageManager;
+    AppInst: TJvAppInstances;
+    SearchReplaceDlg: TSciSearchReplace;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -358,8 +351,6 @@ type
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
     procedure acFileCloseAllExecute(Sender: TObject);
-    procedure acWindowCascadeExecute(Sender: TObject);
-    procedure acWindowTileExecute(Sender: TObject);
     procedure acReverseWindingExecute(Sender: TObject);
     procedure acCheckforUpdateExecute(Sender: TObject);
     procedure acModelTreeViewExecute(Sender: TObject);
@@ -379,7 +370,6 @@ type
     procedure acSubFileExecute(Sender: TObject);
     procedure acSortSelectionExecute(Sender: TObject);
     procedure acEditorOptionsExecute(Sender: TObject);
-    procedure SearchReplaceDlgTextFound(Sender: TObject);
     procedure SearchReplaceDlgTextNotFound(Sender: TObject);
     procedure acToolbarVisibilityExecute(Sender: TObject);
     procedure acErrorListExecute(Sender: TObject);
@@ -390,24 +380,24 @@ type
     procedure DocumentTabsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure DocumentTabsChange(Sender: TObject);
+    procedure AppInstCmdLineReceived(Sender: TObject;
+      CmdLine: TStrings);
 
   private
-    { Private declarations }
     TabRightClickIndex: Integer;
+    Initialized: Boolean;
     procedure AppInitialize;
     procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
     procedure BuildMetaMenu;
     function tempFileName:string;
 
   public
-    { Public declarations }
     strChangedCompleteText:string;
     strChangedSelText:string;
     slPlugins: TStringList;
     procedure LoadPlugins(AppInit:Boolean = false);
     procedure OpenFile(filename: string);
     procedure LoadFile(filename: string; DocNumber: Integer);
-    procedure ShowSearchReplaceDialog(AReplace: boolean);
     procedure UpdateControls(Closing: Boolean = false);
     procedure UpdateMRU(NewFileName: TFileName= '');
     procedure UpdateViewMenu;
@@ -942,14 +932,22 @@ end;
 
 procedure TfrMain.OpenFile(filename: string);
 var
-  DocNumber: Integer;
+  i, DocNumber: Integer;
 
 begin
   if (DocumentTabs.Count = 1) and
      (editor.Lines.Count = 0) then
     DocNumber := 0
   else
+  begin
+    for i := 0 to DocumentTabs.Count - 1 do
+      if DocumentTabs.Document[i].FileName = filename then
+      begin
+        DocumentTabs.Activate(i);
+        Exit;
+      end;
     DocNumber := DocumentTabs.NewDocument;
+  end;
   LoadFile(filename, DocNumber);
 end;
 
@@ -959,6 +957,7 @@ procedure tfrMain.LoadFile(filename: string; DocNumber: Integer);
 begin
   if FileExists(filename) then
   begin
+//    DocumentTabs.ActiveDocument.
     DocumentTabs.Document[DocNumber].FileName := filename;
     DocumentTabs.Document[DocNumber].TabName := ExtractFileName(DocumentTabs.Document[DocNumber].FileName);
     editor.LoadFromFile(filename);
@@ -979,7 +978,7 @@ begin
     acFileSaveAs.Execute
   else
   begin
-    editor.Lines.SaveToFile(Caption);
+    editor.Lines.SaveToFile(DocumentTabs.ActiveDocument.Filename);
     editor.Modified := false;
     FindFirst(Caption, faAnyFile, SR);
     FindClose(sr);
@@ -1008,11 +1007,11 @@ begin
 end;
 
 procedure TfrMain.acFileRevertExecute(Sender: TObject);
-// Reloads active MDI child losing any changes
+// Reloads active document losing any changes
 begin
   if MessageDlg(_('Reload last saved version?') + #13#10 +
-                _('All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes
-    then LoadFile(DocumentTabs.ActiveDocument.FileName, DocumentTabs.ActiveDocument.Index);
+                _('All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes then
+    LoadFile(DocumentTabs.ActiveDocument.FileName, DocumentTabs.ActiveDocument.Index);
 end;
 
 procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
@@ -1202,13 +1201,13 @@ end;
 procedure TfrMain.acFindExecute(Sender: TObject);
 // Execute Find Dialogue
 begin
-  ShowSearchReplaceDialog(False);
+  SearchReplaceDlg.ShowSearchDialog;
 end;
 
 procedure TfrMain.acReplaceExecute(Sender: TObject);
 // Execute Replace Dialogue
 begin
-  ShowSearchReplaceDialog(True);
+  SearchReplaceDlg.ShowReplaceDialog;
 end;
 
 procedure TfrMain.acReplaceColorExecute(Sender: TObject);
@@ -1220,8 +1219,7 @@ end;
 procedure TfrMain.acFindNextExecute(Sender: TObject);
 // Find Next occurence of a previous find procedure
 begin
-  if Assigned(SearchReplaceDlg.Editor) then
-    SearchReplaceDlg.DoSearchReplaceText(false,SearchReplaceDlg.SearchBackwards);
+  SearchReplaceDlg.DoSearchReplaceText(false,SearchReplaceDlg.SearchBackwards);
 end;
 
 procedure TfrMain.acColorReplaceShortcutExecute(Sender: TObject);
@@ -1274,25 +1272,10 @@ begin
   mnuFile.Checked := tbrFile.Visible;
   mnuEditing.Checked := tbrEditing.Visible;
   mnuSearchAndReplace.Checked := tbrSearchAndReplace.Visible;
-  mnuWindows.Checked := tbrWindows.Visible;
   mnuExternalPrograms.Checked := tbrExternalPrograms.Visible;
   mnuColorReplace.Checked := tbrColorReplace.Visible;
   mnuErrorList.Checked := frErrorWindow.Visible;
   mnuModelTree.Checked := frModelTreeView.Visible;
-end;
-
-// Window actions
-
-procedure TfrMain.acWindowCascadeExecute(Sender: TObject);
-// Cascades the child windows
-begin
-  frMain.Cascade;
-end;
-
-procedure TfrMain.acWindowTileExecute(Sender: TObject);
-// Tiles the child windows
-begin
-  frMain.Tile;
 end;
 
 // Other procedures
@@ -1323,6 +1306,20 @@ begin
    DragFinish (hDrop);
 end;
 
+procedure TfrMain.AppInstCmdLineReceived(Sender: TObject;
+  CmdLine: TStrings);
+var
+  i: Integer;
+
+begin
+  if CmdLine.Count > 0 then
+  for i := 0 to CmdLine.Count - 1 do
+  begin
+    OpenFile(CmdLine[i]);
+    UpdateMRU(CmdLine[i]);
+  end;
+end;
+
 procedure TfrMain.UpdateControls(Closing: Boolean = false);
 // Updated the action controls depending on the EditorChilds
 var
@@ -1351,7 +1348,6 @@ begin
   Plugins1.Enabled := documentcount > 0;
   Insert1.Enabled := documentcount > 0;
   Edit1.Enabled := documentcount > 0;
-  Window1.Enabled := documentcount > 0;
   acCommentBlock.Enabled := documentcount > 0;
   acUnCommentBlock.Enabled := documentcount > 0;
   acIncIndent.Enabled := documentcount > 0;
@@ -1375,7 +1371,6 @@ begin
   acSortSelection.Enabled := documentcount > 0;
   acUserDefined.Enabled := documentcount > 0;
   acReplaceColor.enabled := documentcount > 0;
-  acWindowTile.enabled := documentcount > 0;
   acEditorOptions.Enabled := documentcount > 0;
 
   acUndo.Enabled := (documentcount>0) and editor.CanUndo;
@@ -1453,12 +1448,13 @@ procedure TfrMain.FormCreate(Sender: TObject);
 begin
   TranslateComponent(Self);
   DragAcceptFiles(Handle,True);
-  AppInitialize;
+  Initialized := False;
 end;
 
 procedure TfrMain.FormShow(Sender: TObject);
 // if app starts for first time this initializes application and updates controls
 begin
+  AppInitialize;
   UpdateControls;
   frModelTreeView.RestorePosition;
 end;
@@ -1477,6 +1473,8 @@ var
   regT: TRegistry;
 
 begin
+  if Initialized then Exit;
+  
   SplashScreen := TfrSplash.Create(Application);
   try
     //Show splash screen
@@ -1498,9 +1496,6 @@ begin
     EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
     if FileExists(EditorPropertyLoader.FileName) then
       EditorPropertyLoader.Load;
-
-    //Set streamclass so that we can save and load properly
-    editor.StreamClass := TSciStreamDefault;
 
     //Set InstallDir in registry for legacy plugin support
     regT := TRegistry.Create;
@@ -1591,14 +1586,12 @@ var
 
 begin
   r := FindFirst(DocumentTabs.ActiveDocument.FileName, faAnyFile, SR);
-  if r = 0 then
-    if (FileDateToDateTime(SR.Time) <> DocumentTabs.ActiveDocument.LastChanged) and
-       (MessageDlg(_('File has been changed outside the editor!' + #13#10 +
-                   'Reload and lose all changes?'), mtWarning, [mbYes, mbNo], 0)=mrYes) then
-    begin
-      LoadFile(DocumentTabs.ActiveDocument.FileName, DocumentTabs.ActiveDocument.Index);
-      DocumentTabs.ActiveDocument.LastChanged := FileDateToDateTime(SR.Time);
-    end;
+  if (r = 0) and
+     (FileDateToDateTime(SR.Time) <> DocumentTabs.ActiveDocument.LastChanged) then
+  begin
+    acFileRevert.Execute;
+    DocumentTabs.ActiveDocument.LastChanged := FileDateToDateTime(SR.Time);
+  end;
   FindClose(SR);
   UpdateControls;
 end;
@@ -1642,7 +1635,8 @@ begin
 end;
 
 procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
-// Load all plugins and create menu entries, add names to a stringlist and enumerate entries by tag
+// Load all plugins and create menu entries,
+// add names to a stringlist and enumerate entries by tag
 var
   sr: TSearchRec;
   i, j, imgix: Integer;
@@ -1862,16 +1856,6 @@ begin
     Pollonrequest1.ShortCut := 0;
 end;
 
-
-procedure TfrMain.ShowSearchReplaceDialog(AReplace: boolean);
-// Show Search and Replace dialogue
-begin
-  if AReplace then
-    SearchReplaceDlg.ShowReplaceDialog
-  else
-    SearchReplaceDlg.ShowSearchDialog;
-end;
-
 procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
 // Update the Most Recently Used list
 var
@@ -1929,10 +1913,10 @@ begin
   tbrFile.Visible := LDDPini.ReadBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
   tbrExternalPrograms.Visible := LDDPini.ReadBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
   tbrSearchAndReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
-  tbrWindows.Visible := LDDPini.ReadBool(IniSection, 'tbrWindows_Visible', tbrWindows.Visible);
   tbrEditing.Visible := LDDPini.ReadBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
-
+  SearchReplaceDlg.ReplaceTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
+  SearchReplaceDlg.SearchTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
   LDDPini.Free;
 end;
 
@@ -1957,9 +1941,10 @@ begin
   LDDPini.WriteBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
   LDDPini.WriteBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
   LDDPini.WriteBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
-  LDDPini.WriteBool(IniSection, 'tbrWindows_Visible', tbrWindows.Visible);
   LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
+  LDDPini.WriteString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
+  LDDPini.WriteString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
 
   LDDPini.UpdateFile;
   LDDPini.Free;
@@ -1984,11 +1969,6 @@ begin
   EditorPropertyLoader.Save;
 end;
 
-procedure TfrMain.SearchReplaceDlgTextFound(Sender: TObject);
-begin
-  acFindNext.Enabled := true;
-end;
-
 procedure TfrMain.SearchReplaceDlgTextNotFound(Sender: TObject);
 begin
   acFindNext.Enabled := false;
@@ -1996,7 +1976,7 @@ end;
 
 procedure TfrMain.acFindNextUpdate(Sender: TObject);
 begin
-//  (Sender as TAction).Enabled := gsSearchText <> '';
+  acFindNext.Enabled := SearchReplaceDlg.SearchText <> '';
 end;
 
 procedure TfrMain.tbUserDefinedClick(Sender: TObject);
