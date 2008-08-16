@@ -26,11 +26,12 @@ function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem):
 function StripEndingCRLF(const str: string): string;
 function IsBlankLine(line: string): Boolean;
 function GetTmpFileName: string;
+function LDDPCreateDATModel: TDATModel;
 
 implementation
 
 uses
-  main, SysUtils;
+  main, options, SysUtils, DATUtils;
 
 function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
 
@@ -65,6 +66,14 @@ begin
   DecodeDate(Date, Year, Month, Day);
   Result := IntToHex(Hour,2) + IntToHex(Min,2) + IntToHex(Sec,2) +
             IntToHex(Trunc(MSec/10),2);
+end;
+
+function LDDPCreateDATModel: TDATModel;
+begin
+  if frOptions.cboAutoRoundOnly.Checked then
+    Result := TDATModel.Create
+  else
+    Result := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 end;
 
 end.

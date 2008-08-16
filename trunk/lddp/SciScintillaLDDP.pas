@@ -9,6 +9,8 @@ type
   TScintillaLDDP = class(TScintilla)
   private
     FPntAcc, FRotAcc: Byte;
+    FOnlyRoundDuringAutoRound: Boolean;
+
   protected
     { Protected declarations }
   public
@@ -25,6 +27,7 @@ type
   published
     property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc default 15;
     property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc default 15;
+    property OnlyRoundDuringAutoRound: Boolean read FOnlyRoundDuringAutoRound write FOnlyRoundDuringAutoRound default false;
   end;
 
 procedure Register;
@@ -93,7 +96,11 @@ var
 begin
     ExpandSelection(startline, endline);
 
-    DModel := CreateDATModel(PositionDecimalPlaces, RotationDecimalPlaces);
+    if FOnlyRoundDuringAutoRound then
+      DModel := CreateDATModel(PositionDecimalPlaces, RotationDecimalPlaces)
+    else
+      DModel := CreateDATModel(15, 15);
+
     DModel.ModelText := SelText;
 
     for i := 0 to DModel.Count - 1 do

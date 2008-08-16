@@ -23,14 +23,14 @@ uses
   gnugettext, Windows, Dialogs, Forms, SysUtils, Graphics,
   ImgList, Controls, Mask, Inifiles, StdCtrls,
   ExtCtrls, CheckLst, ComCtrls, Buttons, Classes, FileCtrl,
-  Menus, JvExMask, JvSpin, JvExStdCtrls, JvEdit, JvValidateEdit;
+  Menus, JvExMask, JvSpin, JvExStdCtrls, JvEdit, JvValidateEdit, JvCombobox,
+  JvColorCombo;
 
 type
   TfrOptions = class(TForm)
     Panel1: TPanel;
     BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
-    ImageList1: TImageList;
+    btnCancel: TBitBtn;
     OpenDialog: TOpenDialog;
     PageControl1: TPageControl;
     tsExternal: TTabSheet;
@@ -88,7 +88,7 @@ type
     seCollinear: TJvValidateEdit;
     sePntAcc: TJvValidateEdit;
     seRotAcc: TJvValidateEdit;
-    TabSheet7: TTabSheet;
+    ColorBarSheet: TTabSheet;
     GroupBox9: TGroupBox;
     lbxColors: TListBox;
     shpColor: TShape;
@@ -96,7 +96,7 @@ type
     btnColorSelect: TButton;
     edColorName: TLabeledEdit;
     edColorNumber: TJvValidateEdit;
-    Label18: TLabel;
+    lbColorNumber: TLabel;
     btnColorRestore: TBitBtn;
     lbxExternal: TListBox;
     cboNormalAngle: TCheckBox;
@@ -118,6 +118,9 @@ type
     Panel4: TPanel;
     btnAddExternal: TButton;
     btnDelExternal: TButton;
+    cboAutoRoundOnly: TCheckBox;
+    ColorBarCombo: TJvColorComboBox;
+    TabSheet5: TTabSheet;
     procedure PageControl1Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
@@ -137,11 +140,14 @@ type
     procedure btnDelExternalClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ColorBarSheetShow(Sender: TObject);
+    procedure ColorBarComboChange(Sender: TObject);
 
   private
     ColorBarList: TStringList;
     procedure ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
     procedure MakeExternalMenuItem(ProgIndex:Integer);
+    procedure SetColorListToDefault;
 
   public
     ExternalProgramList: TStringList;
@@ -156,7 +162,7 @@ var
 
 implementation
 
-uses main, windowsspecific, DATBase, DATCheck;
+uses main, windowsspecific, DATBase, DATCheck, DATUtils;
 
 {$R *.dfm}
 
@@ -215,10 +221,6 @@ begin
           lbExternal.font.Color:=clRed;
           lbExternal.Caption:=strNotFound;
         end;
-
-  frMain.mnuUserDefined.Enabled := ExternalProgramList.Count > 0;
-  frMain.tbUserDefined.Enabled := ExternalProgramList.Count > 0;
-
 end;
 
 procedure TfrOptions.PageControl1Change(Sender: TObject);
@@ -330,6 +332,7 @@ begin
   LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
   LDDPini.WriteBool(IniSection, 'cboDet_Checked', cboDet.Checked);
   LDDPini.WriteBool(IniSection, 'cboNormalAngle_Checked', cboNormalAngle.Checked);
+  LDDPini.WriteBool(IniSection, 'cboAutoRoundOnly_Checked', cboAutoRoundOnly.Checked);
   LDDPini.WriteInteger(IniSection, 'rgStyle_ItemIndex', rgStyle.ItemIndex);
 
   for i := 0 to 15 do
@@ -382,25 +385,11 @@ begin
   cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
   cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
   cboNormalAngle.Checked := LDDPini.ReadBool(IniSection, 'cboNormalAngle_Checked', false);
+  cboAutoRoundOnly.Checked := LDDPini.ReadBool(IniSection, 'cboAutoRoundOnly_Checked', false);
 
   //Read and set up color bar settings
   if LDDPini.ReadString(IniSection, 'lbxColors_Item0', 'none') = 'none' then
-    ColorBarList.Text := 'Black,0,$00212121' + #13#10 +
-                         'Blue,1,$00B23300' + #13#10 +
-                         'Green,2,$00148C00' + #13#10 +
-                         'Teal,3,$009F9900' + #13#10 +
-                         'Red,4,$002600C4' + #13#10 +
-                         '"Dark Pink",5,$009566DF' + #13#10 +
-                         'Brown,6,$0000205C' + #13#10 +
-                         'Gray,7,$00C1C2C1' + #13#10 +
-                         '"Dark Gray",8,$00525F63' + #13#10 +
-                         '"Light Blue",9,$00DCAB6B' + #13#10 +
-                         '"Bright Green",10,$0090EE6B' + #13#10 +
-                         'Turquiose,11,$00A7A633' + #13#10 +
-                         '"Light Red",12,$007A85FF' + #13#10 +
-                         'Pink,13,$00C6A4F9' + #13#10 +
-                         'Yellow,14,$0000DCFF' + #13#10 +
-                         'White,15,$00FFFFFF'
+    SetColorListToDefault
   else
     for i := 0 to 15 do
       ColorBarList.Add(LDDPini.ReadString(IniSection, 'lbxColors_Item' + IntToStr(i), 'none'));
@@ -449,11 +438,18 @@ var
 begin
   if lbxColors.ItemIndex >= 0 then
     begin
+      edColorName.Enabled := true;
+      edColorNumber.Enabled := true;
+      lbColorNumber.Enabled := true;
+      btnColorSelect.Enabled := true;
+      ColorBarCombo.Enabled := true;
       SelectedColor := TStringList.Create;
       SelectedColor.CommaText := ColorBarList[lbxColors.ItemIndex];
       shpColor.Brush.Color := StrToInt(SelectedColor[2]);
       edColorName.Text := SelectedColor[0];
       edColorNumber.Value := StrToInt(SelectedColor[1]);
+      if ColorBarCombo.FindColor(shpColor.Brush.Color) >= 0 then
+        ColorBarCombo.ItemIndex := ColorBarCombo.FindColor(shpColor.Brush.Color);
       SelectedColor.Free;
     end;
 end;
@@ -502,6 +498,35 @@ begin
   end;
 end;
 
+procedure TfrOptions.ColorBarComboChange(Sender: TObject);
+var
+  newcolornumber: Integer;
+  newcolorname: string;
+
+begin
+  newcolornumber := StrToInt(Copy(ColorBarCombo.Text, 0, Pos(':', ColorBarCombo.Text) - 1));
+  newcolorname := Copy(ColorBarCombo.Text, Pos(':', ColorBarCombo.Text) + 2, Length(ColorBarCombo.Text) - Pos(':', ColorBarCombo.Text) - 1);
+  edColorName.Text := newcolorname;
+  edColorNumber.Value := newcolornumber;
+  shpColor.Brush.Color := ColorBarCombo.ColorValue;
+  ColorBarList[lbxColors.ItemIndex] := '"' + edColorName.Text + '",' +
+                                       IntToStr(edColorNumber.Value) + ',' +
+                                       IntToStr(shpColor.Brush.Color);
+  ColorButtonChange(shpColor.Brush.Color, edColorName.Text,
+                    IntToStr(edColorNumber.Value), lbxColors.ItemIndex);
+end;
+
+procedure TfrOptions.ColorBarSheetShow(Sender: TObject);
+var
+  i: Integer;
+  ColourList: TDATColourList;
+begin
+  ColourList := MakeStandardDATColourList;
+  for i := 0 to ColourList.Count - 1 do
+    ColorBarCombo.AddColor(ColourList[i].MainColor, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
+  ColourList.Free;
+end;
+
 procedure TfrOptions.btnColorRestoreClick(Sender: TObject);
 
 var
@@ -509,23 +534,7 @@ var
   SelectedColor: TStringList;
 
 begin
-  ColorBarList.Text := 'Black,0,$00212121' + #13#10 +
-                       'Blue,1,$00B23300' + #13#10 +
-                       'Green,2,$00148C00' + #13#10 +
-                       'Teal,3,$009F9900' + #13#10 +
-                       'Red,4,$002600C4' + #13#10 +
-                       '"Dark Pink",5,$009566DF' + #13#10 +
-                       'Brown,6,$0000205C' + #13#10 +
-                       'Gray,7,$00C1C2C1' + #13#10 +
-                       '"Dark Gray",8,$00525F63' + #13#10 +
-                       '"Light Blue",9,$00DCAB6B' + #13#10 +
-                       '"Bright Green",10,$0090EE6B' + #13#10 +
-                       'Turquiose,11,$00A7A633' + #13#10 +
-                       '"Light Red",12,$007A85FF' + #13#10 +
-                       'Pink,13,$00C6A4F9' + #13#10 +
-                       'Yellow,14,$0000DCFF' + #13#10 +
-                       'White,15,$00FFFFFF';
-
+  SetColorListToDefault;
   SelectedColor := TStringList.Create;
   for i := 0 to 15 do
   begin
@@ -538,10 +547,16 @@ begin
   SelectedColor.Free;
 
   lbxColors.ItemIndex := -1;
+  ColorBarCombo.ItemIndex := 0;
   shpColor.Brush.Color := clBtnFace;
   edColorName.Text := '';
   edColorNumber.Value := 0;
 
+  edColorName.Enabled := false;
+  edColorNumber.Enabled := false;
+  lbColorNumber.Enabled := false;
+  btnColorSelect.Enabled := false;
+  ColorBarCombo.Enabled := false;
 end;
 
 procedure TfrOptions.lbxExternalDblClick(Sender: TObject);
@@ -672,8 +687,6 @@ begin
   if ModalResult = mrOK then
   begin
     SaveFormValues;
-    frMain.editor.PositionDecimalPlaces := sePntAcc.Value;
-    frMain.editor.RotationDecimalPlaces := seRotAcc.Value;
     SetConfigurationConstants;
   end
   else
@@ -688,6 +701,38 @@ begin
   UpdateControls;
   SetConfigurationConstants;
   PageControl1.ActivePage:=tsExternal;
+end;
+
+procedure TfrOptions.SetColorListToDefault;
+var
+  i: Integer;
+  ColorList: TDATColourList;
+
+begin
+  ColorList := MakeStandardDATColourList;
+
+  ColorBarList.Text := 'Black,0,$00212121' + #13#10 +
+                       'Blue,1,$00B23300' + #13#10 +
+                       'Green,2,$00148C00' + #13#10 +
+                       'Teal,3,$009F9900' + #13#10 +
+                       'Red,4,$002600C4' + #13#10 +
+                       '"Dark Pink",5,$009566DF' + #13#10 +
+                       'Brown,6,$0000205C' + #13#10 +
+                       'Gray,7,$00C1C2C1' + #13#10 +
+                       '"Dark Gray",8,$00525F63' + #13#10 +
+                       '"Light Blue",9,$00DCAB6B' + #13#10 +
+                       '"Bright Green",10,$0090EE6B' + #13#10 +
+                       'Turquiose,11,$00A7A633' + #13#10 +
+                       '"Light Red",12,$007A85FF' + #13#10 +
+                       'Pink,13,$00C6A4F9' + #13#10 +
+                       'Yellow,14,$0000DCFF' + #13#10 +
+                       'White,15,$00FFFFFF';
+
+  for i := 0 to ColorBarList.Count - 1 do
+    if ColorList.IndexOfColourCode(i) >= 0 then
+      ColorBarList[i] := '"' + StringReplace(ColorList[ColorList.IndexOfColourCode(i)].Name, '_', ' ', [rfReplaceAll]) + '",' +
+                         IntToStr(ColorList[ColorList.IndexOfColourCode(i)].Code) + ',' +
+                         IntToStr(ColorList[ColorList.IndexOfColourCode(i)].MainColor);
 end;
 
 procedure TfrOptions.SetConfigurationConstants;
