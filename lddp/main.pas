@@ -20,15 +20,14 @@ unit main;
 interface
 
 uses
-  gnugettext, Windows, Graphics, Forms, Registry, Messages, Dialogs,
-  SysUtils, ExtCtrls, Menus, ImgList, StdActns, Types, Classes, ActnList,
-  ComCtrls, Controls, Inifiles, splash, StdCtrls, ShellAPI, ToolWin,
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  sciPrint, SciScintillaOptionsFrm, SciScintillaOptionsDlg, SciSearchReplaceBase,
+  errorbar, gnugettext, SciSearchReplaceBase, SciSearchReplace, JvAppInst,
+  SciLanguageManager, JvDockTree, JvDockControlForm, JvDockDelphiStyle,
+  JvComponentBase, SciPropertyMgr, SciScintillaOptionsDlg, IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, Dialogs, ExtCtrls, Menus,
+  ImgList, Controls, StdActns, Classes, ActnList, ComCtrls, ToolWin,
   SciScintillaBase, SciScintillaMemo, SciScintilla, SciScintillaLDDP,
-  SciDocTabCtrl, SciLanguageManager, SciPropertyMgr, JvDockTree,
-  JvDockControlForm, JvDockDelphiStyle, JvComponentBase, JvAppInst,
-  SciSearchReplace;
+  SciDocTabCtrl, Windows, Graphics, Forms, Messages, SysUtils, Types,
+  StdCtrls, ShellAPI, sciPrint, SciScintillaOptionsFrm;
 
 type
   TfrMain = class(TForm)
@@ -68,9 +67,9 @@ type
     ChangeColor1: TMenuItem;
     ControlBar1: TControlBar;
     Cut1: TMenuItem;
-    Editing1: TMenuItem;
-    ExternalPrograms2: TMenuItem;
-    Files1: TMenuItem;
+    pmuEditing: TMenuItem;
+    pmuExternalPrograms: TMenuItem;
+    pmuFile: TMenuItem;
     HelpAbout: TAction;
     ilToolBarColor: TImageList;
     InlinePart1: TMenuItem;
@@ -89,7 +88,7 @@ type
     Pollevery5sec2: TMenuItem;
     Pollevery1sec2: TMenuItem;
     Pollevery2sec2: TMenuItem;
-    SearchandReplace1: TMenuItem;
+    pmuSearchandReplace: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
     tmPoll: TTimer;
@@ -100,23 +99,12 @@ type
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
-    ToolButton12: TToolButton;
     ToolButton13: TToolButton;
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
-    ToolButton17: TToolButton;
-    ToolButton18: TToolButton;
-    ToolButton19: TToolButton;
     ToolButton2: TToolButton;
-    ToolButton20: TToolButton;
-    ToolButton21: TToolButton;
-    ToolButton22: TToolButton;
-    ToolButton23: TToolButton;
     tbUserDefined: TToolButton;
-    ToolButton25: TToolButton;
-    ToolButton26: TToolButton;
-    ToolButton27: TToolButton;
     ToolButton28: TToolButton;
     ToolButton29: TToolButton;
     ToolButton3: TToolButton;
@@ -126,7 +114,6 @@ type
     ToolButton8: TToolButton;
     TrimLines2: TMenuItem;
     UpdateHeader2: TMenuItem;
-    Windows1: TMenuItem;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
     acFileOpen: TAction;
@@ -161,7 +148,6 @@ type
     mnuFile: TMenuItem;
     mnuEditing: TMenuItem;
     mnuSearchAndReplace: TMenuItem;
-    mnuWindows: TMenuItem;
     mnuExternalPrograms: TMenuItem;
     N3: TMenuItem;
     miMiscOptions: TMenuItem;
@@ -187,11 +173,9 @@ type
     HelpAboutItem: TMenuItem;
     LDDPHomepage1: TMenuItem;
     CheckforUpdate1: TMenuItem;
-    ToolButton7: TToolButton;
     ReverseWinding1: TMenuItem;
     acReverseWinding: TAction;
     ReverseWinding2: TMenuItem;
-    ToolButton9: TToolButton;
     ErrorCheck1: TMenuItem;
     acCheckforUpdate: TAction;
     acBMP2LDraw: TAction;
@@ -247,7 +231,6 @@ type
     Pollonrequest1: TMenuItem;
     Pollonrequest2: TMenuItem;
     N24: TMenuItem;
-    ToolButton31: TToolButton;
     acMirrorX: TAction;
     acMirrorY: TAction;
     acMirrorZ: TAction;
@@ -282,7 +265,7 @@ type
     UnIndent1: TMenuItem;
     acincIdent1: TMenuItem;
     pmExternal: TPopupMenu;
-    ReplaceColorShortcut1: TMenuItem;
+    pmuColorReplace: TMenuItem;
     acSubFile: TAction;
     SubfileSelection1: TMenuItem;
     N25: TMenuItem;
@@ -306,6 +289,26 @@ type
     SciLanguageManager1: TSciLanguageManager;
     AppInst: TJvAppInstances;
     SearchReplaceDlg: TSciSearchReplace;
+    tbrTools: TToolBar;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton24: TToolButton;
+    ToolButton33: TToolButton;
+    ToolButton34: TToolButton;
+    ToolButton35: TToolButton;
+    ToolButton36: TToolButton;
+    ToolButton37: TToolButton;
+    ToolButton38: TToolButton;
+    ToolButton39: TToolButton;
+    ToolButton40: TToolButton;
+    ToolButton41: TToolButton;
+    ToolButton42: TToolButton;
+    ToolButton43: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton9: TToolButton;
+    ToolButton12: TToolButton;
+    mnuTools: TMenuItem;
+    pmuTools: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -414,10 +417,10 @@ implementation
 {$R *.dfm}
 
 uses
-  about, options, colordialog, BezWindow, sorting, errorbar,
+  about, options, colordialog, BezWindow, sorting, splash, 
   BMP2LDraw, modeltreeview, dlgSubpart, commonprocs, windowsspecific,
   DATBase, DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
-  STRUtils;
+  STRUtils, Registry, IniFiles;
 
 var
   splashscreen: TfrSplash;
@@ -549,7 +552,7 @@ var
 begin
   editor.ExpandSelection(startline, endline);
 
-  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+  DModel := LDDPCreateDATModel;
   DModel.ModelText := editor.SelText;
 
   for j := 0 to DModel.Count-1 do
@@ -592,7 +595,7 @@ var
   DATModel1: TDATModel;
 
 begin
-  DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+  DATModel1 := LDDPCreateDATModel;
 
   editor.ExpandSelection(i, i);
 
@@ -630,7 +633,7 @@ var
   DATModel1: TDATModel;
 
 begin
-    DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+    DATModel1 := LDDPCreateDATModel;
 
     editor.ExpandSelection(startline, endline);
 
@@ -734,7 +737,7 @@ var
   end; 
 
 begin
-  DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+  DModel := LDDPCreateDATModel;
 
   editor.ExpandSelection(startline, endline);
   DModel.ModelText := editor.SelText;
@@ -1048,6 +1051,7 @@ procedure TfrMain.acOptionsExecute(Sender: TObject);
 // Show options window
 begin
   frOptions.ShowModal;
+  UpdateControls;
 end;
 
 procedure TfrMain.acHomepageExecute(Sender: TObject);
@@ -1269,13 +1273,23 @@ end;
 
 procedure TfrMain.UpdateViewMenu;
 begin
+  //Main menu items
   mnuFile.Checked := tbrFile.Visible;
   mnuEditing.Checked := tbrEditing.Visible;
   mnuSearchAndReplace.Checked := tbrSearchAndReplace.Visible;
+  mnuTools.Checked := tbrTools.Visible;
   mnuExternalPrograms.Checked := tbrExternalPrograms.Visible;
   mnuColorReplace.Checked := tbrColorReplace.Visible;
   mnuErrorList.Checked := frErrorWindow.Visible;
   mnuModelTree.Checked := frModelTreeView.Visible;
+
+  //Popup menu items
+  pmuFile.Checked := tbrFile.Visible;
+  pmuEditing.Checked := tbrEditing.Visible;
+  pmuSearchAndReplace.Checked := tbrSearchAndReplace.Visible;
+  pmuTools.Checked := tbrTools.Visible;
+  pmuExternalPrograms.Checked := tbrExternalPrograms.Visible;
+  pmuColorReplace.Checked := tbrColorReplace.Visible;
 end;
 
 // Other procedures
@@ -1377,6 +1391,10 @@ begin
   acRedo.Enabled := (documentcount>0) and editor.CanRedo;
 
   if documentcount = 0 then acInline.enabled:=false;
+
+  mnuUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
+  tbUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
+
 end;
 
 procedure TfrMain.editorUpdateUI(Sender: TObject);
@@ -1492,6 +1510,11 @@ begin
     //Load form parameters from INI file
     LoadFormValues;
 
+    //Set defaults based on options
+    editor.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+    editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
+    editor.OnlyRoundDuringAutoRound := frOptions.cboAutoRoundOnly.Checked;
+
     //Set editor properties filename and load properties
     EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
     if FileExists(EditorPropertyLoader.FileName) then
@@ -1529,7 +1552,6 @@ begin
       end;
 
   finally
-    Sleep(1500);
     Screen.Cursor := crDefault;
     SplashScreen.Release;
   end;
@@ -1913,6 +1935,7 @@ begin
   tbrFile.Visible := LDDPini.ReadBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
   tbrExternalPrograms.Visible := LDDPini.ReadBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
   tbrSearchAndReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
+  tbrTools.Visible := LDDPini.ReadBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
   tbrEditing.Visible := LDDPini.ReadBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
   SearchReplaceDlg.ReplaceTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
@@ -1941,6 +1964,7 @@ begin
   LDDPini.WriteBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
   LDDPini.WriteBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
   LDDPini.WriteBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
+  LDDPini.WriteBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
   LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
   LDDPini.WriteString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
@@ -1964,7 +1988,25 @@ begin
 end;
 
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  i: Integer;
+
 begin
+  for i := DocumentTabs.Count - 1  downto 0 do
+  begin
+    DocumentTabs.Activate(i);
+    if editor.Modified then
+      case MessageDlg('Save changes to ' + DocumentTabs.Document[i].TabName + '?'+#13+#10+''+#13+#10+'Yes: Saves the changes and closes this document.'+#13+#10+'No: Closes the document without saving any changes.'+#13+#10+'Cancel: Keeps the document open', mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
+        mrYes: begin
+                 acFileSave.Execute;
+//                 DeleteFile(tempFilename);
+               end;
+        mrCancel: begin
+                    Action := caNone;
+                    Exit;
+                  end;
+      end;
+  end;
   SaveFormValues;
   EditorPropertyLoader.Save;
 end;

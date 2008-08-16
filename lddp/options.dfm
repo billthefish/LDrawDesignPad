@@ -1,7 +1,7 @@
 object frOptions: TfrOptions
   Left = 360
   Top = 236
-  Width = 528
+  Width = 550
   Height = 404
   VertScrollBar.Range = 37
   Caption = 'Misc. Options'
@@ -20,24 +20,27 @@ object frOptions: TfrOptions
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 520
+    Width = 542
     Height = 333
-    ActivePage = TabSheet1
+    ActivePage = ColorBarSheet
     Align = alClient
-    Images = ImageList1
     MultiLine = True
     TabOrder = 0
     OnChange = PageControl1Change
     object tsExternal: TTabSheet
-      Caption = '&External Progs'
+      Caption = '&Program Paths'
+      ImageIndex = -1
+      ExplicitTop = 42
+      ExplicitHeight = 287
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
-        Width = 512
-        Height = 304
+        Width = 534
+        Height = 305
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
+        ExplicitHeight = 287
         object lbL3Lab: TLabel
           Left = 404
           Top = 141
@@ -431,19 +434,22 @@ object frOptions: TfrOptions
       end
     end
     object TabSheet1: TTabSheet
-      Caption = 'User-&defined Program'
+      Caption = '&External Progams'
       ImageIndex = -1
+      ExplicitTop = 42
+      ExplicitHeight = 287
       object GroupBox7: TGroupBox
-        Left = 151
+        Left = 173
         Top = 0
         Width = 361
-        Height = 304
+        Height = 305
         Align = alRight
         Caption = 'User Defined Program Configuration'
         TabOrder = 0
+        ExplicitHeight = 287
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 241
+          Top = 242
           Width = 357
           Height = 61
           Align = alBottom
@@ -456,20 +462,26 @@ object frOptions: TfrOptions
             'Maximized')
           TabOrder = 0
           OnClick = edExternalNameChange
+          ExplicitTop = 241
         end
         object Panel2: TPanel
           Left = 2
-          Top = 161
+          Top = 145
           Width = 207
-          Height = 80
+          Height = 97
           Align = alLeft
+          BevelOuter = bvNone
           TabOrder = 1
+          ExplicitHeight = 79
           object Memo5: TMemo
-            Left = 1
-            Top = 1
-            Width = 205
-            Height = 78
+            Left = 0
+            Top = 0
+            Width = 207
+            Height = 97
             Align = alClient
+            BevelEdges = []
+            BevelInner = bvNone
+            BevelOuter = bvNone
             BorderStyle = bsNone
             Color = clBtnFace
             Lines.Strings = (
@@ -481,14 +493,17 @@ object frOptions: TfrOptions
               '%3: Path and Filename without extension'
               '%4 - %7: The 8.3 notation of %0 - %3')
             TabOrder = 0
+            ExplicitHeight = 79
           end
         end
         object Panel3: TPanel
           Left = 2
           Top = 15
           Width = 357
-          Height = 146
+          Height = 130
           Align = alTop
+          BevelEdges = []
+          BevelOuter = bvNone
           TabOrder = 2
           object Label19: TLabel
             Left = 4
@@ -512,7 +527,7 @@ object frOptions: TfrOptions
             Caption = 'Parameters:'
           end
           object lbExternal: TLabel
-            Left = 275
+            Left = 224
             Top = 81
             Width = 46
             Height = 13
@@ -601,7 +616,7 @@ object frOptions: TfrOptions
           end
           object cboWaitForFinish: TCheckBox
             Left = 4
-            Top = 104
+            Top = 92
             Width = 161
             Height = 17
             Caption = 'Wait until program is finished'
@@ -610,7 +625,7 @@ object frOptions: TfrOptions
           end
           object cboShowCommand: TCheckBox
             Left = 4
-            Top = 123
+            Top = 107
             Width = 209
             Height = 17
             Caption = 'Show command line before execution'
@@ -620,53 +635,66 @@ object frOptions: TfrOptions
         end
         object Panel4: TPanel
           Left = 209
-          Top = 161
+          Top = 145
           Width = 150
-          Height = 80
+          Height = 97
           Align = alClient
+          BevelEdges = []
+          BevelOuter = bvNone
           Caption = 'Panel4'
           TabOrder = 3
+          ExplicitTop = 161
+          ExplicitHeight = 80
           object btnAddExternal: TButton
-            Left = 1
-            Top = 13
-            Width = 148
+            Left = 0
+            Top = 31
+            Width = 150
             Height = 33
             Align = alBottom
             Caption = 'Add New Program'
             TabOrder = 0
             OnClick = lbxExternalDblClick
+            ExplicitLeft = 1
+            ExplicitTop = 13
+            ExplicitWidth = 148
           end
           object btnDelExternal: TButton
-            Left = 1
-            Top = 46
-            Width = 148
+            Left = 0
+            Top = 64
+            Width = 150
             Height = 33
             Align = alBottom
             Caption = 'Delete Current Program'
             TabOrder = 1
             OnClick = btnDelExternalClick
+            ExplicitLeft = 1
+            ExplicitTop = 46
+            ExplicitWidth = 148
           end
         end
       end
       object lbxExternal: TListBox
         Left = 0
         Top = 0
-        Width = 151
-        Height = 304
+        Width = 173
+        Height = 305
         Align = alClient
         ItemHeight = 13
         TabOrder = 1
         OnClick = lbxExternalClick
         OnDblClick = lbxExternalDblClick
+        ExplicitHeight = 287
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Configuration &Values'
       ImageIndex = -1
+      ExplicitTop = 42
+      ExplicitHeight = 287
       object GroupBox2: TGroupBox
         Left = 0
         Top = 0
-        Width = 512
+        Width = 534
         Height = 169
         Align = alTop
         Caption = 'Error Check Options'
@@ -818,8 +846,8 @@ object frOptions: TfrOptions
       object GroupBox5: TGroupBox
         Left = 0
         Top = 169
-        Width = 512
-        Height = 135
+        Width = 534
+        Height = 136
         Align = alClient
         Caption = 'Decimal Accuracy'
         TabOrder = 1
@@ -857,23 +885,33 @@ object frOptions: TfrOptions
           EditText = '3'
           TabOrder = 1
         end
+        object cboAutoRoundOnly: TCheckBox
+          Left = 8
+          Top = 63
+          Width = 297
+          Height = 17
+          Caption = 'Only round numbers when using the auto round function'
+          TabOrder = 2
+        end
       end
     end
     object TabSheet4: TTabSheet
-      Caption = '&User'
-      ImageIndex = 1
+      Caption = '&User Infomation'
+      ImageIndex = -1
       ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitTop = 25
+      ExplicitWidth = 512
+      ExplicitHeight = 304
       object GroupBox3: TGroupBox
         Left = 0
         Top = 0
-        Width = 512
-        Height = 304
+        Width = 534
+        Height = 305
         Align = alClient
         Caption = 'User Details For Macros'
         TabOrder = 0
+        ExplicitWidth = 512
+        ExplicitHeight = 304
         object Label16: TLabel
           Left = 16
           Top = 80
@@ -919,20 +957,19 @@ object frOptions: TfrOptions
       end
     end
     object TabSheet3: TTabSheet
-      Caption = '&Plugins'
-      ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      Caption = 'Plu&gins'
+      ImageIndex = -1
+      ExplicitTop = 42
+      ExplicitHeight = 287
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0
-        Width = 512
-        Height = 304
+        Width = 534
+        Height = 305
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0
+        ExplicitHeight = 287
         object Label9: TLabel
           Left = 308
           Top = 24
@@ -993,28 +1030,27 @@ object frOptions: TfrOptions
           Left = 2
           Top = 15
           Width = 285
-          Height = 287
+          Height = 288
           OnClickCheck = cblPluginsClickCheck
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
+          ExplicitHeight = 270
         end
       end
     end
-    object TabSheet7: TTabSheet
-      Caption = 'Color Bar'
+    object ColorBarSheet: TTabSheet
+      Caption = '&Color Bar'
       ImageIndex = -1
-      ExplicitTop = 24
-      ExplicitHeight = 305
+      OnShow = ColorBarSheetShow
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
-        Width = 512
-        Height = 304
+        Width = 534
+        Height = 305
         Align = alClient
         Caption = 'Color Bar Colors'
         TabOrder = 0
-        ExplicitHeight = 305
         object shpColor: TShape
           Left = 144
           Top = 32
@@ -1029,56 +1065,60 @@ object frOptions: TfrOptions
           Height = 13
           Caption = 'Color'
         end
-        object Label18: TLabel
-          Left = 144
-          Top = 168
+        object lbColorNumber: TLabel
+          Left = 145
+          Top = 197
           Width = 64
           Height = 13
           Caption = 'Color Number'
+          Enabled = False
         end
         object lbxColors: TListBox
           Left = 2
           Top = 15
           Width = 137
-          Height = 287
+          Height = 288
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
           OnClick = lbxColorsClick
         end
         object btnColorSelect: TButton
-          Left = 144
-          Top = 96
+          Left = 145
+          Top = 120
           Width = 73
           Height = 25
-          Caption = 'Select Color'
+          Caption = 'Custom Color'
+          Enabled = False
           TabOrder = 1
           OnClick = btnColorSelectClick
         end
         object edColorName: TLabeledEdit
-          Left = 144
-          Top = 144
+          Left = 145
+          Top = 170
           Width = 105
           Height = 21
           EditLabel.Width = 55
           EditLabel.Height = 13
           EditLabel.Caption = 'Color Name'
+          Enabled = False
           TabOrder = 2
           OnChange = edColorNameChange
         end
         object edColorNumber: TJvValidateEdit
-          Left = 144
-          Top = 184
+          Left = 145
+          Top = 216
           Width = 105
           Height = 21
           CriticalPoints.MaxValueIncluded = False
           CriticalPoints.MinValueIncluded = False
           EditText = '0'
+          Enabled = False
           TabOrder = 3
           OnChange = edColorNameChange
         end
         object btnColorRestore: TBitBtn
-          Left = 392
+          Left = 416
           Top = 16
           Width = 113
           Height = 25
@@ -1129,23 +1169,42 @@ object frOptions: TfrOptions
             0079B9B9B90000FDFDFDFDFDFDFDFDFDFD00000000FDFDFDFDFDFDFDFDFDFDFD
             FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
         end
+        object ColorBarCombo: TJvColorComboBox
+          Left = 145
+          Top = 94
+          Width = 145
+          Height = 20
+          ColorDialogText = 'Custom...'
+          DroppedDownWidth = 145
+          NewColorText = 'Custom'
+          Options = [coText]
+          Enabled = False
+          TabOrder = 5
+          OnChange = ColorBarComboChange
+        end
       end
+    end
+    object TabSheet5: TTabSheet
+      Caption = '&Search Paths'
+      Enabled = False
+      ImageIndex = 6
+      TabVisible = False
     end
   end
   object Panel1: TPanel
     Left = 0
     Top = 333
-    Width = 520
+    Width = 542
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      520
+      542
       37)
     object BitBtn1: TBitBtn
-      Left = 304
-      Top = 4
+      Left = 337
+      Top = 6
       Width = 95
       Height = 25
       Caption = 'OK'
@@ -1196,10 +1255,10 @@ object frOptions: TfrOptions
         FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
     end
-    object BitBtn2: TBitBtn
-      Left = 412
-      Top = 4
-      Width = 99
+    object btnCancel: TBitBtn
+      Left = 438
+      Top = 6
+      Width = 95
       Height = 25
       Anchors = [akLeft, akTop, akRight, akBottom]
       Cancel = True
@@ -1251,159 +1310,16 @@ object frOptions: TfrOptions
         5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
     end
   end
-  object ImageList1: TImageList
-    Left = 40
-    Top = 328
-    Bitmap = {
-      494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
-      0000000000003600000028000000400000001000000001002000000000000010
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000C6DEC600A5A5A500A5A5
-      A500A5A5A500A5A5A50000000000C6DEC600A5A5A500A5A5A500A5A5A500A5A5
-      A500000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000084C6000063A5000084C600000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00C6C6C600C6C6
-      C600C6C6C600A5A5A50000000000F7FFFF00C6C6C600C6C6C600C6C6C600A5A5
-      A500000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000084C6000063A5000084E700000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000C6C6C6008484840000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00C6C6C600C6C6
-      C600C6C6C600A5A5A50000000000F7FFFF00C6C6C600C6C6C600C6C6C600A5A5
-      A500000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000084C6000084C60000A5E700000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000084A5A500848484008484840084848400848484000000
-      0000C6C6C6008484840000FFFF00000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00C6C6C600C6C6
-      C600C6C6C600C6C6C60000000000F7FFFF00C6C6C600C6C6C600C6C6C600C6C6
-      C600000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000084E70000A5E70000A5E700000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000084A5A500C6C6C600C6C6C600C6C6C600C6C6C600848484000000
-      0000C6C6C60084848400C6C6C600000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00F7FFFF00F7FF
-      FF00F7FFFF00F7FFFF0000000000F7FFFF00F7FFFF00F7FFFF00F7FFFF00F7FF
-      FF00000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000A5E70000A5E70000A5E70000A5E70000A5E7000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000084848400C6C6C600C6C6C600C6C6C600C6C6C600C6C6C600848484000000
-      0000C6C6C6008484840000848400000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000A5E70000A5E70000A5E70000A5E70000A5E7000000
-      0000000000000000000000000000000000008484840084848400848484008484
-      840042636300C6C6C600C6C6C600C6C6C600C6C6C600A5A5A500848484000000
-      0000C6C6C6008484840000FFFF00000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000C6DEC600A5A5A500A5A5
-      A500A5A5A500A5A5A50000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000A5E70000A5E70000A5E70042A5E70042A5E7000000
-      000000000000000000000000000000000000C6DEC600C6DEC600C6DEC600C6DE
-      C60084636300C6C6C600C6C6C600C6C6C600A5A5A500A5A5A500848484000000
-      0000A5A5A50084848400C6C6C600000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00C6C6C600C6C6
-      C600C6C6C600A5A5A50000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000A5E70042A5E70042C6E70042C6E70042C6E7000000
-      000000000000000000000000000000000000C6C6C600C6C6C600C6C6C600C6C6
-      C60084636300C6C6C600C6C6C600C6C6C600A5A5A500A5A5A500848484000000
-      0000A5A5A5008463630000FFFF00000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00C6C6C600C6C6
-      C600C6C6C600A5A5A500000000000000000000000000F7CEA500F7CEA500F7CE
-      A500F7CEA500F7CEA50000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000084848400C6C6C600C6C6C600A5A5A500A5A5A500A5A5A500848484000000
-      0000A5A5A50084636300C6C6C600000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00C6C6C600C6C6
-      C600C6C6C600C6C6C600000000000000000000000000F7CEA500F7CEA500F7CE
-      A500F7CEA500F7CEA50000000000000000000000000000000000000000000000
-      0000000000000000000000000000848484008463630042424200000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000C6C6C600C6C6C600A5A5A500A5A5A500A5A5A50084848400F7FF
-      FF00A5A5A5008463630000848400000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00F7FFFF00F7FF
-      FF00F7FFFF00F7FFFF00000000000000000000000000F7FFFF00F7CEA500F7CE
-      A500F7CEA500F7CEA50000000000000000000000000000000000000000000000
-      0000000000000000000000000000C6C6C60084A5A50084636300000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000C6C6C600A5A5A500A5A5A500A5A5A50084848400F7FF
-      FF00A5A5A5008463630000FFFF00000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00F7CEA500F7CE
-      A500F7CEA500F7CEA50000000000000000000000000000000000000000000000
-      0000000000000000000000000000C6C6C600C6C6C60084848400000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000000000000000000000000000F7FF
-      FF00A5A5A5008463630000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000F7FFFF00F7FFFF00F7FF
-      FF00F7FFFF00F7CEA50000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000424D3E000000000000003E000000
-      2800000040000000100000000100010000000000800000000000000000000000
-      000000000000000000000000FFFFFF00FFFFFFFFFFFF00000007FFFFFFFF0000
-      0007FE3FFFE300000007FE3FFC1100000007FE3FF81000000007FE3FF0100000
-      0007FC1F001000000007FC1F0010000001FFFC1F001000000101FC1F00100000
-      0101FFFF001000000101FE3FF00000000101FE3FF80000000101FE3FFC010000
-      FF01FFFFFFE30000FF01FFFFFFFF000000000000000000000000000000000000
-      000000000000}
-  end
   object OpenDialog: TOpenDialog
     Filter = 'Executibles (*.*)|*.exe'
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Open'
-    Left = 7
-    Top = 328
+    Left = 39
+    Top = 40
   end
   object ColorDialog1: TColorDialog
-    Left = 104
-    Top = 328
+    Left = 8
+    Top = 40
   end
 end
