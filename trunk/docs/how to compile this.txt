@@ -3,7 +3,9 @@ HOW TO COMPILE LDDP
 
 You'll need:
 
-* Borland Delphi. (Delphi version 6 or up required)
+* Borland Delphi. 
+	Delphi 2006 is used for development but it may build in
+	earlier versions down to Delphi 6
 
 To compile this source successfully, you'll also need to download 
 and install the following component suites:
@@ -11,11 +13,21 @@ and install the following component suites:
 * Delphi Scintilla Interface Components 0.50
 	http://delphisci.sourceforge.net
 
-* A bugfix for Delphi Scintilla Interface Components 0.50
-	Located in the lddp source directory.  Simply overwrite the existing file.
-
 * JVCL 3.33 with JCL 1.101
 	http://jvcl.sourceforge.net
 	Note: The LDDP code is incompatible with JVCL 2.x
 
+* Custom modifications to the Delphi Scintilla Interface Components 0.50
+	Overwrite the files in the defualt package with the ones
+	in the delphisci directory located in Package Modifications
 
+LDDP uses Scintilla for it's editor control.  An LDraw lexer has
+been written but not yet added to the Scintilla project.  If you
+wish to build your own Scintilla dll:
+	- Overwrite the files in the default distribution with the 
+	  ones in the Scintilla directory located in Package Modifications.
+	- Run the LexGen.py script in the src directory
+	- Run the HFacer.py script in the include directory
+	- Build Scintilla with your favorite C compiler
+If you don't want to build Scintilla then simply use the SciLexer.dll
+in the /lddp/Exe directory
