@@ -62,7 +62,7 @@ function GetShortFileName(Const FileName : String) : String;
 function WindowsDir:string;
 function GetShellFolderPath(folder: string): string;
 function IniFilePath:string;
-function GetTempDir:string;
+function WinTempDir:string;
 function PluginInfo(fname:string; nr: Byte):string;
 procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
 procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
@@ -169,8 +169,6 @@ begin
      Result:=StrPas(aTmp);
 end;
 
-
-
 function WindowsDir:string;
 var
   WDir: PChar;
@@ -202,7 +200,7 @@ begin
   Result := GetShellFolderPath('AppData') + '\LDDP';
 end;
 
-function GetTempDir:string;
+function WinTempDir:string;
 {---------------------------------------------------------------------
 Description: Find out windows temp path
 Parameter: None

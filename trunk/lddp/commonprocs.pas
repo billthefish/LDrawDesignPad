@@ -75,5 +75,4 @@ begin
   else
     Result := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
 end;
-
 end.
