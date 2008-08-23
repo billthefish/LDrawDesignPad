@@ -118,7 +118,7 @@ var
 begin
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
 
-  Inisection := 'LDDP ErrorWindow';
+  Inisection := 'LDDP ModelView';
 
   Left := LDDPini.ReadInteger(IniSection, 'frErrorWindow_Left', Left);
   Top := LDDPini.ReadInteger(IniSection, 'frErrorWindow_Top', Top);
@@ -138,7 +138,7 @@ begin
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
 
   // Save Main position, size, and toolbar visibility
-  Inisection := 'LDDP ErrorWindow';
+  Inisection := 'LDDP ModelView';
   LDDPini.EraseSection(IniSection);
 
   LDDPini.WriteInteger(IniSection, 'frErrorWindow_Left', Left);

@@ -2,7 +2,7 @@ object frMain: TfrMain
   Left = 267
   Top = 61
   Width = 800
-  Height = 620
+  Height = 640
   VertScrollBar.Range = 49
   Caption = 'LDraw Design Pad'
   Color = clAppWorkSpace
@@ -25,7 +25,7 @@ object frMain: TfrMain
     Left = 0
     Top = 54
     Width = 792
-    Height = 493
+    Height = 513
     Editor = editor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -40,11 +40,12 @@ object frMain: TfrMain
     OnMouseDown = DocumentTabsMouseDown
     DefaultExt = '.dat'
     OnClosing = DocumentTabsClosing
+    ExplicitHeight = 493
     object editor: TScintillaLDDP
       Left = 4
       Top = 24
       Width = 784
-      Height = 465
+      Height = 485
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -445,7 +446,8 @@ object frMain: TfrMain
           Command = 2341
           ShortCut = 24661
         end>
-      SelectedLanguage = 'null'
+      LanguageManager = LanguageManager
+      SelectedLanguage = 'LDraw'
       PositionDecimalPlaces = 0
       RotationDecimalPlaces = 0
       ExplicitLeft = 249
@@ -456,7 +458,7 @@ object frMain: TfrMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 547
+    Top = 567
     Width = 792
     Height = 19
     AutoHint = True
@@ -473,6 +475,7 @@ object frMain: TfrMain
       item
         Width = 50
       end>
+    ExplicitTop = 547
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -490,8 +493,8 @@ object frMain: TfrMain
     RowSize = 27
     TabOrder = 0
     object tbrExternalPrograms: TToolBar
-      Left = 372
-      Top = 2
+      Left = 11
+      Top = 29
       Width = 128
       Height = 23
       Align = alNone
@@ -581,80 +584,31 @@ object frMain: TfrMain
         Top = 0
         Action = acFileOpen
       end
-      object ToolButton15: TToolButton
+      object ToolButton12: TToolButton
         Left = 51
+        Top = 0
+        Action = acFileClose
+      end
+      object ToolButton15: TToolButton
+        Left = 74
         Top = 0
         Action = acFileSave
       end
       object ToolButton16: TToolButton
-        Left = 74
+        Left = 97
         Top = 0
         Action = acFileSaveAs
       end
       object ToolButton28: TToolButton
-        Left = 97
-        Top = 0
-        Action = acFilePrint
-      end
-      object ToolButton12: TToolButton
         Left = 120
         Top = 0
-        Action = acFileClose
-      end
-    end
-    object tbrSearchAndReplace: TToolBar
-      Left = 254
-      Top = 2
-      Width = 105
-      Height = 23
-      Align = alNone
-      AutoSize = True
-      ButtonHeight = 23
-      Caption = 'Search & Replace'
-      Color = clBtnFace
-      DragMode = dmAutomatic
-      EdgeInner = esNone
-      EdgeOuter = esNone
-      Images = ilToolBarColor
-      Indent = 5
-      ParentColor = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 2
-      Wrapable = False
-      object ToolButton2: TToolButton
-        Left = 5
-        Top = 0
-        Action = acFind
-      end
-      object ToolButton29: TToolButton
-        Left = 28
-        Top = 0
-        Action = acFindNext
-      end
-      object ToolButton3: TToolButton
-        Left = 51
-        Top = 0
-        Action = acReplace
-      end
-      object ToolButton7: TToolButton
-        Left = 74
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton7'
-        ImageIndex = 37
-        Style = tbsSeparator
-      end
-      object ToolButton42: TToolButton
-        Left = 82
-        Top = 0
-        Action = acReplaceColor
+        Action = acFilePrint
       end
     end
     object tbrEditing: TToolBar
       Left = 167
       Top = 2
-      Width = 74
+      Width = 236
       Height = 23
       Align = alNone
       AutoSize = True
@@ -669,26 +623,80 @@ object frMain: TfrMain
       ParentColor = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 2
       Wrapable = False
-      object ToolButton8: TToolButton
+      object ToolButton18: TToolButton
         Left = 5
+        Top = 0
+        Action = acUndo
+      end
+      object ToolButton17: TToolButton
+        Left = 28
+        Top = 0
+        Action = acRedo
+      end
+      object ToolButton19: TToolButton
+        Left = 51
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton19'
+        ImageIndex = 5
+        Style = tbsSeparator
+      end
+      object ToolButton8: TToolButton
+        Left = 59
         Top = 0
         Action = acEditCut
       end
       object ToolButton10: TToolButton
-        Left = 28
+        Left = 82
         Top = 0
         Action = acEditCopy
       end
       object ToolButton11: TToolButton
-        Left = 51
+        Left = 105
         Top = 0
         Action = acEditPaste
       end
+      object ToolButton20: TToolButton
+        Left = 128
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton20'
+        ImageIndex = 3
+        Style = tbsSeparator
+      end
+      object ToolButton21: TToolButton
+        Left = 136
+        Top = 0
+        Action = acFind
+      end
+      object ToolButton22: TToolButton
+        Left = 159
+        Top = 0
+        Action = acFindNext
+      end
+      object ToolButton26: TToolButton
+        Left = 182
+        Top = 0
+        Action = acReplace
+      end
+      object ToolButton23: TToolButton
+        Left = 205
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton23'
+        ImageIndex = 5
+        Style = tbsSeparator
+      end
+      object ToolButton25: TToolButton
+        Left = 213
+        Top = 0
+        Action = acReplaceColor
+      end
     end
     object tbrColorReplace: TToolBar
-      Left = 306
+      Left = 152
       Top = 29
       Width = 405
       Height = 23
@@ -706,7 +714,7 @@ object frMain: TfrMain
       ParentColor = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 3
       Visible = False
       Wrapable = False
       object tbnColor0: TToolButton
@@ -807,9 +815,9 @@ object frMain: TfrMain
       end
     end
     object tbrTools: TToolBar
-      Left = 11
-      Top = 29
-      Width = 282
+      Left = 416
+      Top = 2
+      Width = 305
       Height = 22
       Align = alNone
       AutoSize = True
@@ -819,7 +827,7 @@ object frMain: TfrMain
       EdgeOuter = esNone
       Images = ilToolBarColor
       Indent = 5
-      TabOrder = 5
+      TabOrder = 4
       Wrapable = False
       object ToolButton5: TToolButton
         Left = 5
@@ -875,30 +883,39 @@ object frMain: TfrMain
         Top = 0
         Action = acInline
       end
-      object ToolButton36: TToolButton
+      object ToolButton2: TToolButton
         Left = 167
+        Top = 0
+        Caption = 'ToolButton2'
+        DropdownMenu = pmMirror
+        ImageIndex = 42
+        PopupMenu = pmMirror
+      end
+      object ToolButton36: TToolButton
+        Left = 190
         Top = 0
         Action = acReverseWinding
       end
       object ToolButton37: TToolButton
-        Left = 190
+        Left = 213
         Top = 0
         Action = acTriangleCombine
       end
       object ToolButton38: TToolButton
-        Left = 213
+        Left = 236
         Top = 0
         Action = acSortSelection
       end
       object ToolButton43: TToolButton
-        Left = 236
+        Left = 259
         Top = 0
         Action = acAutoRound
       end
       object ToolButton9: TToolButton
-        Left = 259
+        Left = 282
         Top = 0
-        Action = frErrorWindow.acErrorCheck
+        Hint = 'Check for errors|Check for errors'
+        Caption = 'Run Error Check'
         ImageIndex = 22
       end
     end
@@ -1012,12 +1029,6 @@ object frMain: TfrMain
           Caption = 'Editing'
           Checked = True
         end
-        object mnuSearchAndReplace: TMenuItem
-          Action = acToolbarVisibility
-          AutoCheck = True
-          Caption = 'Search && Replace'
-          Checked = True
-        end
         object mnuTools: TMenuItem
           Action = acToolbarVisibility
           AutoCheck = True
@@ -1110,53 +1121,65 @@ object frMain: TfrMain
         Hint = 'Check for errors'
         ImageIndex = 21
         object E1: TMenuItem
-          Action = frErrorWindow.acErrorCheck
+          Caption = 'Run Error Check'
+          Hint = 'Check for errors|Check for errors'
           ImageIndex = 22
+          ShortCut = 121
         end
         object N21: TMenuItem
           Caption = '-'
         end
         object MarkAll1: TMenuItem
-          Action = frErrorWindow.acECMarkAll
+          Caption = 'Mark All'
+          Enabled = False
         end
         object MarkAllofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECMarkAllTyped
+          Caption = 'Mark All of Selected Type'
+          Enabled = False
         end
         object UnmarkAll2: TMenuItem
-          Action = frErrorWindow.acECUnMarkAll
+          Caption = 'Unmark All'
+          Enabled = False
         end
         object UnmarkAllofSelectedType2: TMenuItem
-          Action = frErrorWindow.acECUnMarkAllTyped
+          Caption = 'Unmark All of Selected Type'
+          Enabled = False
         end
         object N18: TMenuItem
           Caption = '-'
         end
         object AutofixSelectedError1: TMenuItem
-          Action = frErrorWindow.acECFixError
+          Caption = 'Autofix Selected Error'
+          Enabled = False
         end
         object N19: TMenuItem
           Caption = '-'
         end
         object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECFixAllMarkedErrorsTyped
+          Caption = 'Autofix All Marked Errors of Selected Type'
+          Enabled = False
         end
         object AutofixAllMarkedErrors1: TMenuItem
-          Action = frErrorWindow.acECFixAllMarkedErrors
+          Caption = 'Autofix All Marked Errors'
+          Enabled = False
         end
         object N20: TMenuItem
           Caption = '-'
         end
         object AutofixAllErrorsofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECFixAllErrorsTyped
+          Caption = 'Autofix All Errors of Selected Type'
+          Enabled = False
         end
         object AutofixAllErrors1: TMenuItem
-          Action = frErrorWindow.acECFixAllErrors
+          Caption = 'Autofix All Errors'
+          Enabled = False
         end
         object N14: TMenuItem
           Caption = '-'
         end
         object CopyErrorListToClipboard1: TMenuItem
-          Action = frErrorWindow.acECCopy
+          Caption = 'Copy Error List To Clipboard'
+          Enabled = False
         end
       end
       object AutoRoundSelection1: TMenuItem
@@ -2689,12 +2712,6 @@ object frMain: TfrMain
       Caption = 'Editing'
       Checked = True
     end
-    object pmuSearchandReplace: TMenuItem
-      Action = acToolbarVisibility
-      AutoCheck = True
-      Caption = 'Search && Replace'
-      Checked = True
-    end
     object pmuTools: TMenuItem
       Action = acToolbarVisibility
       AutoCheck = True
@@ -2716,8 +2733,8 @@ object frMain: TfrMain
   object OpenDialog1: TOpenDialog
     DefaultExt = 'dat'
     Filter = 
-      'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delp' +
-      'hi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*'
+      'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
+      '.*)|*.*'
     FilterIndex = 0
     Options = [ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
     Title = 'Choose LDraw File...'
@@ -2790,8 +2807,317 @@ object frMain: TfrMain
       Action = acFileClose
     end
   end
-  object SciLanguageManager1: TSciLanguageManager
-    LanguageList = <>
+  object LanguageManager: TSciLanguageManager
+    LanguageList = <
+      item
+        Name = 'null'
+        Lexer = 'null'
+        Styles = <
+          item
+            FontName = 'Arial'
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clSilver
+            BackColor = clBlack
+            CharCase = CASE_MIXED
+            Name = 'LineNumbers'
+            StyleNumber = 33
+          end
+          item
+            FontSize = 0
+            FontStyles = [fsBold]
+            ForeColor = clYellow
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Ok Braces'
+            StyleNumber = 34
+          end
+          item
+            FontSize = 0
+            FontStyles = [fsBold]
+            ForeColor = clRed
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Bad Braces'
+            StyleNumber = 35
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlack
+            BackColor = clSilver
+            CharCase = CASE_MIXED
+            Name = 'Control Chars'
+            StyleNumber = 36
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clGray
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Indent Guide'
+            StyleNumber = 37
+          end>
+        Keywords = <>
+        AssignmentOperator = '='
+        EndOfStatementOperator = ';'
+        CommentBoxStart = '/*'
+        CommentBoxEnd = '*/'
+        CommentBoxMiddle = '*'
+        CommentBlock = '//'
+        CommentAtLineStart = True
+        CommentStreamStart = '/*'
+        CommentStreamEnd = '*/'
+        NumStyleBits = 5
+      end
+      item
+        Name = 'LDraw'
+        Lexer = 'ldraw'
+        Styles = <
+          item
+            FontName = 'Arial'
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlack
+            BackColor = clSilver
+            CharCase = CASE_MIXED
+            Name = 'LineNumbers'
+            StyleNumber = 33
+          end
+          item
+            FontSize = 0
+            FontStyles = [fsBold]
+            ForeColor = clBlue
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Ok Braces'
+            StyleNumber = 34
+          end
+          item
+            FontSize = 0
+            FontStyles = [fsBold]
+            ForeColor = clRed
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Bad Braces'
+            StyleNumber = 35
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clDefault
+            BackColor = clSilver
+            CharCase = CASE_MIXED
+            Name = 'Control Chars'
+            StyleNumber = 36
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clSilver
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Indent Guide'
+            StyleNumber = 37
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlack
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Default'
+            StyleNumber = 0
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlue
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Comment'
+            StyleNumber = 1
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlack
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Subfile'
+            StyleNumber = 2
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlack
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Line'
+            StyleNumber = 3
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlack
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Triangle'
+            StyleNumber = 4
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clRed
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Quad'
+            StyleNumber = 5
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clBlack
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'OpLine'
+            StyleNumber = 6
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = clNavy
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Color'
+            StyleNumber = 7
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 4812750
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Position'
+            StyleNumber = 8
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 4812750
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Triple-1'
+            StyleNumber = 9
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 811830
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Triple-2'
+            StyleNumber = 10
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 4812750
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Triple-3'
+            StyleNumber = 11
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 811830
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Triple-4'
+            StyleNumber = 12
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 811830
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Matrix-1'
+            StyleNumber = 13
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 4812750
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Matrix-2'
+            StyleNumber = 14
+          end
+          item
+            FontSize = 0
+            FontStyles = []
+            ForeColor = 811830
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Matrix-3'
+            StyleNumber = 15
+          end
+          item
+            FontSize = 0
+            FontStyles = [fsBold]
+            ForeColor = clBlack
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Official-Filename'
+            StyleNumber = 16
+          end
+          item
+            FontSize = 0
+            FontStyles = [fsBold, fsItalic]
+            ForeColor = clBlack
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Unofficial-Filename'
+            StyleNumber = 17
+          end
+          item
+            FontSize = 0
+            FontStyles = [fsBold, fsItalic]
+            ForeColor = clBlue
+            BackColor = clDefault
+            CharCase = CASE_MIXED
+            Name = 'Meta'
+            StyleNumber = 18
+          end>
+        Keywords = <
+          item
+            KeywordListNumber = 0
+            Name = 'Official Files'
+            Keywords.Strings = (
+              'test.dat')
+          end
+          item
+            KeywordListNumber = 1
+            Name = 'Meta Commands'
+            Keywords.Strings = (
+              'BFC'
+              'CERTIFY'
+              'CCW')
+          end>
+        AssignmentOperator = '='
+        EndOfStatementOperator = ';'
+        CommentBoxStart = '/*'
+        CommentBoxEnd = '*/'
+        CommentBoxMiddle = '*'
+        CommentBlock = '//'
+        CommentAtLineStart = True
+        CommentStreamStart = '/*'
+        CommentStreamEnd = '*/'
+        NumStyleBits = 5
+      end>
     Left = 304
     Top = 112
   end
@@ -2811,5 +3137,18 @@ object frMain: TfrMain
     OnTextNotFound = SearchReplaceDlgTextNotFound
     Left = 272
     Top = 80
+  end
+  object pmMirror: TPopupMenu
+    Left = 96
+    Top = 144
+    object XAxis3: TMenuItem
+      Action = acMirrorX
+    end
+    object YAxis3: TMenuItem
+      Action = acMirrorY
+    end
+    object ZAxis3: TMenuItem
+      Action = acMirrorZ
+    end
   end
 end

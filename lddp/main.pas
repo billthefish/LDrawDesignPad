@@ -88,13 +88,11 @@ type
     Pollevery5sec2: TMenuItem;
     Pollevery1sec2: TMenuItem;
     Pollevery2sec2: TMenuItem;
-    pmuSearchandReplace: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
     tmPoll: TTimer;
     tbrFile: TToolBar;
     tbrExternalPrograms: TToolBar;
-    tbrSearchAndReplace: TToolBar;
     tbrEditing: TToolBar;
     ToolButton1: TToolButton;
     ToolButton10: TToolButton;
@@ -103,11 +101,8 @@ type
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
-    ToolButton2: TToolButton;
     tbUserDefined: TToolButton;
     ToolButton28: TToolButton;
-    ToolButton29: TToolButton;
-    ToolButton3: TToolButton;
     ToolButton30: TToolButton;
     ToolButton32: TToolButton;
     ToolButton4: TToolButton;
@@ -147,7 +142,6 @@ type
     Toolbars: TMenuItem;
     mnuFile: TMenuItem;
     mnuEditing: TMenuItem;
-    mnuSearchAndReplace: TMenuItem;
     mnuExternalPrograms: TMenuItem;
     N3: TMenuItem;
     miMiscOptions: TMenuItem;
@@ -286,7 +280,7 @@ type
     JvDockDelphiStyle1: TJvDockDelphiStyle;
     pmTab: TPopupMenu;
     CloseFile1: TMenuItem;
-    SciLanguageManager1: TSciLanguageManager;
+    LanguageManager: TSciLanguageManager;
     AppInst: TJvAppInstances;
     SearchReplaceDlg: TSciSearchReplace;
     tbrTools: TToolBar;
@@ -302,13 +296,25 @@ type
     ToolButton39: TToolButton;
     ToolButton40: TToolButton;
     ToolButton41: TToolButton;
-    ToolButton42: TToolButton;
     ToolButton43: TToolButton;
-    ToolButton7: TToolButton;
     ToolButton9: TToolButton;
     ToolButton12: TToolButton;
     mnuTools: TMenuItem;
     pmuTools: TMenuItem;
+    ToolButton17: TToolButton;
+    ToolButton18: TToolButton;
+    ToolButton19: TToolButton;
+    ToolButton20: TToolButton;
+    ToolButton21: TToolButton;
+    ToolButton22: TToolButton;
+    ToolButton23: TToolButton;
+    ToolButton25: TToolButton;
+    ToolButton26: TToolButton;
+    ToolButton2: TToolButton;
+    pmMirror: TPopupMenu;
+    XAxis3: TMenuItem;
+    YAxis3: TMenuItem;
+    ZAxis3: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -393,6 +399,7 @@ type
     procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
     procedure BuildMetaMenu;
     function tempFileName:string;
+    procedure SetKeyWordList;
 
   public
     strChangedCompleteText:string;
@@ -400,7 +407,7 @@ type
     slPlugins: TStringList;
     procedure LoadPlugins(AppInit:Boolean = false);
     procedure OpenFile(filename: string);
-    procedure LoadFile(filename: string; DocNumber: Integer);
+//    procedure LoadFile(filename: string);
     procedure UpdateControls(Closing: Boolean = false);
     procedure UpdateMRU(NewFileName: TFileName= '');
     procedure UpdateViewMenu;
@@ -599,7 +606,7 @@ begin
 
   editor.ExpandSelection(i, i);
 
-  DATModel1.FilePath := ExtractFilePath(Caption);
+  DATModel1.FilePath := ExtractFilePath(DocumentTabs.ActiveDocument.Filename);
   DATModel1.ModelText := editor.SelText;
 
   for i := DATModel1.Count - 1 downto 0 do
@@ -766,7 +773,7 @@ begin
   editor.ExpandSelection(startline, endline);
 
   //Init Form Values
-  frSubFile.edFilename.Text := ExtractFileName(Caption);
+  frSubFile.edFilename.Text := ExtractFileName(DocumentTabs.ActiveDocument.Filename);
   frSubFile.edAuthor.Text := frOptions.edName.Text;
   frSubFile.edUsername.Text := frOptions.edUsername.Text;
   frSubFile.edTitle.Text := '';
@@ -801,7 +808,7 @@ begin
                     frSubFile.edComments.Text + #13#10 +
                     editor.SelText;
 
-    if FileExists(ExtractFilePath(Caption) + frSubFile.edFileName.Text) and
+    if FileExists(ExtractFilePath(DocumentTabs.ActiveDocument.Filename) + frSubFile.edFileName.Text) and
        (MessageDlg(_('File of same name already exists.  Overwrite?'),
                    mtWarning, mbOKCancel, 0) <> mrOk) then
       Exit;
@@ -810,7 +817,6 @@ begin
     SubFile.SaveToFile(subfilename);
     editor.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
     OpenFile(subfilename);
-    UpdateMRU(subfilename);
   end;
 end;
 
@@ -915,6 +921,7 @@ procedure TfrMain.acFileNewExecute(Sender: TObject);
 // Creates a new untitled Editor child window
 begin
   DocumentTabs.NewDocument;
+  DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 end;
 
 procedure TfrMain.acFileOpenExecute(Sender: TObject);
@@ -924,57 +931,27 @@ var
 
 begin
   if OpenDialog1.Execute then
-  begin
-    for i:=0 to OpenDialog1.Files.Count - 1 do
-    begin
+    for i := 0 to OpenDialog1.Files.Count - 1 do
       OpenFile(OpenDialog1.Files[i]);
-      UpdateMRU(OpenDialog1.Files[i]);
-    end;
-  end;
 end;
 
 procedure TfrMain.OpenFile(filename: string);
-var
-  i, DocNumber: Integer;
-
-begin
-  if (DocumentTabs.Count = 1) and
-     (editor.Lines.Count = 0) then
-    DocNumber := 0
-  else
-  begin
-    for i := 0 to DocumentTabs.Count - 1 do
-      if DocumentTabs.Document[i].FileName = filename then
-      begin
-        DocumentTabs.Activate(i);
-        Exit;
-      end;
-    DocNumber := DocumentTabs.NewDocument;
-  end;
-  LoadFile(filename, DocNumber);
-end;
-
-procedure tfrMain.LoadFile(filename: string; DocNumber: Integer);
-// Loads given Filename into the active MDI editor child
-
 begin
   if FileExists(filename) then
   begin
-//    DocumentTabs.ActiveDocument.
-    DocumentTabs.Document[DocNumber].FileName := filename;
-    DocumentTabs.Document[DocNumber].TabName := ExtractFileName(DocumentTabs.Document[DocNumber].FileName);
-    editor.LoadFromFile(filename);
-    editor.EmptyUndoBuffer;
-    editor.SetSavePoint;
-    UpdateControls(false);
+    DocumentTabs.Open(filename);
+    UpdateMRU(filename);
+    DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
+    UpdateControls;
   end
   else
-    MessageDlg(_('File ') + Caption + _(' not found'), mtError, [mbOK], 0);
+    MessageDlg(_('File ') + DocumentTabs.ActiveDocument.Filename + _(' not found'), mtError, [mbOK], 0);
 end;
 
 procedure TfrMain.acFileSaveExecute(Sender: TObject);
+// Save file to disk if it already exists otherwise run Save As
 var
-  sr:TsearchRec;
+  fileage: TDateTime;
 
 begin
   if DocumentTabs.ActiveDocument.IsUntitled then
@@ -983,8 +960,8 @@ begin
   begin
     editor.Lines.SaveToFile(DocumentTabs.ActiveDocument.Filename);
     editor.Modified := false;
-    FindFirst(Caption, faAnyFile, SR);
-    FindClose(sr);
+    SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
+    DocumentTabs.ActiveDocument.LastChanged := fileage;
   end;
 end;
 
@@ -1014,15 +991,11 @@ procedure TfrMain.acFileRevertExecute(Sender: TObject);
 begin
   if MessageDlg(_('Reload last saved version?') + #13#10 +
                 _('All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes then
-    LoadFile(DocumentTabs.ActiveDocument.FileName, DocumentTabs.ActiveDocument.Index);
+    OpenFile(DocumentTabs.ActiveDocument.FileName);
 end;
 
 procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
-{---------------------------------------------------------------------
-Description: Closes all open child windows
-Parameter: Standard
-Return value: None
-----------------------------------------------------------------------}
+// Closes all open document tabs
 var
   i: Integer;
 
@@ -1064,9 +1037,7 @@ procedure TfrMain.acMRUListExecute(Sender: TObject);
 // Opens a file from the MRU Manager
 begin
   if FileExists((Sender as TMenuItem).Caption) then
-  begin
-    OpenFile((Sender as TMenuItem).Caption);
-  end
+    OpenFile((Sender as TMenuItem).Caption)
   else
     MessageDlg(_('File ') + (Sender as TMenuItem).Caption + _(' not found!'), mtError, [mbOK], 0);
 end;
@@ -1109,13 +1080,13 @@ begin
   end
   else
   begin
-    OutputFile := GetShortFileName(GetTempDir + GetTmpFileName);
+    OutputFile := GetShortFileName(WinTempDir + GetTmpFileName);
     TempFile := TstringList.create;
     CommandLine := GetShortFileName(frOptions.edLSynthDir.text) + '\lsynthcp.exe ';
     InputFile := GetShortFileName(ExtractFilePath(TempFileName)) + ExtractFileName(TempFileName);
     editor.lines.SaveToFile(InputFile);
     TempFile.Add(CommandLine + ' ' + InputFile + ' ' + OutputFile);
-    CommandFile := GetShortFileName(GetTempDir) + GetTMPFIleName + '.bat';
+    CommandFile := GetShortFileName(WinTempDir) + GetTmpFIleName + '.bat';
     TempFile.SaveToFile(CommandFile);
     DOCommand(GetDOSVar('COMSPEC') + ' /C ' + CommandFile,SW_HIDE,true);
     DeleteFile(CommandFile);
@@ -1276,7 +1247,6 @@ begin
   //Main menu items
   mnuFile.Checked := tbrFile.Visible;
   mnuEditing.Checked := tbrEditing.Visible;
-  mnuSearchAndReplace.Checked := tbrSearchAndReplace.Visible;
   mnuTools.Checked := tbrTools.Visible;
   mnuExternalPrograms.Checked := tbrExternalPrograms.Visible;
   mnuColorReplace.Checked := tbrColorReplace.Visible;
@@ -1286,7 +1256,6 @@ begin
   //Popup menu items
   pmuFile.Checked := tbrFile.Visible;
   pmuEditing.Checked := tbrEditing.Visible;
-  pmuSearchAndReplace.Checked := tbrSearchAndReplace.Visible;
   pmuTools.Checked := tbrTools.Visible;
   pmuExternalPrograms.Checked := tbrExternalPrograms.Visible;
   pmuColorReplace.Checked := tbrColorReplace.Visible;
@@ -1312,10 +1281,7 @@ begin
      if (lowercase(extractFIleExt(fname)) = '.dat') or
         (lowercase(extractFIleExt(fname)) = '.mpd') or
         (lowercase(extractFIleExt(fname)) = '.ldr') then
-     begin
        OpenFile(fName);
-       UpdateMRU(fName);
-     end;
    end;
    DragFinish (hDrop);
 end;
@@ -1328,10 +1294,7 @@ var
 begin
   if CmdLine.Count > 0 then
   for i := 0 to CmdLine.Count - 1 do
-  begin
     OpenFile(CmdLine[i]);
-    UpdateMRU(CmdLine[i]);
-  end;
 end;
 
 procedure TfrMain.UpdateControls(Closing: Boolean = false);
@@ -1394,7 +1357,6 @@ begin
 
   mnuUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
   tbUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
-
 end;
 
 procedure TfrMain.editorUpdateUI(Sender: TObject);
@@ -1506,6 +1468,7 @@ begin
       CreateDir(GetShellFolderPath('AppData') + '\LDDP');
     if not DirectoryExists(GetShellFolderPath('AppData') + '\LDraw') then
       CreateDir(GetShellFolderPath('AppData') + '\LDraw');
+    CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\metamenu.ini'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\metamenu.ini'), false);
 
     //Load form parameters from INI file
     LoadFormValues;
@@ -1519,6 +1482,7 @@ begin
     EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
     if FileExists(EditorPropertyLoader.FileName) then
       EditorPropertyLoader.Load;
+    DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 
     //Set InstallDir in registry for legacy plugin support
     regT := TRegistry.Create;
@@ -1536,6 +1500,9 @@ begin
     //Build the MRU list
     UpdateMRU;
 
+    //Set the keywordlist for the syntax highlighter
+    SetKeyWordList;
+
     // Set initial directory to that of the last opened file
     // or home directory if no file is listed
     if LastOpen1.Count > 0 then
@@ -1546,10 +1513,7 @@ begin
     //Load files listed on the command line
     if ParamCount > 0 then
       for i := 1 to ParamCount do
-      begin
         OpenFile(paramstr(i));
-        UpdateMRU(paramstr(i));
-      end;
 
   finally
     Screen.Cursor := crDefault;
@@ -1601,23 +1565,53 @@ begin
   MetaMenuIni.Free;
 end;
 
-procedure TfrMain.DocumentTabsChange(Sender: TObject);
+procedure TfrMain.SetKeyWordList;
+// Set lookup the official part files put them in the keyword list
 var
-  r : integer;
-  SR : tSearchRec;
+  sc: TSearchRec;
 
 begin
-  r := FindFirst(DocumentTabs.ActiveDocument.FileName, faAnyFile, SR);
-  if (r = 0) and
-     (FileDateToDateTime(SR.Time) <> DocumentTabs.ActiveDocument.LastChanged) then
+  with LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords do
   begin
-    acFileRevert.Execute;
-    DocumentTabs.ActiveDocument.LastChanged := FileDateToDateTime(SR.Time);
+    Clear;
+    if FindFirst(LDrawBasePath + 'parts\*.dat', faAnyFile, sc) = 0 then
+      repeat
+        Add(LowerCase(ExtractFileName(sc.Name)));
+      until FindNext(sc) <> 0;
+    if FindFirst(LDrawBasePath + 'parts\s\*.dat', faAnyFile, sc) = 0 then
+      repeat
+        Add(LowerCase('s\' + ExtractFileName(sc.Name)));
+      until FindNext(sc) <> 0;
+    if FindFirst(LDrawBasePath + 'p\*.dat', faAnyFile, sc) = 0 then
+      repeat
+        Add(LowerCase(ExtractFileName(sc.Name)));
+      until FindNext(sc) <> 0;
+    if FindFirst(LDrawBasePath + 'p\48\*.dat', faAnyFile, sc) = 0 then
+      repeat
+        Add(LowerCase('48\' + ExtractFileName(sc.Name)));
+      until FindNext(sc) <> 0;
+    FindClose(sc);
   end;
-  FindClose(SR);
-  UpdateControls;
 end;
 
+procedure TfrMain.DocumentTabsChange(Sender: TObject);
+
+var
+  fileage: TDateTime;
+
+begin
+  if not DocumentTabs.ActiveDocument.IsUntitled then
+  begin
+    SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
+    if fileage <> DocumentTabs.ActiveDocument.LastChanged then
+    begin
+      acFileRevert.Execute;
+      DocumentTabs.ActiveDocument.LastChanged := fileage;
+    end;
+  end;
+
+  UpdateControls;
+end;
 
 procedure TfrMain.DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
   var AllowClose: Boolean);
@@ -1934,7 +1928,6 @@ begin
   Height := LDDPini.ReadInteger(IniSection, 'frMain_Height', Height);
   tbrFile.Visible := LDDPini.ReadBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
   tbrExternalPrograms.Visible := LDDPini.ReadBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
-  tbrSearchAndReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
   tbrTools.Visible := LDDPini.ReadBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
   tbrEditing.Visible := LDDPini.ReadBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
@@ -1963,7 +1956,6 @@ begin
   LDDPini.WriteInteger(IniSection, 'frMain_Height', Height);
   LDDPini.WriteBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
   LDDPini.WriteBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
-  LDDPini.WriteBool(IniSection, 'tbrSearchAndReplace_Visible', tbrSearchAndReplace.Visible);
   LDDPini.WriteBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
   LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
@@ -1981,10 +1973,7 @@ Parameter: None
 Return value: Path & Filename of the temporary filename
 ---------------------------------------------------------------------}
 begin
-  if ExtractFilePath(DocumentTabs.ActiveDocument.FileName) <> '' then
-    Result := ExtractFilePath(DocumentTabs.ActiveDocument.FileName) //+ tmpFileName
-  else
-    Result := GetTempDir //+ tmpFileName;
+  Result := WinTempDir + ExtractFileName(DocumentTabs.ActiveDocument.FileName)
 end;
 
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -1992,14 +1981,14 @@ var
   i: Integer;
 
 begin
-  for i := DocumentTabs.Count - 1  downto 0 do
+  for i := DocumentTabs.Count - 1 downto 0 do
   begin
     DocumentTabs.Activate(i);
     if editor.Modified then
-      case MessageDlg('Save changes to ' + DocumentTabs.Document[i].TabName + '?'+#13+#10+''+#13+#10+'Yes: Saves the changes and closes this document.'+#13+#10+'No: Closes the document without saving any changes.'+#13+#10+'Cancel: Keeps the document open', mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
+      case MessageDlg('Save changes to ' + DocumentTabs.ActiveDocument.TabName + '?'+#13+#10+''+#13+#10+'Yes: Saves the changes and closes this document.'+#13+#10+'No: Closes the document without saving any changes.'+#13+#10+'Cancel: Keeps the document open', mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
         mrYes: begin
                  acFileSave.Execute;
-//                 DeleteFile(tempFilename);
+                 DeleteFile(tempFilename);
                end;
         mrCancel: begin
                     Action := caNone;
