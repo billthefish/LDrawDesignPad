@@ -28,7 +28,7 @@ object fmSort: TfmSort
     DesignSize = (
       271
       44)
-    object BitBtn2: TBitBtn
+    object btnCancel: TBitBtn
       Left = 168
       Top = 12
       Width = 97
@@ -82,7 +82,7 @@ object fmSort: TfmSort
         5757004F5757570E00FDFDFD00575757575700004E57574F00FDFDFDFD005757
         5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
     end
-    object BitBtn1: TBitBtn
+    object btnOK: TBitBtn
       Left = 9
       Top = 12
       Width = 95
@@ -91,7 +91,7 @@ object fmSort: TfmSort
       Default = True
       ModalResult = 1
       TabOrder = 1
-      OnClick = BitBtn1Click
+      OnClick = btnOKClick
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
@@ -137,7 +137,7 @@ object fmSort: TfmSort
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
     end
   end
-  object Panel2: TPanel
+  object SortPanel: TPanel
     Left = 0
     Top = 0
     Width = 271
@@ -189,7 +189,7 @@ object fmSort: TfmSort
         'Descending')
       TabOrder = 1
     end
-    object cbSort: TComboBox
+    object cbSort1: TComboBox
       Left = 9
       Top = 16
       Width = 145
