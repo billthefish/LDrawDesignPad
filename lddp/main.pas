@@ -268,7 +268,6 @@ type
     http: TIdHTTP;
     EditorOptions1: TMenuItem;
     acEditorOptions: TAction;
-    EditorOptionDlg: TScintillaOptionsDlg;
     acToolbarVisibility: TAction;
     DocumentTabs: TSciDocumentTabControl;
     editor: TScintillaLDDP;
@@ -427,7 +426,7 @@ uses
   about, options, colordialog, BezWindow, sorting, splash, 
   BMP2LDraw, modeltreeview, dlgSubpart, commonprocs, windowsspecific,
   DATBase, DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
-  STRUtils, Registry, IniFiles;
+  STRUtils, Registry, IniFiles, SciResLang;
 
 var
   splashscreen: TfrSplash;
@@ -1167,8 +1166,14 @@ end;
 procedure TfrMain.acEditorOptionsExecute(Sender: TObject);
 // Show the Scintilla editor options
 begin
-  if EditorOptionDlg.Execute then
-    EditorPropertyLoader.Save;
+  with TSciOptionsForm.Create(Self) do
+  begin
+    OptionPages.ActivePage := OptionsPage;
+    Editor := frMain.editor;
+    if ShowModal = mrOK then
+      EditorPropertyLoader.Save;
+    Free;
+  end;
 end;
 
 // Search actions
@@ -1469,6 +1474,7 @@ begin
     if not DirectoryExists(GetShellFolderPath('AppData') + '\LDraw') then
       CreateDir(GetShellFolderPath('AppData') + '\LDraw');
     CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\metamenu.ini'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\metamenu.ini'), false);
+    CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\metalist.txt'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\metalist.txt'), false);
 
     //Load form parameters from INI file
     LoadFormValues;
@@ -1501,7 +1507,8 @@ begin
     UpdateMRU;
 
     //Set the keywordlist for the syntax highlighter
-    SetKeyWordList;
+    if DirectoryExists(LDrawBasePath) then
+      SetKeyWordList;
 
     // Set initial directory to that of the last opened file
     // or home directory if no file is listed
@@ -1591,6 +1598,11 @@ begin
         Add(LowerCase('48\' + ExtractFileName(sc.Name)));
       until FindNext(sc) <> 0;
     FindClose(sc);
+  end;
+  with LanguageManager.LanguageList.Find('LDraw').Keywords[1].Keywords do
+  begin
+    LoadFromFile(IniFilePath + '\metalist.txt');
+    CommaText := Strings[0];
   end;
 end;
 
@@ -1973,7 +1985,7 @@ Parameter: None
 Return value: Path & Filename of the temporary filename
 ---------------------------------------------------------------------}
 begin
-  Result := WinTempDir + ExtractFileName(DocumentTabs.ActiveDocument.FileName)
+  Result := WinTempDir + DocumentTabs.ActiveDocument.TabName;//ExtractFileName(ExtractShortPathName(DocumentTabs.ActiveDocument.FileName))
 end;
 
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -26,19 +26,19 @@ uses
 type
   TfmSort = class(TForm)
     rgScope: TRadioGroup;
-    cbSort: TComboBox;
+    cbSort1: TComboBox;
     Label1: TLabel;
     Panel1: TPanel;
-    Panel2: TPanel;
-    BitBtn2: TBitBtn;
-    BitBtn1: TBitBtn;
+    SortPanel: TPanel;
+    btnCancel: TBitBtn;
+    btnOK: TBitBtn;
     rgSortDirection: TRadioGroup;
     Label2: TLabel;
     cbSort2: TComboBox;
     Label3: TLabel;
     cbSort3: TComboBox;
     procedure FormCreate(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
+    procedure btnOKClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
@@ -55,33 +55,12 @@ uses DATBase, DATModel, DATUtils, main, options, commonprocs;
 {$R *.dfm}
 
 
-procedure TfmSort.BitBtn1Click(Sender: TObject);
+procedure TfmSort.btnOKClick(Sender: TObject);
 var
   DModel: TDATModel;
-  startline, endline: Integer;
-
-  function GetSortVar(idx: Integer): TDATSortTerm;
-
-  begin
-    case idx of
-      0: Result := dsNil;
-      1: Result := dsColor;
-      2: Result := dsMidX;
-      3: Result := dsMidY;
-      4: Result := dsMidZ;
-      5: Result := dsMaxX;
-      6: Result := dsMaxY;
-      7: Result := dsMaxZ;
-      8: Result := dsMinX;
-      9: Result := dsMinY;
-      10: Result := dsMinZ;
-      11: Result := dsLineType;
-      else Result := dsNil;
-    end;
-  end;
-
+  startline, endline, i: Integer;
 begin
-    DModel := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+    DModel := LDDPCreateDATModel;
 
     if fmSort.rgScope.ItemIndex = 0 then
       frMain.editor.SelectAll
@@ -90,11 +69,14 @@ begin
 
     DModel.ModelText := frMain.editor.SelText;
 
-    DModel.SortTerm[1] := GetSortVar(fmSort.cbSort.ItemIndex);
-    DModel.SortTerm[2] := GetSortVar(fmSort.cbSort2.ItemIndex);
-    DModel.SortTerm[3] := GetSortVar(fmSort.cbSort3.ItemIndex);
+    for i := 1 to 3 do
+      with (SortPanel.FindChildControl('cbSort' + IntToStr(i)) as TComboBox) do
+        if ItemIndex >= 0 then
+          DModel.SortTerm[i] := TDATSortTerm(ItemIndex)
+        else
+          DModel.SortTerm[i] := dsNil;
 
-    DModel.Sort(fmSort.rgSortDirection.ItemIndex < 1);
+    DModel.Sort(rgSortDirection.ItemIndex < 1);
 
     frMain.editor.SelText := DModel.ModelText;
 end;

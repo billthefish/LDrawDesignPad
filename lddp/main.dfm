@@ -1045,6 +1045,7 @@ object frMain: TfrMain
           Action = acToolbarVisibility
           AutoCheck = True
           Caption = 'Color Replace'
+          Checked = True
         end
       end
       object mnuErrorList: TMenuItem
@@ -2768,12 +2769,6 @@ object frMain: TfrMain
     Left = 216
     Top = 112
   end
-  object EditorOptionDlg: TScintillaOptionsDlg
-    Editor = editor
-    Pages = [opOptions, opColors, opHighlighter, opKeyboard]
-    Left = 272
-    Top = 112
-  end
   object EditorPropertyLoader: TSciPropertyLoader
     FileName = 'lddp.eop'
     Editor = editor
@@ -3118,7 +3113,7 @@ object frMain: TfrMain
         CommentStreamEnd = '*/'
         NumStyleBits = 5
       end>
-    Left = 304
+    Left = 272
     Top = 112
   end
   object AppInst: TJvAppInstances
