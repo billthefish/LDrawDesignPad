@@ -1,7 +1,7 @@
 object frOptions: TfrOptions
   Left = 360
   Top = 236
-  Width = 550
+  Width = 600
   Height = 404
   VertScrollBar.Range = 37
   Caption = 'Misc. Options'
@@ -20,9 +20,9 @@ object frOptions: TfrOptions
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 542
+    Width = 592
     Height = 333
-    ActivePage = ColorBarSheet
+    ActivePage = TabSheet3
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -30,17 +30,14 @@ object frOptions: TfrOptions
     object tsExternal: TTabSheet
       Caption = '&Program Paths'
       ImageIndex = -1
-      ExplicitTop = 42
-      ExplicitHeight = 287
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
-        Width = 534
+        Width = 584
         Height = 305
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
-        ExplicitHeight = 287
         object lbL3Lab: TLabel
           Left = 404
           Top = 141
@@ -436,17 +433,14 @@ object frOptions: TfrOptions
     object TabSheet1: TTabSheet
       Caption = '&External Progams'
       ImageIndex = -1
-      ExplicitTop = 42
-      ExplicitHeight = 287
       object GroupBox7: TGroupBox
-        Left = 173
+        Left = 223
         Top = 0
         Width = 361
         Height = 305
         Align = alRight
         Caption = 'User Defined Program Configuration'
         TabOrder = 0
-        ExplicitHeight = 287
         object rgStyle: TRadioGroup
           Left = 2
           Top = 242
@@ -462,7 +456,6 @@ object frOptions: TfrOptions
             'Maximized')
           TabOrder = 0
           OnClick = edExternalNameChange
-          ExplicitTop = 241
         end
         object Panel2: TPanel
           Left = 2
@@ -472,7 +465,6 @@ object frOptions: TfrOptions
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitHeight = 79
           object Memo5: TMemo
             Left = 0
             Top = 0
@@ -493,7 +485,6 @@ object frOptions: TfrOptions
               '%3: Path and Filename without extension'
               '%4 - %7: The 8.3 notation of %0 - %3')
             TabOrder = 0
-            ExplicitHeight = 79
           end
         end
         object Panel3: TPanel
@@ -643,8 +634,6 @@ object frOptions: TfrOptions
           BevelOuter = bvNone
           Caption = 'Panel4'
           TabOrder = 3
-          ExplicitTop = 161
-          ExplicitHeight = 80
           object btnAddExternal: TButton
             Left = 0
             Top = 31
@@ -654,9 +643,6 @@ object frOptions: TfrOptions
             Caption = 'Add New Program'
             TabOrder = 0
             OnClick = lbxExternalDblClick
-            ExplicitLeft = 1
-            ExplicitTop = 13
-            ExplicitWidth = 148
           end
           object btnDelExternal: TButton
             Left = 0
@@ -667,34 +653,28 @@ object frOptions: TfrOptions
             Caption = 'Delete Current Program'
             TabOrder = 1
             OnClick = btnDelExternalClick
-            ExplicitLeft = 1
-            ExplicitTop = 46
-            ExplicitWidth = 148
           end
         end
       end
       object lbxExternal: TListBox
         Left = 0
         Top = 0
-        Width = 173
+        Width = 223
         Height = 305
         Align = alClient
         ItemHeight = 13
         TabOrder = 1
         OnClick = lbxExternalClick
         OnDblClick = lbxExternalDblClick
-        ExplicitHeight = 287
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Configuration &Values'
       ImageIndex = -1
-      ExplicitTop = 42
-      ExplicitHeight = 287
       object GroupBox2: TGroupBox
         Left = 0
         Top = 0
-        Width = 534
+        Width = 584
         Height = 169
         Align = alTop
         Caption = 'Error Check Options'
@@ -725,43 +705,45 @@ object frOptions: TfrOptions
         object Memo1: TMemo
           Left = 287
           Top = 20
-          Width = 217
+          Width = 292
           Height = 33
           TabStop = False
           BorderStyle = bsNone
           Color = clBtnFace
           Lines.Strings = (
-            'General files (parts, subparts and some '
-            'primitives) typically use a value of 0.1.')
+            
+              'General files (parts, subparts and some primitives) typically us' +
+              'e '
+            'a value of 0.1. (Note: this check is depreciated)')
           ReadOnly = True
           TabOrder = 3
         end
         object Memo2: TMemo
           Left = 287
-          Top = 49
-          Width = 217
+          Top = 53
+          Width = 292
           Height = 33
           TabStop = False
           BorderStyle = bsNone
           Color = clBtnFace
           Lines.Strings = (
-            'Geometric primitives typically use 0.01. '
-            'Hi-res primitives typically use 0.001.')
+            'Geometric primitives typically use 0.01. Hi-res primitives '
+            'typically use 0.001.  (Note: this check is depreciated)')
           ReadOnly = True
           TabOrder = 4
         end
         object Memo3: TMemo
           Left = 287
           Top = 122
-          Width = 218
+          Width = 292
           Height = 41
           TabStop = False
           BorderStyle = bsNone
           Color = clBtnFace
           Lines.Strings = (
-            'Only adjust this value if you want to change '
-            'the pecent deviation used for collinear point '
-            'determination. (L3P uses 0.0001 by defualt)')
+            'Only adjust this value if you want to change the pecent '
+            'deviation used for collinear point determination. (L3P uses '
+            '0.0001 by defualt)')
           ReadOnly = True
           TabOrder = 2
         end
@@ -816,16 +798,15 @@ object frOptions: TfrOptions
         end
         object Memo4: TMemo
           Left = 287
-          Top = 80
-          Width = 217
-          Height = 43
+          Top = 89
+          Width = 292
+          Height = 27
           TabStop = False
           BorderStyle = bsNone
           Color = clBtnFace
           Lines.Strings = (
-            'Quads considered coplaner if the angle is less '
-            'than or equal to 3 degrees. An angle of less '
-            'than 1 degree is recommended')
+            'Quads considered coplaner if the angle is less than or equal '
+            'to 3 degrees. An angle of less than 1 degree is recommended')
           ReadOnly = True
           TabOrder = 9
         end
@@ -846,7 +827,7 @@ object frOptions: TfrOptions
       object GroupBox5: TGroupBox
         Left = 0
         Top = 169
-        Width = 534
+        Width = 584
         Height = 136
         Align = alClient
         Caption = 'Decimal Accuracy'
@@ -898,20 +879,14 @@ object frOptions: TfrOptions
     object TabSheet4: TTabSheet
       Caption = '&User Infomation'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 25
-      ExplicitWidth = 512
-      ExplicitHeight = 304
       object GroupBox3: TGroupBox
         Left = 0
         Top = 0
-        Width = 534
+        Width = 584
         Height = 305
         Align = alClient
         Caption = 'User Details For Macros'
         TabOrder = 0
-        ExplicitWidth = 512
-        ExplicitHeight = 304
         object Label16: TLabel
           Left = 16
           Top = 80
@@ -959,17 +934,14 @@ object frOptions: TfrOptions
     object TabSheet3: TTabSheet
       Caption = 'Plu&gins'
       ImageIndex = -1
-      ExplicitTop = 42
-      ExplicitHeight = 287
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0
-        Width = 534
+        Width = 584
         Height = 305
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0
-        ExplicitHeight = 287
         object Label9: TLabel
           Left = 308
           Top = 24
@@ -982,14 +954,14 @@ object frOptions: TfrOptions
             'itor to bring it up)'
           WordWrap = True
         end
-        object Button1: TBitBtn
+        object btnRescanPlugins: TBitBtn
           Left = 308
           Top = 201
           Width = 181
           Height = 25
           Caption = 'Rescan for Plugins'
           TabOrder = 1
-          OnClick = Button1Click
+          OnClick = btnRescanPluginsClick
           Glyph.Data = {
             36040000424D3604000000000000360000002800000010000000100000000100
             2000000000000004000000000000000000000000000000000000FF00FF004040
@@ -1035,7 +1007,6 @@ object frOptions: TfrOptions
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
-          ExplicitHeight = 270
         end
       end
     end
@@ -1046,7 +1017,7 @@ object frOptions: TfrOptions
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
-        Width = 534
+        Width = 584
         Height = 305
         Align = alClient
         Caption = 'Color Bar Colors'
@@ -1194,13 +1165,13 @@ object frOptions: TfrOptions
   object Panel1: TPanel
     Left = 0
     Top = 333
-    Width = 542
+    Width = 592
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      542
+      592
       37)
     object BitBtn1: TBitBtn
       Left = 337
@@ -1258,7 +1229,7 @@ object frOptions: TfrOptions
     object btnCancel: TBitBtn
       Left = 438
       Top = 6
-      Width = 95
+      Width = 145
       Height = 25
       Anchors = [akLeft, akTop, akRight, akBottom]
       Cancel = True

@@ -68,7 +68,7 @@ type
     Label13: TLabel;
     TabSheet3: TTabSheet;
     GroupBox4: TGroupBox;
-    Button1: TBitBtn;
+    btnRescanPlugins: TBitBtn;
     cblPlugins: TCheckListBox;
     Label9: TLabel;
     rgStyle: TRadioGroup;
@@ -122,7 +122,7 @@ type
     ColorBarCombo: TJvColorComboBox;
     TabSheet5: TTabSheet;
     procedure PageControl1Change(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure btnRescanPluginsClick(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
     procedure btLDrawClick(Sender: TObject);
     procedure btLDViewClick(Sender: TObject);
@@ -162,7 +162,7 @@ var
 
 implementation
 
-uses main, windowsspecific, DATBase, DATCheck, DATUtils;
+uses main, windowsspecific, ActnList, DATBase, DATCheck, DATUtils;
 
 {$R *.dfm}
 
@@ -228,7 +228,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.Button1Click(Sender: TObject);
+procedure TfrOptions.btnRescanPluginsClick(Sender: TObject);
 begin
   frMain.LoadPlugins;
 end;
@@ -236,18 +236,14 @@ end;
 procedure TfrOptions.cblPluginsClickCheck(Sender: TObject);
 
 var
-  PluginName, PluginPath: string;
+  PluginName: string;
+  EnablePlugin: Boolean;
 
 begin
   PluginName := frOptions.cblPlugins.Items[frOptions.cblplugins.Itemindex];
   PluginName := Copy(PluginName, 1, Pos(' -', PluginName) - 1);
-  PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins\';
-
-  if frOptions.cblPlugins.State[frOptions.cblPlugins.Itemindex] = cbChecked then
-    RenameFile(PluginPath + PluginName + '.dld', ChangeFileExt(PluginPath + PluginName + '.dld', '.dll'))
-  else
-    RenameFile(PluginPath + PluginName + '.dll', ChangeFileExt(PluginPath + PluginName + '.dll', '.dld'));
-  frMain.LoadPlugins;
+  EnablePlugin := frOptions.cblPlugins.State[frOptions.cblPlugins.Itemindex] = cbChecked;
+  (frMain.PluginActionList.FindComponent(PluginName) as TAction).Enabled := EnablePlugin;
 end;
 
 procedure TfrOptions.btLDrawClick(Sender: TObject);
