@@ -22,7 +22,7 @@ interface
 uses Windows, ShellAPI, Messages, Sysutils, Classes, Forms, Registry;
 
 type
-  TLDDPCallBack = procedure(strCBText : PChar );
+  TLDDPCallBack = procedure(strCBText: PChar);
 
 
 
@@ -57,18 +57,18 @@ const
   {$EXTERNALSYM SW_MAX}
   SW_MAX = 10;
 
-function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
-function GetShortFileName(Const FileName : String) : String;
+function DoCommand(Command: string; Flg: byte; Wait: Boolean): Boolean;
+function GetShortFileName(Const FileName : string): string;
 function WindowsDir:string;
 function GetShellFolderPath(folder: string): string;
-function IniFilePath:string;
-function WinTempDir:string;
-function PluginInfo(fname:string; nr: Byte):string;
-procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
-procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
-procedure OpenInBrowser(url:string);
+function IniFilePath: string;
+function WinTempDir: string;
+function PluginInfo(libname: string; nr: Byte):string;
+procedure CallPlugin(libname, FullText, SelectedText: string; var s1, s2, s3, s4: LongWord);
+procedure LDDPCallBack(strCBCompleteText, strCBSelText: PChar); stdcall;
+procedure OpenInBrowser(url: string);
 function GetAppVersion(const FileName: TFileName): string;
-function GetDOSVar (VarName: string): string;
+function GetDOSVar(VarName: string): string;
 
 implementation
 
@@ -102,7 +102,7 @@ begin
   end;
 end;
 
-function DoCommand(Command: String; Flg:byte; Wait:Boolean): Boolean;
+function DoCommand(Command: string; Flg: byte; Wait: Boolean): Boolean;
 {---------------------------------------------------------------------
 Description: Executes an external program
 Parameter: command: Command to execute; flg: see below;
@@ -142,8 +142,9 @@ begin
     dwFlags:= STARTF_USESHOWWINDOW;
     wShowWindow := Flg;
   end;
+
   Result := CreateProcess(nil, PChar(Command), nil, nil, False,
-  NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo);
+                          NORMAL_PRIORITY_CLASS, nil, nil, StartupInfo, ProcessInfo);
   if Result then
     with ProcessInfo do
     begin
@@ -154,7 +155,7 @@ begin
     end;
 end;
 
-function GetShortFileName(Const FileName : String) : String;
+function GetShortFileName(const FileName: string): string;
 {---------------------------------------------------------------------
 Description: Get a short 8.3 version of a long filename - needed for dos programs
 Parameter: Standard
@@ -163,13 +164,13 @@ Return value: None
 var
   aTmp: array[0..255] of char;
 begin
-  if GetShortPathName(PChar(FileName),aTmp,Sizeof(aTmp)-1)=0 then
-     Result:= FileName
+  if GetShortPathName(PChar(FileName), aTmp, Sizeof(aTmp) - 1) = 0 then
+     Result := FileName
   else
-     Result:=StrPas(aTmp);
+     Result := StrPas(aTmp);
 end;
 
-function WindowsDir:string;
+function WindowsDir: string;
 var
   WDir: PChar;
 begin
@@ -195,20 +196,17 @@ begin
   Result := tempstr;
 end;
 
-function IniFilePath:string;
+function IniFilePath: string;
 begin
   Result := GetShellFolderPath('AppData') + '\LDDP';
 end;
 
-function WinTempDir:string;
-{---------------------------------------------------------------------
-Description: Find out windows temp path
-Parameter: None
-Return value: Windows Temp dir
-----------------------------------------------------------------------}
-  var
+function WinTempDir: string;
+// Find out windows temp path
+var
   tempDir: string;
-  lng:     DWORD;
+  lng: DWORD;
+
 begin
   lng := GetTempPath(0, nil);
   if lng > 0 then
@@ -216,94 +214,87 @@ begin
     SetLength(tempDir, lng - 1);
     GetTempPath(lng, PChar(tempDir));
   end;
-  if copy(tempdir,length(tempdir),1)<>'\' then tempdir:=tempdir+'\';
+  if copy(tempdir,length(tempdir),1) <> '\' then
+    tempdir := tempdir+'\';
   Result:=tempDir;
 end;
 
-function PluginInfo(fname:string; nr: Byte):string;
-{---------------------------------------------------------------------
-Description: Get Info from plugin DLL
-Parameter: Fname: path and filename of dll, nr: no. of Info to get
-Return value: None
-----------------------------------------------------------------------}
+function PluginInfo(libname: string; nr: Byte):string;
+// Get Info from plugin DLL
 var
- libHndl:THandle;
- Plugin_Info:procedure(CaseID:byte;buffer:pchar;maxlength:byte); stdcall;
+ libHndl: THandle;
+ Plugin_Info: procedure(CaseID: Byte; buffer: PChar; maxlength: Byte); stdcall;
  sBuff: PAnsiChar;
 
 begin
   GetMem(sBuff, 255);         // allocate buffer
   Plugin_Info := nil;
-  libHndl := LoadLibrary(PAnsiChar(fname));
-  if libHndl <> 0 then
-    @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
 
-  if Assigned(Plugin_Info) then Plugin_info(nr, sBuff, 255);
+  libname := ExtractFilePath(Application.ExeName) + 'Plugins\' + libname;
+  if FileExists(libname) then
+  begin
+    libHndl := LoadLibrary(PChar(libname));
 
-  result := StrPas(sBuff);
-  FreeLibrary(libHndl);
+    if libHndl <> 0 then
+      @Plugin_Info := GetProcAddress(libHndl, 'Plugin_Info');
+
+    if Assigned(Plugin_Info) then
+      Plugin_info(nr, sBuff, 255);
+
+    result := StrPas(sBuff);
+    FreeLibrary(libHndl);
+  end
+  else
+    Result := '';
 end;
 
-procedure LDDPCallBack(strCBCompleteText,strCBSelText : PChar ); StdCall;
-{---------------------------------------------------------------------
-Description: Accepts the (changed) Text and SelText from the plugin DLLs
-Parameter: strCBCompleteText,strCBSelText
-Return value: none
-----------------------------------------------------------------------}
+procedure LDDPCallBack(strCBCompleteText, strCBSelText: PChar); stdcall;
+// Accepts the (changed) Text and SelText from the plugin DLLs
 begin
-  frMain.strChangedCompleteText:=String(strCBCompleteText);
-  frMain.strChangedSelText:=String(strCBSelText);
+  frMain.strChangedCompleteText := string(strCBCompleteText);
+  frMain.strChangedSelText := string(strCBSelText);
 end;
 
-procedure CallPlugin(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
-{---------------------------------------------------------------------
-Description: Start Plugin related to the tag of the menu entry
-Parameter: Fname: path and filename of dll, nr: no. of Info to get
-Return value: None
-----------------------------------------------------------------------}
+procedure CallPlugin(libname:string; FullText, SelectedText: string; var s1, s2, s3, s4: LongWord);
+// Start Plugin related to the tag of the menu entry
 var
- libHndl:THandle;
- ProcessText:procedure(CompleteText,SelText:PChar; var SelStart, SelLength , cursorow , cursorcolumn:longWORD;myCallback:TLDDPCallBack);stdcall;
+ libHndl: THandle;
+ ProcessText: procedure(CompleteText, SelText: PChar; var SelStart, SelLength, cursorrow , cursorcolumn:LongWord; myCallback: TLDDPCallBack); stdcall;
 
 begin
-  ProcessText:=nil;
-  libHndl := LoadLibrary(pchar(libname));
+  ProcessText := nil;
+  libname := ExtractFilePath(Application.ExeName) + 'Plugins\' + libname;
+  if FileExists(libname) then
+  begin
+    libHndl := LoadLibrary(PChar(libname));
 
-  if libHndl <> 0 then
-    @ProcessText := GetProcAddress(libHndl, 'ProcessText');
+    if libHndl <> 0 then
+      @ProcessText := GetProcAddress(libHndl, 'ProcessText');
 
-  if Assigned(ProcessText) then  ProcessText(FullText,selectedtext,s1,s2,s3,s4,@LDDPCallBack);
+    if Assigned(ProcessText) then
+      ProcessText(PChar(FullText), PChar(SelectedText), s1, s2, s3, s4, @LDDPCallBack);
 
-  FreeLibrary(libHndl);
+    FreeLibrary(libHndl);
+  end;
 end;
 
-//procedure CallLibFunction(libname:string; FullText,SelectedText:PChar;var s1,s2,s3,s4:longword);
-
-procedure OpenInBrowser(url:string);
+procedure OpenInBrowser(url: string);
 begin
-  ShellExecute( Application.Handle, 'open', PChar( url) , nil, nil, SW_NORMAL );
+  ShellExecute(Application.Handle, 'open', PChar(url), nil, nil, SW_NORMAL );
 end;
 
-function GetDOSVar (VarName: string): string;
-{---------------------------------------------------------------------
-Description: Find out DOS var settings (path etc.)
-Parameter: name of DOS var
-Return value: value of dos var
-----------------------------------------------------------------------}
-
-const
-  StrSize = 250;
-
+function GetDOSVar(VarName: string): string;
+// Find out DOS var settings (path etc.)
 var
-  PName,PBuff: PChar;
+  PName, PBuff: PChar;
   DataSize: byte;
 
 begin
-  Getmem(PName,StrSize);
-  Getmem(PBuff,StrSize);
-  StrCopy(PName,pchar(VarName));
-  Datasize := GetEnvironmentVariable(PName,PBuff,StrSize);
-  Result := Copy(string(PBuff),1,Datasize);
+  GetMem(PName, 250);
+  GetMem(PBuff, 250);
+  StrCopy(PName, PChar(VarName));
+  Datasize := GetEnvironmentVariable(PName, PBuff, 250);
+  Result := Copy(string(PBuff), 1, DataSize);
   FreeMem(PName);
   FreeMem(PBuff);
 end;

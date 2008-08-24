@@ -57,7 +57,7 @@ type
     acReplace: TAction;
     acReplaceColor: TAction;
     acSelectAll: TAction;
-    ActionList1: TActionList;
+    MainFormActions: TActionList;
     acTrimLines: TAction;
     acUncommentBlock: TAction;
     acUncommentBlock1: TMenuItem;
@@ -401,12 +401,10 @@ type
     procedure SetKeyWordList;
 
   public
-    strChangedCompleteText:string;
-    strChangedSelText:string;
-    slPlugins: TStringList;
-    procedure LoadPlugins(AppInit:Boolean = false);
+    PluginActionList: TActionList;
+    strChangedCompleteText, strChangedSelText: string;
+    procedure LoadPlugins;
     procedure OpenFile(filename: string);
-//    procedure LoadFile(filename: string);
     procedure UpdateControls(Closing: Boolean = false);
     procedure UpdateMRU(NewFileName: TFileName= '');
     procedure UpdateViewMenu;
@@ -824,29 +822,29 @@ end;
 procedure TfrMain.acLDViewExecute(Sender: TObject);
 // Execute LDView with active file
 begin
-  if (not FileExists(frOptions.edLDVIEWDir.text+'\LDVIEW.exe')) then begin
+  if (not FileExists(frOptions.edLDVIEWDir.text + '\LDVIEW.exe')) then begin
     MessageDlg(_('You have to specify a valid path to LDView.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
-    exit;
+    Exit;
   end;
   editor.Lines.SaveToFile(tempFileName);
-  DOCommand(frOptions.edLDVIEWDir.text+'\LDVIEW.exe -Poll=3 "' + tempFileName+'"',SW_SHOWNA,false);
+  DoCommand(frOptions.edLDVIEWDir.text + '\LDVIEW.exe -Poll=3 "' + tempFileName + '"',SW_SHOWNA,false);
 end;
 
 procedure TfrMain.acMLCadExecute(Sender: TObject);
 // Execute MLCad with active file
 begin
- if editor.modified then
-    if MessageDlg(_('File has been modified. ' +#13#10+
-                  'Do you want to save and then view the file in MLCad '+#13#10+
+  if editor.Modified then
+    if MessageDlg(_('File has been modified. ' + #13#10 +
+                  'Do you want to save and then view the file in MLCad ' + #13#10 +
                   'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
-  acFileSaveExecute(Sender);
-  if (not FIleExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
+      acFileSaveExecute(Sender);
+  if (not FileExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
     MessageDlg(_('You have to specify a valid path to MLCad.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
-    exit;
+    Exit;
   end;
-  DOCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "' + DocumentTabs.ActiveDocument.FileName + '"',SW_SHOWNA,false);
+  DoCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "' + DocumentTabs.ActiveDocument.FileName + '"',SW_SHOWNA,false);
 end;
 
 procedure TfrMain.acUserDefinedExecute(Sender: TObject);
@@ -897,7 +895,7 @@ begin
     ShowMessage(ExProgram[1]+' '+ParseString(ExProgram[2]));
 
   editor.Lines.SaveToFile(tempFileName);
-  DoCommand(ExProgram[1]+' '+ParseString(ExProgram[2]),opt,StrToBool(ExProgram[3]));
+  DoCommand(ExProgram[1] + ' ' + ParseString(ExProgram[2]), opt, StrToBool(ExProgram[3]));
   ExProgram.Free;
 end;
 
@@ -1169,6 +1167,18 @@ begin
   with TSciOptionsForm.Create(Self) do
   begin
     OptionPages.ActivePage := OptionsPage;
+
+    //Hide/Disable controls that aren't relavent to LDDP
+    LanguageCBBox.Visible := false;
+    KeyListAdd.Visible := false;
+    KeyListDelete.Visible := false;
+    otherPage.TabVisible := false;
+    AddStyleB.Visible := false;
+    DeleteStyleB.Visible := false;
+    StyleNumberSE.ReadOnly := true;
+    KeyListNumberSE.ReadOnly := true;
+    OptionPages.OnChange := nil;
+
     Editor := frMain.editor;
     if ShowModal = mrOK then
       EditorPropertyLoader.Save;
@@ -1402,25 +1412,15 @@ begin
     end;
   end;
 
-  if slPlugins.Count > 0 then
-  for i:=0 to plugins3.Count-1 do
-    begin
-      case strtoint(copy(slplugins[plugins3.Items[i].tag],1,pos(',',slplugins[plugins3.Items[i].tag])-1))  of
-        2: begin
-             plugins3.Items[i].enabled:=editor.SelLength<>0;
-             plugins1.Items[i].enabled:=editor.SelLength<>0;
-           end;
-        1: begin
-             plugins3.Items[i].enabled:=editor.SelLength=0;
-             plugins1.Items[i].enabled:=editor.SelLength=0;
-           end;
-        0: begin
-             plugins3.Items[i].enabled:=true;
-             plugins1.Items[i].enabled:=true;
-          end;
-      end;
+  for i := 0 to PluginActionList.ActionCount - 1 do
+  begin
+    case (PluginActionList.Actions[i] as TAction).Tag of
+      0: (PluginActionList.Actions[i] as TAction).Enabled := true;
+      1: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength = 0;
+      2: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength <> 0;
     end;
-    UpdateControls;
+  end;
+  UpdateControls;
 end;
 
 procedure TfrMain.FormDblClick(Sender: TObject);
@@ -1434,6 +1434,7 @@ begin
   TranslateComponent(Self);
   DragAcceptFiles(Handle,True);
   Initialized := False;
+  PluginActionList := TActionList.Create(Self);
 end;
 
 procedure TfrMain.FormShow(Sender: TObject);
@@ -1497,8 +1498,7 @@ begin
     regT.Free;
 
     //Load Plugins
-    slPlugins := TStringlist.create;
-    LoadPlugins(true);
+    LoadPlugins;
 
     //Set META menu commands
     BuildMetaMenu;
@@ -1662,138 +1662,135 @@ begin
                       (Sender as TMenuItem).Hint);
 end;
 
-procedure Tfrmain.LoadPlugins(AppInit:Boolean = false);
+procedure Tfrmain.LoadPlugins;
 // Load all plugins and create menu entries,
 // add names to a stringlist and enumerate entries by tag
 var
   sr: TSearchRec;
-  i, j, imgix: Integer;
-  newitem:TMenuItem;
+  i, imgix: Integer;
+  PluginMenuItem: TMenuItem;
   PluginPath, PluginFile: string;
   plgBitmap: TBitMap;
   PluginInfoList: TStringList;
+  PluginAction: TAction;
 
 begin
   PluginInfoList := TStringList.Create;
   PluginPath := ExtractFilePath(Application.ExeName) + 'Plugins' + PathDelim;
-  i:=Findfirst(PluginPath + '*.dl*',faAnyFile,sr);
-  frOptions.cblPlugins.clear;
-  slPlugins.clear;
-  frOptions.cblPlugins.sorted:=false;
-  while Plugins1.Count>0 do plugins1.items[Plugins1.Count-1].free;
-  while plugins3.Count>0 do
-  begin
-    if plugins3.items[Plugins3.Count-1].ImageIndex <> -1 then
-      ilToolBarColor.Delete(plugins3.items[Plugins3.Count-1].ImageIndex);
-    plugins3.items[Plugins3.Count-1].free;
-  end;
 
-  while i=0 do
+  if Findfirst(PluginPath + '*.dl*',faAnyFile,sr) = 0 then
   begin
-    PluginFile := PluginPath + sr.Name;
-    PluginInfoList.Clear;
-    PluginInfoList.Add('');
-    for j := 1 to 6 do
-      PluginInfoList.Add(PluginInfo(PluginFile,j));
-    if AppInit then
-    begin
-      splashscreen.lbState.Caption:=_('Initializing plugin:') + ' '+sr.name;
-      splashscreen.update;
-    end;
-    frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
-                                   ' - ' + PluginInfoList[3]);
-    slplugins.Add(PluginInfoList[6]+','+PluginFile);
+    //Clear the options dialog and plugin string list
+    frOptions.cblPlugins.Clear;
+    frOptions.cblPlugins.Sorted := false;
 
-    if ExtractfileExt(lowercase(sr.name))='.dll' then
-    begin
+    //Free all the old plugin actions and menu items
+    while PluginActionList.ActionCount > 0 do
+      with (PluginActionList.Actions[PluginActionList.ActionCount - 1] as TAction) do
+      begin
+        if ImageIndex > 0 then
+          PluginActionList.Images.Delete(ImageIndex);
+        Free;
+      end;
+    while Plugins1.Count > 0 do
+      Plugins1.items[Plugins1.Count-1].free;
+    while Plugins3.Count > 0 do
+      Plugins3.items[Plugins3.Count-1].free;
+
+    //Find and add the plugins
+    repeat
+      PluginFile := sr.Name;
+      PluginInfoList.Clear;
+      PluginInfoList.Add('');
+
+      for i := 1 to 6 do
+        PluginInfoList.Add(PluginInfo(PluginFile,i));
+
+      if not Initialized then
+      begin
+        splashscreen.lbState.Caption:=_('Initializing plugin:') + ' ' + sr.Name;
+        splashscreen.Update;
+      end;
+
+      frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
+                                     ' - ' + PluginInfoList[3]);
+
       imgix := -1;
       if FileExists(ChangeFileExt(PluginFile, '.bmp')) then
-        try
-          plgBitmap := TBitMap.Create;
-          plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
-          imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
-          plgBitmap.Free;
-        except
-          imgix := -1;
-        end;
-      NewItem := CreateMenuItem(PluginInfoList[1],PluginInfoList[3],Plugins3);
-      Newitem.tag:=slplugins.count-1;
-      NewItem.onclick:=PluginClick;
-      NewItem.ImageIndex := imgix;
-      plugins3.Insert(plugins3.count,Newitem);
+      try
+        plgBitmap := TBitMap.Create;
+        plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
+        imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
+        plgBitmap.Free;
+      except
+        imgix := -1;
+      end;
 
-      NewItem := CreateMenuItem(PluginInfoList[1],PluginInfoList[3],Plugins3);
-      Newitem.tag:=slplugins.count-1;
-      newItem.onclick:=PluginClick;
-      NewItem.ImageIndex := imgix;
-      plugins1.Insert(plugins1.count,Newitem);
-    end;
-    frOptions.cblPlugins.checked[frOptions.cblPlugins.Items.count-1] :=
-      (ExtractfileExt(lowercase(sr.name))='.dll');
-    i:=FindNext(sr);
+      PluginAction := TAction.Create(PluginActionList);
+      PluginAction.Tag := StrToInt(PluginInfoList[6]);
+      PluginAction.OnExecute := PluginClick;
+      PluginAction.ImageIndex := imgix;
+      PluginAction.Caption := PluginInfoList[1];
+      PluginAction.Hint := PluginInfoList[3];
+      PluginAction.Enabled := ExtractFileExt(LowerCase(sr.Name)) = '.dll';
+      PluginAction.Name := ChangeFileExt(sr.Name,'');
+      PluginAction.ActionList := PluginActionList;
+
+      PluginMenuItem := TMenuItem.Create(Plugins1);
+      PluginMenuItem.Action := PluginAction;
+      Plugins1.Insert(Plugins1.Count, PluginMenuItem);
+
+      PluginMenuItem := TMenuItem.Create(Plugins3);
+      PluginMenuItem.Action := PluginAction;
+      Plugins3.Insert(Plugins3.Count, PluginMenuItem);
+
+      frOptions.cblPlugins.Checked[frOptions.cblPlugins.Items.Count - 1] :=
+        PluginAction.Enabled;
+    until FindNext(sr) <> 0;
   end;
+
   if (Plugins1.Count = 0) and (Plugins3.Count = 0) then
   begin
-    NewItem := TMenuItem.Create(Plugins3);
-    NewItem.caption:=_('None Found');
-    NewItem.Enabled := false;
-    plugins3.Insert(plugins3.count,Newitem);
+    PluginMenuItem := CreateMenuItem(_('None Found'), '', Plugins1);
+    PluginMenuItem.Enabled := false;
+    Plugins1.Insert(Plugins1.Count, PluginMenuItem);
 
-    NewItem := TMenuItem.Create(Plugins1);
-    NewItem.caption:=_('None Found');
-    NewItem.Enabled := false;
-    plugins1.Insert(plugins1.count,Newitem);
+    PluginMenuItem := CreateMenuItem(_('None Found'), '', Plugins3);
+    PluginMenuItem.Enabled := false;
+    Plugins3.Insert(Plugins3.Count, PluginMenuItem);
   end;
-  Findclose(sr);
-  frOptions.cblPlugins.sorted:=true;
+
+  FindClose(sr);
+  frOptions.cblPlugins.Sorted := True;
   PluginInfoList.Free;
 end;
 
-
 procedure TfrMain.PluginClick(Sender: TObject);
-// Start Plugin related to the tag of the menu entry
+// Start Plugin related to the tag of the action
 var
- st,libname:string;
- s1,s2,s3,s4: LongWord;
+ libname: string;
+ s1, s2, s3, s4: LongWord;
 
 begin
-  libname:=copy(slplugins[(Sender as TMenuItem).tag],pos(',',slplugins[(Sender as TMenuItem).tag])+1, length(slplugins[(Sender as TMenuItem).tag]));
+  if (Sender is TAction) then
+  begin
+    libname := (Sender as TAction).Name + '.dll';
 
-     s1 := editor.SelStart;
-     s2 := editor.SelLength;
-     s3 := editor.CaretY;
-     s4 := editor.CaretX;
-     if editor.seltext<>'' then
-     begin
-       CallPlugin(libname, PChar(editor.Lines.Text),PChar(editor.seltext),s1,s2,s3,s4);
-       if strChangedSelText<>'' then editor.SelText:=frMain.strChangedSelText
-          else
-          begin
-            editor.SelectAll;
-            editor.SelText:=frMain.strChangedCompleteText;
-          end;
-     end
-        else
-        begin
-           st:=editor.Lines.text;
-           CallPlugin(libname, PChar(editor.Lines.Text),PChar(editor.seltext),s1,s2,s3,s4);
+    s1 := editor.SelStart;
+    s2 := editor.SelLength;
+    s3 := editor.CaretY;
+    s4 := editor.CaretX;
 
-           if strChangedSelText<>'' then editor.SelText:=frMain.strChangedSelText
-            else
-            begin
-              editor.SelectAll;
-              editor.SelText:=frMain.strChangedCompleteText;
-            end;
-        end;
-     if (s1=0) and (s2=0) then
-     begin
-//         CaretX := s4;
-//         CaretY := s3;
-     end
-       else
-       begin
-         editor.SetSel(s1, s1 + s2);
-       end;
+    CallPlugin(libname, editor.Lines.Text, editor.SelText, s1, s2, s3, s4);
+
+    if strChangedSelText <> '' then
+      editor.SelText := strChangedSelText
+    else
+      editor.Lines.Text := strChangedCompleteText;
+
+    if s2 <> 0 then
+      editor.SetSel(s1, s1 + s2);
+  end;
 end;
 
 // Polling procedures
@@ -2010,6 +2007,7 @@ begin
   end;
   SaveFormValues;
   EditorPropertyLoader.Save;
+  PluginActionList.Free;
 end;
 
 procedure TfrMain.SearchReplaceDlgTextNotFound(Sender: TObject);

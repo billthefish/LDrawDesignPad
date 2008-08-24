@@ -1296,7 +1296,7 @@ object frMain: TfrMain
       end
     end
   end
-  object ActionList1: TActionList
+  object MainFormActions: TActionList
     Images = ilToolBarColor
     Left = 8
     Top = 112
