@@ -1,0 +1,2219 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2005-12-25 11:37\n"
+"PO-Revision-Date: 2005-12-25 13:08-1000\n"
+"Last-Translator: Orion Pobursky\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: dxgettext 1.2.1\n"
+"Language-Team: \n"
+
+#. frAboutBox..Caption
+#: about.dfm:10
+msgid "About LDraw Design Pad"
+msgstr "About LDraw Design Pad"
+
+#. frAboutBox..Panel1..ProductName..Caption
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#. frMain..Caption
+#: about.dfm:157
+#: about.dfm:184
+#: main.dfm:8
+msgid "LDraw Design Pad"
+msgstr "LDraw Design Pad"
+
+#. frAboutBox..Panel1..Version..Caption
+#: about.dfm:170
+msgid "Version"
+msgstr "Version"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:186
+msgid "Copyright (C) 2002-2006 by the LDDP contributors"
+msgstr "Copyright (C) 2002-2006 by the LDDP contributors"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:188
+msgid " Orion Pobursky"
+msgstr " Orion Pobursky"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:189
+msgid " Stephan Schonberg"
+msgstr " Stephan Schonberg"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:190
+msgid " Carsten Schmitz"
+msgstr " Carsten Schmitz"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:192
+msgid "Special thanks to:"
+msgstr "Special thanks to:"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:194
+msgid "Lars C. Hassing"
+msgstr "Lars C. Hassing"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:196
+msgid "Error Check feature derived from L3Check.cpp, L3Math.cpp"
+msgstr "Error Check feature derived from L3Check.cpp, L3Math.cpp"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:197
+msgid "Part of the L3 project for handling LDraw *.dat files"
+msgstr "Part of the L3 project for handling LDraw *.dat files"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:198
+msgid "Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)"
+msgstr "Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:202
+msgid "Bendible Object Generator feature derived from "
+msgstr "Bendible Object Generator feature derived from "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:203
+msgid "Emacs LDraw Major-Mode "
+msgstr "Emacs LDraw Major-Mode "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:206
+msgid "Willy Tschager"
+msgstr "Willy Tschager"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:207
+msgid "Anders Isaksson"
+msgstr "Anders Isaksson"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:208
+msgid "Kevin Clague"
+msgstr "Kevin Clague"
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:210
+msgid "This program is free software; you can redistribute it "
+msgstr "This program is free software; you can redistribute it "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:211
+msgid "and/or modify it under the terms of the GNU General "
+msgstr "and/or modify it under the terms of the GNU General "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:212
+msgid "Public License as published by the Free Software Foundation; "
+msgstr "Public License as published by the Free Software Foundation; "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:213
+msgid "either version 2 of the License, or (at your option) any later "
+msgstr "either version 2 of the License, or (at your option) any later "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:214
+msgid "version."
+msgstr "version."
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:216
+msgid "This program is distributed in the hope that it will be useful, "
+msgstr "This program is distributed in the hope that it will be useful, "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:217
+msgid "but WITHOUT ANY WARRANTY; without even the implied "
+msgstr "but WITHOUT ANY WARRANTY; without even the implied "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:218
+msgid "warranty of MERCHANTABILITY or FITNESS FOR A "
+msgstr "warranty of MERCHANTABILITY or FITNESS FOR A "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:219
+msgid "PARTICULAR PURPOSE.  See the GNU General Public License "
+msgstr "PARTICULAR PURPOSE.  See the GNU General Public License "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:220
+msgid "for more details."
+msgstr "for more details."
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:222
+msgid "You should have received a copy of the GNU General "
+msgstr "You should have received a copy of the GNU General "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:223
+msgid "Public License along with this program; if not, write to the "
+msgstr "Public License along with this program; if not, write to the "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:224
+msgid "Free Software Foundation, Inc., "
+msgstr "Free Software Foundation, Inc., "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:225
+msgid "59 Temple Place - Suite 330, "
+msgstr "59 Temple Place - Suite 330, "
+
+#. frAboutBox..Panel1..Memo1....Lines.Strings
+#: about.dfm:226
+msgid "Boston, MA  02111-1307, USA."
+msgstr "Boston, MA  02111-1307, USA."
+
+#. frAboutBox..BitBtn1..Caption
+#. frColorDialog..Panel3..BitBtn1..Caption
+#. TextSearchDialog..btnOK..Caption
+#. frModelTreeView..Panel1..BitBtn1..Caption
+#. frOptions..Panel1..BitBtn1..Caption
+#. fmSort..Panel1..BitBtn1..Caption
+#: about.dfm:236
+#: colordialog.dfm:281
+#: dlgsearchtext.dfm:83
+#: modeltreeview.dfm:30
+#: options.dfm:37
+#: sorting.dfm:88
+msgid "OK"
+msgstr "OK"
+
+#. frmDATCurve..Caption
+#: BezWindow.dfm:6
+msgid "Bendible Objects Creator"
+msgstr "Bendible Objects Creator"
+
+#. frmDATCurve..lblType..Caption
+#: BezWindow.dfm:27
+msgid "Type"
+msgstr "Type"
+
+#. frmDATCurve..btnGenerate..Caption
+#: BezWindow.dfm:67
+msgid "Generate Curve"
+msgstr "Generate Curve"
+
+#. frmDATCurve..btnCancel..Caption
+#. frColorDialog..Panel3..BitBtn2..Caption
+#. ConfirmReplaceDialog..btnCancel..Caption
+#. TextSearchDialog..btnCancel..Caption
+#. frSubFile..btnCancel..Caption
+#. frOptions..Panel1..BitBtn2..Caption
+#. fmSort..Panel1..BitBtn2..Caption
+#: BezWindow.dfm:77
+#: colordialog.dfm:336
+#: dlgconfirmreplace.dfm:59
+#: dlgsearchtext.dfm:94
+#: dlgSubpart.dfm:149
+#: options.dfm:92
+#: sorting.dfm:36
+msgid "Cancel"
+msgstr "Cancel"
+
+#. frmDATCurve..gbxStartPoint..Caption
+#: BezWindow.dfm:86
+msgid "Start Point"
+msgstr "Start Point"
+
+#. frmDATCurve..gbxCont1..Caption
+#: BezWindow.dfm:115
+msgid "Control Point 1"
+msgstr "Control Point 1"
+
+#. frmDATCurve..gbxCont2..Caption
+#: BezWindow.dfm:178
+msgid "Control Point 2"
+msgstr "Control Point 2"
+
+#. frmDATCurve..gbxEndPoint..Caption
+#: BezWindow.dfm:241
+msgid "End Point"
+msgstr "End Point"
+
+#. frmDATCurve..cbxContEnable..Caption
+#: BezWindow.dfm:270
+msgid "Manually Enter Control Points"
+msgstr "Manually Enter Control Points"
+
+#. frBMP2LDrawMain..ScrollBox1..pnProgress..Label4..Caption
+#: BMP2LDraw.dfm:45
+msgid "Converting..."
+msgstr "Converting..."
+
+#. frBMP2LDrawMain..pc..TabSheet1..Label1..Caption
+#: BMP2LDraw.dfm:85
+msgid "First load the image you want to convert..."
+msgstr "First load the image you want to convert..."
+
+#. frBMP2LDrawMain..pc..TabSheet1..Label6..Caption
+#: BMP2LDraw.dfm:92
+msgid "Welcome to the BMP-to-LDraw Wizard..."
+msgstr "Welcome to the BMP-to-LDraw Wizard..."
+
+#. frBMP2LDrawMain..pc..TabSheet1..Label3....Caption
+#: BMP2LDraw.dfm:108
+msgid "Remember that using this tool isn't the appropiate way to create patterns for  official parts."
+msgstr "Remember that using this tool isn't the appropiate way to create patterns for  official parts."
+
+#. frBMP2LDrawMain..pc..TabSheet1..BitBtn1..Caption
+#: BMP2LDraw.dfm:117
+msgid "&Open Bitmap"
+msgstr "&Open Bitmap"
+
+#. frBMP2LDrawMain..pc..TabSheet1..btNext1..Caption
+#. frBMP2LDrawMain..pc..TabSheet2..BitBtn5..Caption
+#: BMP2LDraw.dfm:169
+#: BMP2LDraw.dfm:286
+msgid ">> Next"
+msgstr ">> Next"
+
+#. frBMP2LDrawMain..pc..TabSheet2..Label5..Caption
+#: BMP2LDraw.dfm:191
+msgid "&Choose a transparent color:"
+msgstr "&Choose a transparent color:"
+
+#. frBMP2LDrawMain..pc..TabSheet2..Edit1..Text
+#. fmSort..Panel2..cbSort..Text
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2..Text
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3..Text
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: BMP2LDraw.dfm:200
+#: sorting.dfm:198
+#: sorting.dfm:200
+#: sorting.dfm:222
+#: sorting.dfm:224
+#: sorting.dfm:246
+#: sorting.dfm:248
+#: BMP2LDraw.pas:371
+msgid "None"
+msgstr "None"
+
+#. frBMP2LDrawMain..pc..TabSheet2..BitBtn6..Caption
+#: BMP2LDraw.dfm:207
+msgid "C&lear color"
+msgstr "C&lear color"
+
+#. frBMP2LDrawMain..pc..TabSheet2..Button1..Caption
+#: BMP2LDraw.dfm:259
+msgid "&Pick color"
+msgstr "&Pick color"
+
+#. frBMP2LDrawMain..pc..TabSheet2..BitBtn4..Caption
+#. frBMP2LDrawMain..pc..TabSheet3..BitBtn2..Caption
+#: BMP2LDraw.dfm:277
+#: BMP2LDraw.dfm:355
+msgid "<< Previous"
+msgstr "<< Previous"
+
+#. frBMP2LDrawMain..pc..TabSheet2..rbTrans1..Caption
+#: BMP2LDraw.dfm:296
+msgid "&Replace with transparency value (default)"
+msgstr "&Replace with transparency value (default)"
+
+#. frBMP2LDrawMain..pc..TabSheet2..rbTrans2..Caption
+#: BMP2LDraw.dfm:306
+msgid "&Just leave color out"
+msgstr "&Just leave color out"
+
+#. frBMP2LDrawMain..pc..TabSheet3..Label2..Caption
+#: BMP2LDraw.dfm:326
+msgid "LDraw unit"
+msgstr "LDraw unit"
+
+#. frBMP2LDrawMain..pc..TabSheet3..RadioButton1..Caption
+#: BMP2LDraw.dfm:333
+msgid "1 &Pixel ="
+msgstr "1 &Pixel ="
+
+#. frBMP2LDrawMain..pc..TabSheet3..RadioButton2....Caption
+#: BMP2LDraw.dfm:346
+msgid "Span over Quadrilateral.  Insert complete Quadrilateral line here:"
+msgstr "Span over Quadrilateral.  Insert complete Quadrilateral line here:"
+
+#. frBMP2LDrawMain..pc..TabSheet3..btSave..Caption
+#: BMP2LDraw.dfm:364
+msgid "Done"
+msgstr "Done"
+
+#. frBMP2LDrawMain..PopupMenu1..About1..Caption
+#. frMain..ActionList1..HelpAbout..Caption
+#: BMP2LDraw.dfm:434
+#: main.dfm:931
+msgid "&About..."
+msgstr "&About..."
+
+#. frBMP2LDrawMain..OpenDialog..Filter
+#: BMP2LDraw.dfm:438
+msgid "Bitmaps (*.bmp)|*.bmp|All files (*.*)|*.*"
+msgstr "Bitmaps (*.bmp)|*.bmp|All files (*.*)|*.*"
+
+#. frBMP2LDrawMain..OpenDialog..Title
+#: BMP2LDraw.dfm:441
+msgid "Open bitmap"
+msgstr "Open bitmap"
+
+#. frEditorChild..pnInfo..lbInfo......Caption
+#: childwin.dfm:79
+msgid "Fix"
+msgstr "Fix"
+
+#. frEditorChild..pnInfo..lbInfo......Caption
+#: childwin.dfm:85
+msgid "Line Number"
+msgstr "Line Number"
+
+#. frEditorChild..pnInfo..lbInfo......Caption
+#: childwin.dfm:92
+msgid "Error"
+msgstr "Error"
+
+#. frColorDialog..Caption
+#: colordialog.dfm:9
+msgid "Search & Replace Color Dialog"
+msgstr "Search & Replace Color Dialog"
+
+#. frColorDialog..GroupBox1..Caption
+#: colordialog.dfm:29
+msgid "Pick your color"
+msgstr "Pick your color"
+
+#. frColorDialog..GroupBox1..Label1..Caption
+#: colordialog.dfm:164
+msgid "Old color:"
+msgstr "Old color:"
+
+#. frColorDialog..GroupBox1..Label2..Caption
+#: colordialog.dfm:171
+msgid "New Color:"
+msgstr "New Color:"
+
+#. frColorDialog..GroupBox1..Label3..Caption
+#: colordialog.dfm:178
+msgid "Custom Color Nr:"
+msgstr "Custom Color Nr:"
+
+#. frColorDialog..GroupBox1..btOldColor..Caption
+#: colordialog.dfm:187
+msgid "Unknown"
+msgstr "Unknown"
+
+#. frColorDialog..GroupBox1..btNewColor..Caption
+#: colordialog.dfm:203
+msgid "0 - Black"
+msgstr "0 - Black"
+
+#. frColorDialog..GroupBox1..rgOptions....Items.Strings
+#: colordialog.dfm:251
+#: main.pas:1721
+msgid "Replace All"
+msgstr "Replace All"
+
+#. frColorDialog..GroupBox1..cbxReplaceEverything..Caption
+#: colordialog.dfm:259
+msgid "Replace Regardless of Original Color"
+msgstr "Replace Regardless of Original Color"
+
+#. ConfirmReplaceDialog..Caption
+#: dlgconfirmreplace.dfm:5
+msgid "Confirm replace"
+msgstr "Confirm replace"
+
+#. ConfirmReplaceDialog..btnReplace..Caption
+#: dlgconfirmreplace.dfm:39
+msgid "&Yes"
+msgstr "&Yes"
+
+#. ConfirmReplaceDialog..btnSkip..Caption
+#: dlgconfirmreplace.dfm:49
+msgid "&No"
+msgstr "&No"
+
+#. ConfirmReplaceDialog..btnReplaceAll..Caption
+#: dlgconfirmreplace.dfm:68
+msgid "Yes to &all"
+msgstr "Yes to &all"
+
+#. TextReplaceDialog..Caption
+#: dlgreplacetext.dfm:4
+msgid "Replace text"
+msgstr "Replace text"
+
+#. TextReplaceDialog..Label2..Caption
+#: dlgreplacetext.dfm:14
+msgid "&Replace with:"
+msgstr "&Replace with:"
+
+#. TextSearchDialog..Caption
+#: dlgsearchtext.dfm:5
+msgid "Search Text"
+msgstr "Search Text"
+
+#. TextSearchDialog..Label1..Caption
+#: dlgsearchtext.dfm:24
+msgid "&Search for:"
+msgstr "&Search for:"
+
+#. TextSearchDialog..gbSearchOptions..Caption
+#: dlgsearchtext.dfm:39
+msgid "Options"
+msgstr "Options"
+
+#. TextSearchDialog..gbSearchOptions..cbSearchCaseSensitive..Caption
+#: dlgsearchtext.dfm:46
+msgid "C&ase sensitivity"
+msgstr "C&ase sensitivity"
+
+#. TextSearchDialog..gbSearchOptions..cbSearchWholeWords..Caption
+#: dlgsearchtext.dfm:54
+msgid "&Whole words only"
+msgstr "&Whole words only"
+
+#. TextSearchDialog..gbSearchOptions..cbSearchSelectedOnly..Caption
+#: dlgsearchtext.dfm:62
+msgid "&Selected text only"
+msgstr "&Selected text only"
+
+#. TextSearchDialog..rgSearchDirection..Caption
+#: dlgsearchtext.dfm:71
+msgid "Direction"
+msgstr "Direction"
+
+#. TextSearchDialog..rgSearchDirection....Items.Strings
+#: dlgsearchtext.dfm:74
+msgid "&Forward"
+msgstr "&Forward"
+
+#. TextSearchDialog..rgSearchDirection....Items.Strings
+#: dlgsearchtext.dfm:75
+msgid "&Backward"
+msgstr "&Backward"
+
+#. frSubFile..Caption
+#: dlgSubpart.dfm:5
+msgid "Move Selection to Subfile"
+msgstr "Move Selection to Subfile"
+
+#. frSubFile..Label1..Caption
+#: dlgSubpart.dfm:23
+msgid "Filename:"
+msgstr "Filename:"
+
+#. frSubFile..Label2..Caption
+#: dlgSubpart.dfm:30
+msgid "Model Title:"
+msgstr "Model Title:"
+
+#. frSubFile..Label3..Caption
+#: dlgSubpart.dfm:37
+msgid "Author:"
+msgstr "Author:"
+
+#. frSubFile..Label4..Caption
+#: dlgSubpart.dfm:44
+msgid "Header Comments:"
+msgstr "Header Comments:"
+
+#. frSubFile..rgType..Caption
+#: dlgSubpart.dfm:74
+msgid "Model Type"
+msgstr "Model Type"
+
+#. frSubFile..rgType....Items.Strings
+#: dlgSubpart.dfm:77
+msgid "Model"
+msgstr "Model"
+
+#. frSubFile..rgType....Items.Strings
+#: dlgSubpart.dfm:78
+msgid "Submodel"
+msgstr "Submodel"
+
+#. frSubFile..rgType....Items.Strings
+#: dlgSubpart.dfm:79
+msgid "Part"
+msgstr "Part"
+
+#. frSubFile..rgType....Items.Strings
+#: dlgSubpart.dfm:80
+msgid "Subpart"
+msgstr "Subpart"
+
+#. frSubFile..rgType....Items.Strings
+#: dlgSubpart.dfm:81
+msgid "Primitive"
+msgstr "Primitive"
+
+#. frSubFile..cbUnofficial..Caption
+#: dlgSubpart.dfm:89
+msgid "Mark as Unofficial"
+msgstr "Mark as Unofficial"
+
+#. frSubFile..btnCreate..Caption
+#: dlgSubpart.dfm:97
+msgid "Create"
+msgstr "Create"
+
+#. frMain..ControlBar1..ToolBar2..Caption
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Caption
+#. frMain..ActionList1..acExternalsToolbar..Caption
+#: main.dfm:69
+#: main.dfm:755
+#: main.dfm:1134
+msgid "External Programs"
+msgstr "External Programs"
+
+#. frMain..ControlBar1..ToolBar1..Caption
+#. frMain..ActionList1..acFileToolbar..Caption
+#: main.dfm:133
+#: main.dfm:1106
+msgid "Files"
+msgstr "Files"
+
+#. frMain..ControlBar1..ToolBar3..Caption
+#: main.dfm:181
+msgid "Search & Replace"
+msgstr "Search & Replace"
+
+#. frMain..ControlBar1..ToolBar4..Caption
+#. frMain..ActionList1..acWindowsToolbar..Caption
+#: main.dfm:219
+#: main.dfm:1127
+msgid "Windows"
+msgstr "Windows"
+
+#. frMain..ControlBar1..ToolBar5..Caption
+#. frMain..ActionList1..acEditingToolbar..Caption
+#: main.dfm:252
+#: main.dfm:1113
+msgid "Editing"
+msgstr "Editing"
+
+#. frMain..ControlBar1..tbrColorReplace..Caption
+#. frMain..ActionList1..acColorToolbar..Caption
+#: main.dfm:373
+#: main.dfm:1324
+msgid "Color Replace"
+msgstr "Color Replace"
+
+#. frMain..MainMenu1..File1..Caption
+#: main.dfm:491
+msgid "File"
+msgstr "File"
+
+#. frMain..MainMenu1..File1..Hint
+#: main.dfm:492
+msgid "File Commands"
+msgstr "File Commands"
+
+#. frMain..MainMenu1..File1..CloseAll1..Hint
+#: main.dfm:504
+msgid "Close all|Close all files"
+msgstr "Close all|Close all files"
+
+#. frMain..MainMenu1..File1..Print1..Hint
+#. Form1..ToolBar1..ToolButton1..Caption
+#: main.dfm:514
+#: preview.dfm:32
+msgid "Print"
+msgstr "Print"
+
+#. frMain..MainMenu1..File1..LastOpen1..Caption
+#: main.dfm:524
+msgid "Last opened"
+msgstr "Last opened"
+
+#. frMain..MainMenu1..Edit1..Caption
+#: main.dfm:535
+msgid "Edit"
+msgstr "Edit"
+
+#. frMain..MainMenu1..Edit1..Hint
+#: main.dfm:536
+msgid "Editing Commands"
+msgstr "Editing Commands"
+
+#. frMain..MainMenu1..View1..Caption
+#: main.dfm:578
+msgid "View"
+msgstr "View"
+
+#. frMain..MainMenu1..View1..Hint
+#: main.dfm:579
+msgid "View Options"
+msgstr "View Options"
+
+#. frMain..MainMenu1..View1..Toolbars..Caption
+#: main.dfm:581
+msgid "&Toolbars"
+msgstr "&Toolbars"
+
+#. frMain..MainMenu1..View1..Toolbars..Hint
+#: main.dfm:582
+msgid "Show or Hide Toolbars"
+msgstr "Show or Hide Toolbars"
+
+#. frMain..MainMenu1..View1..SyntaxHighlighting1..Caption
+#. frMain..pmMemo..Highlighting1..Caption
+#: main.dfm:603
+#: main.dfm:2893
+msgid "Syntax Highlighting"
+msgstr "Syntax Highlighting"
+
+#. frMain..MainMenu1..Insert1..Caption
+#: main.dfm:616
+msgid "Insert"
+msgstr "Insert"
+
+#. frMain..MainMenu1..Insert1..Hint
+#: main.dfm:617
+msgid "Insert Commands"
+msgstr "Insert Commands"
+
+#. frMain..MainMenu1..Insert1..mnuMeta..Caption
+#. frMain..pmMemo..Insert2..mnuMeta2..Caption
+#: main.dfm:625
+#: main.dfm:2829
+msgid "META Statement"
+msgstr "META Statement"
+
+#. frMain..MainMenu1..Tools1..Caption
+#: main.dfm:629
+msgid "Tools"
+msgstr "Tools"
+
+#. frMain..MainMenu1..Tools1..Hint
+#: main.dfm:630
+msgid "LDraw Tool Commands"
+msgstr "LDraw Tool Commands"
+
+#. frMain..MainMenu1..Tools1..Mirror1..Caption
+#. frMain..pmMemo..MirrorLineOn1..Caption
+#: main.dfm:662
+#: main.dfm:2839
+msgid "Mirror Line On"
+msgstr "Mirror Line On"
+
+#. frMain..MainMenu1..Tools1..ErrorCheck1..Caption
+#: main.dfm:677
+msgid "Error Checking"
+msgstr "Error Checking"
+
+#. frMain..MainMenu1..Tools1..ErrorCheck1..Hint
+#: main.dfm:678
+msgid "Check for errors"
+msgstr "Check for errors"
+
+#. frMain..MainMenu1..Processing1..Caption
+#: main.dfm:746
+msgid "Process"
+msgstr "Process"
+
+#. frMain..MainMenu1..Processing1..Plugins1..Caption
+#. frMain..pmMemo..Plugins3..Caption
+#. frOptions..PageControl1..TabSheet3..Caption
+#: main.dfm:748
+#: main.dfm:2833
+#: options.dfm:993
+msgid "&Plugins"
+msgstr "&Plugins"
+
+#. frMain..MainMenu1..Processing1..Plugins1..Nonefound1..Caption
+#: main.dfm:751
+msgid "(None found)"
+msgstr "(None found)"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..mnuUserDefined..Caption
+#: main.dfm:766
+msgid "User Defined Program"
+msgstr "User Defined Program"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..mnuUserDefined..Hint
+#: main.dfm:767
+msgid "User Defined Program|Execute User Defined program"
+msgstr "User Defined Program|Execute User Defined program"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Polling1..Caption
+#: main.dfm:774
+msgid "Polling"
+msgstr "Polling"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Polling1..PolltoL3LabLDView1..Caption
+#. frMain..pmPolling..mnPollL3Lab..Caption
+#: main.dfm:777
+#: main.dfm:2909
+msgid "Poll to L3Lab && LDView"
+msgstr "Poll to L3Lab && LDView"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Polling1..Polltoselectedlineonly1..Caption
+#. frMain..pmPolling..mnPollToSelected..Caption
+#: main.dfm:781
+#: main.dfm:2914
+msgid "Poll to selected line only"
+msgstr "Poll to selected line only"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Polling1..Pollevery1sec1..Caption
+#. frMain..pmPolling..Pollevery1sec2..Caption
+#: main.dfm:788
+#: main.dfm:2923
+msgid "Poll every 1 sec"
+msgstr "Poll every 1 sec"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Polling1..Pollevery2sec1..Caption
+#: main.dfm:794
+msgid "Poll every 2 sec"
+msgstr "Poll every 2 sec"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Polling1..Pollevery5sec..Caption
+#: main.dfm:800
+msgid "Poll every 5 sec"
+msgstr "Poll every 5 sec"
+
+#. frMain..MainMenu1..Processing1..ExternalPrograms1..Polling1..Pollonrequest2..Caption
+#. frMain..pmPolling..Pollonrequest1..Caption
+#: main.dfm:805
+#: main.dfm:2942
+msgid "Poll on request"
+msgstr "Poll on request"
+
+#. frMain..MainMenu1..Window1..Caption
+#: main.dfm:829
+msgid "Window"
+msgstr "Window"
+
+#. frMain..MainMenu1..Window1..Hint
+#: main.dfm:830
+msgid "Window Commands"
+msgstr "Window Commands"
+
+#. frMain..MainMenu1..Help1..Caption
+#. frMain..ActionList1..HelpAbout..Category
+#: main.dfm:839
+#: main.dfm:930
+msgid "Help"
+msgstr "Help"
+
+#. frMain..MainMenu1..Help1..Hint
+#: main.dfm:840
+msgid "Help Commands"
+msgstr "Help Commands"
+
+#. frMain..ActionList1..acFileNew..Caption
+#: main.dfm:858
+msgid "&New"
+msgstr "&New"
+
+#. frMain..ActionList1..acFileNew..Hint
+#: main.dfm:859
+msgid "New|Create a new file"
+msgstr "New|Create a new file"
+
+#. frMain..ActionList1..acFileOpen..Caption
+#: main.dfm:866
+msgid "&Open..."
+msgstr "&Open..."
+
+#. frMain..ActionList1..acFileOpen..Hint
+#: main.dfm:867
+msgid "Open|Open an existing file"
+msgstr "Open|Open an existing file"
+
+#. frMain..ActionList1..acFileClose..Caption
+#: main.dfm:874
+msgid "&Close"
+msgstr "&Close"
+
+#. frMain..ActionList1..acFileClose..Hint
+#: main.dfm:875
+msgid "Close|Close current file"
+msgstr "Close|Close current file"
+
+#. frMain..ActionList1..acFileSave..Caption
+#: main.dfm:879
+msgid "&Save"
+msgstr "&Save"
+
+#. frMain..ActionList1..acFileSave..Hint
+#: main.dfm:880
+msgid "Save|Save current file"
+msgstr "Save|Save current file"
+
+#. frMain..ActionList1..acFileSaveAs..Caption
+#: main.dfm:887
+msgid "Save &As..."
+msgstr "Save &As..."
+
+#. frMain..ActionList1..acFileSaveAs..Hint
+#: main.dfm:888
+msgid "Save As|Save file under a new filename"
+msgstr "Save As|Save file under a new filename"
+
+#. frMain..ActionList1..acFileExit..Caption
+#: main.dfm:894
+msgid "&Exit"
+msgstr "&Exit"
+
+#. frMain..ActionList1..acFileExit..Hint
+#: main.dfm:895
+msgid "Exit|Quit program"
+msgstr "Exit|Quit program"
+
+#. frMain..ActionList1..acEditCut..Caption
+#: main.dfm:900
+msgid "&Cut"
+msgstr "&Cut"
+
+#. frMain..ActionList1..acEditCut..Hint
+#: main.dfm:901
+msgid "Cut|Cut out the marked text"
+msgstr "Cut|Cut out the marked text"
+
+#. frMain..ActionList1..acEditCopy..Caption
+#: main.dfm:908
+msgid "C&opy"
+msgstr "C&opy"
+
+#. frMain..ActionList1..acEditCopy..Hint
+#: main.dfm:909
+msgid "Copy|Copy the marked text to clipboard"
+msgstr "Copy|Copy the marked text to clipboard"
+
+#. frMain..ActionList1..acEditPaste..Caption
+#: main.dfm:916
+msgid "&Paste"
+msgstr "&Paste"
+
+#. frMain..ActionList1..acEditPaste..Hint
+#: main.dfm:917
+msgid "Paste|Paste text from clipboard"
+msgstr "Paste|Paste text from clipboard"
+
+#. frMain..ActionList1..acWindowCascade..Caption
+#: main.dfm:924
+msgid "&Cascade"
+msgstr "&Cascade"
+
+#. frMain..ActionList1..acWindowCascade..Hint
+#: main.dfm:925
+msgid "Cascade|Cascade all open windows"
+msgstr "Cascade|Cascade all open windows"
+
+#. frMain..ActionList1..HelpAbout..Hint
+#: main.dfm:932
+msgid "Info|Show info about LDDP"
+msgstr "Info|Show info about LDDP"
+
+#. frMain..ActionList1..acFileRevert..Caption
+#: main.dfm:937
+msgid "Revert"
+msgstr "Revert"
+
+#. frMain..ActionList1..acFileRevert..Hint
+#: main.dfm:938
+msgid "Revert|Reload file and lose changes"
+msgstr "Revert|Reload file and lose changes"
+
+#. frMain..ActionList1..acFind..Caption
+#: main.dfm:943
+msgid "&Find..."
+msgstr "&Find..."
+
+#. frMain..ActionList1..acFind..Hint
+#: main.dfm:944
+msgid "Find text|Find specified text"
+msgstr "Find text|Find specified text"
+
+#. frMain..ActionList1..acReplace..Caption
+#: main.dfm:951
+msgid "&Replace..."
+msgstr "&Replace..."
+
+#. frMain..ActionList1..acReplace..Hint
+#: main.dfm:952
+msgid "Find and replace text|Find and replace text"
+msgstr "Find and replace text|Find and replace text"
+
+#. frMain..ActionList1..acErrorCheck..Caption
+#: main.dfm:959
+msgid "Run Error Check"
+msgstr "Run Error Check"
+
+#. frMain..ActionList1..acErrorCheck..Hint
+#: main.dfm:960
+msgid "Check for errors|Check for errors"
+msgstr "Check for errors|Check for errors"
+
+#. frMain..ActionList1..acOptions..Caption
+#: main.dfm:967
+msgid "&Options..."
+msgstr "&Options..."
+
+#. frMain..ActionList1..acOptions..Hint
+#: main.dfm:968
+msgid "Options|Options"
+msgstr "Options|Options"
+
+#. frMain..ActionList1..acLDView..Caption
+#: main.dfm:975
+msgid "LDView"
+msgstr "LDView"
+
+#. frMain..ActionList1..acLDView..Hint
+#: main.dfm:976
+msgid "Start LDView"
+msgstr "Start LDView"
+
+#. frMain..ActionList1..acUndo..Caption
+#: main.dfm:982
+msgid "&Undo"
+msgstr "&Undo"
+
+#. frMain..ActionList1..acUndo..Hint
+#: main.dfm:983
+msgid "Undo last action"
+msgstr "Undo last action"
+
+#. frMain..ActionList1..acRedo..Caption
+#: main.dfm:990
+msgid "&Redo"
+msgstr "&Redo"
+
+#. frMain..ActionList1..acRedo..Hint
+#: main.dfm:991
+msgid "Redo last action"
+msgstr "Redo last action"
+
+#. frMain..ActionList1..acMLCad..Caption
+#: main.dfm:998
+msgid "MLCad"
+msgstr "MLCad"
+
+#. frMain..ActionList1..acMLCad..Hint
+#: main.dfm:999
+msgid "Start MLCad"
+msgstr "Start MLCad"
+
+#. frMain..ActionList1..acincIndent..Caption
+#. frMain..ActionList1..acincIndent..Hint
+#: main.dfm:1005
+#: main.dfm:1006
+msgid "Increase Indent"
+msgstr "Increase Indent"
+
+#. frMain..ActionList1..acDecIndent..Caption
+#. frMain..ActionList1..acDecIndent..Hint
+#: main.dfm:1012
+#: main.dfm:1013
+msgid "Decrease Indent"
+msgstr "Decrease Indent"
+
+#. frMain..ActionList1..acInsertPartHeader..Caption
+#: main.dfm:1019
+msgid "Standard Part Header"
+msgstr "Standard Part Header"
+
+#. frMain..ActionList1..acInsertPartHeader..Hint
+#: main.dfm:1020
+msgid "Insert a part header"
+msgstr "Insert a part header"
+
+#. frMain..ActionList1..acInsertUpdateLine..Caption
+#: main.dfm:1025
+msgid "Update Header"
+msgstr "Update Header"
+
+#. frMain..ActionList1..acInsertUpdateLine..Hint
+#: main.dfm:1026
+msgid "Insert an update line header"
+msgstr "Insert an update line header"
+
+#. frMain..ActionList1..acCommentBlock..Caption
+#: main.dfm:1032
+msgid "&Comment"
+msgstr "&Comment"
+
+#. frMain..ActionList1..acCommentBlock..Hint
+#: main.dfm:1033
+msgid "Comment a block with 0"
+msgstr "Comment a block with 0"
+
+#. frMain..ActionList1..acUncommentBlock..Caption
+#: main.dfm:1040
+msgid "&Uncomment"
+msgstr "&Uncomment"
+
+#. frMain..ActionList1..acUncommentBlock..Hint
+#: main.dfm:1041
+msgid ""
+"Uncomment a commented block\n"
+"by removing leading zeros"
+msgstr ""
+"Uncomment a commented block\n"
+"by removing leading zeros"
+
+#. frMain..ActionList1..acTrimLines..Caption
+#: main.dfm:1048
+msgid "Tr&im Lines"
+msgstr "Tr&im Lines"
+
+#. frMain..ActionList1..acTrimLines..Hint
+#: main.dfm:1049
+msgid "Removes blank lines from selection"
+msgstr "Removes blank lines from selection"
+
+#. frMain..ActionList1..acHomepage..Caption
+#: main.dfm:1055
+msgid "LDDP &Homepage"
+msgstr "LDDP &Homepage"
+
+#. frMain..ActionList1..acHomepage..Hint
+#: main.dfm:1056
+msgid "Go to LDDP homepage"
+msgstr "Go to LDDP homepage"
+
+#. frMain..ActionList1..acInline..Caption
+#: main.dfm:1062
+msgid "I&nline Part"
+msgstr "I&nline Part"
+
+#. frMain..ActionList1..acInline..Hint
+#: main.dfm:1063
+msgid "Inline a part"
+msgstr "Inline a part"
+
+#. frMain..ActionList1..acReplaceColor..Caption
+#: main.dfm:1075
+msgid "Replace &Color..."
+msgstr "Replace &Color..."
+
+#. frMain..ActionList1..acReplaceColor..Hint
+#: main.dfm:1076
+msgid "Search and replace LDraw colors with a color dialogue"
+msgstr "Search and replace LDraw colors with a color dialogue"
+
+#. frMain..ActionList1..acSelectAll..Caption
+#: main.dfm:1082
+msgid "&Select all"
+msgstr "&Select all"
+
+#. frMain..ActionList1..acSelectAll..Hint
+#: main.dfm:1083
+msgid "Select all"
+msgstr "Select all"
+
+#. frMain..ActionList1..acFindNext..Caption
+#: main.dfm:1089
+msgid "Find &Next"
+msgstr "Find &Next"
+
+#. frMain..ActionList1..acFindNext..Hint
+#: main.dfm:1091
+msgid "Find next..."
+msgstr "Find next..."
+
+#. frMain..ActionList1..acL3Lab..Caption
+#: main.dfm:1099
+msgid "L3Lab"
+msgstr "L3Lab"
+
+#. frMain..ActionList1..acL3Lab..Hint
+#: main.dfm:1100
+msgid "Start L3Lab"
+msgstr "Start L3Lab"
+
+#. frMain..ActionList1..acSearchToolbar..Caption
+#: main.dfm:1120
+msgid "Search && Replace"
+msgstr "Search && Replace"
+
+#. frMain..ActionList1..acHighlightLdraw..Category
+#. frMain..ActionList1..acHighlightPascal..Category
+#. frMain..ActionList1..acHighlightCpp..Category
+#: main.dfm:1140
+#: main.dfm:1145
+#: main.dfm:1150
+msgid "Highlighter"
+msgstr "Highlighter"
+
+#. frMain..ActionList1..acHighlightLdraw..Caption
+#: main.dfm:1141
+msgid "LDraw"
+msgstr "LDraw"
+
+#. frMain..ActionList1..acHighlightPascal..Caption
+#: main.dfm:1146
+msgid "Pascal"
+msgstr "Pascal"
+
+#. frMain..ActionList1..acHighlightCpp..Caption
+#: main.dfm:1151
+msgid "C++"
+msgstr "C++"
+
+#. frMain..ActionList1..acMRUList..Caption
+#: main.dfm:1156
+msgid "acMRUList"
+msgstr "acMRUList"
+
+#. frMain..ActionList1..acFilePrint..Caption
+#: main.dfm:1161
+msgid "&Print..."
+msgstr "&Print..."
+
+#. frMain..ActionList1..acFilePrint..Hint
+#: main.dfm:1162
+msgid "Print|Print current file"
+msgstr "Print|Print current file"
+
+#. frMain..ActionList1..acFileCloseAll..Caption
+#: main.dfm:1169
+msgid "Close A&ll"
+msgstr "Close A&ll"
+
+#. frMain..ActionList1..acFileCloseAll..Hint
+#: main.dfm:1170
+msgid "Close all|Close all open files"
+msgstr "Close all|Close all open files"
+
+#. frMain..ActionList1..acWindowTile..Caption
+#: main.dfm:1175
+msgid "Tile"
+msgstr "Tile"
+
+#. frMain..ActionList1..acWindowTile..Hint
+#: main.dfm:1176
+msgid "Tile|Tile all open windows"
+msgstr "Tile|Tile all open windows"
+
+#. frMain..ActionList1..acReverseWinding..Caption
+#: main.dfm:1182
+msgid "&Reverse Winding"
+msgstr "&Reverse Winding"
+
+#. frMain..ActionList1..acReverseWinding..Hint
+#: main.dfm:1183
+msgid "Reverse Winding"
+msgstr "Reverse Winding"
+
+#. frMain..ActionList1..acCheckforUpdate..Caption
+#: main.dfm:1192
+msgid "Check for Update..."
+msgstr "Check for Update..."
+
+#. frMain..ActionList1..acCheckforUpdate..Hint
+#: main.dfm:1193
+msgid "Check if there is a newer version available..."
+msgstr "Check if there is a newer version available..."
+
+#. frMain..ActionList1..acBMP2LDraw..Caption
+#: main.dfm:1198
+msgid "Convert Bitmap to LDraw..."
+msgstr "Convert Bitmap to LDraw..."
+
+#. frMain..ActionList1..acBMP2LDraw..Hint
+#: main.dfm:1199
+msgid "Start BMP-2-LDraw Tool"
+msgstr "Start BMP-2-LDraw Tool"
+
+#. frMain..ActionList1..acModelTreeView..Caption
+#: main.dfm:1204
+msgid "View Model Tree..."
+msgstr "View Model Tree..."
+
+#. frMain..ActionList1..acModelTreeView..Hint
+#: main.dfm:1205
+msgid "Show a Tree Model of this file including all submodels"
+msgstr "Show a Tree Model of this file including all submodels"
+
+#. frMain..ActionList1..acECFixError..Caption
+#: main.dfm:1210
+msgid "Autofix Selected Error"
+msgstr "Autofix Selected Error"
+
+#. frMain..ActionList1..acECFixAllErrors..Caption
+#: main.dfm:1216
+msgid "Autofix All Errors"
+msgstr "Autofix All Errors"
+
+#. frMain..ActionList1..acECMarkAll..Caption
+#: main.dfm:1222
+msgid "Mark All"
+msgstr "Mark All"
+
+#. frMain..ActionList1..acECUnMarkAll..Caption
+#: main.dfm:1228
+msgid "Unmark All"
+msgstr "Unmark All"
+
+#. frMain..ActionList1..acECFixAllMarkedErrors..Caption
+#: main.dfm:1234
+msgid "Autofix All Marked Errors"
+msgstr "Autofix All Marked Errors"
+
+#. frMain..ActionList1..acECFixAllMarkedErrorsTyped..Caption
+#: main.dfm:1240
+msgid "Autofix All Marked Errors of Selected Type"
+msgstr "Autofix All Marked Errors of Selected Type"
+
+#. frMain..ActionList1..acECFixAllErrorsTyped..Caption
+#: main.dfm:1246
+msgid "Autofix All Errors of Selected Type"
+msgstr "Autofix All Errors of Selected Type"
+
+#. frMain..ActionList1..acECMarkAllTyped..Caption
+#: main.dfm:1252
+msgid "Mark All of Selected Type"
+msgstr "Mark All of Selected Type"
+
+#. frMain..ActionList1..acECUnMarkAllTyped..Caption
+#: main.dfm:1258
+msgid "Unmark All of Selected Type"
+msgstr "Unmark All of Selected Type"
+
+#. frMain..ActionList1..acLSynth..Caption
+#: main.dfm:1264
+msgid "Process Through LSynth..."
+msgstr "Process Through LSynth..."
+
+#. frMain..ActionList1..acLSynth..Hint
+#: main.dfm:1265
+msgid "Run current text though LSynth"
+msgstr "Run current text though LSynth"
+
+#. frMain..ActionList1..acBendableObject..Caption
+#: main.dfm:1270
+msgid "Generate Bendable Object... "
+msgstr "Generate Bendable Object... "
+
+#. frMain..ActionList1..acAutoRound..Caption
+#: main.dfm:1276
+msgid "&Auto Round Selection"
+msgstr "&Auto Round Selection"
+
+#. frMain..ActionList1..acSortSelection..Caption
+#. fmSort..Caption
+#: main.dfm:1282
+#: sorting.dfm:5
+msgid "Sort"
+msgstr "Sort"
+
+#. frMain..ActionList1..acECCopy..Caption
+#: main.dfm:1287
+msgid "Copy Error List To Clipboard"
+msgstr "Copy Error List To Clipboard"
+
+#. frMain..ActionList1..acTriangleCombine..Caption
+#: main.dfm:1293
+msgid "Combine &Triangles Into Quad"
+msgstr "Combine &Triangles Into Quad"
+
+#. frMain..ActionList1..acTriangleCombine..Hint
+#: main.dfm:1294
+msgid "Combine 2 Triangles into 1 Quad"
+msgstr "Combine 2 Triangles into 1 Quad"
+
+#. frMain..ActionList1..acRandomizeColors..Caption
+#: main.dfm:1301
+msgid "Randomize Colors in Selection"
+msgstr "Randomize Colors in Selection"
+
+#. frMain..ActionList1..acMirrorX..Caption
+#: main.dfm:1307
+msgid "X Axis"
+msgstr "X Axis"
+
+#. frMain..ActionList1..acMirrorY..Caption
+#: main.dfm:1313
+msgid "Y Axis"
+msgstr "Y Axis"
+
+#. frMain..ActionList1..acMirrorZ..Caption
+#: main.dfm:1319
+msgid "Z Axis"
+msgstr "Z Axis"
+
+#. frMain..ActionList1..acColorReplaceShortcut..Caption
+#: main.dfm:1330
+msgid "Replace Color Shortcut"
+msgstr "Replace Color Shortcut"
+
+#. frMain..ActionList1..acSubFile..Caption
+#: main.dfm:1335
+msgid "Subfile Selection"
+msgstr "Subfile Selection"
+
+#. frMain..ActionList1..acSubFile..Hint
+#: main.dfm:1336
+msgid "Move Selection to New Subfile"
+msgstr "Move Selection to New Subfile"
+
+#. frMain..pmMemo..Insert2..Caption
+#: main.dfm:2821
+msgid "&Insert"
+msgstr "&Insert"
+
+#. frMain..pmPolling..Pollevery2sec2..Caption
+#: main.dfm:2929
+msgid "Poll every 2 secs"
+msgstr "Poll every 2 secs"
+
+#. frMain..pmPolling..Pollevery5sec2..Caption
+#: main.dfm:2936
+msgid "Poll every 5 secs"
+msgstr "Poll every 5 secs"
+
+#. frMain..OpenDialog1....Filter
+#: main.dfm:3065
+msgid "LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delphi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*"
+msgstr "LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|Pascal, Delphi (*.pas,*.dpr)|*.pas;*.dpr|C,C++(*.c)|*.c|All Files (*.*)|*.*"
+
+#. frMain..OpenDialog1..Title
+#: main.dfm:3068
+msgid "Choose LDraw File..."
+msgstr "Choose LDraw File..."
+
+#. frMain..SaveDialog1....Filter
+#: main.dfm:3076
+msgid "LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*.*)|*.*"
+msgstr "LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*.*)|*.*"
+
+#. frMain..SaveDialog1..Title
+#: main.dfm:3079
+msgid "Save File as..."
+msgstr "Save File as..."
+
+#. frMain..SynCppSyn..DefaultFilter
+#: main.dfm:3088
+msgid "C++ Files (*.c,*.cpp,*.h,*.hpp)|*.c;*.cpp;*.h;*.hpp"
+msgstr "C++ Files (*.c,*.cpp,*.h,*.hpp)|*.c;*.cpp;*.h;*.hpp"
+
+#. frModelTreeView..Caption
+#: modeltreeview.dfm:5
+msgid "Model Tree View"
+msgstr "Model Tree View"
+
+#. frOptions..Caption
+#: options.dfm:9
+msgid "Misc. Options"
+msgstr "Misc. Options"
+
+#. frOptions..PageControl1..tsExternal..Caption
+#: options.dfm:152
+msgid "&External Progs"
+msgstr "&External Progs"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..Caption
+#: options.dfm:159
+msgid "External Progam Locations"
+msgstr "External Progam Locations"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..lbL3Lab..Caption
+#: options.dfm:166
+msgid "lbL3Lab"
+msgstr "lbL3Lab"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..Label17..Caption
+#: options.dfm:179
+msgid "L3Lab (L3Lab.exe)"
+msgstr "L3Lab (L3Lab.exe)"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..Label5..Caption
+#: options.dfm:186
+msgid "LDraw (parts.lst)"
+msgstr "LDraw (parts.lst)"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..lbMLCAD..Caption
+#: options.dfm:193
+msgid "lbMLCAD"
+msgstr "lbMLCAD"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..Label2..Caption
+#: options.dfm:206
+msgid "MLCad (MLCad.exe)"
+msgstr "MLCad (MLCad.exe)"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..lbLDVIew..Caption
+#: options.dfm:213
+msgid "lbLDView"
+msgstr "lbLDView"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..Label4..Caption
+#: options.dfm:226
+msgid "LDView (LDView.exe)"
+msgstr "LDView (LDView.exe)"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..lbLdraw..Caption
+#: options.dfm:233
+msgid "lbLdraw"
+msgstr "lbLdraw"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..lbLSynth..Caption
+#: options.dfm:246
+msgid "lbLSynth"
+msgstr "lbLSynth"
+
+#. frOptions..PageControl1..tsExternal..GroupBox1..Label12..Caption
+#: options.dfm:259
+msgid "LSynth (lsynthcp.exe)"
+msgstr "LSynth (lsynthcp.exe)"
+
+#. frOptions..PageControl1..TabSheet1..Caption
+#: options.dfm:554
+msgid "User-&defined Program"
+msgstr "User-&defined Program"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Caption
+#: options.dfm:562
+msgid "User Defined Program Configuration"
+msgstr "User Defined Program Configuration"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Label10..Caption
+#: options.dfm:569
+msgid "Parameters:"
+msgstr "Parameters:"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Label11..Caption
+#: options.dfm:589
+msgid "Path && Filename:"
+msgstr "Path && Filename:"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Label19..Caption
+#: options.dfm:596
+msgid "Program Name"
+msgstr "Program Name"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..rgStyle..Caption
+#: options.dfm:604
+msgid "Style"
+msgstr "Style"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..rgStyle....Items.Strings
+#: options.dfm:607
+msgid "Normal"
+msgstr "Normal"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..rgStyle....Items.Strings
+#: options.dfm:608
+msgid "Hidden"
+msgstr "Hidden"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..rgStyle....Items.Strings
+#: options.dfm:609
+msgid "Normal, LDDP Retains Focus"
+msgstr "Normal, LDDP Retains Focus"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..rgStyle....Items.Strings
+#: options.dfm:610
+msgid "Maximized"
+msgstr "Maximized"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..cboShowCommand..Caption
+#: options.dfm:686
+msgid "Show command line before execution"
+msgstr "Show command line before execution"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..cboWaitForFinish..Caption
+#: options.dfm:695
+msgid "Wait until program is finished"
+msgstr "Wait until program is finished"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Memo5....Lines.Strings
+#: options.dfm:716
+msgid "You can use the following shortcuts in the parameters:"
+msgstr "You can use the following shortcuts in the parameters:"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Memo5....Lines.Strings
+#: options.dfm:717
+msgid "%0: Path and filename of the current file"
+msgstr "%0: Path and filename of the current file"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Memo5....Lines.Strings
+#: options.dfm:718
+msgid "%1: Path only"
+msgstr "%1: Path only"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Memo5....Lines.Strings
+#: options.dfm:719
+msgid "%2: Filename without extension"
+msgstr "%2: Filename without extension"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Memo5....Lines.Strings
+#: options.dfm:720
+msgid "%3: Path and Filename without extension"
+msgstr "%3: Path and Filename without extension"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..Memo5....Lines.Strings
+#: options.dfm:721
+msgid "%4 - %7: The 8.3 notation of %0 - %3"
+msgstr "%4 - %7: The 8.3 notation of %0 - %3"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..btnAddExternal..Caption
+#: options.dfm:729
+msgid "Add New Program"
+msgstr "Add New Program"
+
+#. frOptions..PageControl1..TabSheet1..GroupBox7..btnDelExternal..Caption
+#: options.dfm:738
+msgid "Delete Current Program"
+msgstr "Delete Current Program"
+
+#. frOptions..PageControl1..TabSheet2..Caption
+#: options.dfm:756
+msgid "Configuration &Values"
+msgstr "Configuration &Values"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Caption
+#: options.dfm:764
+msgid "Error Check Options"
+msgstr "Error Check Options"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Label6..Caption
+#: options.dfm:771
+msgid "Collinear Points Threshold:"
+msgstr "Collinear Points Threshold:"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..cboDet..Caption
+#: options.dfm:778
+msgid "Det Coplanarity Check Threshold:"
+msgstr "Det Coplanarity Check Threshold:"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..cboDist..Caption
+#: options.dfm:786
+msgid "Dist Coplanarity Check Threshold:"
+msgstr "Dist Coplanarity Check Threshold:"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Memo1....Lines.Strings
+#: options.dfm:798
+msgid "General files (parts, subparts and some "
+msgstr "General files (parts, subparts and some "
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Memo1....Lines.Strings
+#: options.dfm:799
+msgid "primitives) typically use a value of 0.1."
+msgstr "primitives) typically use a value of 0.1."
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Memo2....Lines.Strings
+#: options.dfm:812
+msgid "Geometric primitives typically use 0.01. "
+msgstr "Geometric primitives typically use 0.01. "
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Memo2....Lines.Strings
+#: options.dfm:813
+msgid "Hi-res primitives typically use 0.001."
+msgstr "Hi-res primitives typically use 0.001."
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Memo3....Lines.Strings
+#: options.dfm:826
+msgid "Only adjust this value if you want to change "
+msgstr "Only adjust this value if you want to change "
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Memo3....Lines.Strings
+#: options.dfm:827
+msgid "the pecent deviation used for collinear point "
+msgstr "the pecent deviation used for collinear point "
+
+#. frOptions..PageControl1..TabSheet2..GroupBox2..Memo3....Lines.Strings
+#: options.dfm:828
+msgid "determination. (L3P uses 0.0001 by defualt)"
+msgstr "determination. (L3P uses 0.0001 by defualt)"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox5..Caption
+#: options.dfm:890
+msgid "Decimal Accuracy"
+msgstr "Decimal Accuracy"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox5..lbPntAcc..Caption
+#: options.dfm:897
+msgid "Position Decimal Accuracy"
+msgstr "Position Decimal Accuracy"
+
+#. frOptions..PageControl1..TabSheet2..GroupBox5..lbRotAcc..Caption
+#: options.dfm:904
+msgid "Rotation Matrix Decimal Accuracy"
+msgstr "Rotation Matrix Decimal Accuracy"
+
+#. frOptions..PageControl1..TabSheet4..Caption
+#: options.dfm:937
+msgid "&User"
+msgstr "&User"
+
+#. frOptions..PageControl1..TabSheet4..GroupBox3..Caption
+#: options.dfm:945
+msgid "User Details For Macros"
+msgstr "User Details For Macros"
+
+#. frOptions..PageControl1..TabSheet4..GroupBox3..Label16..Caption
+#: options.dfm:952
+msgid "Email:"
+msgstr "Email:"
+
+#. frOptions..PageControl1..TabSheet4..GroupBox3..Label14..Caption
+#: options.dfm:959
+msgid "Signature:"
+msgstr "Signature:"
+
+#. frOptions..PageControl1..TabSheet4..GroupBox3..Label13..Caption
+#: options.dfm:966
+msgid "Full Name:"
+msgstr "Full Name:"
+
+#. frOptions..PageControl1..TabSheet3..GroupBox4..Caption
+#: options.dfm:1001
+msgid "Configure Plugins"
+msgstr "Configure Plugins"
+
+#. frOptions..PageControl1..TabSheet3..GroupBox4..Label9....Caption
+#: options.dfm:1012
+msgid ""
+"Mark/Unmark a plugin to en-/disable it.\n"
+"\n"
+"If a plugin is disabled it won't show up in the editors popup menu (right-click in editor to bring it up)"
+msgstr ""
+"Mark/Unmark a plugin to en-/disable it.\n"
+"\n"
+"If a plugin is disabled it won't show up in the editors popup menu (right-click in editor to bring it up)"
+
+#. frOptions..PageControl1..TabSheet3..GroupBox4..Button1..Caption
+#: options.dfm:1020
+msgid "Rescan for Plugins"
+msgstr "Rescan for Plugins"
+
+#. frOptions..PageControl1..TabSheet5..Caption
+#: options.dfm:1072
+msgid "LDraw &Highlighting"
+msgstr "LDraw &Highlighting"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..Caption
+#: options.dfm:1080
+msgid "Highlighter Options"
+msgstr "Highlighter Options"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..Label3..Caption
+#: options.dfm:1101
+msgid "&Background Color:"
+msgstr "&Background Color:"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..Label1..Caption
+#: options.dfm:1108
+msgid "&Foreground Color:"
+msgstr "&Foreground Color:"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1118
+msgid "Default"
+msgstr "Default"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#. frOptions..PageControl1..TabSheet7..GroupBox9..Label15..Caption
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: options.dfm:1119
+#: options.dfm:1333
+#: sorting.dfm:201
+#: sorting.dfm:225
+#: sorting.dfm:249
+msgid "Color"
+msgstr "Color"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1120
+msgid "Comment"
+msgstr "Comment"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1121
+msgid "Triple 1"
+msgstr "Triple 1"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1122
+msgid "Triple 2"
+msgstr "Triple 2"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1123
+msgid "Triple 3"
+msgstr "Triple 3"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1124
+msgid "Triple 4"
+msgstr "Triple 4"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1125
+msgid "Line"
+msgstr "Line"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1126
+msgid "Triangle"
+msgstr "Triangle"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1127
+msgid "Quad"
+msgstr "Quad"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..lstElement....Items.Strings
+#: options.dfm:1128
+msgid "Optional Line"
+msgstr "Optional Line"
+
+#. frOptions..PageControl1..TabSheet5..GroupBox6..btnReset..Caption
+#. frOptions..PageControl1..TabSheet7..GroupBox9..btnColorRestore..Caption
+#: options.dfm:1169
+#: options.dfm:1392
+msgid "&Restore Defaults"
+msgstr "&Restore Defaults"
+
+#. frOptions..PageControl1..TabSheet6..Caption
+#: options.dfm:1252
+msgid "Editor &Options"
+msgstr "Editor &Options"
+
+#. frOptions..PageControl1..TabSheet6..GroupBox8..Caption
+#: options.dfm:1260
+msgid "Editor Options"
+msgstr "Editor Options"
+
+#. frOptions..PageControl1..TabSheet6..GroupBox8..Label7..Caption
+#: options.dfm:1267
+msgid "Left Margin Width"
+msgstr "Left Margin Width"
+
+#. frOptions..PageControl1..TabSheet6..GroupBox8..Label8..Caption
+#: options.dfm:1274
+msgid "Right Line Position"
+msgstr "Right Line Position"
+
+#. frOptions..PageControl1..TabSheet6..GroupBox8..cboMarginNumbers..Caption
+#: options.dfm:1281
+msgid "Show Line Numbers in Left Margin"
+msgstr "Show Line Numbers in Left Margin"
+
+#. frOptions..PageControl1..TabSheet7..Caption
+#: options.dfm:1311
+msgid "Color Bar"
+msgstr "Color Bar"
+
+#. frOptions..PageControl1..TabSheet7..GroupBox9..Caption
+#: options.dfm:1319
+msgid "Color Bar Colors"
+msgstr "Color Bar Colors"
+
+#. frOptions..PageControl1..TabSheet7..GroupBox9..Label18..Caption
+#: options.dfm:1340
+msgid "Color Number"
+msgstr "Color Number"
+
+#. frOptions..PageControl1..TabSheet7..GroupBox9..btnColorSelect..Caption
+#: options.dfm:1357
+msgid "Select Color"
+msgstr "Select Color"
+
+#. frOptions..PageControl1..TabSheet7..GroupBox9..edColorName..EditLabel.Caption
+#: options.dfm:1368
+msgid "Color Name"
+msgstr "Color Name"
+
+#. frOptions..OpenDialog..Filter
+#: options.dfm:1586
+msgid "Executibles (*.*)|*.exe"
+msgstr "Executibles (*.*)|*.exe"
+
+#. frOptions..OpenDialog..Title
+#: options.dfm:1589
+msgid "Open"
+msgstr "Open"
+
+#. fmSort..Panel2..Label1..Caption
+#: sorting.dfm:150
+msgid "Sort on"
+msgstr "Sort on"
+
+#. fmSort..Panel2..Label2..Caption
+#. fmSort..Panel2..Label3..Caption
+#: sorting.dfm:157
+#: sorting.dfm:164
+msgid "Then sort on"
+msgstr "Then sort on"
+
+#. fmSort..Panel2..rgScope..Caption
+#: sorting.dfm:171
+msgid "Sorting Scope"
+msgstr "Sorting Scope"
+
+#. fmSort..Panel2..rgScope....Items.Strings
+#: sorting.dfm:173
+msgid "Entire File"
+msgstr "Entire File"
+
+#. fmSort..Panel2..rgScope....Items.Strings
+#: sorting.dfm:174
+msgid "Selection"
+msgstr "Selection"
+
+#. fmSort..Panel2..rgSortDirection..Caption
+#: sorting.dfm:182
+msgid "Sort Direction"
+msgstr "Sort Direction"
+
+#. fmSort..Panel2..rgSortDirection....Items.Strings
+#: sorting.dfm:185
+msgid "Ascending"
+msgstr "Ascending"
+
+#. fmSort..Panel2..rgSortDirection....Items.Strings
+#: sorting.dfm:186
+msgid "Descending"
+msgstr "Descending"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:202
+#: sorting.dfm:226
+#: sorting.dfm:250
+msgid "Center X"
+msgstr "Center X"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:203
+#: sorting.dfm:227
+#: sorting.dfm:251
+msgid "Center Y"
+msgstr "Center Y"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:204
+#: sorting.dfm:228
+#: sorting.dfm:252
+msgid "Center Z"
+msgstr "Center Z"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:205
+#: sorting.dfm:229
+#: sorting.dfm:253
+msgid "Max X"
+msgstr "Max X"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:206
+#: sorting.dfm:230
+#: sorting.dfm:254
+msgid "Max Y"
+msgstr "Max Y"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:207
+#: sorting.dfm:231
+#: sorting.dfm:255
+msgid "Max Z"
+msgstr "Max Z"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:208
+#: sorting.dfm:232
+#: sorting.dfm:256
+msgid "Min X"
+msgstr "Min X"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:209
+#: sorting.dfm:233
+#: sorting.dfm:257
+msgid "Min Y"
+msgstr "Min Y"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:210
+#: sorting.dfm:234
+#: sorting.dfm:258
+msgid "Min Z"
+msgstr "Min Z"
+
+#. fmSort..Panel2..cbSort....Items.Strings
+#. fmSort..Panel2..cbSort2....Items.Strings
+#. fmSort..Panel2..cbSort3....Items.Strings
+#: sorting.dfm:211
+#: sorting.dfm:235
+#: sorting.dfm:259
+msgid "Linetype"
+msgstr "Linetype"
+
+#. frSplash..lbState..Caption
+#: splash.dfm:860
+msgid "Loading..."
+msgstr "Loading..."
+
+#: about.pas:57
+msgid "Version information not available"
+msgstr "Version information not available"
+
+#: BezWindow.pas:90
+msgid "Distance between the end points is longer than the specified length"
+msgstr "Distance between the end points is longer than the specified length"
+
+#: BezWindow.pas:125
+msgid "Hose Flexible 8.5L With Tabs"
+msgstr "Hose Flexible 8.5L With Tabs"
+
+#: BezWindow.pas:130
+msgid "Hose Flexible 8.5L Without Tabs"
+msgstr "Hose Flexible 8.5L Without Tabs"
+
+#: BezWindow.pas:136
+msgid "Hose Flexible 12L"
+msgstr "Hose Flexible 12L"
+
+#: BezWindow.pas:142
+msgid "Technic Ribbed Hose"
+msgstr "Technic Ribbed Hose"
+
+#: BezWindow.pas:143
+msgid "Enter number of notches to use:"
+msgstr "Enter number of notches to use:"
+
+#: BezWindow.pas:150
+msgid "Technic Flexible Axle"
+msgstr "Technic Flexible Axle"
+
+#: BezWindow.pas:152
+msgid "Enter total length of the axle in LDU (1 Brick Width = 20 LDU) :"
+msgstr "Enter total length of the axle in LDU (1 Brick Width = 20 LDU) :"
+
+#: BezWindow.pas:159
+msgid "Technic Flex-System Hose"
+msgstr "Technic Flex-System Hose"
+
+#: BezWindow.pas:161
+msgid "Enter total length of the hose in LDU (1 Brick Width = 20 LDU) :"
+msgstr "Enter total length of the hose in LDU (1 Brick Width = 20 LDU) :"
+
+#: BezWindow.pas:169
+msgid "Unsupported File Types.  Read the ReadMe file for supported file types"
+msgstr "Unsupported File Types.  Read the ReadMe file for supported file types"
+
+#: BMP2LDraw.pas:183
+msgid "LDraw unit size cannot be 0.0 !"
+msgstr "LDraw unit size cannot be 0.0 !"
+
+#: BMP2LDraw.pas:191
+#: BMP2LDraw.pas:213
+msgid "You entered an invalid Quadliteral line!"
+msgstr "You entered an invalid Quadliteral line!"
+
+#: BMP2LDraw.pas:330
+msgid "Done!"
+msgstr "Done!"
+
+#: childwin.pas:111
+msgid ""
+"File has been changed outside the editor!\n"
+"Reload and loose all changes?"
+msgstr ""
+"File has been changed outside the editor!\n"
+"Reload and loose all changes?"
+
+#: childwin.pas:130
+msgid "Modified"
+msgstr "Modified"
+
+#. Programmer's name for it: SAskReplaceText
+#: dlgconfirmreplace.pas:70
+msgid "Replace this occurence of \"%s\"?"
+msgstr "Replace this occurence of \"%s\"?"
+
+#: main.pas:617
+#: main.pas:727
+msgid "File "
+msgstr "File "
+
+#: main.pas:617
+msgid " not found"
+msgstr " not found"
+
+#: main.pas:727
+msgid " not found!"
+msgstr " not found!"
+
+#. Show splash screen
+#: main.pas:803
+msgid "Initializing plugins..."
+msgstr "Initializing plugins..."
+
+#: main.pas:923
+msgid "Reload last saved version?"
+msgstr "Reload last saved version?"
+
+#: main.pas:924
+msgid "All changes will be lost!"
+msgstr "All changes will be lost!"
+
+#: main.pas:1157
+msgid "No Errors Found!"
+msgstr "No Errors Found!"
+
+#: main.pas:1219
+msgid "You have to specify a valid path to LDView.exe first!"
+msgstr "You have to specify a valid path to LDView.exe first!"
+
+#: main.pas:1238
+msgid ""
+"File has been modified. \n"
+"Do you want to save and then view the file in MLCad \n"
+"or cancel the operation?"
+msgstr ""
+"File has been modified. \n"
+"Do you want to save and then view the file in MLCad \n"
+"or cancel the operation?"
+
+#: main.pas:1241
+msgid "You have to specify a valid path to MLCad.exe first!"
+msgstr "You have to specify a valid path to MLCad.exe first!"
+
+#: main.pas:1295
+msgid "You have to specify a valid external program first!"
+msgstr "You have to specify a valid external program first!"
+
+#: main.pas:1353
+msgid "Initializing plugin:"
+msgstr "Initializing plugin:"
+
+#: main.pas:1395
+#: main.pas:1400
+msgid "None Found"
+msgstr "None Found"
+
+#: main.pas:1473
+msgid "You have to specify a valid path to L3Lab.exe first!"
+msgstr "You have to specify a valid path to L3Lab.exe first!"
+
+#. Replace Current Line
+#: main.pas:1731
+#: main.pas:1781
+msgid "Replace Current Line Only"
+msgstr "Replace Current Line Only"
+
+#. Replace colors in selection
+#: main.pas:1736
+#: main.pas:1788
+msgid "Replace For Selection"
+msgstr "Replace For Selection"
+
+#: main.pas:1757
+msgid "Invalid colornumber!"
+msgstr "Invalid colornumber!"
+
+#: main.pas:2170
+msgid "Searchtext has not been found."
+msgstr "Searchtext has not been found."
+
+#: main.pas:2401
+msgid "There is no newer version available."
+msgstr "There is no newer version available."
+
+#: main.pas:2404
+msgid "There is a newer version available!!!"
+msgstr "There is a newer version available!!!"
+
+#: main.pas:2617
+msgid "You have to specify a valid path to lsynthcp.exe first!"
+msgstr "You have to specify a valid path to lsynthcp.exe first!"
+
+#: main.pas:2749
+msgid "Combining these triangles:"
+msgstr "Combining these triangles:"
+
+#: main.pas:2752
+msgid "will result in a quad with collinear or"
+msgstr "will result in a quad with collinear or"
+
+#: main.pas:2753
+msgid "not coplaner vertices"
+msgstr "not coplaner vertices"
+
+#: main.pas:2754
+msgid "Combine anyway?"
+msgstr "Combine anyway?"
+
+#: main.pas:2990
+msgid "File of same name already exists.  Overwrite?"
+msgstr "File of same name already exists.  Overwrite?"
+
+#: options.pas:188
+msgid "Found!"
+msgstr "Found!"
+
+#: options.pas:189
+msgid "Not found!"
+msgstr "Not found!"
+
+#: options.pas:255
+msgid "Executibles"
+msgstr "Executibles"
+
+#: options.pas:297
+msgid "Choose LDraw Library Location"
+msgstr "Choose LDraw Library Location"
+
+#: options.pas:305
+#: options.pas:313
+#: options.pas:321
+msgid "Choose LDView Location"
+msgstr "Choose LDView Location"
+
+#: options.pas:329
+msgid "Choose lynthcp Location"
+msgstr "Choose lynthcp Location"
+
+#: options.pas:336
+msgid "Select Program Location"
+msgstr "Select Program Location"
+
+#: options.pas:698
+#: options.pas:704
+#: options.pas:705
+msgid "New Program"
+msgstr "New Program"
+
+#: options.pas:755
+msgid "Program Name cannot be blank"
+msgstr "Program Name cannot be blank"
+
