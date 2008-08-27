@@ -61,11 +61,11 @@ object frErrorWindow: TfrErrorWindow
     DockStyle = frMain.JvDockDelphiStyle1
     CustomDock = False
     Left = 8
-    Top = 8
+    Top = 16
   end
   object pmL3P: TPopupMenu
     Left = 40
-    Top = 8
+    Top = 16
     object MarkAllForFixing1: TMenuItem
       Action = acECMarkAll
     end
@@ -111,7 +111,7 @@ object frErrorWindow: TfrErrorWindow
   end
   object ActionList1: TActionList
     Left = 72
-    Top = 8
+    Top = 16
     object acErrorCheck: TAction
       Category = 'Error Check'
       Caption = 'Run Error Check'

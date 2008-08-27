@@ -121,6 +121,9 @@ type
     cboAutoRoundOnly: TCheckBox;
     ColorBarCombo: TJvColorComboBox;
     TabSheet5: TTabSheet;
+    GroupBox6: TGroupBox;
+    Label1: TLabel;
+    seCustomPollInterval: TJvValidateEdit;
     procedure PageControl1Change(Sender: TObject);
     procedure btnRescanPluginsClick(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
@@ -143,7 +146,7 @@ type
     procedure ColorBarSheetShow(Sender: TObject);
     procedure ColorBarComboChange(Sender: TObject);
 
-  private
+  protected
     ColorBarList: TStringList;
     procedure ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
     procedure MakeExternalMenuItem(ProgIndex:Integer);
@@ -323,6 +326,7 @@ begin
   LDDPini.WriteFloat(IniSection, 'seDist_Value', seDist.Value);
   LDDPini.WriteFloat(IniSection, 'seNormalAngle_Value', seNormalAngle.Value);
   LDDPini.WriteFloat(IniSection, 'seCollinear_Value', seCollinear.Value);
+  LDDPini.WriteFloat(IniSection, 'seCustomPollInterval_Value', seCustomPollInterval.Value);
   LDDPini.WriteInteger(IniSection, 'sePntAcc_Value', sePntAcc.Value);
   LDDPini.WriteInteger(IniSection, 'seRotAcc_Value', seRotAcc.Value);
   LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
@@ -374,6 +378,7 @@ begin
   if seNormalAngle.Value = 0 then seNormalAngle.Value := 1;
   seCollinear.Value := LDDPini.ReadFloat(IniSection, 'seCollinear_Value', 0.0001);
   if seCollinear.Value = 0 then seCollinear.Value := 0.0001;
+  seCustomPollInterval.Value := LDDPini.ReadFloat(IniSection, 'seCustomPollInterval_Value', 0.1);
   sePntAcc.Value := LDDPini.ReadInteger(IniSection, 'sePntAcc_Value', 4);
   if sePntAcc.Value = 0 then sePntAcc.Value := 4;
   seRotAcc.Value := LDDPini.ReadInteger(IniSection, 'seRotAcc_Value', 4);
@@ -681,12 +686,10 @@ end;
 procedure TfrOptions.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if ModalResult = mrOK then
-  begin
-    SaveFormValues;
-    SetConfigurationConstants;
-  end
+    SaveFormValues
   else
     LoadFormValues;
+  SetConfigurationConstants;
 end;
 
 procedure TfrOptions.FormCreate(Sender: TObject);
