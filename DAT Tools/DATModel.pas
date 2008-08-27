@@ -30,10 +30,11 @@ uses
 
 type
 
-  TDATSortTerm = (dsNil, dsLineType, dsColor,
+  TDATSortTerm = (dsNil, dsColor,
                   dsMidX, dsMidY, dsMidZ,
                   dsMaxX, dsMaxY, dsMaxZ,
-                  dsMinX, dsMinY, dsMinZ);
+                  dsMinX, dsMinY, dsMinZ ,
+                  dsLineType);
 
   TDATSortArray = array[1..3] of TDATSortTerm;
 

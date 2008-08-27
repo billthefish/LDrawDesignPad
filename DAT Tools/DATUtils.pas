@@ -68,30 +68,25 @@ begin
      (strCurrentLine = #10#13) then
     Result := TDATBlankLine.Create
   else
-    if Length(strCurrentLine) > 1 then
-      if strCurrentLine[2] = ' ' then
-        case strCurrentLine[1] of
-          '0': Result := TDATComment.Create;
-          '1': Result := TDATSubPart.Create;
-          '2': Result := TDATLine.Create;
-          '3': Result := TDATTriangle.Create;
-          '4': Result := TDATQuad.Create;
-          '5': Result := TDATOpLine.Create;
-          else Result := TDATBlankLine.Create;
-        end
-      else
-        Result := TDATBlankLine.Create
+    if (Length(strCurrentLine) > 1) and
+       (strCurrentLine[2] = ' ') then
+      case strCurrentLine[1] of
+        '0': Result := TDATComment.Create;
+        '1': Result := TDATSubPart.Create;
+        '2': Result := TDATLine.Create;
+        '3': Result := TDATTriangle.Create;
+        '4': Result := TDATQuad.Create;
+        '5': Result := TDATOpLine.Create;
+      else Result := TDATInvalidLine.Create;
+    end
     else
-      if strCurrentLine[1] = '0' then
-        Result := TDATComment.Create
-      else
-        Result := TDATBlankLine.Create;
+      Result := TDATInvalidLine.Create;
   try
     Result.DATString := strLine;
   except
     Result.Free;
-    Result := TDATComment.Create;
-    (Result as TDATComment).Comment := 'Invalid Line: ' + strLine;
+    Result := TDATInvalidLine.Create;
+    Result.DATString := strLine;
   end;
 end;
 
@@ -287,6 +282,7 @@ begin
   Result.Finish := Finish;
   Result.MaterialParams := MaterialParams;
 end;
+
 function CheckIdentPoints(const points1, points2: array of TDATPoint): Boolean;
 
 var

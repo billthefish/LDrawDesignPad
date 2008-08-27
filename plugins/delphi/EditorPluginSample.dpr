@@ -42,11 +42,6 @@ begin
   // 1 = Plugin can only be called if no text is selected
   // 2 = Plugin can only be called if a portion of text is selected
 
-  Plugintype:='%%editor';
-
-  // Plugintype Kind of plugin - never change this
-  // if you want to write an import or export plugin use the "ImportExportPluginSample"
-
   case CaseID of
       0:strResult:=PlugInName;
       1:strResult:=PlugInMenuEntry;
@@ -55,7 +50,6 @@ begin
       4:strResult:=PlugInAuthor;
       5:strResult:=PlugInCommentaries;
       6:strResult:=PluginCall;
-      7:strResult:=Plugintype;
       else strResult:=PlugInName;
   end;
   if Length(strResult) > maxLength then  // don't overflow the buffer we are about to write to
@@ -63,7 +57,7 @@ begin
   StrPCopy(buffer,strResult);
 end;
 
-procedure ProcessText(CompleteText,SelText:PChar;var SelStart, SelLength , cursorrow , cursorcolumn:longWORD; myCallback:TLDDPCallBack);stdcall;
+procedure ProcessText(CompleteText,SelText:PChar;var SelStart, SelLength , cursorrow , cursorcolumn:longWORD; myCallback:TLDDPCallBack); stdcall;
 //
 // This function processes and Returns 'TheText'.
 //

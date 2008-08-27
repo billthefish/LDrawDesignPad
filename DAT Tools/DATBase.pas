@@ -27,20 +27,31 @@ uses
   Contnrs;
 
 type
+//  EInvalidDATLine = class(Exception);
+
   (* These types allow passing of fixed arrays between procedures
      instead of varible length arrays *)
   TDATPoint = array[1..3] of Extended;
   TDATMatrix = array[1..4,1..4] of Extended;
   TDATRotationMatrix = array[1..3,1..3] of Extended;
 
+  // For operations involving axis
   TDATAxis = (axisX = 1, axisY = 2, axisZ = 3);
+
+  // List of DAT file types, the first 5 are official
+  TDATFileType = (ftPart, ftSubpart, ftPrimitive, ft48Primitve,
+                  ftShortcut, ftModel, ftSubmodel);
+
+  //License Type
+  TDATLicenseType = (ltCA, ltNonCA);
+                  
 (*
   The general structure of the DAT Classes is:
 
-                        TDATType-------------
-                         /   \               \
-                        /     \               \
-           TDATComment--       \               TDATColor
+                        TDATType---
+                         /   \     \
+                        /     \     TDATInvalidLine
+           TDATComment--       \
                       /       TDATElement
      TDATBlankLine----         /   \
                               /     \
@@ -72,6 +83,8 @@ type
          the DAT Object's values *)
       property DATString: string read GetDATString write ProcessDATLine;
   end;
+
+  TDATInvalidLine = TDATType;
 
   (* Represents LineType 0 *)
   TDATComment=class(TDATType)
@@ -334,6 +347,8 @@ const
 
 implementation
 
+{TDATType}
+
 constructor TDATType.Create;
 
 begin
@@ -350,6 +365,8 @@ procedure TDATType.ProcessDATLine(strText:string);
 begin
   strLine := strText;
 end;
+
+{TDATComment}
 
 procedure TDATComment.ProcessDATLine(strText:string);
 begin
@@ -373,11 +390,15 @@ begin
   result := '0 ' + strComment;
 end;
 
+{TDATBlankLine}
+
 function TDATBlankLine.GetDATString: string;
 
 begin
   Result := '';
 end;
+
+{TDATElement}
 
 constructor TDATElement.Create;
 begin

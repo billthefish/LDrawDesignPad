@@ -42,18 +42,18 @@ uses
   
 function SubPartIsXZPrimitive(const Subp: string): Boolean;
 begin
-  Result :=  (pos('disc',Subp) > 0) or
-             (pos('ndis',Subp) > 0) or
-             (pos('rect',Subp) > 0) or
-             (pos('rin',Subp) > 0) or
-             (pos('axleend',Subp) > 0) or
-             (pos('axlehol2',Subp) > 0) or
-             (pos('axlehol3',Subp) > 0) or
-             (pos('axlehol9',Subp) > 0) or
-             (pos('axleho10',Subp) > 0) or
-             (pos('edge',Subp) > 0) or
-             (pos('chrd',Subp) > 0) or
-             (pos('tang',Subp) > 0);
+  Result :=  (Pos('disc', Subp) > 0) or
+             (Pos('ndis', Subp) > 0) or
+             (Pos('rect', Subp) > 0) or
+             (Pos('rin', Subp) > 0) or
+             (Pos('axleend', Subp) > 0) or
+             (Pos('axlehol2', Subp) > 0) or
+             (Pos('axlehol3', Subp) > 0) or
+             (Pos('axlehol9', Subp) > 0) or
+             (Pos('axleho10', Subp) > 0) or
+             (Pos('edge', Subp) > 0) or
+             (Pos('chrd', Subp) > 0) or
+             (Pos('tang', Subp) > 0);
 end;
 
 function CheckLinearPoints(const p1,p2,p3: TDATPoint): Extended;
@@ -282,6 +282,27 @@ begin
     B := PointDotProduct(PointCrossProduct(v12, v01), PointCrossProduct(v01, v13)) > 0;
     C := -PointDotProduct(PointCrossProduct(v02, v12), PointCrossProduct(v12, v23)) > 0;
 
+    if A then
+    begin
+      if (B and (not C)) or (C and (not B)) then
+          Result := 'Concave Quad, split on 02'
+    end
+    else
+      if B then
+        if C then
+          Result := 'Concave Quad, split on 13'
+        else
+          Result := 'Bad vertex sequence, 0312 used'
+      else
+        if C then
+          Result := 'Bad vertex sequence, 0132 used'
+        else
+          Result := 'Concave Quad, split on 13';
+
+    if Result <> '' then
+      Exit;
+
+(*
     if (not A) and (not B) and C then
     begin
       Result := 'Bad vertex sequence, 0132 used';
@@ -294,6 +315,24 @@ begin
       Exit;
     end;
 
+    if (not A) and B and C then
+    begin
+      Result := 'Concave Quad';
+      Exit;
+    end;
+
+    if (not A) and (not B) and (not C) then
+    begin
+      Result := 'Concave Quad';
+      Exit;
+    end;
+
+    if A and (not B) and (not C) then
+    begin
+      Result := 'Concave Quad';
+      Exit;
+    end;
+ *)
     if (DetThreshold > 0) then
     begin
       det := CoPlanarCheckDet(Matrix);
