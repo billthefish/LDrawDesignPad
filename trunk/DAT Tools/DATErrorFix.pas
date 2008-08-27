@@ -24,6 +24,8 @@ uses
 
 procedure FixBowtieQuad0132(quad: TDATQuad);
 procedure FixBowtieQuad0312(quad: TDATQuad);
+procedure SplitConcaveQuad02(quad: TDATQuad; out tri1, tri2: TDATTriangle);
+procedure SplitConcaveQuad13(quad: TDATQuad; out tri1, tri2: TDATTriangle);
 procedure FixRowAllZeros(subp: TDATSubPart; const Row: Integer);
 procedure FixYColumnAllZeros(subp: TDATSubPart);
 
@@ -80,6 +82,34 @@ end;
 procedure FixYColumnAllZeros(subp: TDATSubPart);
 begin
   subp.MatrixVals[2,2] := 1;
+end;
+
+procedure SplitConcaveQuad02(quad: TDATQuad; out tri1, tri2: TDATTriangle);
+begin
+  tri1 := TDATTriangle.Create;
+  tri2 := TDATTriangle.Create;
+
+  tri1.Point[1] := quad.Point[1];
+  tri1.Point[2] := quad.Point[2];
+  tri1.Point[3] := quad.Point[3];
+
+  tri2.Point[1] := quad.Point[1];
+  tri2.Point[2] := quad.Point[3];
+  tri2.Point[3] := quad.Point[4];
+end;
+
+procedure SplitConcaveQuad13(quad: TDATQuad; out tri1, tri2: TDATTriangle);
+begin
+  tri1 := TDATTriangle.Create;
+  tri2 := TDATTriangle.Create;
+
+  tri1.Point[1] := quad.Point[2];
+  tri1.Point[2] := quad.Point[3];
+  tri1.Point[3] := quad.Point[4];
+
+  tri2.Point[1] := quad.Point[4];
+  tri2.Point[2] := quad.Point[1];
+  tri2.Point[3] := quad.Point[2];
 end;
 
 end.
