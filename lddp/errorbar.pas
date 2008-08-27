@@ -320,6 +320,8 @@ procedure TfrErrorWindow.acECFixErrorExecute(Sender: TObject);
 // Fix an error
 var
   DATElem: TDATElement;
+  tri1, tri2: TDATTriangle;
+  i: Integer;
 
 begin
   if ErrorListView.ItemIndex >= 0 then
@@ -337,6 +339,55 @@ begin
           frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
         end;
         DATElem.Free;
+        ErrorListView.items.delete(ErrorListView.ItemIndex);
+      end
+
+      else if pos('Bad vertex sequence, 0312',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATQuad.Create;
+        with DATElem as TDATQuad do
+        begin
+          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
+          FixBowtieQuad0312(DATElem as TDATQuad);
+          frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
+        end;
+        DATElem.Free;
+        ErrorListView.items.delete(ErrorListView.ItemIndex);
+      end
+
+      else if pos('Concave Quad, split on 13',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATQuad.Create;
+        with DATElem as TDATQuad do
+        begin
+          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
+          SplitConcaveQuad13((DATElem as TDATQuad), tri1, tri2);
+          frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
+          frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
+        end;
+        DATElem.Free;
+        tri1.Free;
+        tri2.Free;
+        for i := ErrorListView.ItemIndex + 1 to ErrorListView.Items.Count - 1 do
+          ErrorListView.Items[i].SubItems[0] := IntToStr(StrToInt(ErrorListView.Items[i].SubItems[0]) + 1);
+        ErrorListView.items.delete(ErrorListView.ItemIndex);
+      end
+
+      else if pos('Concave Quad, split on 02',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
+      begin
+        DATElem := TDATQuad.Create;
+        with DATElem as TDATQuad do
+        begin
+          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
+          SplitConcaveQuad02((DATElem as TDATQuad), tri1, tri2);
+          frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
+          frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
+        end;
+        DATElem.Free;
+        tri1.Free;
+        tri2.Free;
+        for i := ErrorListView.ItemIndex + 1 to ErrorListView.Items.Count - 1 do
+          ErrorListView.Items[i].SubItems[0] := IntToStr(StrToInt(ErrorListView.Items[i].SubItems[0]) + 1);
         ErrorListView.items.delete(ErrorListView.ItemIndex);
       end
 
@@ -382,19 +433,6 @@ begin
         (DATElem as TDATSubPart).DATString := frMain.editor.lines[frMain.editor.CaretY-1];
         FixYColumnAllZeros(DATElem as TDATSubPart);
         frMain.editor.lines[frMain.editor.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Bad vertex sequence, 0312',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATQuad.Create;
-        with DATElem as TDATQuad do
-        begin
-          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          FixBowtieQuad0312(DATElem as TDATQuad);
-          frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
-        end;
         DATElem.Free;
         ErrorListView.items.delete(ErrorListView.ItemIndex);
       end;

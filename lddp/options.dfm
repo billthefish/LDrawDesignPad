@@ -22,7 +22,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 592
     Height = 333
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -680,7 +680,7 @@ object frOptions: TfrOptions
         Caption = 'Error Check Options'
         TabOrder = 0
         object Label6: TLabel
-          Left = 73
+          Left = 37
           Top = 133
           Width = 125
           Height = 13
@@ -753,7 +753,7 @@ object frOptions: TfrOptions
           Width = 81
           Height = 21
           CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
           TrimDecimals = True
           DisplayFormat = dfFloat
           DecimalPlaces = 9
@@ -766,7 +766,7 @@ object frOptions: TfrOptions
           Width = 81
           Height = 21
           CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
           TrimDecimals = True
           DisplayFormat = dfFloat
           DecimalPlaces = 9
@@ -779,7 +779,7 @@ object frOptions: TfrOptions
           Width = 81
           Height = 21
           CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
           TrimDecimals = True
           DisplayFormat = dfFloat
           DecimalPlaces = 9
@@ -816,7 +816,7 @@ object frOptions: TfrOptions
           Width = 81
           Height = 21
           CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
           TrimDecimals = True
           DisplayFormat = dfFloat
           DecimalPlaces = 9
@@ -827,9 +827,9 @@ object frOptions: TfrOptions
       object GroupBox5: TGroupBox
         Left = 0
         Top = 169
-        Width = 584
+        Width = 305
         Height = 136
-        Align = alClient
+        Align = alLeft
         Caption = 'Decimal Accuracy'
         TabOrder = 1
         object lbPntAcc: TLabel
@@ -851,8 +851,9 @@ object frOptions: TfrOptions
           Top = 18
           Width = 81
           Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = False
+          CriticalPoints.MaxValue = 15.000000000000000000
+          CriticalPoints.MaxValueIncluded = True
+          CriticalPoints.MinValueIncluded = True
           EditText = '3'
           TabOrder = 0
         end
@@ -861,18 +862,53 @@ object frOptions: TfrOptions
           Top = 42
           Width = 81
           Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = False
+          CriticalPoints.MaxValue = 15.000000000000000000
+          CriticalPoints.MaxValueIncluded = True
+          CriticalPoints.MinValueIncluded = True
           EditText = '3'
           TabOrder = 1
         end
         object cboAutoRoundOnly: TCheckBox
           Left = 8
           Top = 63
-          Width = 297
+          Width = 291
           Height = 17
-          Caption = 'Only round numbers when using the auto round function'
+          Caption = 'Only perform rounding when using the auto round function'
           TabOrder = 2
+        end
+      end
+      object GroupBox6: TGroupBox
+        Left = 305
+        Top = 169
+        Width = 279
+        Height = 136
+        Align = alClient
+        Caption = 'Other Options'
+        TabOrder = 2
+        ExplicitLeft = 333
+        ExplicitTop = 175
+        ExplicitWidth = 185
+        ExplicitHeight = 105
+        object Label1: TLabel
+          Left = 8
+          Top = 20
+          Width = 156
+          Height = 13
+          Caption = 'Custom Poll Interval (In Seconds)'
+        end
+        object seCustomPollInterval: TJvValidateEdit
+          Left = 170
+          Top = 18
+          Width = 81
+          Height = 21
+          CriticalPoints.MinValue = 0.100000000000000000
+          CriticalPoints.MaxValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 2
+          EditText = '0.50'
+          TabOrder = 0
         end
       end
     end

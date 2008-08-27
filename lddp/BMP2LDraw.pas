@@ -73,13 +73,12 @@ type
     procedure BitBtn4Click(Sender: TObject);
     procedure TabSheet3Show(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+
   private
-    { Private-Deklarationen }
-    slConvertColors:Tstringlist;
+    ColourList: TDATColourList;
+
   public
-    function GetLDrawColor(const color:TCOLOR):integer;
-    function BGRtoRGB(clr:TColor):TCoLOR;
-    { Public-Deklarationen }
+    function GetLDrawColor(const color: TColor): Integer;
   end;
 
 var
@@ -87,309 +86,319 @@ var
 
 implementation
 
-uses main;
+uses
+  main, DATUtils;
 
 
 {$R *.dfm}
 
+function TfrBMP2LDrawMain.GetLDrawColor(const color: TColor): Integer;
 
-function TfrBMP2LDrawMain.BGRtoRGB(clr:TColor):TColor;
-var sr:string;
+var
+  DistanceSquared, i, B1, B2, G1, G2, R1, R2, SmallestDistanceSquared: Integer;
+
+  function GetRValue(rgb: TColor): Byte;
+  begin
+    Result := Byte(rgb);
+  end;
+
+  function GetGValue(rgb: TColor): Byte;
+  begin
+    Result := Byte(rgb shr 8);
+  end;
+
+  function GetBValue(rgb: TColor): Byte;
+  begin
+    Result := Byte(rgb shr 16);
+  end;
+
+
 begin
-  sr:=IntToHex(ColortoRGB(clr),6);
-  Result:=strtoint('$'+Copy(sr,5,2)+Copy(sr,3,2)+Copy(sr,1,2));
-end;
-
-
-
-function TfrBMP2LDrawMain.GetLDrawColor(const color:TCOLOR):integer;
-VAR
-    DistanceSquared:  INTEGER;
-    i:integer;
-    B1, B2:  INTEGER;
-    G1, G2:  INTEGER;
-    R1, R2:  INTEGER;
-    SmallestDistanceSquared:  INTEGER;
-
-
-    function GetRValue(rgb: TColor): Byte;
-    begin
-      Result := Byte(rgb);
-    end;
-
-    function GetGValue(rgb: TColor): Byte;
-    begin
-      Result := Byte(rgb shr 8);
-    end;
-
-    function GetBValue(rgb: TColor): Byte;
-    begin
-      Result := Byte(rgb shr 16);
-    end;
-
-
-BEGIN
-  RESULT := clBlack;                       // Assume black is closest color
-  SmallestDistanceSquared := 256*256*256;  // Any distance would be shorter
+  Result := clBlack;                       // Assume black is closest color
+  SmallestDistanceSquared := 256 * 256 * 256;  // Any distance would be shorter
 
   R1 := GetRValue(color);
   G1 := GetGValue(color);
   B1 := GetBValue(color);
 
-  i:=0;
-  while i<=slConvertColors.count-1 do
-  BEGIN
-    R2 := GetRValue(strtoint('$'+copy(slConvertColors[i],Pos(' ',slConvertColors[i]) + 1,6)));
-    G2 := GetGValue(strtoint('$'+copy(slConvertColors[i],Pos(' ',slConvertColors[i]) + 1,6)));
-    B2 := GetBValue(strtoint('$'+copy(slConvertColors[i],Pos(' ',slConvertColors[i]) + 1,6)));
+  for i := 0 to ColourList.Count - 1 do
+  begin
+    R2 := GetRValue(ColourList[i].MainColor);
+    G2 := GetGValue(ColourList[i].MainColor);
+    B2 := GetBValue(ColourList[i].MainColor);
 
-    DistanceSquared := SQR(R1-R2) + SQR(G1-G2) + SQR(B1-B2);
-    IF   DistanceSquared < SmallestDistanceSquared
-    THEN BEGIN
-      RESULT := strtoint(slConvertColors.Names[i]);
-      SmallestDistanceSquared := DistanceSquared
+    DistanceSquared := Sqr(R1 - R2) + Sqr(G1 - G2) + Sqr(B1 - B2);
+    if DistanceSquared < SmallestDistanceSquared then
+    begin
+      Result := ColourList[i].Code;
+      SmallestDistanceSquared := DistanceSquared;
     end;
-    inc(i);
-  END
+  end;
 end;
 
 procedure TfrBMP2LDrawMain.BitBtn1Click(Sender: TObject);
 begin
-  if opendialog.execute then begin
-    image1.Picture.LoadFromFile(opendialog.files[0]);
-    btNext1.Enabled:=True;
+  if OpenDialog.Execute then
+  begin
+    Image1.Picture.LoadFromFile(OpenDialog.Files[0]);
+    btNext1.Enabled := True;
   end;
 end;
 
 procedure TfrBMP2LDrawMain.btSaveClick(Sender: TObject);
 
-var sr:TStringList;
-    cl,clo:TColor;
-    Quad:TDatquad;
-    ps,transclr:integer;
-    x,y,i,found,ldc:integer;
-    pwx,pwy,pwzx,pwzy,z2,z3,y1,y2,y3,y4:real;
-    x3:real;
+var
+  sr: TStringList;
+  cl, clo: TColor;
+  quad, quad2: TDATQuad;
+  x, y, i, found, ldc, ps, transclr: Integer;
+  pwx, pwy, pwzx, pwzy, x3, z2, z3, y1, y2, y3, y4: Real;
 
 begin
-  quad:=TDatQuad.Create;
-  decimalseparator:='.';
-  if Radiobutton1.Checked then begin
-    pwx:=strtofloat(edwidth.text);
-    pwy:=pwx;
-    pwzx:=0; pwzy:=0;
-    z2:=0; x3:=0; z3:=0;
-    y1:=0; y2:=0; y3:=0; y4:=0;
-    if strtofloat(edwidth.text)=0 then begin
+  quad := TDATQuad.Create;
+  if RadioButton1.Checked then
+  begin
+    pwx := StrToFloat(edWidth.Text);
+    pwy := pwx;
+    pwzx := 0;
+    pwzy := 0;
+    z2 := 0;
+    x3 := 0;
+    z3 := 0;
+    y1 := 0;
+    y2 := 0;
+    y3 := 0;
+    y4 := 0;
+    if StrToFloat(edWidth.Text) = 0 then
+    begin
       MessageDlg(_('LDraw unit size cannot be 0.0 !'), mtError, [mbOK], 0);
       Exit;
     end;
   end
-    else begin
-       try
-          quad.DATString:=edQuad.text;
-        except
-          MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
-          exit;
-        end;
-      try
-
-        x3:=quad.x3;
-
-        y1:=quad.y1;
-        y2:=quad.y2;
-        y3:=quad.y3;
-        y4:=quad.y4;
-
-        z2:=quad.z2;
-        z3:=quad.z3;
-
-        pwx:=(quad.x1-x3)/image1.Width;
-        pwy:=(quad.y1-y3)/image1.height;
-        pwzx:=(quad.z1-z3)/image1.width;
-        pwzy:=(quad.z1-z3)/image1.height;
-
-
-      except
-        MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
-        Exit;
-      end;
+  else
+  begin
+    try
+      quad.DATString := edQuad.text;
+    except
+      MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
+      Exit;
     end;
 
-    frBMP2LDrawMain.Enabled:=False;
-    pnProgress.Visible:=true;
-    slConvertColors.LoadFromFile(ExtractFilePath(Application.ExeName)+'\colors.pal');
-    transclr:=-1;
-    if edit1.Text<>'None' then begin
-      clo:=strtoint('$'+edit1.Text);
-      transclr:=getLDrawColor(clo);
+    try
+      x3 := quad.x3;
+
+      y1 := quad.y1;
+      y2 := quad.y2;
+      y3 := quad.y3;
+      y4 := quad.y4;
+
+      z2 := quad.z2;
+      z3 := quad.z3;
+
+      pwx := (quad.x1 - x3) / Image1.Width;
+      pwy := (quad.y1 - y3) / Image1.Height;
+      pwzx := (quad.z1 - z3) / Image1.Width;
+      pwzy := (quad.z1 - z3) / Image1.Height;
+    except
+      MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
+      Exit;
     end;
-    decimalseparator:='.';
-    clo:=image1.Canvas.pixels[0,0];
-    ps:=0;
-    sr:=TStringList.Create;
-    sr.Add('0 Image converted by LDrawDesignPad');
-    pb.Position:=0;
-    with image1 do begin
-      pb.max:=Height;
-      for y:=0 to Height-1 do begin
-        pb.Position:=y+1;
-        Application.ProcessMessages;
-        for x:=0 to Width  do begin
-          cl:=Canvas.pixels[x,y];
-          if (cl<>clo) or (x=Width) then begin
-            ldc:=getLDrawColor(clo);
-            if (rbTrans1.Checked) or (rbTrans2.Checked and not (ldc=transclr)) then begin
-              if rbTrans1.Checked and (ldc=transclr) then ldc:=16;
-              found:=0;
-              if sr.Count>2 then
-                if (z2<>z3) and not ((y1=y2) and (y2=y3) and (y3=y4)) then
+  end;
+
+  frBMP2LDrawMain.Enabled := False;
+  pnProgress.Visible := true;
+  ColourList := MakeStandardDATColourList;
+  transclr := -1;
+  if Edit1.Text <> 'None' then
+  begin
+    clo := StrToInt('$' + Edit1.Text);
+    transclr := GetLDrawColor(clo);
+  end;
+  clo := Image1.Canvas.Pixels[0,0];
+  ps := 0;
+  sr := TStringList.Create;
+  sr.Add('0 Image converted by LDrawDesignPad');
+  pb.Position := 0;
+  with Image1 do
+  begin
+    pb.Max := Height;
+    for y := 0 to Height - 1 do
+    begin
+      pb.Position := y + 1;
+      Application.ProcessMessages;
+      for x := 0 to Width do
+      begin
+        cl := Canvas.Pixels[x,y];
+        if (cl <> clo) or (x = Width) then
+        begin
+          ldc := GetLDrawColor(clo);
+          if (rbTrans1.Checked) or (rbTrans2.Checked and not (ldc = transclr)) then
+          begin
+            if rbTrans1.Checked and (ldc = transclr) then
+              ldc := 16;
+            found := 0;
+            if sr.Count > 2 then
+              if (z2 <> z3) and not ((y1 = y2) and (y2 = y3) and (y3 = y4)) then
+              begin
+                for i := sr.Count - 1 downto 2 do
                 begin
-                  for I:=sr.Count-1 downto 2 do
+                  Quad.DATString := sr[i];
+                  if (quad.Color = ldc) and
+                     (quad.x1 = (pwx * ps) + x3) and
+                     (quad.x2 = (pwx * x) + x3) and
+                     (quad.x3 = (pwy * (y - 1)) + y3 + pwy) then
                   begin
-                    quad.DATString:=sr[i];
-                    if (quad.Color=ldc) and
-                       (quad.x1=(pwx*ps)+x3) and
-                       (quad.x2=(pwx*x) +x3) and
-                       (quad.x3=(pwy*(y-1))+y3+pwy)
-                          then begin
-                            found:=i;
-                            Break;
-                          end;
+                    found := i;
+                    Break;
                   end;
-                end
-                  else
-                  begin
-                    for I:=sr.Count-1 downto 2 do
-                    begin
-                      quad.DATString:=sr[i];
-                      if (quad.Color=ldc) and
-                         (quad.x1=(pwx*ps)+x3) and
-                         (quad.x2=(pwx*x) +x3) and
-                         (quad.x3=(pwy*(y-1))+y3+pwy)
-                            then
-                            begin
-                              found:=i;
-                              Break;
-                            end;
-                  end;
-
-                  end;
-              if found>0 then begin
-                quad.DATString:=sr[found];
-                if (z2<>z3) and not ((y1=y2) and (y2=y3) and (y3=y4)) then
-                    sr.Add('4 '+IntToStr(ldc)+' '+
-                       floattostr((pwx*ps)+x3)+' '+floattostr(quad.y1)+' '+floattostr(quad.z1)+' '+
-                       floattostr((pwx*x) +x3)+' '+floattostr(quad.y2)+' '+floattostr((pwzx*x)+z3)+' '+
-                       floattostr((pwx*x )+x3)+' '+floattostr((pwy*y)+pwy+y3)  +' '+floattostr((pwzx*x)+z3)+' '+
-                       floattostr((pwx*ps)+x3)+' '+floattostr((pwy*y)+pwy+y3)  +' '+floattostr(quad.z3))
-                   else
-                     sr.Add('4 '+IntToStr(ldc)+' '+
-                       floattostr((pwx*ps)+x3)+' '+floattostr(quad.y1)+' '+floattostr(quad.z1)+' '+
-                       floattostr((pwx*x) +x3)+' '+floattostr(quad.y2)+' '+floattostr(quad.z2)+' '+
-                       floattostr((pwx*x )+x3)+' '+floattostr((pwy*y)+pwy+y3)  +' '+floattostr((pwzy*(y+1))+z3)+' '+
-                       floattostr((pwx*ps)+x3)+' '+floattostr((pwy*y)+pwy+y3)  +' '+floattostr((pwzy*(y+1))+z3));
-                sr.Delete(found);
-
-              end else  begin
-
-                if (z2<>z3) and not ((y1=y2) and (y2=y3) and (y3=y4)) then
-                     sr.Add('4 '+IntToStr(ldc)+' '+
-                         floattostr((pwx*ps)+x3)+' '+floattostr((pwy*y)+y3)    +' '+floattostr((pwzx*ps)+z3)+' '+
-                         floattostr((pwx*x) +x3)+' '+floattostr((pwy*y)+y3)    +' '+floattostr((pwzx*x)+z3)+' '+
-                         floattostr((pwx*x )+x3)+' '+floattostr((pwy*y)+pwy+y3)+' '+floattostr((pwzx*x)+z3)+' '+
-                         floattostr((pwx*ps)+x3)+' '+floattostr((pwy*y)+pwy+y3)+' '+floattostr((pwzx*ps)+z3))
-                   else
-                     sr.Add('4 '+IntToStr(ldc)+' '+
-                         floattostr((pwx*ps)+x3)+' '+floattostr((pwy*y)+y3)    +' '+floattostr((pwzy*y)+z3)+' '+
-                         floattostr((pwx*x) +x3)+' '+floattostr((pwy*y)+y3)    +' '+floattostr((pwzy*y)+z3)+' '+
-                         floattostr((pwx*x )+x3)+' '+floattostr((pwy*y)+pwy+y3)+' '+floattostr((pwzy*(y+1))+z3)+' '+
-                         floattostr((pwx*ps)+x3)+' '+floattostr((pwy*y)+pwy+y3)+' '+floattostr((pwzy*(y+1))+z3));
-
                 end;
-            end;
-            ps:=x;
-            if x=Width then begin
-              ps:=0;
-              clo:=Canvas.pixels[0,y+1]
-
+              end
+              else
+              begin
+                for i := sr.Count - 1 downto 2 do
+                begin
+                  quad.DATString := sr[i];
+                  if (quad.Color = ldc) and
+                     (quad.x1 = (pwx * ps) + x3) and
+                     (quad.x2 = (pwx * x) + x3) and
+                     (quad.x3 = (pwy * (y - 1)) + y3 + pwy) then
+                  begin
+                    found:=i;
+                    Break;
+                  end;
+                end;
+              end;
+            if found > 0 then
+            begin
+              quad.DATString := sr[found];
+              if (z2 <> z3) and not ((y1 = y2) and (y2 = y3) and (y3 = y4)) then
+              begin
+                quad2 := TDATQuad.Create;
+                quad2.Color := ldc;
+                quad2.Matrix := DATMatrix((pwx * ps) + x3, quad.y1, quad.z1, 0,
+                                          (pwx * x) + x3, quad.y2, (pwzx * x) + z3, 0,
+                                          (pwx * x) + x3, (pwy * y) + pwy + y3, (pwzx * x) + z3, 0,
+                                          (pwx * ps) + x3, (pwy * y) + pwy + y3, quad.z3, 1);
+                sr.Add(quad2.DATString);
+                quad2.Free;
+              end
+              else
+              begin
+                quad2 := TDATQuad.Create;
+                quad2.Color := ldc;
+                quad2.Matrix := DATMatrix((pwx * ps) + x3, quad.y1, quad.z1, 0,
+                                          (pwx * x) + x3, quad.y2, quad.z2, 0,
+                                          (pwx * x) + x3, (pwy * y) + pwy + y3, (pwzy * (y + 1)) + z3, 0,
+                                          (pwx * ps) + x3, (pwy * y) + pwy + y3, (pwzy *( y + 1)) + z3, 1);
+                sr.Add(quad2.DATString);
+                sr.Delete(found);
+                quad2.Free;
+              end;
             end
-              else clo:=cl;
-
+            else
+            begin
+              if (z2 <> z3) and not ((y1 = y2) and (y2 = y3) and (y3 = y4)) then
+              begin
+                quad2 := TDATQuad.Create;
+                quad2.Color := ldc;
+                quad2.Matrix := DATMatrix((pwx * ps) + x3, (pwy * y) + y3, (pwzx * ps) + z3, 0,
+                                          (pwx * x) + x3, (pwy * y) + y3, (pwzx * x) + z3, 0,
+                                          (pwx * x) + x3, (pwy * y) + pwy + y3, (pwzx * x) + z3, 0,
+                                          (pwx * ps) + x3, (pwy * y) + pwy + y3, (pwzx * ps) + z3, 1);
+                sr.Add(quad2.DATString);
+                quad2.Free;
+              end
+              else
+              begin
+                quad2 := TDATQuad.Create;
+                quad2.Color := ldc;
+                quad2.Matrix := DATMatrix((pwx * ps) + x3, (pwy * y) + y3, (pwzy * y) + z3, 0,
+                                          (pwx * x) + x3, (pwy * y) + y3, (pwzy * y) + z3, 0,
+                                          (pwx * x) + x3, (pwy * y) + pwy + y3, (pwzy * (y + 1)) + z3, 0,
+                                          (pwx * ps) + x3, (pwy * y) + pwy + y3, (pwzy *( y + 1)) + z3, 1);
+                sr.Add(quad2.DATString);
+                quad2.Free;
+              end;
+            end;
           end;
+          ps := x;
+          if x = Width then
+          begin
+            ps := 0;
+            clo := Canvas.Pixels[0,y+1];
+          end
+          else
+            clo := cl;
         end;
       end;
     end;
+  end;
 
-    frMain.editor.Seltext:=sr.text;
-    sr.Free;
-    pnProgress.Visible:=False;
-    frBMP2LDrawMain.Enabled:=true;
-    MessageDlg(_('Done!'), mtInformation, [mbOK], 0);
-    quad.free;
-    ModalResult:=mrOK;
+  frMain.Editor.Seltext := sr.text;
+  sr.Free;
+  pnProgress.Visible := False;
+  frBMP2LDrawMain.Enabled := true;
+  quad.Free;
+  ModalResult := mrOK;
 end;
-
-
 
 procedure TfrBMP2LDrawMain.FormShow(Sender: TObject);
 begin
-  pc.ActivePage:=TabSheet1;
-  if slConvertColors=nil then slConvertColors:=TStringlist.Create;
+  pc.ActivePage := TabSheet1;
 end;
 
 procedure TfrBMP2LDrawMain.btNext1Click(Sender: TObject);
 begin
-  pc.ActivePage:=TabSheet2;
+  pc.ActivePage := TabSheet2;
 end;
 
 procedure TfrBMP2LDrawMain.BitBtn5Click(Sender: TObject);
 begin
-  pc.ActivePage:=TabSheet3;
+  pc.ActivePage := TabSheet3;
 end;
 
 procedure TfrBMP2LDrawMain.Button1Click(Sender: TObject);
 begin
-  Screen.cursor:=crHandPoint;
+  Screen.Cursor := crHandPoint;
 end;
 
 procedure TfrBMP2LDrawMain.Image1MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if Screen.cursor=crHandPoint then begin
-    edit1.Color:=image1.Canvas.Pixels[x,y];
-    edit1.text:=IntToHex(image1.Canvas.Pixels[x,y],6);
-    edit1.Font.color:=($FFFFFF-image1.Canvas.Pixels[x,y]);
-    Screen.cursor:=crDefault;
+  if Screen.Cursor = crHandPoint then
+  begin
+    Edit1.Color := Image1.Canvas.Pixels[x,y];
+    Edit1.Text := IntToHex(image1.Canvas.Pixels[x,y], 6);
+    Edit1.Font.Color := ($FFFFFF - Image1.Canvas.Pixels[x,y]);
+    Screen.Cursor := crDefault;
   end;
 end;
 
 procedure TfrBMP2LDrawMain.BitBtn6Click(Sender: TObject);
 begin
-  edit1.Text:=_('None');
-  edit1.Color:=clWindow;
-  edit1.Font.Color:=clBlack;
+  Edit1.Text := _('None');
+  Edit1.Color := clWindow;
+  Edit1.Font.Color := clBlack;
 end;
 
 procedure TfrBMP2LDrawMain.BitBtn4Click(Sender: TObject);
 begin
-  pc.ActivePage:=TabSheet1;
+  pc.ActivePage := TabSheet1;
 end;
 
 procedure TfrBMP2LDrawMain.TabSheet3Show(Sender: TObject);
 begin
-  edQuad.Enabled:=Radiobutton2.Checked;
-  if Radiobutton1.Checked then begin
-    btSave.Enabled:=(strtoFloat(edWidth.text)>0);
-  end
-    else begin
-      btSave.Enabled:=(edQuad.Text<>'');
-    end;
+  edQuad.Enabled := Radiobutton2.Checked;
+  if Radiobutton1.Checked then
+    btSave.Enabled := (StrToFloat(edWidth.text) > 0)
+  else
+    btSave.Enabled := (edQuad.Text <> '');
+
 end;
 
 procedure TfrBMP2LDrawMain.FormCreate(Sender: TObject);
 begin
-  TranslateComponent (self);
+  TranslateComponent(Self);
 end;
 
 end.

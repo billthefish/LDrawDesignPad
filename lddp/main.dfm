@@ -40,7 +40,6 @@ object frMain: TfrMain
     OnMouseDown = DocumentTabsMouseDown
     DefaultExt = '.dat'
     OnClosing = DocumentTabsClosing
-    ExplicitHeight = 493
     object editor: TScintillaLDDP
       Left = 4
       Top = 24
@@ -111,7 +110,9 @@ object frMain: TfrMain
       HideSelect = False
       WordWrap = sciNoWrap
       EdgeColor = clSilver
-      WordChars = '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      WordChars = 
+        '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-' +
+        '.'
       ControlCharSymbol = #0
       Folding = [foldCompact, foldComment, foldPreprocessor, foldAtElse, foldHTML, foldHTMLPreProcessor]
       FoldMarkers.MarkerType = sciMarkBox
@@ -475,7 +476,6 @@ object frMain: TfrMain
       item
         Width = 50
       end>
-    ExplicitTop = 547
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -914,8 +914,7 @@ object frMain: TfrMain
       object ToolButton9: TToolButton
         Left = 282
         Top = 0
-        Hint = 'Check for errors|Check for errors'
-        Caption = 'Run Error Check'
+        Action = frErrorWindow.acErrorCheck
         ImageIndex = 22
       end
     end
@@ -1122,65 +1121,53 @@ object frMain: TfrMain
         Hint = 'Check for errors'
         ImageIndex = 21
         object E1: TMenuItem
-          Caption = 'Run Error Check'
-          Hint = 'Check for errors|Check for errors'
+          Action = frErrorWindow.acErrorCheck
           ImageIndex = 22
-          ShortCut = 121
         end
         object N21: TMenuItem
           Caption = '-'
         end
         object MarkAll1: TMenuItem
-          Caption = 'Mark All'
-          Enabled = False
+          Action = frErrorWindow.acECMarkAll
         end
         object MarkAllofSelectedType1: TMenuItem
-          Caption = 'Mark All of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECMarkAllTyped
         end
         object UnmarkAll2: TMenuItem
-          Caption = 'Unmark All'
-          Enabled = False
+          Action = frErrorWindow.acECUnMarkAll
         end
         object UnmarkAllofSelectedType2: TMenuItem
-          Caption = 'Unmark All of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECUnMarkAllTyped
         end
         object N18: TMenuItem
           Caption = '-'
         end
         object AutofixSelectedError1: TMenuItem
-          Caption = 'Autofix Selected Error'
-          Enabled = False
+          Action = frErrorWindow.acECFixError
         end
         object N19: TMenuItem
           Caption = '-'
         end
         object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
-          Caption = 'Autofix All Marked Errors of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllMarkedErrorsTyped
         end
         object AutofixAllMarkedErrors1: TMenuItem
-          Caption = 'Autofix All Marked Errors'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllMarkedErrors
         end
         object N20: TMenuItem
           Caption = '-'
         end
         object AutofixAllErrorsofSelectedType1: TMenuItem
-          Caption = 'Autofix All Errors of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllErrorsTyped
         end
         object AutofixAllErrors1: TMenuItem
-          Caption = 'Autofix All Errors'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllErrors
         end
         object N14: TMenuItem
           Caption = '-'
         end
         object CopyErrorListToClipboard1: TMenuItem
-          Caption = 'Copy Error List To Clipboard'
-          Enabled = False
+          Action = frErrorWindow.acECCopy
         end
       end
       object AutoRoundSelection1: TMenuItem
@@ -1226,47 +1213,6 @@ object frMain: TfrMain
           Caption = 'User Defined Program'
           Hint = 'User Defined Program|Execute User Defined program'
           ImageIndex = 34
-        end
-        object N15: TMenuItem
-          Caption = '-'
-        end
-        object Polling1: TMenuItem
-          Caption = 'Polling'
-          ImageIndex = 37
-          object PolltoL3LabLDView1: TMenuItem
-            Caption = 'Poll to L3Lab && LDView'
-            OnClick = mnPollL3LabClick
-          end
-          object Polltoselectedlineonly1: TMenuItem
-            Caption = 'Poll to selected line only'
-            OnClick = mnPollToSelectedClick
-          end
-          object N16: TMenuItem
-            Caption = '-'
-          end
-          object Pollevery1sec1: TMenuItem
-            Caption = 'Poll every 1 sec'
-            GroupIndex = 1
-            RadioItem = True
-            OnClick = Pollevery1sec2Click
-          end
-          object Pollevery2sec1: TMenuItem
-            Caption = 'Poll every 2 sec'
-            Checked = True
-            GroupIndex = 1
-            RadioItem = True
-          end
-          object Pollevery5sec: TMenuItem
-            Caption = 'Poll every 5 sec'
-            GroupIndex = 1
-            RadioItem = True
-          end
-          object Pollonrequest2: TMenuItem
-            Caption = 'Poll on request'
-            GroupIndex = 1
-            RadioItem = True
-            OnClick = Pollonrequest1Click
-          end
         end
       end
       object N6: TMenuItem
@@ -2652,44 +2598,50 @@ object frMain: TfrMain
   object pmPolling: TPopupMenu
     Left = 128
     Top = 80
-    object mnPollL3Lab: TMenuItem
-      Caption = 'Poll to L3Lab && LDView'
+    object mnuEnablePolling: TMenuItem
+      Caption = 'Enable Polling'
       GroupIndex = 1
-      OnClick = mnPollL3LabClick
+      OnClick = mnuEnablePollingClick
     end
-    object mnPollToSelected: TMenuItem
+    object mnuPollToSelected: TMenuItem
       Caption = 'Poll to selected line only'
       GroupIndex = 1
-      OnClick = mnPollToSelectedClick
+      OnClick = mnuPollToSelectedClick
     end
     object N8: TMenuItem
       Caption = '-'
       GroupIndex = 1
     end
-    object Pollevery1sec2: TMenuItem
+    object mnuPollEvery1sec: TMenuItem
       Caption = 'Poll every 1 sec'
-      GroupIndex = 1
+      GroupIndex = 2
       RadioItem = True
-      OnClick = Pollevery1sec2Click
+      OnClick = mnuPollEvery1secClick
     end
-    object Pollevery2sec2: TMenuItem
+    object mnuPollevery2sec: TMenuItem
       Caption = 'Poll every 2 secs'
       Checked = True
-      GroupIndex = 1
+      GroupIndex = 2
       RadioItem = True
-      OnClick = Pollevery2sec2Click
+      OnClick = mnuPollevery2secClick
     end
-    object Pollevery5sec2: TMenuItem
+    object mnuPollEvery5sec: TMenuItem
       Caption = 'Poll every 5 secs'
-      GroupIndex = 1
+      GroupIndex = 2
       RadioItem = True
-      OnClick = Pollevery5sec2Click
+      OnClick = mnuPollEvery5secClick
     end
-    object Pollonrequest1: TMenuItem
-      Caption = 'Poll on request'
-      GroupIndex = 1
+    object mnuPollOnCustomInterval: TMenuItem
+      Caption = 'Poll on Custom Interval'
+      GroupIndex = 2
       RadioItem = True
-      OnClick = Pollonrequest1Click
+      OnClick = mnuPollOnCustomIntervalClick
+    end
+    object mnuPollOnRequest: TMenuItem
+      Caption = 'Poll on Request'
+      GroupIndex = 2
+      RadioItem = True
+      OnClick = mnuPollOnRequestClick
     end
   end
   object tmPoll: TTimer
@@ -2799,7 +2751,10 @@ object frMain: TfrMain
     Left = 160
     Top = 80
     object CloseFile1: TMenuItem
-      Action = acFileClose
+      Caption = '&Close File'
+      Hint = 'Close|Close current file'
+      ImageIndex = 7
+      OnClick = CloseFile1Click
     end
   end
   object LanguageManager: TSciLanguageManager

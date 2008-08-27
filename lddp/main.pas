@@ -75,8 +75,8 @@ type
     InlinePart1: TMenuItem;
     Insert2: TMenuItem;
     MenuItem2: TMenuItem;
-    mnPollL3Lab: TMenuItem;
-    mnPollToSelected: TMenuItem;
+    mnuEnablePolling: TMenuItem;
+    mnuPollToSelected: TMenuItem;
     N5: TMenuItem;
     N8: TMenuItem;
     N10: TMenuItem;
@@ -85,9 +85,9 @@ type
     pmMemo: TPopupMenu;
     pmPolling: TPopupMenu;
     pmToolbars: TPopupMenu;
-    Pollevery5sec2: TMenuItem;
-    Pollevery1sec2: TMenuItem;
-    Pollevery2sec2: TMenuItem;
+    mnuPollEvery5sec: TMenuItem;
+    mnuPollEvery1sec: TMenuItem;
+    mnuPollevery2sec: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
     tmPoll: TTimer;
@@ -176,14 +176,6 @@ type
     ConvertBitmaptoLDraw1: TMenuItem;
     acModelTreeView: TAction;
     mnuModelTree: TMenuItem;
-    N15: TMenuItem;
-    Polling1: TMenuItem;
-    PolltoL3LabLDView1: TMenuItem;
-    Polltoselectedlineonly1: TMenuItem;
-    N16: TMenuItem;
-    Pollevery1sec1: TMenuItem;
-    Pollevery2sec1: TMenuItem;
-    Pollevery5sec: TMenuItem;
     N7: TMenuItem;
     View1: TMenuItem;
     MarkAll1: TMenuItem;
@@ -222,8 +214,7 @@ type
     Processing1: TMenuItem;
     RandomizeColorsinSelection1: TMenuItem;
     RandomizeColorsinSelection2: TMenuItem;
-    Pollonrequest1: TMenuItem;
-    Pollonrequest2: TMenuItem;
+    mnuPollOnRequest: TMenuItem;
     N24: TMenuItem;
     acMirrorX: TAction;
     acMirrorY: TAction;
@@ -314,6 +305,7 @@ type
     XAxis3: TMenuItem;
     YAxis3: TMenuItem;
     ZAxis3: TMenuItem;
+    mnuPollOnCustomInterval: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -350,11 +342,11 @@ type
     procedure FormDblClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
-    procedure mnPollL3LabClick(Sender: TObject);
-    procedure mnPollToSelectedClick(Sender: TObject);
-    procedure Pollevery5sec2Click(Sender: TObject);
-    procedure Pollevery1sec2Click(Sender: TObject);
-    procedure Pollevery2sec2Click(Sender: TObject);
+    procedure mnuEnablePollingClick(Sender: TObject);
+    procedure mnuPollToSelectedClick(Sender: TObject);
+    procedure mnuPollEvery5secClick(Sender: TObject);
+    procedure mnuPollEvery1secClick(Sender: TObject);
+    procedure mnuPollevery2secClick(Sender: TObject);
     procedure tmPollTimer(Sender: TObject);
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
@@ -371,7 +363,7 @@ type
     procedure MetaMenuClick(Sender: TObject);
     procedure acTriangleCombineExecute(Sender: TObject);
     procedure acRandomizeColorsExecute(Sender: TObject);
-    procedure Pollonrequest1Click(Sender: TObject);
+    procedure mnuPollOnRequestClick(Sender: TObject);
     procedure acMirrorExecute(Sender: TObject);
     procedure acColorReplaceShortcutExecute(Sender: TObject);
     procedure tbUserDefinedClick(Sender: TObject);
@@ -390,6 +382,8 @@ type
     procedure DocumentTabsChange(Sender: TObject);
     procedure AppInstCmdLineReceived(Sender: TObject;
       CmdLine: TStrings);
+    procedure mnuPollOnCustomIntervalClick(Sender: TObject);
+    procedure CloseFile1Click(Sender: TObject);
 
   private
     TabRightClickIndex: Integer;
@@ -405,7 +399,7 @@ type
     strChangedCompleteText, strChangedSelText: string;
     procedure LoadPlugins;
     procedure OpenFile(filename: string);
-    procedure UpdateControls(Closing: Boolean = false);
+    procedure CloseFile(DocNumber: Integer);
     procedure UpdateMRU(NewFileName: TFileName= '');
     procedure UpdateViewMenu;
     procedure LoadFormValues;
@@ -619,7 +613,6 @@ begin
 
   editor.SelText := DATModel1.ModelText;
   editor.Modified := true;
-  UpdateControls(false);
 
   DATModel1.Free;
 end;
@@ -721,14 +714,15 @@ var
 
       ErrorLine := L3CheckLine(QuadCombine.DATString);
       flag := true;
-      if (pos('Collinear vertices',ErrorLine)>0) or
-         (pos('Vertices not coplaner',ErrorLine)>0) then
+      if (pos('Collinear vertices',ErrorLine) > 0) or
+         (pos('Vertices not coplaner',ErrorLine) > 0) or
+         (pos('Concave Quad',ErrorLine) > 0) then
         if MessageDlg(_('Combining these triangles:') + #13#10 +
                       tri1.DATString + '(Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
                       tri2.DATString + '(Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
-                      _('will result in a quad with collinear or') + #13#10 +
-                      _('not coplaner vertices') + #13#10 +
-                      _('Combine anyway?'), mtWarning, [mbYes, mbNo], 0) = mrNo then
+                      _('will result in a concave quad or a quad with' + #13#10 +
+                        'collinear or not coplaner vertices' + #13#10 +
+                        'Combine anyway?'), mtWarning, [mbYes, mbNo], 0) = mrNo then
           flag := false;
 
       if flag then
@@ -939,7 +933,6 @@ begin
     DocumentTabs.Open(filename);
     UpdateMRU(filename);
     DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
-    UpdateControls;
   end
   else
     MessageDlg(_('File ') + DocumentTabs.ActiveDocument.Filename + _(' not found'), mtError, [mbOK], 0);
@@ -1002,9 +995,26 @@ begin
 end;
 
 procedure TfrMain.acFileCloseExecute(Sender: TObject);
+// Close tab under cursor
+begin
+  CloseFile(DocumentTabs.ActiveDocument.Index);
+end;
+
+procedure TfrMain.CloseFile(DocNumber: Integer);
+var
+  LastTab: Boolean;
+
+begin
+  LastTab := DocumentTabs.Count <= 1;
+  DocumentTabs.Close(DocNumber);
+  if LastTab then
+    DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
+end;
+
+procedure TfrMain.CloseFile1Click(Sender: TObject);
 begin
   if TabRightClickIndex >= 0 then
-    DocumentTabs.Close(TabRightClickIndex);
+    CloseFile(TabRightClickIndex);
 end;
 
 // Help actions
@@ -1021,7 +1031,12 @@ procedure TfrMain.acOptionsExecute(Sender: TObject);
 // Show options window
 begin
   frOptions.ShowModal;
-  UpdateControls;
+
+  editor.OnlyRoundDuringAutoRound := frOptions.cboAutoRoundOnly.Checked;
+  mnuUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
+  tbUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
+
+  editorUpdateUI(Sender);
 end;
 
 procedure TfrMain.acHomepageExecute(Sender: TObject);
@@ -1312,68 +1327,6 @@ begin
     OpenFile(CmdLine[i]);
 end;
 
-procedure TfrMain.UpdateControls(Closing: Boolean = false);
-// Updated the action controls depending on the EditorChilds
-var
-  documentcount: Integer;
-
-begin
-  documentcount := DocumentTabs.Count;
-
-  if Closing then documentcount := documentcount - 1;
-  acFileClose.Enabled := documentcount > 0 ;
-  acFileCloseAll.Enabled := documentcount > 0;
-  acFileSaveAs.Enabled := documentcount > 0;
-  acFilePrint.Enabled := documentcount > 0;
-  acFileSave.Enabled := documentcount > 0;
-  acFileRevert.Enabled := documentcount > 0;
-  acldview.Enabled := documentcount > 0;
-  acl3Lab.Enabled := documentcount > 0;
-  acmlcad.Enabled := documentcount > 0;
-  acEditCut.Enabled := documentcount > 0;
-  acEditCopy.Enabled := documentcount > 0;
-  acEditPaste.Enabled := documentcount > 0;
-  btPolling.Enabled := documentcount > 0;
-  acSelectAll.Enabled := documentcount > 0;
-  acFind.Enabled := documentcount > 0;
-  acReplace.Enabled := documentcount > 0;
-  Plugins1.Enabled := documentcount > 0;
-  Insert1.Enabled := documentcount > 0;
-  Edit1.Enabled := documentcount > 0;
-  acCommentBlock.Enabled := documentcount > 0;
-  acUnCommentBlock.Enabled := documentcount > 0;
-  acIncIndent.Enabled := documentcount > 0;
-  acDecIndent.Enabled := documentcount > 0;
-  acTrimLines.Enabled := documentcount > 0;
-  acReverseWinding.Enabled := documentcount > 0;
-  acTriangleCombine.Enabled := documentcount > 0;
-  acMirrorX.Enabled := documentcount > 0;
-  acMirrorY.Enabled := documentcount > 0;
-  acMirrorZ.Enabled := documentcount > 0;
-  acAutoRound.Enabled := documentcount > 0;
-  acLSynth.Enabled := documentcount > 0;
-  acBendableObject.Enabled := documentcount > 0;
-  acModelTreeView.Enabled := documentcount > 0;
-  acBMP2LDraw.Enabled := documentcount > 0;
-  Mirror1.Enabled := documentcount > 0;
-  ErrorCheck1.Enabled := documentcount > 0;
-  MirrorLineOn1.Enabled := documentcount > 0;
-  tbrColorReplace.Enabled := documentcount > 0;
-  acSubfile.Enabled := documentcount > 0;
-  acSortSelection.Enabled := documentcount > 0;
-  acUserDefined.Enabled := documentcount > 0;
-  acReplaceColor.enabled := documentcount > 0;
-  acEditorOptions.Enabled := documentcount > 0;
-
-  acUndo.Enabled := (documentcount>0) and editor.CanUndo;
-  acRedo.Enabled := (documentcount>0) and editor.CanRedo;
-
-  if documentcount = 0 then acInline.enabled:=false;
-
-  mnuUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
-  tbUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
-end;
-
 procedure TfrMain.editorUpdateUI(Sender: TObject);
 var
   i: Integer;
@@ -1385,15 +1338,15 @@ begin
   else
     Statusbar.Panels[2].Text:='';
 
-  acUndo.Enabled:=editor.CanUndo;
-  acRedo.Enabled:=editor.CanRedo;
+  StatusBar.Panels[1].text := IntToStr(editor.CaretY) + ':' + IntToStr(editor.CaretX);
 
-  StatusBar.Panels[1].text:=inttostr(editor.CaretY)+':'+inttostr(editor.CaretX);
+  acUndo.Enabled := (DocumentTabs.Count > 0) and editor.CanUndo;
+  acRedo.Enabled := (DocumentTabs.Count > 0) and editor.CanRedo;
 
   if editor.SelLength = 0 then
   begin
     DLine := StrToDAT(editor.Lines[editor.CaretY - 1]);
-    acInline.enabled := DLine.LineType = 1;
+    acInline.Enabled := DLine.LineType = 1;
     DLine.Free;
   end
   else
@@ -1420,7 +1373,6 @@ begin
       2: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength <> 0;
     end;
   end;
-  UpdateControls;
 end;
 
 procedure TfrMain.FormDblClick(Sender: TObject);
@@ -1441,7 +1393,6 @@ procedure TfrMain.FormShow(Sender: TObject);
 // if app starts for first time this initializes application and updates controls
 begin
   AppInitialize;
-  UpdateControls;
   frModelTreeView.RestorePosition;
 end;
 
@@ -1621,8 +1572,6 @@ begin
       DocumentTabs.ActiveDocument.LastChanged := fileage;
     end;
   end;
-
-  UpdateControls;
 end;
 
 procedure TfrMain.DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
@@ -1801,56 +1750,60 @@ begin
  // do nothing
 end;
 
-procedure TfrMain.Pollevery1sec2Click(Sender: TObject);
+procedure TfrMain.mnuPollEvery1secClick(Sender: TObject);
 // Set polling interval to 1 sec
 begin
-  Pollevery1sec1.Checked := true;
-  Pollevery1sec2.Checked := true;
-  Pollonrequest2.ShortCut := 0;
-  tmPoll.Enabled:=false;
-  tmPoll.Interval:=1000;
-  tmPoll.Enabled:=true;
+  mnuPollEvery1sec.Checked := true;
+  mnuPollOnRequest.ShortCut := 0;
+  tmPoll.Enabled := false;
+  tmPoll.Interval := 1000;
+  tmPoll.Enabled := true;
 end;
 
 
-procedure TfrMain.Pollevery2sec2Click(Sender: TObject);
+procedure TfrMain.mnuPollevery2secClick(Sender: TObject);
 // Set polling interval to 2 secs
 begin
- Pollevery2sec1.Checked := true;
- Pollevery2sec2.Checked := true;
- Pollonrequest2.ShortCut := 0;
- tmPoll.Enabled:=false;
- tmPoll.Interval:=2000;
- tmPoll.Enabled:=true;
+ mnuPollEvery2sec.Checked := true;
+ mnuPollOnRequest.ShortCut := 0;
+ tmPoll.Enabled := false;
+ tmPoll.Interval := 2000;
+ tmPoll.Enabled := true;
 
 end;
 
-procedure TfrMain.Pollevery5sec2Click(Sender: TObject);
+procedure TfrMain.mnuPollEvery5secClick(Sender: TObject);
 // Set polling interval to 5 secs
 begin
-  Pollevery5sec.Checked := true;
-  Pollevery5sec2.Checked := true;
-  Pollonrequest2.ShortCut := 0;
-  tmPoll.Enabled:=false;
-  tmPoll.Interval:=5000;
-  tmPoll.Enabled:=true;
+  mnuPollEvery5sec.Checked := true;
+  mnuPollOnRequest.ShortCut := 0;
+  tmPoll.Enabled := false;
+  tmPoll.Interval := 5000;
+  tmPoll.Enabled := true;
 end;
 
-procedure TfrMain.Pollonrequest1Click(Sender: TObject);
+procedure TfrMain.mnuPollOnCustomIntervalClick(Sender: TObject);
+begin
+  mnuPollOnCustomInterval.Checked := true;
+  mnuPollOnRequest.ShortCut := 0;
+  tmPoll.Enabled := false;
+  tmPoll.Interval := frOptions.seCustomPollInterval.Value * 1000;
+  tmPoll.Enabled := true;
+end;
+
+procedure TfrMain.mnuPollOnRequestClick(Sender: TObject);
 // Poll on request
 begin
-  Pollonrequest1.Checked := true;
-  Pollonrequest2.Checked := true;
-  Pollonrequest2.ShortCut := TextToShortcut('F11');
-  tmPoll.Enabled:=false;
-  tmPollTimer(nil);
+  mnuPollOnRequest.Checked := true;
+  mnuPollOnRequest.ShortCut := TextToShortcut('F11');
+  tmPoll.Enabled := false;
+  tmPollTimer(Sender);
 end;
 
-procedure TfrMain.mnPollToSelectedClick(Sender: TObject);
+procedure TfrMain.mnuPollToSelectedClick(Sender: TObject);
 // Switch polling to selected line
 begin
-  mnPollToSelected.Checked:=not mnPollToSelected.Checked;
-  Polltoselectedlineonly1.Checked := not Polltoselectedlineonly1.Checked;
+  mnuPollToSelected.Checked := not mnuPollToSelected.Checked;
 end;
 
 procedure TfrMain.tmPollTimer(Sender: TObject);
@@ -1859,26 +1812,25 @@ var
   st: TStringList;
 
 begin
-  if mnPollL3Lab.Checked and (DocumentTabs.Count > 0) then
-   if mnPolltoSelected.checked then
-   begin
-     st:=TStringList.Create;
-     st.Text:=editor.Lines.Text;
-     while st.Count>editor.CaretY do
-       st.Delete(st.Count-1);
-     st.SaveToFile(tempFileName);
-   end
-   else editor.lines.SaveToFile(tempFileName);
+  if mnuEnablePolling.Checked and (DocumentTabs.Count > 0) then
+    if mnuPollToSelected.checked then
+    begin
+      st := TStringList.Create;
+      st.Text := editor.Lines.Text;
+      while st.Count > editor.CaretY do
+        st.Delete(st.Count - 1);
+      st.SaveToFile(tempFileName);
+    end
+    else editor.lines.SaveToFile(tempFileName);
 end;
 
 
-procedure TfrMain.mnPollL3LabClick(Sender: TObject);
+procedure TfrMain.mnuEnablePollingClick(Sender: TObject);
 // Activate Polling for L3Lab
 begin
-  mnPollL3Lab.checked:= not mnPollL3Lab.checked;
-  PolltoL3LabLDView1.Checked := not PolltoL3LabLDView1.Checked;
-  if (Pollonrequest1.Checked) and (not mnPollL3Lab.checked) then
-    Pollonrequest1.ShortCut := 0;
+  mnuEnablePolling.Checked := not mnuEnablePolling.Checked;
+  if (mnuPollOnRequest.Checked) and (not mnuEnablePolling.Checked) then
+    mnuPollOnRequest.ShortCut := 0;
 end;
 
 procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
@@ -1940,6 +1892,20 @@ begin
   tbrTools.Visible := LDDPini.ReadBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
   tbrEditing.Visible := LDDPini.ReadBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
+  if LDDPini.ReadBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked) then
+    mnuEnablePollingClick(nil);
+  if LDDPini.ReadBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked) then
+    mnuPollToSelectedClick(nil);
+  if LDDPini.ReadBool(IniSection, 'mnuPollEvery1Sec_Checked', mnuPollEvery1Sec.Checked) then
+    mnuPollEvery1SecClick(nil);
+  if LDDPini.ReadBool(IniSection, 'mnuPollEvery2Sec_Checked', mnuPollEvery2Sec.Checked) then
+    mnuPollEvery2SecClick(nil);
+  if LDDPini.ReadBool(IniSection, 'mnuPollEvery5Sec_Checked', mnuPollEvery5Sec.Checked) then
+    mnuPollEvery5SecClick(nil);
+  if LDDPini.ReadBool(IniSection, 'mnuPollOnCustomInterval_Checked', mnuPollOnCustomInterval.Checked) then
+    mnuPollOnCustomIntervalClick(nil);
+  if LDDPini.ReadBool(IniSection, 'mnuPollOnRequest_Checked', mnuPollOnRequest.Checked) then
+    mnuPollOnRequestClick(nil);
   SearchReplaceDlg.ReplaceTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
   SearchReplaceDlg.SearchTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
   LDDPini.Free;
@@ -1968,6 +1934,13 @@ begin
   LDDPini.WriteBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
   LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
   LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
+  LDDPini.WriteBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked);
+  LDDPini.WriteBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked);
+  LDDPini.WriteBool(IniSection, 'mnuPollEvery1Sec_Checked', mnuPollEvery1Sec.Checked);
+  LDDPini.WriteBool(IniSection, 'mnuPollEvery2Sec_Checked', mnuPollEvery2Sec.Checked);
+  LDDPini.WriteBool(IniSection, 'mnuPollEvery5Sec_Checked', mnuPollEvery5Sec.Checked);
+  LDDPini.WriteBool(IniSection, 'mnuPollOnCustomInterval_Checked', mnuPollOnCustomInterval.Checked);
+  LDDPini.WriteBool(IniSection, 'mnuPollOnRequest_Checked', mnuPollOnRequest.Checked);
   LDDPini.WriteString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
   LDDPini.WriteString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
 
@@ -1982,7 +1955,7 @@ Parameter: None
 Return value: Path & Filename of the temporary filename
 ---------------------------------------------------------------------}
 begin
-  Result := WinTempDir + DocumentTabs.ActiveDocument.TabName;//ExtractFileName(ExtractShortPathName(DocumentTabs.ActiveDocument.FileName))
+  Result := WinTempDir + ExtractFileName(DocumentTabs.ActiveDocument.FileName);
 end;
 
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
