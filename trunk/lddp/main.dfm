@@ -53,6 +53,8 @@ object frMain: TfrMain
       PopupMenu = pmMemo
       Align = alClient
       OnUpdateUI = editorUpdateUI
+      OnDwellStart = editorDwellStart
+      OnDwellEnd = editorDwellEnd
       EOLStyle = eolCRLF
       Indentation = [TabIndents]
       IndentWidth = 0
@@ -89,6 +91,7 @@ object frMain: TfrMain
       Bookmark.BackColor = clDefault
       Bookmark.ForeColor = clDefault
       Bookmark.MarkerType = sciMCircle
+      MouseDwellTime = 500
       Gutter0.Width = 0
       Gutter0.MarginType = gutLineNumber
       Gutter0.Sensitive = False
@@ -109,10 +112,12 @@ object frMain: TfrMain
       LayoutCache = sciCacheCaret
       HideSelect = False
       WordWrap = sciNoWrap
+      EdgeMode = sciEdgeLine
+      EdgeColumn = 64
       EdgeColor = clSilver
       WordChars = 
         '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-' +
-        '.'
+        '.\/'
       ControlCharSymbol = #0
       Folding = [foldCompact, foldComment, foldPreprocessor, foldAtElse, foldHTML, foldHTMLPreProcessor]
       FoldMarkers.MarkerType = sciMarkBox
@@ -3084,6 +3089,7 @@ object frMain: TfrMain
     SearchWholeWords = False
     SearchRegex = False
     SearchForSelWord = False
+    Editor = editor
     OnTextNotFound = SearchReplaceDlgTextNotFound
     Left = 272
     Top = 80
@@ -3100,5 +3106,22 @@ object frMain: TfrMain
     object ZAxis3: TMenuItem
       Action = acMirrorZ
     end
+  end
+  object AutoComplete: TSciAutoComplete
+    Disabled = True
+    StartChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    IgnoreCase = False
+    ChooseSingle = False
+    AutoHide = True
+    DropRestOfWord = False
+    CancelAtStart = True
+    Editor = editor
+    WordCharacters = 
+      '_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-' +
+      '.\/'
+    MaxWidth = 0
+    MaxHeight = 5
+    Left = 304
+    Top = 112
   end
 end

@@ -69,10 +69,12 @@ procedure LDDPCallBack(strCBCompleteText, strCBSelText: PChar); stdcall;
 procedure OpenInBrowser(url: string);
 function GetAppVersion(const FileName: TFileName): string;
 function GetDOSVar(VarName: string): string;
+function ReadUIConfigValue(const ConfigValue: string): string;
 
 implementation
 
-uses main;
+uses
+  main, IniFiles;
 
 function GetAppVersion(const FileName: TFileName): string;
 var
@@ -297,6 +299,16 @@ begin
   Result := Copy(string(PBuff), 1, DataSize);
   FreeMem(PName);
   FreeMem(PBuff);
+end;
+
+function ReadUIConfigValue(const ConfigValue: string): string;
+var
+  UIConfigIni: TIniFile;
+
+begin
+  UIConfigIni := TInifile.Create(IniFilePath + '\uiconfig.ini');
+  Result := UIConfigIni.ReadString('UI Config Values', ConfigValue, '');
+  UIConfigIni.Free;
 end;
 
 end.
