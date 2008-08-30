@@ -27,7 +27,8 @@ uses
   ImgList, Controls, StdActns, Classes, ActnList, ComCtrls, ToolWin,
   SciScintillaBase, SciScintillaMemo, SciScintilla, SciScintillaLDDP,
   SciDocTabCtrl, Windows, Graphics, Forms, Messages, SysUtils, Types,
-  StdCtrls, ShellAPI, sciPrint, SciScintillaOptionsFrm;
+  StdCtrls, ShellAPI, sciPrint, SciScintillaOptionsFrm, SciAutoComplete,
+  SciCallTips;
 
 type
   TfrMain = class(TForm)
@@ -306,6 +307,7 @@ type
     YAxis3: TMenuItem;
     ZAxis3: TMenuItem;
     mnuPollOnCustomInterval: TMenuItem;
+    AutoComplete: TSciAutoComplete;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -384,6 +386,10 @@ type
       CmdLine: TStrings);
     procedure mnuPollOnCustomIntervalClick(Sender: TObject);
     procedure CloseFile1Click(Sender: TObject);
+    procedure editorDwellStart(Sender: TObject; const position: Integer; x,
+      y: Integer);
+    procedure editorDwellEnd(Sender: TObject; const position: Integer; x,
+      y: Integer);
 
   private
     TabRightClickIndex: Integer;
@@ -756,59 +762,11 @@ end;
 procedure TfrMain.acSubFileExecute(Sender: TObject);
 // Save a block of text as a separate file and add the appropriate subfile line
 var
-  SubFile: TStringList;
-  FileType, subfilename: string;
-  i, startline, endline: Integer;
+  startline, endline: Integer;
 
 begin
   editor.ExpandSelection(startline, endline);
-
-  //Init Form Values
-  frSubFile.edFilename.Text := ExtractFileName(DocumentTabs.ActiveDocument.Filename);
-  frSubFile.edAuthor.Text := frOptions.edName.Text;
-  frSubFile.edUsername.Text := frOptions.edUsername.Text;
-  frSubFile.edTitle.Text := '';
-  frSubFile.edComments.Clear;
-  frSubFile.rgType.ItemIndex := -1;
-  frSubFile.cbUnofficial.Checked := False;
-
-  //Subfile selected text
-  if frSubfile.ShowModal = mrOK then
-  begin
-    case frSubFile.rgType.ItemIndex of
-      1: FileType := 'Submodel';
-      2: FileType := 'Part';
-      3: FileType := 'Subpart';
-      4: FileType := 'Primitive';
-      5: FileType := '48_Primitive';
-      else FileType := 'Model';
-    end;
-
-    if frSubFile.cbUnofficial.Checked then
-      FileType := 'Unofficial ' + FileType;
-
-    for i := 0 to frSubFile.edComments.Lines.Count - 1 do
-      frSubFile.edComments.Lines[i] := '0 ' + frSubFile.edComments.Lines[i];
-
-    SubFile := TStringList.Create;
-    SubFile.Text := '0 ' + frSubFile.edTitle.Text + #13#10 +
-                    '0 Name: ' + frSubFile.edFileName.Text + #13#10 +
-                    '0 Author: ' + frSubFile.edAuthor.Text +
-                    '[' + frSubFile.edUsername.text + ']' + #13#10 +
-                    '0 !LDRAW_ORG ' + FileType + #13#10 +
-                    frSubFile.edComments.Text + #13#10 +
-                    editor.SelText;
-
-    if FileExists(ExtractFilePath(DocumentTabs.ActiveDocument.Filename) + frSubFile.edFileName.Text) and
-       (MessageDlg(_('File of same name already exists.  Overwrite?'),
-                   mtWarning, mbOKCancel, 0) <> mrOk) then
-      Exit;
-
-    subfilename := ExtractFilePath(DocumentTabs.ActiveDocument.FileName) + frSubFile.edFileName.Text;
-    SubFile.SaveToFile(subfilename);
-    editor.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + frSubFile.edFileName.Text;
-    OpenFile(subfilename);
-  end;
+  frSubfile.ShowModal;
 end;
 
 // External Program actions
@@ -844,11 +802,12 @@ end;
 procedure TfrMain.acUserDefinedExecute(Sender: TObject);
 // Execute user defined program with active file
 var
-  opt:byte;
+  opt: byte;
   ExProgram: TStringList;
 
-    function ParseString(toparse:string):string;
-    var short,long:string;
+    function ParseString(toparse: string): string;
+    var
+      short, long: string;
     // %0 will be replaced by the path and filename of the exported file LDDP has generated,
     // %1 is replaced by the path only,
     // %2 will be replaced by the file-name only (without extension),
@@ -857,15 +816,15 @@ var
     begin
       long := tempFileName;
       short := ExtractShortPathName(long);
-      toparse:=StringReplace(toparse,'%0',long,[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%1',ExtractFilePath(long),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%2',ChangeFileExt(ExtractFileName(long),''),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%3',ChangeFileExt(long,''),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%4',short,[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%5',ExtractFilePath(short),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%6',ChangeFileExt(ExtractFileName(short),''),[rfReplaceAll]);
-      toparse:=StringReplace(toparse,'%7',ChangeFileExt(short,''),[rfReplaceAll]);
-      Result:=toParse;
+      toparse := StringReplace(toparse,'%0',long,[rfReplaceAll]);
+      toparse := StringReplace(toparse,'%1',ExtractFilePath(long),[rfReplaceAll]);
+      toparse := StringReplace(toparse,'%2',ChangeFileExt(ExtractFileName(long),''),[rfReplaceAll]);
+      toparse := StringReplace(toparse,'%3',ChangeFileExt(long,''),[rfReplaceAll]);
+      toparse := StringReplace(toparse,'%4',short,[rfReplaceAll]);
+      toparse := StringReplace(toparse,'%5',ExtractFilePath(short),[rfReplaceAll]);
+      toparse := StringReplace(toparse,'%6',ChangeFileExt(ExtractFileName(short),''),[rfReplaceAll]);
+      toparse := StringReplace(toparse,'%7',ChangeFileExt(short,''),[rfReplaceAll]);
+      Result := toParse;
     end;
 
 begin
@@ -878,15 +837,15 @@ begin
     exit;
   end;
   case StrToInt(ExProgram[5]) of
-    1: opt:=SW_HIDE;
-    2: opt:=SW_SHOWNOACTIVATE;
-    3: opt:=SW_MAXIMIZE;
+    1: opt := SW_HIDE;
+    2: opt := SW_SHOWNOACTIVATE;
+    3: opt := SW_MAXIMIZE;
     else
-      opt:=SW_SHOWNORMAL;
+      opt := SW_SHOWNORMAL;
   end;
 
   if StrToBool(ExProgram[4]) then
-    ShowMessage(ExProgram[1]+' '+ParseString(ExProgram[2]));
+    ShowMessage(ExProgram[1] + ' ' + ParseString(ExProgram[2]));
 
   editor.Lines.SaveToFile(tempFileName);
   DoCommand(ExProgram[1] + ' ' + ParseString(ExProgram[2]), opt, StrToBool(ExProgram[3]));
@@ -1327,12 +1286,48 @@ begin
     OpenFile(CmdLine[i]);
 end;
 
+procedure TfrMain.editorDwellEnd(Sender: TObject; const position: Integer; x,
+  y: Integer);
+begin
+  editor.CallTipCancel;
+end;
+
+procedure TfrMain.editorDwellStart(Sender: TObject; const position: Integer; x,
+  y: Integer);
+
+var
+  subp: TDATType;
+  DModel: TDATModel;
+
+begin
+  if editor.GetStyleAt(editor.PositionFromPointClose(x,y)) = 16 then
+  begin
+    subp := StrToDAT(editor.Lines[editor.LineFromPosition(editor.PositionFromPointClose(x,y))]);
+    if subp is TDATSubpart then
+    begin
+      DModel := TDATModel.Create;
+      if FileExists(LDrawBasePath + 'parts\' + (subp as TDATSubpart).FileName) then
+        DModel.LoadModel(LDrawBasePath + 'parts\' + (subp as TDATSubpart).FileName)
+      else if FileExists(LDrawBasePath + 'p\' + (subp as TDATSubpart).FileName) then
+        DModel.LoadModel(LDrawBasePath + 'p\' + (subp as TDATSubpart).FileName);
+
+      if (DModel.Count > 0) and (DModel[0] is TDATComment) then
+        editor.CallTipShow(editor.PositionFromPointClose(x,y),
+                           PCHar((DModel[0] as TDATComment).Comment));
+
+      subp.Free;
+      DModel.Free;
+    end;
+  end;
+end;
+
 procedure TfrMain.editorUpdateUI(Sender: TObject);
 var
   i: Integer;
   DLine: TDATType;
 
 begin
+  // Update panel values
   if editor.modified then
     Statusbar.Panels[2].Text:=_('Modified')
   else
@@ -1340,9 +1335,11 @@ begin
 
   StatusBar.Panels[1].text := IntToStr(editor.CaretY) + ':' + IntToStr(editor.CaretX);
 
+  // Set undo and redo state
   acUndo.Enabled := (DocumentTabs.Count > 0) and editor.CanUndo;
   acRedo.Enabled := (DocumentTabs.Count > 0) and editor.CanRedo;
 
+  // Enable inline function based on line or selection
   if editor.SelLength = 0 then
   begin
     DLine := StrToDAT(editor.Lines[editor.CaretY - 1]);
@@ -1365,6 +1362,7 @@ begin
     end;
   end;
 
+  // Check plugin type an enable as appropriate
   for i := 0 to PluginActionList.ActionCount - 1 do
   begin
     case (PluginActionList.Actions[i] as TAction).Tag of
@@ -1373,6 +1371,9 @@ begin
       2: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength <> 0;
     end;
   end;
+
+  // Check style state and enable auto complete and call tips for linetype 1 file
+  AutoComplete.Disabled := editor.GetStyleAt(editor.GetCurrentPos) <> 16;
 end;
 
 procedure TfrMain.FormDblClick(Sender: TObject);
@@ -1423,10 +1424,7 @@ begin
     // Check if the App Data folder exists and create it if not
     if not DirectoryExists(GetShellFolderPath('AppData') + '\LDDP') then
       CreateDir(GetShellFolderPath('AppData') + '\LDDP');
-    if not DirectoryExists(GetShellFolderPath('AppData') + '\LDraw') then
-      CreateDir(GetShellFolderPath('AppData') + '\LDraw');
-    CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\metamenu.ini'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\metamenu.ini'), false);
-    CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\metalist.txt'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\metalist.txt'), false);
+    CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\uiconfig.ini'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\uiconfig.ini'), false);
 
     //Load form parameters from INI file
     LoadFormValues;
@@ -1436,10 +1434,12 @@ begin
     editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
     editor.OnlyRoundDuringAutoRound := frOptions.cboAutoRoundOnly.Checked;
 
+    editor.CallTipSetFore(clBlack);
+
     //Set editor properties filename and load properties
     EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
-    if FileExists(EditorPropertyLoader.FileName) then
-      EditorPropertyLoader.Load;
+//    if FileExists(EditorPropertyLoader.FileName) then
+//      EditorPropertyLoader.Load;
     DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 
     //Set InstallDir in registry for legacy plugin support
@@ -1460,6 +1460,7 @@ begin
     //Set the keywordlist for the syntax highlighter
     if DirectoryExists(LDrawBasePath) then
       SetKeyWordList;
+    AutoComplete.AStrings.Text := LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords.Text;
 
     // Set initial directory to that of the last opened file
     // or home directory if no file is listed
@@ -1485,33 +1486,39 @@ var
   MetaMenuIni: TInifile;
   ParentMenuItem, ParentMenuItem2, ChildMenuItem: TMenuItem;
   MetaSections, CurrentSection: TStringList;
+  SectionName: string;
   i,j: Integer;
 
 begin
   MetaSections := TStringList.Create;
+  MetaSections.Sorted := true;
   CurrentSection := TStringList.Create;
-  MetaMenuIni := TInifile.Create(IniFilePath + '\metamenu.ini');
+  MetaMenuIni := TInifile.Create(IniFilePath + '\uiconfig.ini');
 
-  MetaMenuIni.ReadSections(MetaSections);
+  MetaMenuIni.ReadSection('Meta Menu Items', MetaSections);
 
   if MetaSections.Count > 0 then
     for i := 0 to MetaSections.Count - 1 do
     begin
-      MetaMenuIni.ReadSection(MetaSections[i],CurrentSection);
-      if CurrentSection.Count > 0 then
+      SectionName := MetaMenuIni.ReadString('Meta Menu Items', MetaSections[i], '');
+      if MetaMenuIni.SectionExists(SectionName) then
       begin
-        ParentMenuItem := CreateMenuItem(MetaSections[i],'',mnuMeta);
-        ParentMenuItem2 := CreateMenuItem(MetaSections[i],'',mnuMeta2);
-        mnuMeta.Add(ParentMenuItem);
-        mnuMeta2.Add(ParentMenuItem2);
-        for j := 0 to CurrentSection.Count - 1 do
+        MetaMenuIni.ReadSection(SectionName,CurrentSection);
+        if CurrentSection.Count > 0 then
         begin
-          ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],''),ParentMenuItem);
-          ChildMenuItem.OnClick := MetaMenuClick;
-          ParentMenuItem.Add(ChildMenuItem);
-          ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(MetaSections[i],CurrentSection[j],''),ParentMenuItem);
-          ChildMenuItem.OnClick := MetaMenuClick;
-          ParentMenuItem2.Add(ChildMenuItem);
+          ParentMenuItem := CreateMenuItem(SectionName, '', mnuMeta);
+          ParentMenuItem2 := CreateMenuItem(SectionName, '', mnuMeta2);
+          mnuMeta.Add(ParentMenuItem);
+          mnuMeta2.Add(ParentMenuItem2);
+          for j := 0 to CurrentSection.Count - 1 do
+          begin
+            ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
+            ChildMenuItem.OnClick := MetaMenuClick;
+            ParentMenuItem.Add(ChildMenuItem);
+            ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
+            ChildMenuItem.OnClick := MetaMenuClick;
+            ParentMenuItem2.Add(ChildMenuItem);
+          end;
         end;
       end;
     end
@@ -1551,10 +1558,7 @@ begin
     FindClose(sc);
   end;
   with LanguageManager.LanguageList.Find('LDraw').Keywords[1].Keywords do
-  begin
-    LoadFromFile(IniFilePath + '\metalist.txt');
-    CommaText := Strings[0];
-  end;
+    CommaText := ReadUIConfigValue('MetaCommands');
 end;
 
 procedure TfrMain.DocumentTabsChange(Sender: TObject);
