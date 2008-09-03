@@ -27,7 +27,10 @@ unit DATCheck;
 
 interface
 
-function L3CheckLine(const Line: string): string;
+uses
+  Classes;
+
+function L3CheckLine(const Line: string): TStringList;
 
 var
   DetThreshold: Extended = 0;
@@ -137,14 +140,14 @@ begin
   temp := PointCrossProduct(B, C);
   norm2 := PointMultiply(temp, 1 / sqrt(PointDotProduct(temp, temp)));
   temp := PointCrossProduct(norm1, norm2);
-  Angle1 := 180*pi*arcsin(sqrt(PointDotProduct(temp, temp)));
+  Angle1 := 180/pi*arcsin(sqrt(PointDotProduct(temp, temp)));
 
   temp := PointCrossProduct(A, B);
   norm1 := PointMultiply(temp, 1 / sqrt(PointDotProduct(temp, temp)));
   temp := PointCrossProduct(D, C);
   norm2 := PointMultiply(temp, 1 / sqrt(PointDotProduct(temp, temp)));
   temp := PointCrossProduct(norm1, norm2);
-  Angle2 := 180*pi*arcsin(sqrt(PointDotProduct(temp, temp)));
+  Angle2 := 180/pi*arcsin(sqrt(PointDotProduct(temp, temp)));
 
   if Angle1 > Angle2 then
     Result := Angle1
@@ -152,14 +155,14 @@ begin
     Result := Angle2;
 end;
 
-function CheckSubPart(datsubpart: TDATSubPart): string;
+function CheckSubPart(datsubpart: TDATSubPart): TStringList;
 
 var
   det, tempval: Extended;
   i: Integer;
 
 begin
-  Result := '';
+  Result := TStringList.Create;;
   with datsubpart do
   begin
     det := MatrixDet(Matrix);
@@ -173,7 +176,7 @@ begin
             det := MatrixDet(Matrix);
             if det <> 0 then
             begin
-              Result := 'Row ' + IntToStr(i-1) + ' all zeros';
+              Result.Add('Row ' + IntToStr(i-1) + ' all zeros');
               Break;
             end;
           end;
@@ -185,48 +188,48 @@ begin
             det := MatrixDet(Matrix);
             if det <> 0 then
             begin
-              Result := 'Y column all zeros';
+              Result.Add('Y column all zeros');
               Break;
             end
             else
               MatrixVals[i,2] := tempval;
           end;
-        if det = 0 then Result := 'Singular matrix (unfixable)';
+        if det = 0 then Result.Add('Singular matrix (unfixable)');
       end
       else
-        Result := 'Singular matrix';
+        Result.Add('Singular matrix');
   end;
 end;
 
-function CheckLine2(const line: TDATLine): string;
+function CheckLine2(const line: TDATLine): TStringList;
 begin
-  Result := '';
+  Result := TStringList.Create;;
   with line do
     if CheckSamePoint(Point[1],Point[2]) then
-      Result := 'Identical vertices';
+      Result.Add('Identical vertices');
 end;
 
-function CheckTri(const tri: TDATTriangle): string;
+function CheckTri(const tri: TDATTriangle): TStringList;
 
 var
   dp: Extended;
 
 begin
-  Result := '';
+  Result := TStringList.Create;
   with tri do
+  begin
     if CheckSamePoint(Point[1],Point[2]) or
        CheckSamePoint(Point[2],Point[3]) or
        CheckSamePoint(Point[3],Point[1]) then
-      Result := 'Identical vertices'
-    else
-    begin
-      dp := CheckLinearPoints(Point[1],Point[2],Point[3]);
-      if dp < CollinearPointsThreshold then
-        Result := 'Collinear vertices (' + FloatToStr(dp) + ')';
-    end;
+      Result.Add('Identical vertices');
+
+    dp := CheckLinearPoints(Point[1],Point[2],Point[3]);
+    if dp < CollinearPointsThreshold then
+      Result.Add('Collinear vertices (' + FloatToStr(dp) + ')');
+  end;
 end;
 
-function CheckQuad(const quad: TDATQuad): string;
+function CheckQuad(const quad: TDATQuad): TStringList;
 
 var
   det, maxdist, maxangle: Extended;
@@ -234,6 +237,7 @@ var
   v01, v02, v03, v12, v13, v23: TDATPoint;
 
 begin
+  Result := TStringList.Create;;
   with quad do
   begin
     if CheckSamePoint(Point[1],Point[2]) or
@@ -242,34 +246,19 @@ begin
        CheckSamePoint(Point[4],Point[1]) or
        CheckSamePoint(Point[1],Point[3]) or
        CheckSamePoint(Point[4],Point[2]) then
-    begin
-      Result := 'Identical vertices';
-      Exit;
-    end;
+     Result.Add('Identical vertices');
 
     if CheckLinearPoints(Point[1],Point[2],Point[3]) < CollinearPointsThreshold then
-    begin
-      Result := 'Collinear vertices 012 (' + FloatToStr(CheckLinearPoints(Point[1],Point[2],Point[3])) + ')';
-      Exit;
-    end;
+      Result.Add('Collinear vertices 012 (' + FloatToStr(CheckLinearPoints(Point[1],Point[2],Point[3])) + ')');
 
     if CheckLinearPoints(Point[1],Point[2],Point[4]) < CollinearPointsThreshold then
-    begin
-      Result := 'Collinear vertices 013 (' + FloatToStr(CheckLinearPoints(Point[1],Point[2],Point[4])) + ')';
-      Exit;
-    end;
+      Result.Add('Collinear vertices 013 (' + FloatToStr(CheckLinearPoints(Point[1],Point[2],Point[4])) + ')');
 
     if CheckLinearPoints(Point[1],Point[3],Point[4]) < CollinearPointsThreshold then
-    begin
-      Result := 'Collinear vertices 023 (' + FloatToStr(CheckLinearPoints(Point[1],Point[3],Point[4])) + ')';
-      Exit;
-    end;
+      Result.Add('Collinear vertices 023 (' + FloatToStr(CheckLinearPoints(Point[1],Point[3],Point[4])) + ')');
 
     if CheckLinearPoints(Point[2],Point[3],Point[4]) < CollinearPointsThreshold then
-    begin
-      Result := 'Collinear vertices 123(' + FloatToStr(CheckLinearPoints(Point[2],Point[3],Point[4])) + ')';
-      Exit;
-    end;
+      Result.Add('Collinear vertices 123(' + FloatToStr(CheckLinearPoints(Point[2],Point[3],Point[4])) + ')');
 
     v01 := PointSubtract(Point[2], Point[1]);
     v02 := PointSubtract(Point[3], Point[1]);
@@ -285,112 +274,66 @@ begin
     if A then
     begin
       if (B and (not C)) or (C and (not B)) then
-          Result := 'Concave Quad, split on 02'
+          Result.Add('Concave Quad, split on 02')
     end
     else
       if B then
         if C then
-          Result := 'Concave Quad, split on 13'
+          Result.Add('Concave Quad, split on 13')
         else
-          Result := 'Bad vertex sequence, 0312 used'
+          Result.Add('Bad vertex sequence, 0312 used')
       else
         if C then
-          Result := 'Bad vertex sequence, 0132 used'
+          Result.Add('Bad vertex sequence, 0132 used')
         else
-          Result := 'Concave Quad, split on 13';
+          Result.Add('Concave Quad, split on 13');
 
-    if Result <> '' then
-      Exit;
-
-(*
-    if (not A) and (not B) and C then
-    begin
-      Result := 'Bad vertex sequence, 0132 used';
-      Exit;
-    end;
-
-    if (not A) and B and (not C) then
-    begin
-      Result := 'Bad vertex sequence, 0312 used';
-      Exit;
-    end;
-
-    if (not A) and B and C then
-    begin
-      Result := 'Concave Quad';
-      Exit;
-    end;
-
-    if (not A) and (not B) and (not C) then
-    begin
-      Result := 'Concave Quad';
-      Exit;
-    end;
-
-    if A and (not B) and (not C) then
-    begin
-      Result := 'Concave Quad';
-      Exit;
-    end;
- *)
     if (DetThreshold > 0) then
     begin
       det := CoPlanarCheckDet(Matrix);
       if det > DetThreshold then
-      begin
-        Result := 'Vertices not coplaner (' + FloatToStr(det) + ')';
-        Exit;
-      end;
+        Result.Add('Vertices not coplaner (' + FloatToStr(det) + ')');
     end;
 
     if (DistThreshold > 0)  then
     begin
       maxdist := CoPlanerCheckDist(Matrix);
       if maxdist > DistThreshold then
-      begin
-        Result := 'Vertices not coplaner (' + FloatToStr(maxdist) + ')';
-        Exit;
-      end;
+        Result.Add('Vertices not coplaner (' + FloatToStr(maxdist) + ')');
     end;
 
     if (PlaneNormalAngleLimit > 0)  then
     begin
       maxangle := CoPlanerCheckNormalAngle(Matrix);
       if maxangle > PlaneNormalAngleLimit then
-      begin
-        Result := 'Vertices not coplaner (angle ' + FloatToStr(maxangle) + ')';
-        Exit;
-      end;
+        Result.Add('Vertices not coplaner (angle ' + FloatToStr(maxangle) + ')');
     end;
 
   end;
-
-  Result := '';
 end;
 
-function CheckOpLine(const opline: TDATOpline): string;
+function CheckOpLine(const opline: TDATOpline): TStringList;
 begin
+  Result := TStringList.Create;;
   with opline do
     if CheckSamePoint(Point[1],Point[2]) or CheckSamePoint(Point[3],Point[4]) then
-      Result := 'Identical vertices';
+      Result.Add('Identical vertices');
 end;
 
-function L3CheckLine(const Line: string): string;
+function L3CheckLine(const Line: string): TStringList;
 
 var
   DLine: TDATType;
 
 begin
   DLine := StrToDAT(Line);
-
+  Result := TStringList.Create;
   case DLine.LineType of
     1: Result := CheckSubPart(DLine as TDATSubPart);
     2: Result := CheckLine2(DLine as TDATLine);
     3: Result := CheckTri(DLine as TDATTriangle);
     4: Result := CheckQuad(DLine as TDATQuad);
     5: Result := CheckOpLine(DLine as TDATOpline);
-    else
-      Result := '';
   end;
 
   DLine.Free;

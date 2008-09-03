@@ -22,7 +22,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 592
     Height = 333
-    ActivePage = TabSheet2
+    ActivePage = TabSheet5
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -138,13 +138,13 @@ object frOptions: TfrOptions
           Height = 13
           Caption = 'LSynth (lsynthcp.exe)'
         end
-        object btL3Lab: TBitBtn
+        object c: TBitBtn
           Left = 376
           Top = 137
           Width = 25
           Height = 22
           TabOrder = 7
-          OnClick = btL3LabClick
+          OnClick = cClick
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
             08000000000000010000120B0000120B00000001000000010000000000000000
@@ -430,6 +430,649 @@ object frOptions: TfrOptions
         end
       end
     end
+    object TabSheet5: TTabSheet
+      Caption = '&Search Paths'
+      ImageIndex = 6
+      object SearchPathsList: TListView
+        Left = 0
+        Top = 0
+        Width = 584
+        Height = 201
+        Align = alTop
+        Columns = <
+          item
+            AutoSize = True
+            Caption = 'State'
+          end>
+        HideSelection = False
+        ReadOnly = True
+        RowSelect = True
+        ShowColumnHeaders = False
+        StateImages = OptionImages
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnSelectItem = SearchPathsListSelectItem
+      end
+      object Panel5: TPanel
+        Left = 0
+        Top = 201
+        Width = 584
+        Height = 104
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 1
+        ExplicitLeft = 289
+        ExplicitTop = 0
+        ExplicitWidth = 295
+        ExplicitHeight = 305
+        object btnPathUp: TBitBtn
+          Left = 261
+          Top = 6
+          Width = 25
+          Height = 25
+          TabOrder = 0
+          OnClick = btnPathUpClick
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            1800000000000003000000000000000000000000000000000000FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FF0000000000000000000000000000000000000000000000000000000000
+            00C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000000000000000
+            0000000000000000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FF000000000000000000000000000000000000C0C0C0FF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FF000000000000C0C0C0FF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+        end
+        object btnPathDown: TBitBtn
+          Left = 292
+          Top = 6
+          Width = 25
+          Height = 25
+          TabOrder = 1
+          OnClick = btnPathDownClick
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            1800000000000003000000000000000000000000000000000000FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00
+            0000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000000000
+            0000000000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF000000000000000000000000000000000000000000000000C0C0
+            C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000000000000000000000
+            0000000000000000000000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000C0C0C0FF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000
+            0000000000000000C0C0C0FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FF000000000000000000000000FF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+        end
+        object btnMLCadPathImport: TButton
+          Left = 6
+          Top = 6
+          Width = 91
+          Height = 33
+          Caption = 'Import From MLCad'
+          TabOrder = 2
+          WordWrap = True
+          OnClick = btnMLCadPathImportClick
+        end
+        object btnDeleteInvalidPaths: TButton
+          Left = 496
+          Top = 6
+          Width = 83
+          Height = 33
+          Caption = 'Delete Invald Paths'
+          TabOrder = 3
+          WordWrap = True
+          OnClick = btnDeleteInvalidPathsClick
+        end
+        object btnDeletePath: TButton
+          Left = 389
+          Top = 73
+          Width = 75
+          Height = 25
+          Caption = 'Delete'
+          Enabled = False
+          TabOrder = 4
+          OnClick = btnDeletePathClick
+        end
+        object btnReplacePath: TButton
+          Left = 87
+          Top = 72
+          Width = 75
+          Height = 25
+          Caption = 'Replace'
+          Enabled = False
+          TabOrder = 5
+          OnClick = btnReplacePathClick
+        end
+        object btnAddPath: TButton
+          Left = 6
+          Top = 72
+          Width = 75
+          Height = 25
+          Caption = 'Add'
+          Enabled = False
+          TabOrder = 6
+          OnClick = btnAddPathClick
+        end
+        object edSearchPath: TEdit
+          Left = 6
+          Top = 45
+          Width = 427
+          Height = 21
+          TabOrder = 7
+          OnChange = edSearchPathChange
+        end
+        object btnPathOpen: TBitBtn
+          Left = 439
+          Top = 45
+          Width = 25
+          Height = 22
+          TabOrder = 8
+          OnClick = btnPathOpenClick
+          Glyph.Data = {
+            36050000424D3605000000000000360400002800000010000000100000000100
+            08000000000000010000120B0000120B00000001000000010000000000000000
+            80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+            A6000020400000206000002080000020A0000020C0000020E000004000000040
+            20000040400000406000004080000040A0000040C0000040E000006000000060
+            20000060400000606000006080000060A0000060C0000060E000008000000080
+            20000080400000806000008080000080A0000080C0000080E00000A0000000A0
+            200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0
+            200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0
+            200000E0400000E0600000E0800000E0A00000E0C00000E0E000400000004000
+            20004000400040006000400080004000A0004000C0004000E000402000004020
+            20004020400040206000402080004020A0004020C0004020E000404000004040
+            20004040400040406000404080004040A0004040C0004040E000406000004060
+            20004060400040606000406080004060A0004060C0004060E000408000004080
+            20004080400040806000408080004080A0004080C0004080E00040A0000040A0
+            200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0
+            200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0
+            200040E0400040E0600040E0800040E0A00040E0C00040E0E000800000008000
+            20008000400080006000800080008000A0008000C0008000E000802000008020
+            20008020400080206000802080008020A0008020C0008020E000804000008040
+            20008040400080406000804080008040A0008040C0008040E000806000008060
+            20008060400080606000806080008060A0008060C0008060E000808000008080
+            20008080400080806000808080008080A0008080C0008080E00080A0000080A0
+            200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0
+            200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0
+            200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C000
+            2000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C020
+            2000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C040
+            2000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C060
+            2000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C080
+            2000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A0
+            2000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C0
+            2000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFD
+            FDFDFDFDFDFDFDFDFDFDFD4949494949494949494949494949FDFD49BFBFBFBF
+            BFBFBFBFBFBFBFBF49FDFD49F6777777777777776F6F6FBF49FDFD49F6777777
+            777777776F6F6FBF49FDFD49F677777777777777777777BF49FDFD49F6777777
+            77777777777777BF49FDFD49F677777777777777777777BF49FDFD49F6B77777
+            77BFF6F6F6F6F6BF49FDFD49F6BFB7B7B7F649494949494949FDFD49F6F6F6F6
+            F649FDFDFDFDFDFDFDFDFDFD4949494949FDFD0000FDFD0000FDFDFDFDFDFDFD
+            FDFD0009D80000E8D800FDFDFDFDFDFDFDFDFD0009E9E9E800FDFDFDFDFDFDFD
+            FDFDFDFD0009D800FDFDFDFDFDFDFDFDFDFDFDFDFD0000FDFDFD}
+        end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Configuration &Values'
+      ImageIndex = -1
+      object GroupBox2: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 584
+        Height = 169
+        Align = alTop
+        Caption = 'Error Check Options'
+        TabOrder = 0
+        object Label6: TLabel
+          Left = 37
+          Top = 133
+          Width = 125
+          Height = 13
+          Caption = 'Collinear Points Threshold:'
+        end
+        object cboDet: TCheckBox
+          Left = 20
+          Top = 56
+          Width = 185
+          Height = 17
+          Caption = 'Det Coplanarity Check Threshold:'
+          TabOrder = 1
+        end
+        object cboDist: TCheckBox
+          Left = 20
+          Top = 22
+          Width = 181
+          Height = 17
+          Caption = 'Dist Coplanarity Check Threshold:'
+          TabOrder = 0
+        end
+        object Memo1: TMemo
+          Left = 287
+          Top = 20
+          Width = 292
+          Height = 33
+          TabStop = False
+          BorderStyle = bsNone
+          Color = clBtnFace
+          Lines.Strings = (
+            
+              'General files (parts, subparts and some primitives) typically us' +
+              'e '
+            'a value of 0.1. (Note: this check is depreciated)')
+          ReadOnly = True
+          TabOrder = 3
+        end
+        object Memo2: TMemo
+          Left = 287
+          Top = 53
+          Width = 292
+          Height = 33
+          TabStop = False
+          BorderStyle = bsNone
+          Color = clBtnFace
+          Lines.Strings = (
+            'Geometric primitives typically use 0.01. Hi-res primitives '
+            'typically use 0.001.  (Note: this check is depreciated)')
+          ReadOnly = True
+          TabOrder = 4
+        end
+        object Memo3: TMemo
+          Left = 287
+          Top = 122
+          Width = 292
+          Height = 41
+          TabStop = False
+          BorderStyle = bsNone
+          Color = clBtnFace
+          Lines.Strings = (
+            'Only adjust this value if you want to change the pecent '
+            'deviation used for collinear point determination. (L3P uses '
+            '0.0001 by defualt)')
+          ReadOnly = True
+          TabOrder = 2
+        end
+        object seDist: TJvValidateEdit
+          Left = 200
+          Top = 20
+          Width = 81
+          Height = 21
+          CriticalPoints.MaxValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '0.1'
+          TabOrder = 5
+        end
+        object seDet: TJvValidateEdit
+          Left = 200
+          Top = 53
+          Width = 81
+          Height = 21
+          CriticalPoints.MaxValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '0.001'
+          TabOrder = 6
+        end
+        object seCollinear: TJvValidateEdit
+          Left = 200
+          Top = 130
+          Width = 81
+          Height = 21
+          CriticalPoints.MaxValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '0.0001'
+          TabOrder = 7
+        end
+        object cboNormalAngle: TCheckBox
+          Left = 20
+          Top = 90
+          Width = 174
+          Height = 19
+          Caption = 'Normal Angle Coplanarity Limit:'
+          Checked = True
+          State = cbChecked
+          TabOrder = 8
+        end
+        object Memo4: TMemo
+          Left = 287
+          Top = 89
+          Width = 292
+          Height = 27
+          TabStop = False
+          BorderStyle = bsNone
+          Color = clBtnFace
+          Lines.Strings = (
+            'Quads considered coplaner if the angle is less than or equal '
+            'to 3 degrees. An angle of less than 1 degree is recommended')
+          ReadOnly = True
+          TabOrder = 9
+        end
+        object seNormalAngle: TJvValidateEdit
+          Left = 200
+          Top = 89
+          Width = 81
+          Height = 21
+          CriticalPoints.MaxValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 9
+          EditText = '1.000000000'
+          TabOrder = 10
+        end
+      end
+      object GroupBox5: TGroupBox
+        Left = 0
+        Top = 169
+        Width = 305
+        Height = 136
+        Align = alLeft
+        Caption = 'Decimal Accuracy'
+        TabOrder = 1
+        object lbPntAcc: TLabel
+          Left = 8
+          Top = 20
+          Width = 126
+          Height = 13
+          Caption = 'Position Decimal Accuracy'
+        end
+        object lbRotAcc: TLabel
+          Left = 8
+          Top = 47
+          Width = 160
+          Height = 13
+          Caption = 'Rotation Matrix Decimal Accuracy'
+        end
+        object sePntAcc: TJvValidateEdit
+          Left = 184
+          Top = 18
+          Width = 81
+          Height = 21
+          CriticalPoints.MaxValue = 15.000000000000000000
+          CriticalPoints.MaxValueIncluded = True
+          CriticalPoints.MinValueIncluded = True
+          EditText = '3'
+          TabOrder = 0
+        end
+        object seRotAcc: TJvValidateEdit
+          Left = 184
+          Top = 45
+          Width = 81
+          Height = 21
+          CriticalPoints.MaxValue = 15.000000000000000000
+          CriticalPoints.MaxValueIncluded = True
+          CriticalPoints.MinValueIncluded = True
+          EditText = '3'
+          TabOrder = 1
+        end
+        object cboAutoRoundOnly: TCheckBox
+          Left = 8
+          Top = 72
+          Width = 291
+          Height = 17
+          Caption = 'Only perform rounding when using the auto round function'
+          TabOrder = 2
+        end
+      end
+      object GroupBox6: TGroupBox
+        Left = 305
+        Top = 169
+        Width = 279
+        Height = 136
+        Align = alClient
+        Caption = 'Other Options'
+        TabOrder = 2
+        object Label1: TLabel
+          Left = 6
+          Top = 20
+          Width = 156
+          Height = 13
+          Caption = 'Custom Poll Interval (In Seconds)'
+        end
+        object Label3: TLabel
+          Left = 6
+          Top = 47
+          Width = 50
+          Height = 13
+          Caption = 'Full Name:'
+        end
+        object Label7: TLabel
+          Left = 6
+          Top = 74
+          Width = 118
+          Height = 13
+          Caption = 'Parts Tracker Username:'
+        end
+        object Label8: TLabel
+          Left = 6
+          Top = 101
+          Width = 28
+          Height = 13
+          Caption = 'Email:'
+        end
+        object seCustomPollInterval: TJvValidateEdit
+          Left = 184
+          Top = 18
+          Width = 81
+          Height = 21
+          CriticalPoints.MinValue = 0.100000000000000000
+          CriticalPoints.MaxValueIncluded = False
+          CriticalPoints.MinValueIncluded = True
+          TrimDecimals = True
+          DisplayFormat = dfFloat
+          DecimalPlaces = 2
+          EditText = '0.50'
+          TabOrder = 0
+        end
+        object edUserName: TEdit
+          Left = 127
+          Top = 72
+          Width = 138
+          Height = 21
+          TabOrder = 1
+        end
+        object edEmail: TEdit
+          Left = 62
+          Top = 99
+          Width = 203
+          Height = 21
+          TabOrder = 2
+        end
+        object edName: TEdit
+          Left = 62
+          Top = 45
+          Width = 203
+          Height = 21
+          TabOrder = 3
+        end
+      end
+    end
+    object ColorBarSheet: TTabSheet
+      Caption = '&Color Bar'
+      ImageIndex = -1
+      OnShow = ColorBarSheetShow
+      object GroupBox9: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 584
+        Height = 305
+        Align = alClient
+        Caption = 'Color Bar Colors'
+        TabOrder = 0
+        object shpColor: TShape
+          Left = 144
+          Top = 32
+          Width = 73
+          Height = 57
+          Brush.Color = clBtnFace
+        end
+        object Label15: TLabel
+          Left = 144
+          Top = 16
+          Width = 24
+          Height = 13
+          Caption = 'Color'
+        end
+        object lbColorNumber: TLabel
+          Left = 145
+          Top = 197
+          Width = 64
+          Height = 13
+          Caption = 'Color Number'
+          Enabled = False
+        end
+        object lbxColors: TListBox
+          Left = 2
+          Top = 15
+          Width = 137
+          Height = 288
+          Align = alLeft
+          ItemHeight = 13
+          TabOrder = 0
+          OnClick = lbxColorsClick
+        end
+        object btnColorSelect: TButton
+          Left = 145
+          Top = 120
+          Width = 73
+          Height = 25
+          Caption = 'Custom Color'
+          Enabled = False
+          TabOrder = 1
+          OnClick = btnColorSelectClick
+        end
+        object edColorName: TLabeledEdit
+          Left = 145
+          Top = 170
+          Width = 105
+          Height = 21
+          EditLabel.Width = 55
+          EditLabel.Height = 13
+          EditLabel.Caption = 'Color Name'
+          Enabled = False
+          TabOrder = 2
+          OnChange = edColorNameChange
+        end
+        object edColorNumber: TJvValidateEdit
+          Left = 145
+          Top = 216
+          Width = 105
+          Height = 21
+          CriticalPoints.MaxValueIncluded = False
+          CriticalPoints.MinValueIncluded = False
+          EditText = '0'
+          Enabled = False
+          TabOrder = 3
+          OnChange = edColorNameChange
+        end
+        object btnColorRestore: TBitBtn
+          Left = 416
+          Top = 16
+          Width = 113
+          Height = 25
+          Caption = '&Restore Defaults'
+          TabOrder = 4
+          OnClick = btnColorRestoreClick
+          Glyph.Data = {
+            36050000424D3605000000000000360400002800000010000000100000000100
+            0800000000000001000000000000000000000001000000000000000000000000
+            80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
+            A6000020400000206000002080000020A0000020C0000020E000004000000040
+            20000040400000406000004080000040A0000040C0000040E000006000000060
+            20000060400000606000006080000060A0000060C0000060E000008000000080
+            20000080400000806000008080000080A0000080C0000080E00000A0000000A0
+            200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0
+            200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0
+            200000E0400000E0600000E0800000E0A00000E0C00000E0E000400000004000
+            20004000400040006000400080004000A0004000C0004000E000402000004020
+            20004020400040206000402080004020A0004020C0004020E000404000004040
+            20004040400040406000404080004040A0004040C0004040E000406000004060
+            20004060400040606000406080004060A0004060C0004060E000408000004080
+            20004080400040806000408080004080A0004080C0004080E00040A0000040A0
+            200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0
+            200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0
+            200040E0400040E0600040E0800040E0A00040E0C00040E0E000800000008000
+            20008000400080006000800080008000A0008000C0008000E000802000008020
+            20008020400080206000802080008020A0008020C0008020E000804000008040
+            20008040400080406000804080008040A0008040C0008040E000806000008060
+            20008060400080606000806080008060A0008060C0008060E000808000008080
+            20008080400080806000808080008080A0008080C0008080E00080A0000080A0
+            200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0
+            200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0
+            200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C000
+            2000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C020
+            2000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C040
+            2000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C060
+            2000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C080
+            2000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A0
+            2000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C0
+            2000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFD
+            FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD
+            FD00000000FDFDFDFDFDFDFDFDFD0000FD000808080000FDFDFDFDFDFD00BC70
+            00FD000808080800FDFDFDFD00BC79387000FD0000080800FDFDFD0008087979
+            387000FDFD00F4F400FDFD0000587879580000FDFD00BCF400FDFDFDFD007879
+            00FDFDFDFD00BCF400FDFDFDFD00787900FDFDFDFD00BBBB00FDFDFDFDFD0078
+            B900000000BABB00FDFDFDFDFDFD007879B9BABABABABA00FDFDFDFDFDFDFD00
+            0079B9B9B90000FDFDFDFDFDFDFDFDFDFD00000000FDFDFDFDFDFDFDFDFDFDFD
+            FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
+        end
+        object ColorBarCombo: TJvColorComboBox
+          Left = 145
+          Top = 94
+          Width = 145
+          Height = 20
+          ColorDialogText = 'Custom...'
+          DroppedDownWidth = 145
+          NewColorText = 'Custom'
+          Options = [coText]
+          Enabled = False
+          TabOrder = 5
+          OnChange = ColorBarComboChange
+        end
+      end
+    end
     object TabSheet1: TTabSheet
       Caption = '&External Progams'
       ImageIndex = -1
@@ -668,305 +1311,6 @@ object frOptions: TfrOptions
         OnDblClick = lbxExternalDblClick
       end
     end
-    object TabSheet2: TTabSheet
-      Caption = 'Configuration &Values'
-      ImageIndex = -1
-      object GroupBox2: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 584
-        Height = 169
-        Align = alTop
-        Caption = 'Error Check Options'
-        TabOrder = 0
-        object Label6: TLabel
-          Left = 37
-          Top = 133
-          Width = 125
-          Height = 13
-          Caption = 'Collinear Points Threshold:'
-        end
-        object cboDet: TCheckBox
-          Left = 20
-          Top = 56
-          Width = 185
-          Height = 17
-          Caption = 'Det Coplanarity Check Threshold:'
-          TabOrder = 1
-        end
-        object cboDist: TCheckBox
-          Left = 20
-          Top = 22
-          Width = 181
-          Height = 17
-          Caption = 'Dist Coplanarity Check Threshold:'
-          TabOrder = 0
-        end
-        object Memo1: TMemo
-          Left = 287
-          Top = 20
-          Width = 292
-          Height = 33
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            
-              'General files (parts, subparts and some primitives) typically us' +
-              'e '
-            'a value of 0.1. (Note: this check is depreciated)')
-          ReadOnly = True
-          TabOrder = 3
-        end
-        object Memo2: TMemo
-          Left = 287
-          Top = 53
-          Width = 292
-          Height = 33
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            'Geometric primitives typically use 0.01. Hi-res primitives '
-            'typically use 0.001.  (Note: this check is depreciated)')
-          ReadOnly = True
-          TabOrder = 4
-        end
-        object Memo3: TMemo
-          Left = 287
-          Top = 122
-          Width = 292
-          Height = 41
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            'Only adjust this value if you want to change the pecent '
-            'deviation used for collinear point determination. (L3P uses '
-            '0.0001 by defualt)')
-          ReadOnly = True
-          TabOrder = 2
-        end
-        object seDist: TJvValidateEdit
-          Left = 200
-          Top = 20
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '0.1'
-          TabOrder = 5
-        end
-        object seDet: TJvValidateEdit
-          Left = 200
-          Top = 53
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '0.001'
-          TabOrder = 6
-        end
-        object seCollinear: TJvValidateEdit
-          Left = 200
-          Top = 130
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '0.0001'
-          TabOrder = 7
-        end
-        object cboNormalAngle: TCheckBox
-          Left = 20
-          Top = 90
-          Width = 174
-          Height = 19
-          Caption = 'Normal Angle Coplanarity Limit:'
-          Checked = True
-          State = cbChecked
-          TabOrder = 8
-        end
-        object Memo4: TMemo
-          Left = 287
-          Top = 89
-          Width = 292
-          Height = 27
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            'Quads considered coplaner if the angle is less than or equal '
-            'to 3 degrees. An angle of less than 1 degree is recommended')
-          ReadOnly = True
-          TabOrder = 9
-        end
-        object seNormalAngle: TJvValidateEdit
-          Left = 200
-          Top = 89
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '1.000000000'
-          TabOrder = 10
-        end
-      end
-      object GroupBox5: TGroupBox
-        Left = 0
-        Top = 169
-        Width = 305
-        Height = 136
-        Align = alLeft
-        Caption = 'Decimal Accuracy'
-        TabOrder = 1
-        object lbPntAcc: TLabel
-          Left = 8
-          Top = 20
-          Width = 126
-          Height = 13
-          Caption = 'Position Decimal Accuracy'
-        end
-        object lbRotAcc: TLabel
-          Left = 8
-          Top = 44
-          Width = 160
-          Height = 13
-          Caption = 'Rotation Matrix Decimal Accuracy'
-        end
-        object sePntAcc: TJvValidateEdit
-          Left = 184
-          Top = 18
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValue = 15.000000000000000000
-          CriticalPoints.MaxValueIncluded = True
-          CriticalPoints.MinValueIncluded = True
-          EditText = '3'
-          TabOrder = 0
-        end
-        object seRotAcc: TJvValidateEdit
-          Left = 184
-          Top = 42
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValue = 15.000000000000000000
-          CriticalPoints.MaxValueIncluded = True
-          CriticalPoints.MinValueIncluded = True
-          EditText = '3'
-          TabOrder = 1
-        end
-        object cboAutoRoundOnly: TCheckBox
-          Left = 8
-          Top = 63
-          Width = 291
-          Height = 17
-          Caption = 'Only perform rounding when using the auto round function'
-          TabOrder = 2
-        end
-      end
-      object GroupBox6: TGroupBox
-        Left = 305
-        Top = 169
-        Width = 279
-        Height = 136
-        Align = alClient
-        Caption = 'Other Options'
-        TabOrder = 2
-        ExplicitLeft = 333
-        ExplicitTop = 175
-        ExplicitWidth = 185
-        ExplicitHeight = 105
-        object Label1: TLabel
-          Left = 8
-          Top = 20
-          Width = 156
-          Height = 13
-          Caption = 'Custom Poll Interval (In Seconds)'
-        end
-        object seCustomPollInterval: TJvValidateEdit
-          Left = 170
-          Top = 18
-          Width = 81
-          Height = 21
-          CriticalPoints.MinValue = 0.100000000000000000
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 2
-          EditText = '0.50'
-          TabOrder = 0
-        end
-      end
-    end
-    object TabSheet4: TTabSheet
-      Caption = '&User Infomation'
-      ImageIndex = -1
-      object GroupBox3: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 584
-        Height = 305
-        Align = alClient
-        Caption = 'User Details For Macros'
-        TabOrder = 0
-        object Label16: TLabel
-          Left = 16
-          Top = 80
-          Width = 28
-          Height = 13
-          Caption = 'Email:'
-        end
-        object Label14: TLabel
-          Left = 16
-          Top = 51
-          Width = 118
-          Height = 13
-          Caption = 'Parts Tracker Username:'
-        end
-        object Label13: TLabel
-          Left = 16
-          Top = 22
-          Width = 50
-          Height = 13
-          Caption = 'Full Name:'
-        end
-        object edEmail: TEdit
-          Left = 136
-          Top = 73
-          Width = 285
-          Height = 21
-          TabOrder = 2
-        end
-        object edUsername: TEdit
-          Left = 136
-          Top = 46
-          Width = 185
-          Height = 21
-          TabOrder = 1
-        end
-        object edName: TEdit
-          Left = 136
-          Top = 19
-          Width = 285
-          Height = 21
-          TabOrder = 0
-        end
-      end
-    end
     object TabSheet3: TTabSheet
       Caption = 'Plu&gins'
       ImageIndex = -1
@@ -1046,157 +1390,6 @@ object frOptions: TfrOptions
         end
       end
     end
-    object ColorBarSheet: TTabSheet
-      Caption = '&Color Bar'
-      ImageIndex = -1
-      OnShow = ColorBarSheetShow
-      object GroupBox9: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 584
-        Height = 305
-        Align = alClient
-        Caption = 'Color Bar Colors'
-        TabOrder = 0
-        object shpColor: TShape
-          Left = 144
-          Top = 32
-          Width = 73
-          Height = 57
-          Brush.Color = clBtnFace
-        end
-        object Label15: TLabel
-          Left = 144
-          Top = 16
-          Width = 24
-          Height = 13
-          Caption = 'Color'
-        end
-        object lbColorNumber: TLabel
-          Left = 145
-          Top = 197
-          Width = 64
-          Height = 13
-          Caption = 'Color Number'
-          Enabled = False
-        end
-        object lbxColors: TListBox
-          Left = 2
-          Top = 15
-          Width = 137
-          Height = 288
-          Align = alLeft
-          ItemHeight = 13
-          TabOrder = 0
-          OnClick = lbxColorsClick
-        end
-        object btnColorSelect: TButton
-          Left = 145
-          Top = 120
-          Width = 73
-          Height = 25
-          Caption = 'Custom Color'
-          Enabled = False
-          TabOrder = 1
-          OnClick = btnColorSelectClick
-        end
-        object edColorName: TLabeledEdit
-          Left = 145
-          Top = 170
-          Width = 105
-          Height = 21
-          EditLabel.Width = 55
-          EditLabel.Height = 13
-          EditLabel.Caption = 'Color Name'
-          Enabled = False
-          TabOrder = 2
-          OnChange = edColorNameChange
-        end
-        object edColorNumber: TJvValidateEdit
-          Left = 145
-          Top = 216
-          Width = 105
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = False
-          EditText = '0'
-          Enabled = False
-          TabOrder = 3
-          OnChange = edColorNameChange
-        end
-        object btnColorRestore: TBitBtn
-          Left = 416
-          Top = 16
-          Width = 113
-          Height = 25
-          Caption = '&Restore Defaults'
-          TabOrder = 4
-          OnClick = btnColorRestoreClick
-          Glyph.Data = {
-            36050000424D3605000000000000360400002800000010000000100000000100
-            0800000000000001000000000000000000000001000000000000000000000000
-            80000080000000808000800000008000800080800000C0C0C000C0DCC000F0CA
-            A6000020400000206000002080000020A0000020C0000020E000004000000040
-            20000040400000406000004080000040A0000040C0000040E000006000000060
-            20000060400000606000006080000060A0000060C0000060E000008000000080
-            20000080400000806000008080000080A0000080C0000080E00000A0000000A0
-            200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0
-            200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0
-            200000E0400000E0600000E0800000E0A00000E0C00000E0E000400000004000
-            20004000400040006000400080004000A0004000C0004000E000402000004020
-            20004020400040206000402080004020A0004020C0004020E000404000004040
-            20004040400040406000404080004040A0004040C0004040E000406000004060
-            20004060400040606000406080004060A0004060C0004060E000408000004080
-            20004080400040806000408080004080A0004080C0004080E00040A0000040A0
-            200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0
-            200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0
-            200040E0400040E0600040E0800040E0A00040E0C00040E0E000800000008000
-            20008000400080006000800080008000A0008000C0008000E000802000008020
-            20008020400080206000802080008020A0008020C0008020E000804000008040
-            20008040400080406000804080008040A0008040C0008040E000806000008060
-            20008060400080606000806080008060A0008060C0008060E000808000008080
-            20008080400080806000808080008080A0008080C0008080E00080A0000080A0
-            200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0
-            200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0
-            200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C000
-            2000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C020
-            2000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C040
-            2000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C060
-            2000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C080
-            2000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A0
-            2000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C0
-            2000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000
-            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFD
-            FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD
-            FD00000000FDFDFDFDFDFDFDFDFD0000FD000808080000FDFDFDFDFDFD00BC70
-            00FD000808080800FDFDFDFD00BC79387000FD0000080800FDFDFD0008087979
-            387000FDFD00F4F400FDFD0000587879580000FDFD00BCF400FDFDFDFD007879
-            00FDFDFDFD00BCF400FDFDFDFD00787900FDFDFDFD00BBBB00FDFDFDFDFD0078
-            B900000000BABB00FDFDFDFDFDFD007879B9BABABABABA00FDFDFDFDFDFDFD00
-            0079B9B9B90000FDFDFDFDFDFDFDFDFDFD00000000FDFDFDFDFDFDFDFDFDFDFD
-            FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
-        end
-        object ColorBarCombo: TJvColorComboBox
-          Left = 145
-          Top = 94
-          Width = 145
-          Height = 20
-          ColorDialogText = 'Custom...'
-          DroppedDownWidth = 145
-          NewColorText = 'Custom'
-          Options = [coText]
-          Enabled = False
-          TabOrder = 5
-          OnChange = ColorBarComboChange
-        end
-      end
-    end
-    object TabSheet5: TTabSheet
-      Caption = '&Search Paths'
-      Enabled = False
-      ImageIndex = 6
-      TabVisible = False
-    end
   end
   object Panel1: TPanel
     Left = 0
@@ -1210,7 +1403,7 @@ object frOptions: TfrOptions
       592
       37)
     object BitBtn1: TBitBtn
-      Left = 337
+      Left = 387
       Top = 6
       Width = 95
       Height = 25
@@ -1263,9 +1456,9 @@ object frOptions: TfrOptions
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
     end
     object btnCancel: TBitBtn
-      Left = 438
+      Left = 488
       Top = 6
-      Width = 145
+      Width = 95
       Height = 25
       Anchors = [akLeft, akTop, akRight, akBottom]
       Cancel = True
@@ -1323,10 +1516,88 @@ object frOptions: TfrOptions
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Open'
     Left = 39
-    Top = 40
+    Top = 32
   end
   object ColorDialog1: TColorDialog
+    Left = 72
+    Top = 32
+  end
+  object OptionImages: TImageList
     Left = 8
-    Top = 40
+    Top = 32
+    Bitmap = {
+      494C010102000400040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000400000001000000001001000000000000008
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001003
+      9002900200000000000000000000000000000000000080608060806000000000
+      0000000080608060000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000010031003
+      1003100390020000000000000000000000000000000008718871087100000000
+      0000806090719071887000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000100390021003
+      1003100310030000000000000000000000000000000008719071907108710000
+      8060887190719071087100000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000001003900210039003
+      1003100310031003000000000000000000000000000008718871887190710871
+      8871907190718871806000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000010039002900390039002
+      0000100310031003000000000000000000000000000000000871887188718871
+      9071887190710871806000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000090129003900290120000
+      0000000010031003100300000000000000000000000000000000087108718871
+      8871907108718060000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000010129002901200000000
+      0000000010039003100300000000000000000000000000000000000008710871
+      0871087108718060000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000009003900310030000000000000000000000000000000008710871
+      0871087108710871000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000009003900310030000000000000000000000000000000008718870
+      0871087108710871806000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000900390031003000000000000000000000000087108718870
+      0871087108710871087180600000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000900390031003000000000000000000000000087108718860
+      8870087108710871087108718060000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000090039003100300000000000000008871087180600871
+      0871000088700871087108718060000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000090031003900300000000000000000871087108710871
+      0871000000008860087108718870000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000087108710871
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000424D3E000000000000003E000000
+      2800000040000000100000000100010000000000800000000000000000000000
+      000000000000000000000000FFFFFF00FC7FC79F00000000F83F830F00000000
+      F01F820700000000E01F800700000000C00F800700000000800FC00700000000
+      8107E00F000000008307F00F00000000C783F00F00000000FF83F00700000000
+      FFC1E00300000000FFC1E00100000000FFE0C00100000000FFE0C00100000000
+      FFF1E0C300000000FFFFF1FF00000000}
   end
 end

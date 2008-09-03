@@ -28,7 +28,7 @@ uses
   SciScintillaBase, SciScintillaMemo, SciScintilla, SciScintillaLDDP,
   SciDocTabCtrl, Windows, Graphics, Forms, Messages, SysUtils, Types,
   StdCtrls, ShellAPI, sciPrint, SciScintillaOptionsFrm, SciAutoComplete,
-  SciCallTips;
+  SciCallTips, DATBase;
 
 type
   TfrMain = class(TForm)
@@ -72,7 +72,7 @@ type
     pmuExternalPrograms: TMenuItem;
     pmuFile: TMenuItem;
     HelpAbout: TAction;
-    ilToolBarColor: TImageList;
+    ilProgramIcons: TImageList;
     InlinePart1: TMenuItem;
     Insert2: TMenuItem;
     MenuItem2: TMenuItem;
@@ -391,14 +391,15 @@ type
     procedure editorDwellEnd(Sender: TObject; const position: Integer; x,
       y: Integer);
 
-  private
+  protected
     TabRightClickIndex: Integer;
     Initialized: Boolean;
     procedure AppInitialize;
     procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
     procedure BuildMetaMenu;
-    function tempFileName:string;
+    function tempFileName: string;
     procedure SetKeyWordList;
+    function CombineGeometrics(const line1, line2: TDATGeometric): TDATQuad;
 
   public
     PluginActionList: TActionList;
@@ -423,7 +424,7 @@ implementation
 uses
   about, options, colordialog, BezWindow, sorting, splash, 
   BMP2LDraw, modeltreeview, dlgSubpart, commonprocs, windowsspecific,
-  DATBase, DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
+  DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
   STRUtils, Registry, IniFiles, SciResLang;
 
 var
@@ -661,87 +662,16 @@ procedure TfrMain.acTriangleCombineExecute(Sender: TObject);
 // Also checks for non coplanarity and issues a warning
 var
   DModel: TDATModel;
-  i, startline, endline: Integer;
-  QuadCombine: TDATQuad;
-  ErrorLine: string;
-
-  procedure ProcessTriangles(tri1, tri2: TDATTriangle);
-
-  var
-    QuadPoints: array of TDATPoint;
-    j, k: Integer;
-    flag: Boolean;
-
-  begin
-    for j := 1 to 3 do
-    begin
-      if Length(QuadPoints) > 0 then
-      begin
-        flag := false;
-        for k := 0 to Length(QuadPoints) - 1 do
-          if CheckSamePoint(tri1.Point[j],QuadPoints[k]) then
-            flag := true;
-        if not flag then
-        begin
-          SetLength(QuadPoints, Length(QuadPoints) + 1);
-          QuadPoints[Length(QuadPoints) - 1] := tri1.Point[j];
-        end;
-      end
-      else
-      begin
-        SetLength(QuadPoints,1);
-        QuadPoints[0] := tri1.Point[j];
-      end;
-      flag := false;
-      for k := 0 to Length(QuadPoints) - 1 do
-        if CheckSamePoint(tri2.Point[j],QuadPoints[k]) then
-          flag := true;
-      if not flag then
-      begin
-        SetLength(QuadPoints, Length(QuadPoints) + 1);
-        QuadPoints[Length(QuadPoints) - 1] := tri2.Point[j];
-      end;
-    end;
-
-    if Length(QuadPoints) = 4 then
-    begin
-      QuadCombine := TDATQuad.Create;
-      QuadCombine.Point[1] := QuadPoints[0];
-      QuadCombine.Point[2] := QuadPoints[1];
-      QuadCombine.Point[3] := QuadPoints[2];
-      QuadCombine.Point[4] := QuadPoints[3];
-      QuadCombine.Color := tri1.Color;
-      ErrorLine := L3CheckLine(QuadCombine.DATString);
-
-      if pos('Bad vertex sequence, 0132',ErrorLine)>0 then
-        FixBowtieQuad0132(QuadCombine)
-      else if pos('Bad vertex sequence, 0312',ErrorLine)>0 then
-        FixBowtieQuad0312(QuadCombine);
-
-      ErrorLine := L3CheckLine(QuadCombine.DATString);
-      flag := true;
-      if (pos('Collinear vertices',ErrorLine) > 0) or
-         (pos('Vertices not coplaner',ErrorLine) > 0) or
-         (pos('Concave Quad',ErrorLine) > 0) then
-        if MessageDlg(_('Combining these triangles:') + #13#10 +
-                      tri1.DATString + '(Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
-                      tri2.DATString + '(Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
-                      _('will result in a concave quad or a quad with' + #13#10 +
-                        'collinear or not coplaner vertices' + #13#10 +
-                        'Combine anyway?'), mtWarning, [mbYes, mbNo], 0) = mrNo then
-          flag := false;
-
-      if flag then
-      begin
-        DModel.Insert(i, QuadCombine.DATString);
-        DModel.Delete(i+1);
-        DModel.Delete(i+1);
-      end;
-    end;
-  end; 
+  i, j, index, startline, endline: Integer;
+  quad: TDATQuad;
+  line1, line2: TDATGeometric;
+  errorlist: TStringList;
+  DoNotCombine, quaderror: Boolean;
 
 begin
   DModel := LDDPCreateDATModel;
+  line1 := TDATTriangle.Create;
+  line2 := TDATTriangle.Create;
 
   editor.ExpandSelection(startline, endline);
   DModel.ModelText := editor.SelText;
@@ -753,11 +683,115 @@ begin
     begin
       if i <= DModel.Count - 2 then
         if (DModel[i] is TDATTriangle) and (DModel[i+1] is TDATTriangle) then
-          ProcessTriangles(DModel[i] as TDATTriangle, DModel[i+1] as TDATTriangle);
+        begin
+          line1.DATString := DModel[i].DATString;
+          line2.DATString := DModel[i+1].DATString;
+          quad := CombineGeometrics(line1, line2);
+          if Assigned(quad) then
+          begin
+            errorlist := L3CheckLine(quad.DATString);
+
+            if errorlist.Find('Bad vertex sequence, 0132', index) then
+              FixBowtieQuad0132(quad)
+            else if errorlist.Find('Bad vertex sequence, 0312', index) then
+              FixBowtieQuad0312(quad);
+
+            quaderror := False;
+            for j := 0 to errorlist.Count - 1 do
+              if (Pos('Collinear vertices', errorlist[j]) >= 0) or
+                 (Pos('Vertices not coplaner', errorlist[j]) >= 0) or
+                 (Pos('Vertices not coplaner', errorlist[j]) >= 0) then
+              begin
+                quaderror := True;
+                Break;
+              end;
+            DoNotCombine := False;
+            if quaderror then
+              case MessageDlg(_('Combining these triangles:') + #13#10 +
+                            line1.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
+                            line2.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
+                            _('will result in a concave quad or a quad with' + #13#10 +
+                            'collinear or not coplaner vertices' + #13#10 +
+                            'Combine anyway?'), mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
+                mrNo: DoNotCombine := True;
+                mrYes: DoNotCombine := False;
+                mrAbort: begin
+                           DModel.Free;
+                           line1.Free;
+                           line2.Free;
+                           Exit;
+                         end;
+                else DoNotCombine := True;
+              end;
+
+            if not DoNotCombine then
+            begin
+              DModel.Insert(i, quad.DATString);
+              DModel.Delete(i+1);
+              DModel.Delete(i+1);
+            end;
+          end;
+        end;
       inc(i);
     end;
   editor.SelText := DModel.ModelText;
+  DModel.Free;
+  line1.Free;
+  line2.Free;
 end;
+
+
+function tfrMain.CombineGeometrics(const line1, line2: TDATGeometric): TDATQuad;
+
+var
+  QuadPoints: array of TDATPoint;
+  j, k: Integer;
+  flag: Boolean;
+
+begin
+  for j := 1 to 3 do
+  begin
+    if Length(QuadPoints) > 0 then
+    begin
+      flag := false;
+      for k := 0 to Length(QuadPoints) - 1 do
+        if CheckSamePoint(line1.Point[j],QuadPoints[k]) then
+          flag := true;
+      if not flag then
+      begin
+        SetLength(QuadPoints, Length(QuadPoints) + 1);
+        QuadPoints[Length(QuadPoints) - 1] := line1.Point[j];
+      end;
+    end
+    else
+    begin
+      SetLength(QuadPoints,1);
+      QuadPoints[0] := line1.Point[j];
+    end;
+    flag := false;
+    for k := 0 to Length(QuadPoints) - 1 do
+      if CheckSamePoint(line2.Point[j],QuadPoints[k]) then
+        flag := true;
+    if not flag then
+    begin
+      SetLength(QuadPoints, Length(QuadPoints) + 1);
+      QuadPoints[Length(QuadPoints) - 1] := line2.Point[j];
+    end;
+  end;
+
+  if Length(QuadPoints) = 4 then
+  begin
+    Result := TDATQuad.Create;
+    Result.Point[1] := QuadPoints[0];
+    Result.Point[2] := QuadPoints[1];
+    Result.Point[3] := QuadPoints[2];
+    Result.Point[4] := QuadPoints[3];
+    Result.Color := line1.Color;
+  end
+  else
+    Result := nil;
+end;
+
 
 procedure TfrMain.acSubFileExecute(Sender: TObject);
 // Save a block of text as a separate file and add the appropriate subfile line
@@ -868,14 +902,14 @@ end;
 // File actions
 
 procedure TfrMain.acFileNewExecute(Sender: TObject);
-// Creates a new untitled Editor child window
+// Creates a new untitled document
 begin
   DocumentTabs.NewDocument;
   DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 end;
 
 procedure TfrMain.acFileOpenExecute(Sender: TObject);
-// Opens chosen existing filenames in a new editor child windows
+// Opens chosen existing filenames in a new tab
 var
   i: Integer;
 
@@ -886,6 +920,7 @@ begin
 end;
 
 procedure TfrMain.OpenFile(filename: string);
+// Open the specified file and set initial data
 begin
   if FileExists(filename) then
   begin
@@ -1373,7 +1408,8 @@ begin
   end;
 
   // Check style state and enable auto complete and call tips for linetype 1 file
-  AutoComplete.Disabled := editor.GetStyleAt(editor.GetCurrentPos) <> 16;
+  AutoComplete.Disabled := (editor.GetStyleAt(editor.GetCurrentPos) <> 16) and
+                           (editor.GetStyleAt(editor.GetCurrentPos) <> 17);
 end;
 
 procedure TfrMain.FormDblClick(Sender: TObject);
@@ -1428,7 +1464,8 @@ begin
 
     //Load form parameters from INI file
     LoadFormValues;
-
+    UpdateViewMenu;
+    
     //Set defaults based on options
     editor.PositionDecimalPlaces := frOptions.sePntAcc.Value;
     editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
@@ -1576,10 +1613,13 @@ begin
       DocumentTabs.ActiveDocument.LastChanged := fileage;
     end;
   end;
+  if frErrorWindow.Visible  then
+    frErrorWindow.acErrorCheck.Execute;
 end;
 
 procedure TfrMain.DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
   var AllowClose: Boolean);
+
 begin
   if editor.modified then
   begin
@@ -1673,7 +1713,7 @@ begin
       try
         plgBitmap := TBitMap.Create;
         plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
-        imgix := ilToolBarColor.AddMasked(plgBitmap, clFuchsia);
+        imgix := ilProgramIcons.AddMasked(plgBitmap, clFuchsia);
         plgBitmap.Free;
       except
         imgix := -1;
@@ -1892,10 +1932,20 @@ begin
   Width := LDDPini.ReadInteger(IniSection, 'frMain_Width', Width);
   Height := LDDPini.ReadInteger(IniSection, 'frMain_Height', Height);
   tbrFile.Visible := LDDPini.ReadBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
+  tbrFile.Top := LDDPini.ReadInteger(IniSection, 'tbrFile_Top', tbrFile.Top);
+  tbrFile.Left := LDDPini.ReadInteger(IniSection, 'tbrFile_Left', tbrFile.Left);
   tbrExternalPrograms.Visible := LDDPini.ReadBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
+  tbrExternalPrograms.Top := LDDPini.ReadInteger(IniSection, 'tbrExternalPrograms_Top', tbrExternalPrograms.Top);
+  tbrExternalPrograms.Left := LDDPini.ReadInteger(IniSection, 'tbrExternalPrograms_Left', tbrExternalPrograms.Left);
   tbrTools.Visible := LDDPini.ReadBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
+  tbrTools.Top := LDDPini.ReadInteger(IniSection, 'tbrTools_Top', tbrTools.Top);
+  tbrTools.Left := LDDPini.ReadInteger(IniSection, 'tbrTools_Left', tbrTools.Left);
   tbrEditing.Visible := LDDPini.ReadBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
+  tbrEditing.Top := LDDPini.ReadInteger(IniSection, 'tbrEditing_Top', tbrEditing.Top);
+  tbrEditing.Left := LDDPini.ReadInteger(IniSection, 'tbrEditing_Left', tbrEditing.Left);
   tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
+  tbrColorReplace.Top := LDDPini.ReadInteger(IniSection, 'tbrColorReplace_Top', tbrColorReplace.Top);
+  tbrColorReplace.Left := LDDPini.ReadInteger(IniSection, 'tbrColorReplace_Left', tbrColorReplace.Left);
   if LDDPini.ReadBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked) then
     mnuEnablePollingClick(nil);
   if LDDPini.ReadBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked) then
@@ -1934,10 +1984,20 @@ begin
   LDDPini.WriteInteger(IniSection, 'frMain_Width', Width);
   LDDPini.WriteInteger(IniSection, 'frMain_Height', Height);
   LDDPini.WriteBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
+  LDDPini.WriteInteger(IniSection, 'tbrFile_Top', tbrFile.Top);
+  LDDPini.WriteInteger(IniSection, 'tbrFile_Left', tbrFile.Left);
   LDDPini.WriteBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
+  LDDPini.WriteInteger(IniSection, 'tbrExternalPrograms_Top', tbrExternalPrograms.Top);
+  LDDPini.WriteInteger(IniSection, 'tbrExternalPrograms_Left', tbrExternalPrograms.Left);
   LDDPini.WriteBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
+  LDDPini.WriteInteger(IniSection, 'tbrTools_Top', tbrTools.Top);
+  LDDPini.WriteInteger(IniSection, 'tbrTools_Left', tbrTools.Left);
   LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
+  LDDPini.WriteInteger(IniSection, 'tbrEditing_Top', tbrEditing.Top);
+  LDDPini.WriteInteger(IniSection, 'tbrEditing_Left', tbrEditing.Left);
   LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
+  LDDPini.WriteInteger(IniSection, 'tbrColorReplace_Top', tbrColorReplace.Top);
+  LDDPini.WriteInteger(IniSection, 'tbrColorReplace_Left', tbrColorReplace.Left);
   LDDPini.WriteBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked);
   LDDPini.WriteBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked);
   LDDPini.WriteBool(IniSection, 'mnuPollEvery1Sec_Checked', mnuPollEvery1Sec.Checked);

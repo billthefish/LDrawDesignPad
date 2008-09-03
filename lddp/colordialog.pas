@@ -77,10 +77,12 @@ begin
         endline := Lines.Count - 1;
       end;
 
+      BeginUndoAction;
       for i := startline to endline do
         if (cbxReplaceEverything.Checked) or
            (GetLineColor(i) = oldcolor) then
           SetLineColor(i, newcolor);
+      EndUndoAction;    
     end;
 end;
 

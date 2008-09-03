@@ -35,7 +35,7 @@ type
     PageControl1: TPageControl;
     tsExternal: TTabSheet;
     GroupBox1: TGroupBox;
-    btL3Lab: TBitBtn;
+    c: TBitBtn;
     btMLCad: TBitBtn;
     btLDView: TBitBtn;
     btLDraw: TBitBtn;
@@ -58,14 +58,6 @@ type
     cboDist: TCheckBox;
     Memo1: TMemo;
     Memo2: TMemo;
-    TabSheet4: TTabSheet;
-    GroupBox3: TGroupBox;
-    edEmail: TEdit;
-    edUsername: TEdit;
-    edName: TEdit;
-    Label16: TLabel;
-    Label14: TLabel;
-    Label13: TLabel;
     TabSheet3: TTabSheet;
     GroupBox4: TGroupBox;
     btnRescanPlugins: TBitBtn;
@@ -124,13 +116,31 @@ type
     GroupBox6: TGroupBox;
     Label1: TLabel;
     seCustomPollInterval: TJvValidateEdit;
+    Label3: TLabel;
+    edUserName: TEdit;
+    edEmail: TEdit;
+    Label7: TLabel;
+    Label8: TLabel;
+    edName: TEdit;
+    SearchPathsList: TListView;
+    Panel5: TPanel;
+    btnPathUp: TBitBtn;
+    btnPathDown: TBitBtn;
+    btnMLCadPathImport: TButton;
+    btnDeleteInvalidPaths: TButton;
+    btnDeletePath: TButton;
+    btnReplacePath: TButton;
+    btnAddPath: TButton;
+    edSearchPath: TEdit;
+    btnPathOpen: TBitBtn;
+    OptionImages: TImageList;
     procedure PageControl1Change(Sender: TObject);
     procedure btnRescanPluginsClick(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
     procedure btLDrawClick(Sender: TObject);
     procedure btLDViewClick(Sender: TObject);
     procedure btMLCadClick(Sender: TObject);
-    procedure btL3LabClick(Sender: TObject);
+    procedure cClick(Sender: TObject);
     procedure btExternalClick(Sender: TObject);
     procedure btLSynthClick(Sender: TObject);
     procedure btnColorSelectClick(Sender: TObject);
@@ -145,12 +155,24 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ColorBarSheetShow(Sender: TObject);
     procedure ColorBarComboChange(Sender: TObject);
+    procedure btnMLCadPathImportClick(Sender: TObject);
+    procedure SearchPathsListSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
+    procedure edSearchPathChange(Sender: TObject);
+    procedure btnPathOpenClick(Sender: TObject);
+    procedure btnAddPathClick(Sender: TObject);
+    procedure btnReplacePathClick(Sender: TObject);
+    procedure btnDeletePathClick(Sender: TObject);
+    procedure btnDeleteInvalidPathsClick(Sender: TObject);
+    procedure btnPathDownClick(Sender: TObject);
+    procedure btnPathUpClick(Sender: TObject);
 
   protected
     ColorBarList: TStringList;
     procedure ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
     procedure MakeExternalMenuItem(ProgIndex:Integer);
     procedure SetColorListToDefault;
+    procedure SetDirectory(DCaption: string; EditControl: TEdit);
 
   public
     ExternalProgramList: TStringList;
@@ -165,7 +187,7 @@ var
 
 implementation
 
-uses main, windowsspecific, ActnList, DATBase, DATCheck, DATUtils;
+uses main, windowsspecific, ActnList, DATBase, DATCheck, DATUtils, StrUtils;
 
 {$R *.dfm}
 
@@ -173,6 +195,7 @@ procedure TfrOptions.UpdateControls;
 
 var
   strFound, strNotFound: string;
+  i: Integer;
 
 begin
   strFound := _('Found!');
@@ -190,7 +213,7 @@ begin
   lbLSynth.Caption:=strNotFound;
 
   if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
-    lbLDraw.font.Color:=clGreen;
+    lbLDraw.font.Color := clGreen;
     lbldraw.Caption:= strFound;
   end;
 
@@ -214,21 +237,36 @@ begin
     lbLSynth.Caption:=strFound;
   end;
 
-  if trim(frOptions.edExternal.text)='' then lbExternal.Caption:=''
+  if trim(frOptions.edExternal.text)='' then
+    lbExternal.Caption:=''
+  else
+    if FileExists(frOptions.edExternal.text) then begin
+      lbExternal.font.Color:=clGreen;
+      lbExternal.Caption:=strFound;
+    end
     else
-      if FileExists(frOptions.edExternal.text) then begin
-        lbExternal.font.Color:=clGreen;
-        lbExternal.Caption:=strFound;
-      end
-        else begin
-          lbExternal.font.Color:=clRed;
-          lbExternal.Caption:=strNotFound;
-        end;
+    begin
+      lbExternal.font.Color:=clRed;
+      lbExternal.Caption:=strNotFound;
+    end;
+
+  for i := 0 to SearchPathsList.Items.Count - 1 do
+    if DirectoryExists(SearchPathsList.Items[i].Caption) then
+      SearchPathsList.Items[i].StateIndex := 0
+    else
+      SearchPathsList.Items[i].StateIndex := 1;
+
 end;
 
 procedure TfrOptions.PageControl1Change(Sender: TObject);
 begin
   UpdateControls;
+end;
+
+procedure TfrOptions.btnReplacePathClick(Sender: TObject);
+begin
+  if Assigned(SearchPathsList.Selected) then
+    SearchPathsList.Selected.Caption := edSearchPath.Text
 end;
 
 procedure TfrOptions.btnRescanPluginsClick(Sender: TObject);
@@ -250,42 +288,43 @@ begin
 end;
 
 procedure TfrOptions.btLDrawClick(Sender: TObject);
-var strDir:string;
 begin
-  strDir:=edLdrawDir.Text;
-  if SelectDirectory(_('Choose LDraw Library Location'),'',strDir) then edLdrawDir.Text:=strDir;
+  SetDirectory(_('Choose LDraw Library Location'),edLdrawDir);
   UpdateControls;
 end;
 
 procedure TfrOptions.btLDViewClick(Sender: TObject);
-var strDir:string;
 begin
-  strDir:=edLDViewDir.Text;
-  if SelectDirectory(_('Choose LDView Location'),'',strDir) then edLDViewDir.Text:=strDir;
+  SetDirectory(_('Choose LDView Location'),edLDViewDir);
   UpdateControls;
 end;
 
 procedure TfrOptions.btMLCadClick(Sender: TObject);
-var strDir:string;
 begin
-  strDir:=edMLCadDir.Text;
-  if SelectDirectory(_('Choose MLCad Location'),'',strDir) then edMLCadDir.Text:=strDir;
+  SetDirectory(_('Choose MLCad Location'),edMLCadDir);
   UpdateControls;
 end;
 
-procedure TfrOptions.btL3LabClick(Sender: TObject);
-var strDir:string;
+procedure TfrOptions.cClick(Sender: TObject);
 begin
-  strDir:=edL3LabDir.Text;
-  if SelectDirectory(_('Choose L3Lab Location'),'',strDir) then edL3LabDir.Text:=strDir;
+  SetDirectory(_('Choose L3Lab Location'),edL3LabDir);
   UpdateControls;
 end;
 
 procedure TfrOptions.btLSynthClick(Sender: TObject);
-var strDir:string;
 begin
-  strDir:=edLSynthDir.Text;
-  if SelectDirectory(_('Choose lynthcp Location'),'',strDir) then edLSynthDir.Text:=strDir;
+  SetDirectory(_('Choose lynthcp Location'),edLSynthDir);
+  UpdateControls;
+end;
+
+procedure TfrOptions.SetDirectory(DCaption: string; EditControl: TEdit);
+var
+  strDir: string;
+
+begin
+  strDir := EditControl.Text;
+  if SelectDirectory(DCaption,'',strDir) then
+    EditControl.Text := strDir;
   UpdateControls;
 end;
 
@@ -341,6 +380,9 @@ begin
   for i := 0 to ExternalProgramList.Count - 1 do
     LDDPini.WriteString(IniSection, 'lbxExternal_Item' + IntToStr(i), ExternalProgramList[i]);
 
+  for i := 0 to SearchPathsList.Items.Count - 1 do
+    LDDPini.WriteString(IniSection, 'SearchPathsList_Item' + IntToStr(i), SearchPathsList.Items[i].Caption);
+
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -352,6 +394,7 @@ var
   CurrentItem: TStringList;
   LDDPini: TMemIniFile;
   IniSection: string;
+  SearchPath: TListItem;
 
 begin
   ColorBarList := TStringList.Create;
@@ -410,10 +453,20 @@ begin
   i := 0;
   while LDDPini.ReadString(IniSection, 'lbxExternal_Item' + IntToStr(i), 'none') <> 'none' do
   begin
-     MakeExternalMenuItem(ExternalProgramList.Add(LDDPini.ReadString(IniSection, 'lbxExternal_Item' + IntToStr(i), 'none')));
-     CurrentItem.CommaText := ExternalProgramList[ExternalProgramList.Count - 1];
-     lbxExternal.Items.Add(CurrentItem[0]);
-     Inc(i);
+    MakeExternalMenuItem(ExternalProgramList.Add(LDDPini.ReadString(IniSection, 'lbxExternal_Item' + IntToStr(i), 'none')));
+    CurrentItem.CommaText := ExternalProgramList[ExternalProgramList.Count - 1];
+    lbxExternal.Items.Add(CurrentItem[0]);
+    Inc(i);
+  end;
+
+  //Read and setup seach paths list
+  SearchPathsList.Clear;
+  i := 0;
+  while LDDPini.ReadString(IniSection, 'SearchPathsList_Item' + IntToStr(i), 'none') <> 'none' do
+  begin
+    SearchPath := SearchPathsList.Items.Add;
+    SearchPath.Caption := LDDPini.ReadString(IniSection, 'SearchPathsList_Item' + IntToStr(i), '');
+    Inc(i);
   end;
 
   CurrentItem.Free;
@@ -478,7 +531,7 @@ begin
 
   with frMain.tbrColorReplace.Buttons[ButtonIndex] do
   begin
-    ImageIndex := frMain.ilToolBarColor.AddMasked(ColorButtonBitmap, clFuchsia);
+    ImageIndex := frMain.ilProgramIcons.AddMasked(ColorButtonBitmap, clFuchsia);
     Hint := ColorName + ' ' + ColorNumber;
     Caption := ColorName + ' ' + ColorNumber;
     Tag := StrToInt(ColorNumber);
@@ -526,6 +579,18 @@ begin
   for i := 0 to ColourList.Count - 1 do
     ColorBarCombo.AddColor(ColourList[i].MainColor, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
   ColourList.Free;
+end;
+
+procedure TfrOptions.btnAddPathClick(Sender: TObject);
+
+var
+  SearchPath: TListItem;
+
+begin
+  SearchPath := SearchPathsList.Items.Add;
+  SearchPath.Caption := edSearchPath.Text;
+  SearchPathsList.Selected := SearchPath;
+  UpdateControls;
 end;
 
 procedure TfrOptions.btnColorRestoreClick(Sender: TObject);
@@ -654,6 +719,60 @@ begin
   end;
 end;
 
+procedure TfrOptions.edSearchPathChange(Sender: TObject);
+var
+  SearchPath: TListItem;
+
+begin
+  SearchPath := SearchPathsList.FindCaption(0, edSearchPath.Text, False, True, True);
+  if DirectoryExists(edSearchPath.Text) then
+  begin
+    if not Assigned(SearchPath) then
+    begin
+      btnAddPath.Enabled := True;
+      btnReplacePath.Enabled := Assigned(SearchPathsList.Selected);
+      btnDeletePath.Enabled := False;
+    end
+    else
+    begin
+      btnAddPath.Enabled := False;
+      btnReplacePath.Enabled := False;
+      btnDeletePath.Enabled := True;
+    end;
+  end
+  else
+  begin
+    btnAddPath.Enabled := False;
+    btnReplacePath.Enabled := False;
+    btnDeletePath.Enabled := Assigned(SearchPath);
+  end;
+
+end;
+
+procedure TfrOptions.btnDeleteInvalidPathsClick(Sender: TObject);
+
+var
+ i: Integer;
+
+begin
+  for i := SearchPathsList.Items.Count - 1 downto 0  do
+    if not DirectoryExists(SearchPathsList.Items[i].Caption) then
+      SearchPathsList.Items[i].Free;
+end;
+
+procedure TfrOptions.btnDeletePathClick(Sender: TObject);
+var
+  SearchPath: TListItem;
+
+begin
+  SearchPath := SearchPathsList.FindCaption(0, edSearchPath.Text, False, True, True);
+  if Assigned(SearchPath) then
+  begin
+    SearchPath.Free;
+    edSearchPath.Text := '';
+  end;
+end;
+
 procedure TfrOptions.btnDelExternalClick(Sender: TObject);
 
 var
@@ -683,6 +802,90 @@ begin
   end;
 end;
 
+procedure TfrOptions.btnMLCadPathImportClick(Sender: TObject);
+// Construct the meta command menu from the ini file
+var
+  MLCadIni: TIniFile;
+  ScanPathSection: TStringList;
+  scanpath: string;
+  i: Integer;
+  SearchPath: TListItem;
+
+begin
+  if FileExists(edMLCadDir.Text + '\MLCad.ini') then
+  begin
+    ScanPathSection := TStringList.Create;
+    ScanPathSection.Duplicates := dupIgnore;
+    ScanPathSection.Sorted := True;
+    ScanPathSection.CaseSensitive := False;
+
+    MLCadIni := TIniFile.Create(edMLCadDir.Text + '\MLCad.ini');
+
+    MLCadIni.ReadSection('SCAN_ORDER', ScanPathSection);
+
+    for i := 0 to ScanPathSection.Count - 1 do
+    begin
+      scanpath := MLCadIni.ReadString('SCAN_ORDER', ScanPathSection[i], '');
+      // strip out the SHOW or HIDE command
+      scanpath := RightStr(scanpath, Length(scanpath) - 5);
+      SearchPath := SearchPathsList.FindCaption(0, scanpath, False, True, True);
+      if not Assigned(SearchPath) and
+         (Pos('<LDRAWDIR>', scanpath) = 0) and
+         (scanpath <> LDrawBasePath + '\parts') and
+         (scanpath <> LDrawBasePath + '\parts\s') and
+         (scanpath <> LDrawBasePath + '\p') and
+         (scanpath <> LDrawBasePath + '\p\48') and
+         DirectoryExists(scanpath) then
+      begin
+        SearchPath := SearchPathsList.Items.Add;
+        SearchPath.Caption := scanpath;
+      end;
+    end;
+    ScanPathSection.Free;
+    MLCadIni.Free;
+  end;
+  UpdateControls;
+end;
+
+procedure TfrOptions.btnPathDownClick(Sender: TObject);
+
+var
+  SearchPath: TListItem;
+
+begin
+  if Assigned(SearchPathsList.Selected) and
+     (SearchPathsList.Selected.Index < SearchPathsList.Items.Count - 1) then
+  begin
+    SearchPath := SearchPathsList.Items.Insert(SearchPathsList.Selected.Index + 2);
+    SearchPath.Caption := SearchPathsList.Selected.Caption;
+    SearchPathsList.Selected.Free;
+    SearchPathsList.Selected := SearchPath;
+  end;
+  UpdateControls;
+end;
+
+procedure TfrOptions.btnPathOpenClick(Sender: TObject);
+begin
+  SetDirectory(_('Choose Directory'),edSearchPath);
+end;
+
+procedure TfrOptions.btnPathUpClick(Sender: TObject);
+
+var
+  SearchPath: TListItem;
+
+begin
+  if Assigned(SearchPathsList.Selected) and
+     (SearchPathsList.Selected.Index > 0) then
+  begin
+    SearchPath := SearchPathsList.Items.Insert(SearchPathsList.Selected.Index - 1);
+    SearchPath.Caption := SearchPathsList.Selected.Caption;
+    SearchPathsList.Selected.Free;
+    SearchPathsList.Selected := SearchPath;
+  end;
+  UpdateControls;
+end;
+
 procedure TfrOptions.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if ModalResult = mrOK then
@@ -694,12 +897,20 @@ end;
 
 procedure TfrOptions.FormCreate(Sender: TObject);
 begin
-  TranslateComponent (self);
+  TranslateComponent(Self);
   LoadFormValues;
   OpenDialog.Filter := _('Executibles') + '(*.*)|*.exe';
+  if SearchPathsList.Items.Count > 0 then
+    SearchPathsList.Selected := SearchPathsList.Items[0];
   UpdateControls;
   SetConfigurationConstants;
   PageControl1.ActivePage:=tsExternal;
+end;
+
+procedure TfrOptions.SearchPathsListSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
+begin
+  edSearchPath.Text := Item.Caption;
 end;
 
 procedure TfrOptions.SetColorListToDefault;
