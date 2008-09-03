@@ -615,8 +615,8 @@ begin
       DATModel1.Insert(i,'0 Original Line: ' + DATModel1[i+2].DATString );
       DATModel1.Insert(i+4, '0 End of Inlined Part');
       DATModel1.Insert(i+5, '');
-      DATModel1.InlinePart(i+3);
-      end;
+      DATModel1.InlinePart(i+3, frOptions.SearchPaths);
+    end;
 
   editor.SelText := DATModel1.ModelText;
   editor.Modified := true;

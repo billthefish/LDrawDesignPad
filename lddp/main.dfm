@@ -40,7 +40,6 @@ object frMain: TfrMain
     OnMouseDown = DocumentTabsMouseDown
     DefaultExt = '.dat'
     OnClosing = DocumentTabsClosing
-    ExplicitHeight = 513
     object editor: TScintillaLDDP
       Left = 4
       Top = 24
@@ -482,7 +481,6 @@ object frMain: TfrMain
       item
         Width = 50
       end>
-    ExplicitTop = 567
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -539,7 +537,7 @@ object frMain: TfrMain
         Left = 74
         Top = 0
         DropdownMenu = pmExternal
-        ImageIndex = 34
+        ImageIndex = 35
         PopupMenu = pmExternal
         OnClick = tbUserDefinedClick
       end
