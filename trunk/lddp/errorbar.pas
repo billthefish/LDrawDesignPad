@@ -164,10 +164,11 @@ end;
 procedure TfrErrorWindow.acErrorCheckExecute(Sender: TObject);
 // Perform an error check based on L3P error check
 var
-  s, strid: string;
+  strid: string;
   i, j: Integer;
   errorfound: Boolean;
   DATModel1: TDATModel;
+  s: TStringList;
 
 begin
   Screen.Cursor := crHourGlass;
@@ -175,7 +176,6 @@ begin
   ErrorListView.Items.Clear;
 
   DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
-
   DATModel1.ModelText := frMain.editor.Lines.Text;
 
   strid := 'Identical to line';
@@ -217,8 +217,10 @@ begin
 
         // Check for All Other L3P Errors
         s := L3CheckLine(DATModel1[i].DATString);
-        if s <> '' then
-          AddError(IntToStr(i+1),s);
+        if s.Count > 0 then
+          for j := 0 to s.Count - 1 do
+            AddError(IntToStr(i+1),s[j]);
+        s.Free;    
       end;
     end;
 

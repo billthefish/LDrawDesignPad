@@ -94,7 +94,7 @@ begin
     if (edAuthor.Text <> '') and (edUsername.Text <> '') then
       SubFile.Add('0 Author: ' + edAuthor.Text + '[' + edUsername.text + ']');
     SubFile.Add('0 !LDRAW_ORG ' + FileType);
-    SubFile.Add('!LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt');
+    SubFile.Add('0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt');
     SubFile.Add('');
     if edHelpText.Lines.Count > 0 then
     begin
@@ -133,8 +133,8 @@ end;
 
 procedure TfrSubFile.FormCreate(Sender: TObject);
 begin
-  CategoryCombo.Items.CommaText := ReadUIConfigValue('LDrawCategories');
   TranslateComponent (self);
+  CategoryCombo.Items.CommaText := ReadUIConfigValue('LDrawCategories');
 end;
 
 procedure TfrSubFile.FormShow(Sender: TObject);

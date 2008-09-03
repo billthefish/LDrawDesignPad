@@ -2,7 +2,7 @@ object frMain: TfrMain
   Left = 267
   Top = 61
   Width = 800
-  Height = 640
+  Height = 660
   VertScrollBar.Range = 49
   Caption = 'LDraw Design Pad'
   Color = clAppWorkSpace
@@ -25,7 +25,7 @@ object frMain: TfrMain
     Left = 0
     Top = 54
     Width = 792
-    Height = 513
+    Height = 533
     Editor = editor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -40,11 +40,12 @@ object frMain: TfrMain
     OnMouseDown = DocumentTabsMouseDown
     DefaultExt = '.dat'
     OnClosing = DocumentTabsClosing
+    ExplicitHeight = 513
     object editor: TScintillaLDDP
       Left = 4
       Top = 24
       Width = 784
-      Height = 485
+      Height = 505
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -464,7 +465,7 @@ object frMain: TfrMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 567
+    Top = 587
     Width = 792
     Height = 19
     AutoHint = True
@@ -481,6 +482,7 @@ object frMain: TfrMain
       item
         Width = 50
       end>
+    ExplicitTop = 567
   end
   object ControlBar1: TControlBar
     Left = 0
@@ -510,7 +512,7 @@ object frMain: TfrMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilToolBarColor
+      Images = ilProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -572,7 +574,7 @@ object frMain: TfrMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilToolBarColor
+      Images = ilProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -623,7 +625,7 @@ object frMain: TfrMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilToolBarColor
+      Images = ilProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -714,7 +716,7 @@ object frMain: TfrMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilToolBarColor
+      Images = ilProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -823,14 +825,15 @@ object frMain: TfrMain
       Left = 416
       Top = 2
       Width = 305
-      Height = 22
+      Height = 23
       Align = alNone
       AutoSize = True
+      ButtonHeight = 23
       Caption = 'Tools'
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilToolBarColor
+      Images = ilProgramIcons
       Indent = 5
       TabOrder = 4
       Wrapable = False
@@ -925,7 +928,7 @@ object frMain: TfrMain
     end
   end
   object MainMenu1: TMainMenu
-    Images = ilToolBarColor
+    Images = ilProgramIcons
     Left = 160
     Top = 112
     object File1: TMenuItem
@@ -1248,7 +1251,7 @@ object frMain: TfrMain
     end
   end
   object MainFormActions: TActionList
-    Images = ilToolBarColor
+    Images = ilProgramIcons
     Left = 8
     Top = 112
     object acFileNew: TAction
@@ -1286,6 +1289,7 @@ object frMain: TfrMain
       Category = 'File'
       Caption = '&Exit'
       Hint = 'Exit|Quit program'
+      ShortCut = 16465
       OnExecute = acFileExitExecute
     end
     object acEditCut: TEditCut
@@ -1617,7 +1621,7 @@ object frMain: TfrMain
       OnExecute = acFileCloseExecute
     end
   end
-  object ilToolBarColor: TImageList
+  object ilProgramIcons: TImageList
     Left = 40
     Top = 112
     Bitmap = {
@@ -2514,7 +2518,7 @@ object frMain: TfrMain
   end
   object pmMemo: TPopupMenu
     AutoHotkeys = maManual
-    Images = ilToolBarColor
+    Images = ilProgramIcons
     Left = 96
     Top = 112
     object Cut1: TMenuItem

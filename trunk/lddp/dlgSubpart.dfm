@@ -128,7 +128,6 @@ object frSubFile: TfrSubFile
     Height = 41
     Align = alBottom
     TabOrder = 6
-    ExplicitTop = 313
     object btnCancel: TBitBtn
       Left = 438
       Top = 8
