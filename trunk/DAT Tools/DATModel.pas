@@ -114,7 +114,7 @@ type
       procedure Delete(Index: Integer);
 
       {Inline part at index}
-      procedure InlinePart(Index: Integer);
+      procedure InlinePart(Index: Integer; SearchPaths: TStringList = nil);
 
       {Inline all parts (linetype 1) in the model}
       procedure InlineAll;
@@ -889,7 +889,7 @@ begin
   inherited Clear;
 end;
 
-procedure TDATModel.InlinePart(Index: Integer);
+procedure TDATModel.InlinePart(Index: Integer; SearchPaths: TStringList = nil);
 
 var
   InlineFile: TDATModel;
@@ -906,12 +906,27 @@ begin
     begin
       with (Lines[Index] as TDATSubPart) do
       begin
-        if FileExists(strFilePath + FileName) then
-          InlineFile.LoadModel(strFilePath + FileName)
-        else if FileExists(LDrawBasePath + 'PARTS' + PathDelim + FileName) then
-          InlineFile.LoadModel(LDrawBasePath + 'PARTS' + PathDelim + FileName)
-        else if FileExists(LDrawBasePath + 'P' + PathDelim + FileName) then
-          InlineFile.LoadModel(LDrawBasePath + 'P' + PathDelim + FileName);
+        if (not Assigned(SearchPaths)) or (SearchPaths.Count = 0) then
+        begin
+          if FileExists(strFilePath + FileName) then
+            InlineFile.LoadModel(strFilePath + FileName)
+          else if FileExists(LDrawBasePath + 'PARTS' + PathDelim + FileName) then
+            InlineFile.LoadModel(LDrawBasePath + 'PARTS' + PathDelim + FileName)
+          else if FileExists(LDrawBasePath + 'P' + PathDelim + FileName) then
+            InlineFile.LoadModel(LDrawBasePath + 'P' + PathDelim + FileName)
+        end
+        else
+        begin
+          if FileExists(strFilePath + FileName) then
+            InlineFile.LoadModel(strFilePath + FileName)
+          else
+            for i := 0 to SearchPaths.Count - 1 do
+              if FileExists(SearchPaths[i] + PathDelim + FileName) then
+              begin
+                InlineFile.LoadModel(SearchPaths[i] + PathDelim + FileName);
+                Break;
+              end;
+        end;
       end;
 
 

@@ -166,6 +166,7 @@ type
     procedure btnDeleteInvalidPathsClick(Sender: TObject);
     procedure btnPathDownClick(Sender: TObject);
     procedure btnPathUpClick(Sender: TObject);
+    procedure edLdrawDirChange(Sender: TObject);
 
   protected
     ColorBarList: TStringList;
@@ -173,9 +174,11 @@ type
     procedure MakeExternalMenuItem(ProgIndex:Integer);
     procedure SetColorListToDefault;
     procedure SetDirectory(DCaption: string; EditControl: TEdit);
+    procedure UpdateSearchPathList;
 
   public
     ExternalProgramList: TStringList;
+    SearchPaths: TStringList;
     procedure UpdateControls;
     procedure LoadFormValues;
     procedure SaveFormValues;
@@ -266,7 +269,8 @@ end;
 procedure TfrOptions.btnReplacePathClick(Sender: TObject);
 begin
   if Assigned(SearchPathsList.Selected) then
-    SearchPathsList.Selected.Caption := edSearchPath.Text
+    SearchPathsList.Selected.Caption := edSearchPath.Text;
+  UpdateControls;
 end;
 
 procedure TfrOptions.btnRescanPluginsClick(Sender: TObject);
@@ -719,6 +723,31 @@ begin
   end;
 end;
 
+procedure TfrOptions.edLdrawDirChange(Sender: TObject);
+
+var
+  SearchPath: TListItem;
+  
+begin
+  SearchPath := SearchPathsList.FindCaption(0, edLDrawDir.Text + '\p', False, True, True);
+  if not Assigned(SearchPath) and
+     DirectoryExists(edLDrawDir.Text + '\p') then
+  begin
+    SearchPath := TListItem.Create(SearchPathsList.Items);
+    SearchPathsList.Items.AddItem(SearchPath, 0);
+    SearchPath.Caption := edLDrawDir.Text + '\p';
+  end;
+  SearchPath := SearchPathsList.FindCaption(0, edLDrawDir.Text + '\parts', False, True, True);
+  if not Assigned(SearchPath) and
+     DirectoryExists(edLDrawDir.Text + '\parts') then
+  begin
+    SearchPath := TListItem.Create(SearchPathsList.Items);
+    SearchPathsList.Items.AddItem(SearchPath, 0);
+    SearchPath.Caption := edLDrawDir.Text + '\parts';
+  end;
+  UpdateControls;
+end;
+
 procedure TfrOptions.edSearchPathChange(Sender: TObject);
 var
   SearchPath: TListItem;
@@ -893,6 +922,7 @@ begin
   else
     LoadFormValues;
   SetConfigurationConstants;
+  UpdateSearchPathList;
 end;
 
 procedure TfrOptions.FormCreate(Sender: TObject);
@@ -904,6 +934,7 @@ begin
     SearchPathsList.Selected := SearchPathsList.Items[0];
   UpdateControls;
   SetConfigurationConstants;
+  UpdateSearchPathList;
   PageControl1.ActivePage:=tsExternal;
 end;
 
@@ -943,6 +974,21 @@ begin
       ColorBarList[i] := '"' + StringReplace(ColorList[ColorList.IndexOfColourCode(i)].Name, '_', ' ', [rfReplaceAll]) + '",' +
                          IntToStr(ColorList[ColorList.IndexOfColourCode(i)].Code) + ',' +
                          IntToStr(ColorList[ColorList.IndexOfColourCode(i)].MainColor);
+end;
+
+procedure TfrOptions.UpdateSearchPathList;
+
+var
+  i: Integer;
+  
+begin
+  if not Assigned(SearchPaths) then
+    SearchPaths := TStringList.Create
+  else
+    SearchPaths.Text := '';
+      
+  for i := 0 to SearchPathsList.Items.Count - 1 do
+    SearchPaths.Add(SearchPathsList.Items[i].Caption);
 end;
 
 procedure TfrOptions.SetConfigurationConstants;

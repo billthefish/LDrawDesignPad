@@ -30,6 +30,10 @@ object frOptions: TfrOptions
     object tsExternal: TTabSheet
       Caption = '&Program Paths'
       ImageIndex = -1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
@@ -369,6 +373,7 @@ object frOptions: TfrOptions
           Width = 260
           Height = 21
           TabOrder = 0
+          OnChange = edLdrawDirChange
         end
         object edLSynthDir: TEdit
           Left = 116
@@ -461,10 +466,6 @@ object frOptions: TfrOptions
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitLeft = 289
-        ExplicitTop = 0
-        ExplicitWidth = 295
-        ExplicitHeight = 305
         object btnPathUp: TBitBtn
           Left = 261
           Top = 6
@@ -649,6 +650,10 @@ object frOptions: TfrOptions
     object TabSheet2: TTabSheet
       Caption = 'Configuration &Values'
       ImageIndex = -1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox2: TGroupBox
         Left = 0
         Top = 0
@@ -932,6 +937,10 @@ object frOptions: TfrOptions
       Caption = '&Color Bar'
       ImageIndex = -1
       OnShow = ColorBarSheetShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
@@ -1076,6 +1085,10 @@ object frOptions: TfrOptions
     object TabSheet1: TTabSheet
       Caption = '&External Progams'
       ImageIndex = -1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox7: TGroupBox
         Left = 223
         Top = 0
@@ -1314,6 +1327,10 @@ object frOptions: TfrOptions
     object TabSheet3: TTabSheet
       Caption = 'Plu&gins'
       ImageIndex = -1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0
@@ -1526,7 +1543,7 @@ object frOptions: TfrOptions
     Left = 8
     Top = 32
     Bitmap = {
-      494C010102000400040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001001000000000000008
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1598,6 +1615,7 @@ object frOptions: TfrOptions
       F01F820700000000E01F800700000000C00F800700000000800FC00700000000
       8107E00F000000008307F00F00000000C783F00F00000000FF83F00700000000
       FFC1E00300000000FFC1E00100000000FFE0C00100000000FFE0C00100000000
-      FFF1E0C300000000FFFFF1FF00000000}
+      FFF1E0C300000000FFFFF1FF0000000000000000000000000000000000000000
+      000000000000}
   end
 end
