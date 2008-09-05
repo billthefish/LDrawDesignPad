@@ -662,11 +662,11 @@ procedure TfrMain.acTriangleCombineExecute(Sender: TObject);
 // Also checks for non coplanarity and issues a warning
 var
   DModel: TDATModel;
-  i, j, index, startline, endline: Integer;
+  i, j, startline, endline: Integer;
   quad: TDATQuad;
   line1, line2: TDATGeometric;
-  errorlist: TStringList;
-  DoNotCombine, quaderror: Boolean;
+  errorlist: TDATErrorList;
+  DoNotCombine: Boolean;
 
 begin
   DModel := LDDPCreateDATModel;
@@ -690,39 +690,42 @@ begin
           if Assigned(quad) then
           begin
             errorlist := L3CheckLine(quad.DATString);
-
-            if errorlist.Find('Bad vertex sequence, 0132', index) then
-              FixBowtieQuad0132(quad)
-            else if errorlist.Find('Bad vertex sequence, 0312', index) then
-              FixBowtieQuad0312(quad);
-
-            quaderror := False;
-            for j := 0 to errorlist.Count - 1 do
-              if (Pos('Collinear vertices', errorlist[j]) >= 0) or
-                 (Pos('Vertices not coplaner', errorlist[j]) >= 0) or
-                 (Pos('Vertices not coplaner', errorlist[j]) >= 0) then
-              begin
-                quaderror := True;
-                Break;
-              end;
             DoNotCombine := False;
-            if quaderror then
-              case MessageDlg(_('Combining these triangles:') + #13#10 +
-                            line1.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
-                            line2.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
-                            _('will result in a concave quad or a quad with' + #13#10 +
-                            'collinear or not coplaner vertices' + #13#10 +
-                            'Combine anyway?'), mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
-                mrNo: DoNotCombine := True;
-                mrYes: DoNotCombine := False;
-                mrAbort: begin
-                           DModel.Free;
-                           line1.Free;
-                           line2.Free;
-                           Exit;
-                         end;
-                else DoNotCombine := True;
-              end;
+            if Length(errorlist) > 0 then
+            begin
+              for j := 0 to Length(errorlist) - 1 do
+                if errorlist[j].ErrorType = deBowtieQuad then
+                  if errorlist[j].IsBowtieType1423 then
+                    FixBowtieQuad1423(quad)
+                  else
+                    FixBowtieQuad1243(quad);
+              errorlist := L3CheckLine(quad.DATString);
+              for j := 0 to Length(errorlist) - 1 do
+                if (errorlist[j].ErrorType = deCollinearVertices) or
+                   (errorlist[j].ErrorType = deNonCoplanerVertices) or
+                   (errorlist[j].ErrorType = deConcaveQuad) then
+                  case MessageDlg(_('Combining these triangles:') + #13#10 +
+                                    line1.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
+                                    line2.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
+                                    _('will result in a concave quad or a quad with' + #13#10 +
+                                    'collinear or not coplaner vertices' + #13#10 +
+                                    'Combine anyway?'), mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
+                    mrNo:
+                    begin
+                      DoNotCombine := True;
+                      Break;
+                    end;
+                    mrYes: DoNotCombine := False;
+                    mrAbort:
+                    begin
+                      DModel.Free;
+                      line1.Free;
+                      line2.Free;
+                      Exit;
+                    end;
+                    else DoNotCombine := True;
+                  end;
+            end;
 
             if not DoNotCombine then
             begin

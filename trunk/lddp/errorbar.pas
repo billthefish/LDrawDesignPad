@@ -22,7 +22,7 @@ interface
 uses
   gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, ComCtrls, Menus, JvDockTree, JvDockControlForm,
-  JvDockDelphiStyle, JvComponentBase, ActnList;
+  JvDockDelphiStyle, JvComponentBase, ActnList, DATCheck;
 
 type
   TfrErrorWindow = class(TForm)
@@ -77,7 +77,7 @@ type
     procedure ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
     procedure SetErrorCheckMarks(State: Boolean; ErrorType: string);
   public
-    function AddError(LineNumber, ErrorType: string): Boolean;
+    procedure AddError(LineNumber: string; ErrorRec: TDATError);
     procedure LoadFormValues;
     procedure SaveFormValues;
     procedure RestorePosition;
@@ -91,10 +91,10 @@ implementation
 {$R *.dfm}
 
 uses
-  IniFiles, DATBase, DATModel, DATCheck, DATErrorFix, DATUtils, main, options,
+  IniFiles, DATBase, DATModel, DATErrorFix, DATUtils, main, options,
   commonprocs, windowsspecific;
 
-function TfrErrorWindow.AddError(LineNumber, ErrorType: string): Boolean;
+procedure TfrErrorWindow.AddError(LineNumber: string; ErrorRec: TDATError);
 
 var
   error: TListItem;
@@ -102,9 +102,9 @@ var
 begin
   error := ErrorListView.Items.Add;
   error.Checked := True;
+//  PDATError(error.Data) := @ErrorRec;
   error.SubItems.Add(LineNumber);
-  error.SubItems.Add(ErrorType);
-  Result := True;
+  error.SubItems.Add(GetErrorString(ErrorRec));
 end;
 
 procedure TfrErrorWindow.ErrorListViewDblClick(Sender: TObject);
@@ -164,63 +164,86 @@ end;
 procedure TfrErrorWindow.acErrorCheckExecute(Sender: TObject);
 // Perform an error check based on L3P error check
 var
-  strid: string;
-  i, j: Integer;
-  errorfound: Boolean;
+  i, j, iline: Integer;
+  identline: Boolean;
   DATModel1: TDATModel;
-  s: TStringList;
+  errorlist: TDATErrorList;
+  error: TDATError;
 
 begin
   Screen.Cursor := crHourGlass;
 
   ErrorListView.Items.Clear;
 
-  DATModel1 := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+  DATModel1 := TDATModel.Create;
   DATModel1.ModelText := frMain.editor.Lines.Text;
-
-  strid := 'Identical to line';
+  iline := -1;
+  
   for i := 0 to DATModel1.Count - 1 do
     if DATModel1[i] is TDATElement then
     begin
       // Check for Identical Lines
-      errorfound := False;
+      identline := False;
       if i > 0 then
       begin
         for j := 0 to i - 1 do
+        begin
           if DATModel1[j].LineType = DATModel1[i].LineType then
             case DATModel1[j].LineType of
                1: if DATModel1[i].DATString = DATModel1[j].DATString then
-                    errorfound := AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               2: if CheckIdentPoints([(DATModel1[i] as TDATLine).Point[1], (DATModel1[i] as TDATLine).Point[2]],
-                                      [(DATModel1[j] as TDATLine).Point[1], (DATModel1[j] as TDATLine).Point[2]]) then
-                    errorfound := AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               3: if CheckIdentPoints([(DATModel1[i] as TDATTriangle).Point[1], (DATModel1[i] as TDATTriangle).Point[2], (DATModel1[i] as TDATTriangle).Point[3]],
-                                      [(DATModel1[j] as TDATTriangle).Point[1], (DATModel1[j] as TDATTriangle).Point[2], (DATModel1[j] as TDATTriangle).Point[3]]) then
-                    errorfound := AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               4: if CheckIdentPoints([(DATModel1[i] as TDATQuad).Point[1], (DATModel1[i] as TDATQuad).Point[2], (DATModel1[i] as TDATQuad).Point[3], (DATModel1[i] as TDATQuad).Point[4]],
-                                      [(DATModel1[j] as TDATQuad).Point[1], (DATModel1[j] as TDATQuad).Point[2], (DATModel1[j] as TDATQuad).Point[3], (DATModel1[j] as TDATQuad).Point[4]]) then
-                    errorfound := AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
-               5: if (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[1], (DATModel1[i] as TDATOpLine).Point[2]],
-                                      [(DATModel1[j] as TDATOpLine).Point[1], (DATModel1[j] as TDATOpLine).Point[2]])) and
-                     (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[3], (DATModel1[i] as TDATOpLine).Point[4]],
-                                      [(DATModel1[j] as TDATOpLine).Point[3], (DATModel1[j] as TDATOpLine).Point[4]])) then
-                    errorfound := AddError(IntToStr(i+1),strid + ' ' + IntToStr(j+1));
+                    identline := True;
+               2: if CheckIdentPoints([(DATModel1[i] as TDATLine).Point[1],
+                                       (DATModel1[i] as TDATLine).Point[2]],
+                                      [(DATModel1[j] as TDATLine).Point[1],
+                                       (DATModel1[j] as TDATLine).Point[2]]) then
+                    identline := True;
+               3: if CheckIdentPoints([(DATModel1[i] as TDATTriangle).Point[1],
+                                       (DATModel1[i] as TDATTriangle).Point[2],
+                                       (DATModel1[i] as TDATTriangle).Point[3]],
+                                      [(DATModel1[j] as TDATTriangle).Point[1],
+                                       (DATModel1[j] as TDATTriangle).Point[2],
+                                       (DATModel1[j] as TDATTriangle).Point[3]]) then
+                    identline := True;
+               4: if CheckIdentPoints([(DATModel1[i] as TDATQuad).Point[1],
+                                       (DATModel1[i] as TDATQuad).Point[2],
+                                       (DATModel1[i] as TDATQuad).Point[3],
+                                       (DATModel1[i] as TDATQuad).Point[4]],
+                                      [(DATModel1[j] as TDATQuad).Point[1],
+                                       (DATModel1[j] as TDATQuad).Point[2],
+                                       (DATModel1[j] as TDATQuad).Point[3],
+                                       (DATModel1[j] as TDATQuad).Point[4]]) then
+                    identline := True;
+               5: if (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[1],
+                                        (DATModel1[i] as TDATOpLine).Point[2]],
+                                      [(DATModel1[j] as TDATOpLine).Point[1],
+                                       (DATModel1[j] as TDATOpLine).Point[2]])) and
+                     (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[3],
+                                        (DATModel1[i] as TDATOpLine).Point[4]],
+                                      [(DATModel1[j] as TDATOpLine).Point[3],
+                                       (DATModel1[j] as TDATOpLine).Point[4]])) then
+                    identline := True;
             end;
+          if identline then
+          begin
+            iline := j;
+            Break;
+          end;
+        end;
       end;
       // Do not continue if line is identical
-      if (not errorfound) then
+      if identline then
       begin
-        // Check For Illegal Color Number
-        if (DATModel1[i] is TDATSubPart) and
-           ((DATModel1[i] as TDATElement).Color = 24) then
-          AddError(IntToStr(i+1),'Color 24 Illegal for this linetype');
-
-        // Check for All Other L3P Errors
-        s := L3CheckLine(DATModel1[i].DATString);
-        if s.Count > 0 then
-          for j := 0 to s.Count - 1 do
-            AddError(IntToStr(i+1),s[j]);
-        s.Free;    
+        error.ErrorType := deIdenticalLine;
+        error.Line := iline + 1;
+        AddError(IntToStr(i + 1), error)
+      end
+      else
+      begin
+        // Check for All Other Errors
+        errorlist := L3CheckLine(DATModel1[i].DATString);
+        if Length(errorlist) > 0 then
+          for j := 0 to Length(errorlist) - 1 do
+            AddError(IntToStr(i + 1), errorlist[j]);
       end;
     end;
 
@@ -337,7 +360,7 @@ begin
         with DATElem as TDATQuad do
         begin
           DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          FixBowtieQuad0132(DATElem as TDATQuad);
+          FixBowtieQuad1243(DATElem as TDATQuad);
           frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
         end;
         DATElem.Free;
@@ -350,7 +373,7 @@ begin
         with DATElem as TDATQuad do
         begin
           DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          FixBowtieQuad0312(DATElem as TDATQuad);
+          FixBowtieQuad1423(DATElem as TDATQuad);
           frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
         end;
         DATElem.Free;
@@ -363,7 +386,7 @@ begin
         with DATElem as TDATQuad do
         begin
           DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          SplitConcaveQuad13((DATElem as TDATQuad), tri1, tri2);
+          SplitConcaveQuad24((DATElem as TDATQuad), tri1, tri2);
           frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
           frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
         end;
@@ -381,7 +404,7 @@ begin
         with DATElem as TDATQuad do
         begin
           DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          SplitConcaveQuad02((DATElem as TDATQuad), tri1, tri2);
+          SplitConcaveQuad13((DATElem as TDATQuad), tri1, tri2);
           frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
           frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
         end;

@@ -97,9 +97,9 @@ begin
     ExpandSelection(startline, endline);
 
     if FOnlyRoundDuringAutoRound then
-      DModel := CreateDATModel(PositionDecimalPlaces, RotationDecimalPlaces)
+      DModel := TDATModel.Create
     else
-      DModel := CreateDATModel(15, 15);
+      DModel := CreateDATModel(PositionDecimalPlaces, RotationDecimalPlaces);
 
     DModel.ModelText := SelText;
 
