@@ -184,7 +184,17 @@ begin
           end;
 
         end;
-
+      // Add color 16 and 24
+      TempColor.Name := 'Main Color';
+      TempColor.Code := 16;
+      TempColor.MainColor := $000001;
+      TempColor.EdgeColor := $000002;
+      Result[Result.IndexOfColourCode(16)] := TempColor;
+      TempColor.Name := 'Edge Color';
+      TempColor.Code := 24;
+      TempColor.MainColor := $000002;
+      TempColor.EdgeColor := $000001;
+      Result[Result.IndexOfColourCode(24)] := TempColor;
     finally
       TempList.Free;
       LDConfig.Free;
