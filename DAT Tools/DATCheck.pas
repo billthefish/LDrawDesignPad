@@ -516,11 +516,11 @@ begin
     deNonCoplanerVertices:
       case error.CoplanerType of
         ctDet: Result := strNonCoplanerVertices +
-                         ' (det = ' + FloatToStr(error.CoplanerValue);
+                         ' (det = ' + FloatToStr(error.CoplanerValue) + ')';
         ctDist: Result := strNonCoplanerVertices +
-                          ' (dist = ' + FloatToStr(error.CoplanerValue);
+                          ' (dist = ' + FloatToStr(error.CoplanerValue) + ')';
         ctNormalAngle: Result := strNonCoplanerVertices +
-                       ' (angle = ' + FloatToStr(error.CoplanerValue);
+                       ' (angle = ' + FloatToStr(error.CoplanerValue) + ')';
         else Result := '';
       end;
     deIdenticalLine: Result := strIdenticalLine + ' ' + IntToStr(error.Line);

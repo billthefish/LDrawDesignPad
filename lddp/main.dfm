@@ -15,6 +15,7 @@ object frMain: TfrMain
   Menu = MainMenu1
   OldCreateOrder = True
   Position = poDesigned
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnDblClick = FormDblClick

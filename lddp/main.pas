@@ -390,6 +390,7 @@ type
       y: Integer);
     procedure editorDwellEnd(Sender: TObject; const position: Integer; x,
       y: Integer);
+    procedure FormActivate(Sender: TObject);
 
   protected
     TabRightClickIndex: Integer;
@@ -988,7 +989,7 @@ var
 
 begin
    for i:= DocumentTabs.Count - 1 downto 0 do
-     DocumentTabs.Close(i, False);
+     CloseFile(i);
 end;
 
 procedure TfrMain.acFileCloseExecute(Sender: TObject);
@@ -1365,11 +1366,21 @@ var
   DLine: TDATType;
 
 begin
+  DocumentTabs.ActiveDocument.Modified := editor.Modified;
+
   // Update panel values
-  if editor.modified then
+  if editor.Modified then
+  begin
+    DocumentTabs.ActiveDocument.TabName :=
+      ExtractFileName(DocumentTabs.ActiveDocument.FileName) + ' *';
     Statusbar.Panels[2].Text:=_('Modified')
+  end
   else
+  begin
+    DocumentTabs.ActiveDocument.TabName :=
+      ExtractFileName(DocumentTabs.ActiveDocument.FileName);
     Statusbar.Panels[2].Text:='';
+  end;
 
   StatusBar.Panels[1].text := IntToStr(editor.CaretY) + ':' + IntToStr(editor.CaretX);
 
@@ -1611,10 +1622,8 @@ begin
   begin
     SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
     if fileage <> DocumentTabs.ActiveDocument.LastChanged then
-    begin
       acFileRevert.Execute;
-      DocumentTabs.ActiveDocument.LastChanged := fileage;
-    end;
+    DocumentTabs.ActiveDocument.LastChanged := fileage;
   end;
   if frErrorWindow.Visible  then
     frErrorWindow.acErrorCheck.Execute;
@@ -1624,15 +1633,21 @@ procedure TfrMain.DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
   var AllowClose: Boolean);
 
 begin
-  if editor.modified then
+  if DocumentTabs.Document[TabIndex].Modified then
   begin
-    case MessageDlg('Save changes to ' + DocumentTabs.Document[TabIndex].TabName + '?'+#13+#10+''+#13+#10+'Yes: Saves the changes and closes this document.'+#13+#10+'No: Closes the document without saving any changes.'+#13+#10+'Cancel: Keeps the document open', mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
-      mrYes: begin
-               acFileSave.Execute;
-               AllowClose := true;
-             end;
-      mrNo : AllowClose := true;
-      mrCancel: AllowClose := false;
+    case MessageDlg('Save changes to ' + DocumentTabs.Document[TabIndex].FileName + '?'
+                    + #13#10 + #13#10 +
+                    'Yes: Saves the changes and closes this document.' + #13#10 +
+                    'No: Closes the document without saving any changes.'+ #13#10 +
+                    'Cancel: Keeps the document open',
+                    mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
+      mrYes:
+      begin
+        acFileSave.Execute;
+        AllowClose := True;
+      end;
+      mrNo : AllowClose := True;
+      mrCancel: AllowClose := False;
     end;
   end
   else
@@ -2016,13 +2031,15 @@ begin
 end;
 
 function TfrMain.tempFileName:string;
-{---------------------------------------------------------------------
-Description: Creates and returns a unique temporary filename for this editor window
-Parameter: None
-Return value: Path & Filename of the temporary filename
----------------------------------------------------------------------}
+// Creates and returns a unique temporary filename
 begin
-  Result := WinTempDir + ExtractFileName(DocumentTabs.ActiveDocument.FileName);
+  Result := ExtractFilePath(DocumentTabs.ActiveDocument.FileName) + PathDelim +
+            ChangeFileExt(ExtractFileName(DocumentTabs.ActiveDocument.FileName), '.lddptmp');
+end;
+
+procedure TfrMain.FormActivate(Sender: TObject);
+begin
+  DocumentTabsChange(Sender);
 end;
 
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -2032,18 +2049,23 @@ var
 begin
   for i := DocumentTabs.Count - 1 downto 0 do
   begin
-    DocumentTabs.Activate(i);
-    if editor.Modified then
-      case MessageDlg('Save changes to ' + DocumentTabs.ActiveDocument.TabName + '?'+#13+#10+''+#13+#10+'Yes: Saves the changes and closes this document.'+#13+#10+'No: Closes the document without saving any changes.'+#13+#10+'Cancel: Keeps the document open', mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
-        mrYes: begin
-                 acFileSave.Execute;
-                 DeleteFile(tempFilename);
-               end;
-        mrCancel: begin
-                    Action := caNone;
-                    Exit;
-                  end;
+    if DocumentTabs.Document[i].Modified then
+      case MessageDlg(_('Save changes to ' + DocumentTabs.Document[i].FileName + '?'
+                      + #13#10 + #13#10 +
+                      'Yes: Saves the changes and closes this document.' + #13#10 +
+                      'No: Closes the document without saving any changes.' + #13#10 +
+                      'Cancel: Keeps the document open'),
+                      mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
+        mrYes: acFileSave.Execute;
+        mrCancel:
+        begin
+          DocumentTabs.Activate(i);
+          Action := caNone;
+          Exit;
+        end;
       end;
+    if FileExists(tempFilename) then
+      DeleteFile(tempFilename);
   end;
   SaveFormValues;
   EditorPropertyLoader.Save;
