@@ -28,7 +28,7 @@ uses
   SciScintillaBase, SciScintillaMemo, SciScintilla, SciScintillaLDDP,
   SciDocTabCtrl, Windows, Graphics, Forms, Messages, SysUtils, Types,
   StdCtrls, ShellAPI, sciPrint, SciScintillaOptionsFrm, SciAutoComplete,
-  SciCallTips, DATBase;
+  SciCallTips, DATBase, AppEvnts;
 
 type
   TfrMain = class(TForm)
@@ -308,6 +308,7 @@ type
     ZAxis3: TMenuItem;
     mnuPollOnCustomInterval: TMenuItem;
     AutoComplete: TSciAutoComplete;
+    ApplicationEvents1: TApplicationEvents;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -390,7 +391,6 @@ type
       y: Integer);
     procedure editorDwellEnd(Sender: TObject; const position: Integer; x,
       y: Integer);
-    procedure FormActivate(Sender: TObject);
 
   protected
     TabRightClickIndex: Integer;
@@ -1364,6 +1364,7 @@ procedure TfrMain.editorUpdateUI(Sender: TObject);
 var
   i: Integer;
   DLine: TDATType;
+  fileage: TDateTime;
 
 begin
   DocumentTabs.ActiveDocument.Modified := editor.Modified;
@@ -1371,14 +1372,22 @@ begin
   // Update panel values
   if editor.Modified then
   begin
-    DocumentTabs.ActiveDocument.TabName :=
-      ExtractFileName(DocumentTabs.ActiveDocument.FileName) + ' *';
+    if DocumentTabs.ActiveDocument.IsUntitled then
+      DocumentTabs.ActiveDocument.TabName :=
+        '<' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + '> *'
+    else
+      DocumentTabs.ActiveDocument.TabName :=
+        ExtractFileName(DocumentTabs.ActiveDocument.FileName) + ' *';
     Statusbar.Panels[2].Text:=_('Modified')
   end
   else
   begin
-    DocumentTabs.ActiveDocument.TabName :=
-      ExtractFileName(DocumentTabs.ActiveDocument.FileName);
+    if DocumentTabs.ActiveDocument.IsUntitled then
+      DocumentTabs.ActiveDocument.TabName :=
+        '<' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + '>'
+    else
+      DocumentTabs.ActiveDocument.TabName :=
+        ExtractFileName(DocumentTabs.ActiveDocument.FileName);
     Statusbar.Panels[2].Text:='';
   end;
 
@@ -1424,6 +1433,27 @@ begin
   // Check style state and enable auto complete and call tips for linetype 1 file
   AutoComplete.Disabled := (editor.GetStyleAt(editor.GetCurrentPos) <> 16) and
                            (editor.GetStyleAt(editor.GetCurrentPos) <> 17);
+
+  // Update the model tree view
+  if frModelTreeView.Visible then
+    frModelTreeView.FormActivate(nil);
+
+  // Check external changes
+  if (not DocumentTabs.ActiveDocument.IsUntitled) and
+     FileExists(DocumentTabs.ActiveDocument.FileName) then
+  begin
+    SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
+    if fileage <> DocumentTabs.ActiveDocument.LastChanged then
+    begin
+      if MessageDlg(_('File has been externally changed.' + #13#10 +
+                      'Reload last saved version?' + #13#10 +
+                      'All changes will be lost!'),
+                    mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
+        OpenFile(DocumentTabs.ActiveDocument.FileName);
+      DocumentTabs.ActiveDocument.LastChanged := fileage;
+    end;
+  end;
+
 end;
 
 procedure TfrMain.FormDblClick(Sender: TObject);
@@ -1434,6 +1464,7 @@ end;
 
 procedure TfrMain.FormCreate(Sender: TObject);
 begin
+//  frMain.OnActivate := DocumentTabsChange;
   TranslateComponent(Self);
   DragAcceptFiles(Handle,True);
   Initialized := False;
@@ -1613,18 +1644,7 @@ begin
 end;
 
 procedure TfrMain.DocumentTabsChange(Sender: TObject);
-
-var
-  fileage: TDateTime;
-
 begin
-  if not DocumentTabs.ActiveDocument.IsUntitled then
-  begin
-    SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
-    if fileage <> DocumentTabs.ActiveDocument.LastChanged then
-      acFileRevert.Execute;
-    DocumentTabs.ActiveDocument.LastChanged := fileage;
-  end;
   if frErrorWindow.Visible  then
     frErrorWindow.acErrorCheck.Execute;
 end;
@@ -2035,11 +2055,6 @@ function TfrMain.tempFileName:string;
 begin
   Result := ExtractFilePath(DocumentTabs.ActiveDocument.FileName) + PathDelim +
             ChangeFileExt(ExtractFileName(DocumentTabs.ActiveDocument.FileName), '.lddptmp');
-end;
-
-procedure TfrMain.FormActivate(Sender: TObject);
-begin
-  DocumentTabsChange(Sender);
 end;
 
 procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
