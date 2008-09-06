@@ -4,6 +4,7 @@ object frMain: TfrMain
   Width = 800
   Height = 660
   VertScrollBar.Range = 49
+  ActiveControl = editor
   Caption = 'LDraw Design Pad'
   Color = clAppWorkSpace
   Font.Charset = DEFAULT_CHARSET
@@ -15,7 +16,6 @@ object frMain: TfrMain
   Menu = MainMenu1
   OldCreateOrder = True
   Position = poDesigned
-  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnDblClick = FormDblClick
@@ -921,7 +921,8 @@ object frMain: TfrMain
       object ToolButton9: TToolButton
         Left = 282
         Top = 0
-        Action = frErrorWindow.acErrorCheck
+        Hint = 'Check for errors|Check for errors'
+        Caption = 'Run Error Check'
         ImageIndex = 22
       end
     end
@@ -1128,53 +1129,65 @@ object frMain: TfrMain
         Hint = 'Check for errors'
         ImageIndex = 21
         object E1: TMenuItem
-          Action = frErrorWindow.acErrorCheck
+          Caption = 'Run Error Check'
+          Hint = 'Check for errors|Check for errors'
           ImageIndex = 22
+          ShortCut = 121
         end
         object N21: TMenuItem
           Caption = '-'
         end
         object MarkAll1: TMenuItem
-          Action = frErrorWindow.acECMarkAll
+          Caption = 'Mark All'
+          Enabled = False
         end
         object MarkAllofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECMarkAllTyped
+          Caption = 'Mark All of Selected Type'
+          Enabled = False
         end
         object UnmarkAll2: TMenuItem
-          Action = frErrorWindow.acECUnMarkAll
+          Caption = 'Unmark All'
+          Enabled = False
         end
         object UnmarkAllofSelectedType2: TMenuItem
-          Action = frErrorWindow.acECUnMarkAllTyped
+          Caption = 'Unmark All of Selected Type'
+          Enabled = False
         end
         object N18: TMenuItem
           Caption = '-'
         end
         object AutofixSelectedError1: TMenuItem
-          Action = frErrorWindow.acECFixError
+          Caption = 'Autofix Selected Error'
+          Enabled = False
         end
         object N19: TMenuItem
           Caption = '-'
         end
         object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECFixAllMarkedErrorsTyped
+          Caption = 'Autofix All Marked Errors of Selected Type'
+          Enabled = False
         end
         object AutofixAllMarkedErrors1: TMenuItem
-          Action = frErrorWindow.acECFixAllMarkedErrors
+          Caption = 'Autofix All Marked Errors'
+          Enabled = False
         end
         object N20: TMenuItem
           Caption = '-'
         end
         object AutofixAllErrorsofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECFixAllErrorsTyped
+          Caption = 'Autofix All Errors of Selected Type'
+          Enabled = False
         end
         object AutofixAllErrors1: TMenuItem
-          Action = frErrorWindow.acECFixAllErrors
+          Caption = 'Autofix All Errors'
+          Enabled = False
         end
         object N14: TMenuItem
           Caption = '-'
         end
         object CopyErrorListToClipboard1: TMenuItem
-          Action = frErrorWindow.acECCopy
+          Caption = 'Copy Error List To Clipboard'
+          Enabled = False
         end
       end
       object AutoRoundSelection1: TMenuItem
@@ -3126,5 +3139,10 @@ object frMain: TfrMain
     MaxHeight = 5
     Left = 304
     Top = 112
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnActivate = editorUpdateUI
+    Left = 8
+    Top = 144
   end
 end
