@@ -74,10 +74,10 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
-    procedure ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
-    procedure SetErrorCheckMarks(State: Boolean; ErrorType: string);
+    procedure ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: TDATErrorType);
+    procedure SetErrorCheckMarks(State: Boolean; ErrorType: TDATErrorType);
   public
-    procedure AddError(LineNumber: string; ErrorRec: TDATError);
+    procedure AddError(LineNumber: string; const ErrorRec: TDATError);
     procedure LoadFormValues;
     procedure SaveFormValues;
     procedure RestorePosition;
@@ -92,17 +92,20 @@ implementation
 
 uses
   IniFiles, DATBase, DATModel, DATErrorFix, DATUtils, main, options,
-  commonprocs, windowsspecific;
+  commonprocs, windowsspecific, Contnrs;
 
-procedure TfrErrorWindow.AddError(LineNumber: string; ErrorRec: TDATError);
+procedure TfrErrorWindow.AddError(LineNumber: string; const ErrorRec: TDATError);
 
 var
   error: TListItem;
+  PError: TDATError;
 
 begin
+  PError := TDATError.Create;
+  PError.Assign(ErrorRec);
   error := ErrorListView.Items.Add;
   error.Checked := True;
-//  PDATError(error.Data) := @ErrorRec;
+  error.Data := Pointer(PError);
   error.SubItems.Add(LineNumber);
   error.SubItems.Add(GetErrorString(ErrorRec));
 end;
@@ -127,12 +130,15 @@ procedure TfrErrorWindow.ErrorListViewSelectItem(Sender: TObject;
   Item: TListItem; Selected: Boolean);
 var
   UnFixableError: Boolean;
+  error: TDATError;
 
 begin
-  UnFixableError := (Item.SubItems[1] = 'Identical vertices') or
-     (pos('Singular matrix',Item.SubItems[1]) > 0) or
-     (pos('Collinear vertices',Item.SubItems[1]) > 0) or
-     (pos('Vertices not coplaner',Item.SubItems[1]) > 0);
+  error := TDATError(Item.Data);
+  UnFixableError := (error.ErrorType = deIdenticalVertices) or
+                    (error.ErrorType = deSigularMatrix) or
+                    (error.ErrorType = deCollinearVertices) or
+                    (error.ErrorType = deNonCoplanerVertices) or
+                    (error.ErrorType = deColor24Illegal);
   acECFixError.Enabled := not UnFixableError;
   acECFixAllErrorsTyped.Enabled := not UnFixableError;
   acECFixAllMarkedErrorsTyped.Enabled := not UnFixableError;
@@ -141,16 +147,22 @@ end;
 procedure TfrErrorWindow.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveFormValues;
-  frMain.UpdateViewMenu;
 end;
 
 procedure TfrErrorWindow.FormCreate(Sender: TObject);
+
 begin
   TranslateComponent(self);
 end;
 
 procedure TfrErrorWindow.FormDestroy(Sender: TObject);
+
+var
+  i: Integer;
+
 begin
+  for i := 0 to ErrorListView.Items.Count - 1 do
+    TDATError(ErrorListView.Items[i].Data).Free;
   SaveFormValues;
 end;
 
@@ -167,11 +179,14 @@ var
   i, j, iline: Integer;
   identline: Boolean;
   DATModel1: TDATModel;
-  errorlist: TDATErrorList;
+  errorlist: TObjectList;
   error: TDATError;
 
 begin
   Screen.Cursor := crHourGlass;
+
+  for i := 0 to ErrorListView.Items.Count - 1 do
+    TDATError(ErrorListView.Items[i].Data).Free;
 
   ErrorListView.Items.Clear;
 
@@ -233,6 +248,7 @@ begin
       // Do not continue if line is identical
       if identline then
       begin
+        error := TDATError.Create;
         error.ErrorType := deIdenticalLine;
         error.Line := iline + 1;
         AddError(IntToStr(i + 1), error)
@@ -241,13 +257,15 @@ begin
       begin
         // Check for All Other Errors
         errorlist := L3CheckLine(DATModel1[i].DATString);
-        if Length(errorlist) > 0 then
-          for j := 0 to Length(errorlist) - 1 do
-            AddError(IntToStr(i + 1), errorlist[j]);
+        if errorlist.Count > 0 then
+          for j := 0 to errorlist.Count - 1 do
+            AddError(IntToStr(i + 1), (errorlist[j] as TDATError));
+        if Assigned(errorlist) then
+          errorlist.Free;
       end;
     end;
 
-  DATModel1.Free;
+    DATModel1.Free;
 
     if ErrorListView.Items.Count > 0 then
     begin
@@ -283,62 +301,37 @@ begin
   Screen.Cursor := crDefault;
 end;
 
-procedure TfrErrorWindow.ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: string);
+procedure TfrErrorWindow.ErrorCheckErrorFix(OnlyMarked: Boolean; ErrorType: TDATErrorType);
 // Route appropriate error to the error fixing procedure
 // OnlyMarked set will only fix checked errors
-// Errortype set will ony fix those types of errors
+// Errortype set will only fix those types of errors
 var
   i: Integer;
-  currenterror: string;
+  CurrentErrorType: TDATErrorType;
 
 begin
-  if pos('Identical to line', ErrorType) > 0 then
-    ErrorType := 'Identical to line';
-
-  if ErrorListView.Items.Count > 0 then
-    for i := ErrorListView.Items.Count - 1 downto 0 do
-    begin
-      ErrorListView.ItemIndex := i;
-      currenterror := ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1];
-      if pos('Identical to line', currenterror) > 0 then
-        currenterror := 'Identical to line';
-      if ((not OnlyMarked) and (ErrorType = '')) or
-         ((not OnlyMarked) and (currenterror = ErrorType)) or
-         ((OnlyMarked and ErrorListView.Items[ErrorListView.ItemIndex].Checked) and (ErrorType = '')) or
-         ((OnlyMarked and ErrorListView.Items[ErrorListView.ItemIndex].Checked) and (currenterror = ErrorType)) then
-        acECFixErrorExecute(nil);
-    end;
+  for i := ErrorListView.Items.Count - 1 downto 0 do
+  begin
+    ErrorListView.ItemIndex := i;
+    CurrentErrorType := TDATError(ErrorListView.Items[i].Data).ErrorType;
+    if ((not OnlyMarked) and (ErrorType = deNil)) or
+       ((not OnlyMarked) and (CurrentErrorType = ErrorType)) or
+       ((OnlyMarked and ErrorListView.Items[i].Checked) and (ErrorType = deNil)) or
+       ((OnlyMarked and ErrorListView.Items[i].Checked) and (CurrentErrorType = ErrorType)) then
+      acECFixErrorExecute(nil);
+  end;
 end;
 
-procedure TfrErrorWindow.SetErrorCheckMarks(State: Boolean; ErrorType: string);
+procedure TfrErrorWindow.SetErrorCheckMarks(State: Boolean; ErrorType: TDATErrorType);
 
 var
   i: Integer;
-  errorstring: string;
 
 begin
-  if pos('Identical to line', ErrorType) > 0 then
-    ErrorType := 'Identical to line'
-  else if pos('Vertices not coplaner', ErrorType) > 0 then
-    ErrorType := 'Vertices not coplaner'
-  else if pos('Collinear vertices', ErrorType) > 0 then
-    ErrorType := 'Collinear vertices';
-
-    if ErrorListView.Items.Count > 0 then
-      for i := 0 to ErrorListView.Items.Count - 1 do
-      begin
-        if pos('Identical to line', ErrorListView.Items[i].SubItems[1]) > 0 then
-          errorstring := 'Identical to line'
-        else if pos('Vertices not coplaner', ErrorListView.Items[i].SubItems[1]) > 0 then
-          errorstring := 'Vertices not coplaner'
-        else if pos('Collinear vertices', ErrorListView.Items[i].SubItems[1]) > 0 then
-          errorstring := 'Collinear vertices'
-        else
-          errorstring := ErrorListView.Items[i].SubItems[1];
-
-        if (ErrorType = '') or (ErrorType = errorstring) then
-          ErrorListView.Items[i].Checked := State;
-      end;
+  for i := 0 to ErrorListView.Items.Count - 1 do
+    if (ErrorType = deNil) or
+       (ErrorType = TDATError(ErrorListView.Items[i].Data).ErrorType) then
+      ErrorListView.Items[i].Checked := State;
 end;
 
 procedure TfrErrorWindow.acECFixErrorExecute(Sender: TObject);
@@ -347,119 +340,81 @@ var
   DATElem: TDATElement;
   tri1, tri2: TDATTriangle;
   i: Integer;
+  errorfixed: Boolean;
+  PError: TDATError;
 
 begin
   if ErrorListView.ItemIndex >= 0 then
       // Set postion to line with error
       ErrorListViewDblClick(Sender);
+      PError := TDATError(ErrorListView.Items[ErrorListView.ItemIndex].Data);
 
       // Fix the error
-      if pos('Bad vertex sequence, 0132',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATQuad.Create;
-        with DATElem as TDATQuad do
-        begin
-          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          FixBowtieQuad1243(DATElem as TDATQuad);
-          frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
+      with ErrorListView.Items[ErrorListView.ItemIndex] do
+        case PError.ErrorType of
+          deRowAllZeros, deYColumnAllZeros:
+          begin
+            DATElem := TDATSubPart.Create;
+            (DATElem as TDATSubPart).DATString :=
+              frMain.editor.Lines[frMain.editor.CaretY - 1];
+            if PError.ErrorType = deRowAllZeros then
+              FixRowAllZeros(DATElem as TDATSubPart, PError.Row)
+            else
+              FixYColumnAllZeros(DATElem as TDATSubPart);
+            frMain.editor.lines[frMain.editor.CaretY - 1] :=
+              (DATElem as TDATSubPart).DATString;
+            DATElem.Free;
+            errorfixed := True;
+          end;
+          deConcaveQuad:
+          begin
+            DATElem := TDATQuad.Create;
+            with DATElem as TDATQuad do
+            begin
+              DATString := frMain.editor.lines[frMain.editor.CaretY - 1];
+              if PError.SplitOn24 then
+                SplitConcaveQuad24((DATElem as TDATQuad), tri1, tri2)
+              else
+                SplitConcaveQuad13((DATElem as TDATQuad), tri1, tri2);
+              frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
+              frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
+              Free;
+            end;
+            tri1.Free;
+            tri2.Free;
+            for i := ErrorListView.ItemIndex + 1 to ErrorListView.Items.Count - 1 do
+              ErrorListView.Items[i].SubItems[0] :=
+                IntToStr(StrToInt(ErrorListView.Items[i].SubItems[0]) + 1);
+            errorfixed := True;
+          end;
+          deBowtieQuad:
+          begin
+            DATElem := TDATQuad.Create;
+            with DATElem as TDATQuad do
+            begin
+              DATString := frMain.editor.lines[frMain.editor.CaretY - 1];
+              if PError.IsBowtieType1423 then
+                FixBowtieQuad1423(DATElem as TDATQuad)
+              else
+                FixBowtieQuad1423(DATElem as TDATQuad);
+              frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
+              Free;
+            end;
+            errorfixed := True;
+          end;
+          deIdenticalLine:
+          begin
+            frMain.editor.lines[frMain.editor.CaretY-1]:='';
+            errorfixed := True;
+          end;
+          else errorfixed := false;
         end;
-        DATElem.Free;
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
 
-      else if pos('Bad vertex sequence, 0312',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
+      // Delete list entry if error fixed
+      if errorfixed then
       begin
-        DATElem := TDATQuad.Create;
-        with DATElem as TDATQuad do
-        begin
-          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          FixBowtieQuad1423(DATElem as TDATQuad);
-          frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
-        end;
-        DATElem.Free;
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Concave Quad, split on 13',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATQuad.Create;
-        with DATElem as TDATQuad do
-        begin
-          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          SplitConcaveQuad24((DATElem as TDATQuad), tri1, tri2);
-          frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
-          frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
-        end;
-        DATElem.Free;
-        tri1.Free;
-        tri2.Free;
-        for i := ErrorListView.ItemIndex + 1 to ErrorListView.Items.Count - 1 do
-          ErrorListView.Items[i].SubItems[0] := IntToStr(StrToInt(ErrorListView.Items[i].SubItems[0]) + 1);
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Concave Quad, split on 02',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATQuad.Create;
-        with DATElem as TDATQuad do
-        begin
-          DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-          SplitConcaveQuad13((DATElem as TDATQuad), tri1, tri2);
-          frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
-          frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
-        end;
-        DATElem.Free;
-        tri1.Free;
-        tri2.Free;
-        for i := ErrorListView.ItemIndex + 1 to ErrorListView.Items.Count - 1 do
-          ErrorListView.Items[i].SubItems[0] := IntToStr(StrToInt(ErrorListView.Items[i].SubItems[0]) + 1);
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Identical to line',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        frMain.editor.lines[frMain.editor.CaretY-1]:='';
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Row 0 all zeros',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := frMain.editor.Lines[frMain.editor.CaretY-1];
-        FixRowAllZeros(DATElem as TDATSubPart, 1);
-        frMain.editor.lines[frMain.editor.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Row 1 all zeros',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-        FixRowAllZeros(DATElem as TDATSubPart, 2);
-        frMain.editor.lines[frMain.editor.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Row 2 all zeros',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-        FixRowAllZeros(DATElem as TDATSubPart, 3);
-        frMain.editor.lines[frMain.editor.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
-      end
-
-      else if pos('Y column all zeros',ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1])>0 then
-      begin
-        DATElem := TDATSubPart.Create;
-        (DATElem as TDATSubPart).DATString := frMain.editor.lines[frMain.editor.CaretY-1];
-        FixYColumnAllZeros(DATElem as TDATSubPart);
-        frMain.editor.lines[frMain.editor.CaretY-1] := (DATElem as TDATSubPart).DATString;
-        DATElem.Free;
-        ErrorListView.items.delete(ErrorListView.ItemIndex);
+        TDATError(ErrorListView.Items[ErrorListView.ItemIndex].Data).Free;;
+        ErrorListView.Items.Delete(ErrorListView.ItemIndex);
       end;
 
       if ErrorListView.Items.Count < 1 then
@@ -480,49 +435,49 @@ end;
 procedure TfrErrorWindow.acECFixAllErrorsExecute(Sender: TObject);
 // Fix all errors in the error list
 begin
-  ErrorCheckErrorFix(False,'');
+  ErrorCheckErrorFix(False, deNil);
 end;
 
 procedure TfrErrorWindow.acECMarkAllExecute(Sender: TObject);
 // Check the checkbox for all errors
 begin
-  SetErrorCheckMarks(True, '');
+  SetErrorCheckMarks(True, deNil);
 end;
 
 procedure TfrErrorWindow.acECUnMarkAllExecute(Sender: TObject);
 // Uncheck the checkbox for all errors
 begin
-  SetErrorCheckMarks(False, '');
+  SetErrorCheckMarks(False, deNil);
 end;
 
 procedure TfrErrorWindow.acECMarkAllTypedExecute(Sender: TObject);
 // Check the checkbox for all errors of the currently selected type
 begin
-  SetErrorCheckMarks(True, ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1]);
+  SetErrorCheckMarks(True, TDATError(ErrorListView.Items[ErrorListView.ItemIndex].Data).ErrorType);
 end;
 
 procedure TfrErrorWindow.acECUnMarkAllTypedExecute(Sender: TObject);
 // Uncheck the checkbox for all errors of the currently selected type
 begin
-  SetErrorCheckMarks(False, ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1]);
+  SetErrorCheckMarks(False, TDATError(ErrorListView.Items[ErrorListView.ItemIndex].Data).ErrorType);
 end;
 
 procedure TfrErrorWindow.acECFixAllMarkedErrorsExecute(Sender: TObject);
 // Fix all marked errors
 begin
-  ErrorCheckErrorFix(True,'');
+  ErrorCheckErrorFix(True, deNil);
 end;
 
 procedure TfrErrorWindow.acECFixAllMarkedErrorsTypedExecute(Sender: TObject);
 // Fix all marked errors of the currently selected type
 begin
-  ErrorCheckErrorFix(True,ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1]);
+  ErrorCheckErrorFix(True, TDATError(ErrorListView.Items[ErrorListView.ItemIndex].Data).ErrorType);
 end;
 
 procedure TfrErrorWindow.acECFixAllErrorsTypedExecute(Sender: TObject);
 // Fix all marked errors of the currently selected type
 begin
-  ErrorCheckErrorFix(False,ErrorListView.Items[ErrorListView.ItemIndex].SubItems[1]);
+  ErrorCheckErrorFix(False, TDATError(ErrorListView.Items[ErrorListView.ItemIndex].Data).ErrorType);
 end;
 
 procedure TfrErrorWindow.acECCopyExecute(Sender: TObject);

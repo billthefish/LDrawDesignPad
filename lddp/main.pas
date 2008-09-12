@@ -260,7 +260,6 @@ type
     http: TIdHTTP;
     EditorOptions1: TMenuItem;
     acEditorOptions: TAction;
-    acToolbarVisibility: TAction;
     DocumentTabs: TSciDocumentTabControl;
     editor: TScintillaLDDP;
     EditorPropertyLoader: TSciPropertyLoader;
@@ -275,18 +274,10 @@ type
     AppInst: TJvAppInstances;
     SearchReplaceDlg: TSciSearchReplace;
     tbrTools: TToolBar;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
-    ToolButton24: TToolButton;
-    ToolButton33: TToolButton;
-    ToolButton34: TToolButton;
     ToolButton35: TToolButton;
     ToolButton36: TToolButton;
     ToolButton37: TToolButton;
     ToolButton38: TToolButton;
-    ToolButton39: TToolButton;
-    ToolButton40: TToolButton;
-    ToolButton41: TToolButton;
     ToolButton43: TToolButton;
     ToolButton9: TToolButton;
     ToolButton12: TToolButton;
@@ -295,12 +286,6 @@ type
     ToolButton17: TToolButton;
     ToolButton18: TToolButton;
     ToolButton19: TToolButton;
-    ToolButton20: TToolButton;
-    ToolButton21: TToolButton;
-    ToolButton22: TToolButton;
-    ToolButton23: TToolButton;
-    ToolButton25: TToolButton;
-    ToolButton26: TToolButton;
     ToolButton2: TToolButton;
     pmMirror: TPopupMenu;
     XAxis3: TMenuItem;
@@ -309,6 +294,60 @@ type
     mnuPollOnCustomInterval: TMenuItem;
     AutoComplete: TSciAutoComplete;
     ApplicationEvents1: TApplicationEvents;
+    printer: TSciPrinter;
+    Search1: TMenuItem;
+    acMoveXPos: TAction;
+    acMoveXNeg: TAction;
+    acMoveYPos: TAction;
+    acMoveYNeg: TAction;
+    acMoveZPos: TAction;
+    acMoveZNeg: TAction;
+    acMoveRotXPos: TAction;
+    acMoveRotXNeg: TAction;
+    acMoveRotYPos: TAction;
+    acMoveRotYNeg: TAction;
+    acMoveRotZPos: TAction;
+    acMoveRotZNeg: TAction;
+    acSaveAll: TAction;
+    tbrMovement: TToolBar;
+    ToolButton7: TToolButton;
+    ToolButton29: TToolButton;
+    ToolButton42: TToolButton;
+    ToolButton45: TToolButton;
+    ToolButton46: TToolButton;
+    ToolButton47: TToolButton;
+    ToolButton48: TToolButton;
+    ToolButton49: TToolButton;
+    ToolButton50: TToolButton;
+    ToolButton51: TToolButton;
+    ToolButton52: TToolButton;
+    ToolButton53: TToolButton;
+    tbrSearch: TToolBar;
+    ToolButton3: TToolButton;
+    ToolButton27: TToolButton;
+    ToolButton31: TToolButton;
+    ToolButton44: TToolButton;
+    ToolButton54: TToolButton;
+    ToolButton20: TToolButton;
+    ToolButton21: TToolButton;
+    ToolButton22: TToolButton;
+    ToolButton23: TToolButton;
+    ToolButton25: TToolButton;
+    ToolButton26: TToolButton;
+    ToolButton55: TToolButton;
+    ToolButton56: TToolButton;
+    ToolButton5: TToolButton;
+    mnuSearch: TMenuItem;
+    mnuMovement: TMenuItem;
+    pmuSearch: TMenuItem;
+    pmuMovement: TMenuItem;
+    acViewFileToolbar: TAction;
+    acViewSearchToolbar: TAction;
+    acViewToolsToolbar: TAction;
+    acViewExternalProgramToolbar: TAction;
+    acViewMovementToolbar: TAction;
+    acViewEditToolbar: TAction;
+    acViewColorReplaceToolbar: TAction;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -374,7 +413,6 @@ type
     procedure acSortSelectionExecute(Sender: TObject);
     procedure acEditorOptionsExecute(Sender: TObject);
     procedure SearchReplaceDlgTextNotFound(Sender: TObject);
-    procedure acToolbarVisibilityExecute(Sender: TObject);
     procedure acErrorListExecute(Sender: TObject);
     procedure editorUpdateUI(Sender: TObject);
     procedure acFileCloseExecute(Sender: TObject);
@@ -391,6 +429,16 @@ type
       y: Integer);
     procedure editorDwellEnd(Sender: TObject; const position: Integer; x,
       y: Integer);
+    procedure acFilePrintExecute(Sender: TObject);
+    procedure acSaveAllExecute(Sender: TObject);
+    procedure acViewFileToolbarExecute(Sender: TObject);
+    procedure acViewSearchToolbarExecute(Sender: TObject);
+    procedure acViewToolsToolbarExecute(Sender: TObject);
+    procedure acViewExternalProgramToolbarExecute(Sender: TObject);
+    procedure acViewMovementToolbarExecute(Sender: TObject);
+    procedure acViewEditToolbarExecute(Sender: TObject);
+    procedure acViewColorReplaceToolbarExecute(Sender: TObject);
+    procedure acMoveXPosExecute(Sender: TObject);
 
   protected
     TabRightClickIndex: Integer;
@@ -408,8 +456,8 @@ type
     procedure LoadPlugins;
     procedure OpenFile(filename: string);
     procedure CloseFile(DocNumber: Integer);
+    procedure SaveFile(DocNumber: Integer);
     procedure UpdateMRU(NewFileName: TFileName= '');
-    procedure UpdateViewMenu;
     procedure LoadFormValues;
     procedure SaveFormValues;
   end;
@@ -426,7 +474,7 @@ uses
   about, options, colordialog, BezWindow, sorting, splash, 
   BMP2LDraw, modeltreeview, dlgSubpart, commonprocs, windowsspecific,
   DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
-  STRUtils, Registry, IniFiles, SciResLang;
+  STRUtils, Registry, IniFiles, SciResLang, Contnrs;
 
 var
   splashscreen: TfrSplash;
@@ -666,7 +714,7 @@ var
   i, j, startline, endline: Integer;
   quad: TDATQuad;
   line1, line2: TDATGeometric;
-  errorlist: TDATErrorList;
+  errorlist: TObjectList;
   DoNotCombine: Boolean;
 
 begin
@@ -692,19 +740,19 @@ begin
           begin
             errorlist := L3CheckLine(quad.DATString);
             DoNotCombine := False;
-            if Length(errorlist) > 0 then
+            if errorlist.Count > 0 then
             begin
-              for j := 0 to Length(errorlist) - 1 do
-                if errorlist[j].ErrorType = deBowtieQuad then
-                  if errorlist[j].IsBowtieType1423 then
+              for j := 0 to errorlist.Count - 1 do
+                if (errorlist[j] as TDATError).ErrorType = deBowtieQuad then
+                  if (errorlist[j] as TDATError).IsBowtieType1423 then
                     FixBowtieQuad1423(quad)
                   else
                     FixBowtieQuad1243(quad);
               errorlist := L3CheckLine(quad.DATString);
-              for j := 0 to Length(errorlist) - 1 do
-                if (errorlist[j].ErrorType = deCollinearVertices) or
-                   (errorlist[j].ErrorType = deNonCoplanerVertices) or
-                   (errorlist[j].ErrorType = deConcaveQuad) then
+              for j := 0 to errorlist.Count - 1 do
+                if ((errorlist[j] as TDATError).ErrorType = deCollinearVertices) or
+                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVertices) or
+                   ((errorlist[j] as TDATError).ErrorType = deConcaveQuad) then
                   case MessageDlg(_('Combining these triangles:') + #13#10 +
                                     line1.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
                                     line2.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
@@ -722,10 +770,14 @@ begin
                       DModel.Free;
                       line1.Free;
                       line2.Free;
+                      if Assigned(errorlist) then
+                        errorlist.Free;
                       Exit;
                     end;
                     else DoNotCombine := True;
                   end;
+              if Assigned(errorlist) then
+                errorlist.Free;
             end;
 
             if not DoNotCombine then
@@ -923,6 +975,12 @@ begin
       OpenFile(OpenDialog1.Files[i]);
 end;
 
+procedure TfrMain.acFilePrintExecute(Sender: TObject);
+begin
+  printer.Title := DocumentTabs.ActiveDocument.FileName;
+  printer.Print;
+end;
+
 procedure TfrMain.OpenFile(filename: string);
 // Open the specified file and set initial data
 begin
@@ -938,19 +996,8 @@ end;
 
 procedure TfrMain.acFileSaveExecute(Sender: TObject);
 // Save file to disk if it already exists otherwise run Save As
-var
-  fileage: TDateTime;
-
 begin
-  if DocumentTabs.ActiveDocument.IsUntitled then
-    acFileSaveAs.Execute
-  else
-  begin
-    editor.Lines.SaveToFile(DocumentTabs.ActiveDocument.Filename);
-    editor.Modified := false;
-    SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
-    DocumentTabs.ActiveDocument.LastChanged := fileage;
-  end;
+  SaveFile(DocumentTabs.ActiveDocument.Index);
 end;
 
 procedure TfrMain.acFileSaveAsExecute(Sender: TObject);
@@ -964,7 +1011,34 @@ begin
       UpdateMRU(SaveDialog1.FileName);
     DocumentTabs.ActiveDocument.FileName := SaveDialog1.FileName;
     DocumentTabs.ActiveDocument.TabName := ExtractFileName(DocumentTabs.ActiveDocument.FileName);
-    acFileSaveExecute(Sender);
+    SaveFile(DocumentTabs.ActiveDocument.Index);
+  end;
+end;
+
+procedure TfrMain.acSaveAllExecute(Sender: TObject);
+// Save all open documents
+var
+  i: Integer;
+
+begin
+   for i:= DocumentTabs.Count - 1 downto 0 do
+     SaveFile(i);
+end;
+
+procedure TfrMain.SaveFile(DocNumber: Integer);
+// Save the file of the specified tab
+var
+  fileage: TDateTime;
+
+begin
+  if DocumentTabs.ActiveDocument.IsUntitled then
+    acFileSaveAs.Execute
+  else
+  begin
+    editor.SaveToFile(DocumentTabs.ActiveDocument.Filename);
+    DocumentTabs.ActiveDocument.Modified := editor.Modified;
+    SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
+    DocumentTabs.ActiveDocument.LastChanged := fileage;
   end;
 end;
 
@@ -977,8 +1051,8 @@ end;
 procedure TfrMain.acFileRevertExecute(Sender: TObject);
 // Reloads active document losing any changes
 begin
-  if MessageDlg(_('Reload last saved version?') + #13#10 +
-                _('All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes then
+  if MessageDlg(_('Reload last saved version?' + #13#10 +
+                  'All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes then
     OpenFile(DocumentTabs.ActiveDocument.FileName);
 end;
 
@@ -1199,6 +1273,14 @@ begin
   end;
 end;
 
+// Movement actions
+
+procedure TfrMain.acMoveXPosExecute(Sender: TObject);
+begin
+
+end;
+
+
 // Search actions
 
 procedure TfrMain.acFindExecute(Sender: TObject);
@@ -1240,53 +1322,57 @@ begin
 end;
 
 // View Menu actions
-
-procedure TfrMain.acToolbarVisibilityExecute(Sender: TObject);
-// Toggle the toolbars on and off
-var
-  toolbarname: string;
-  toolbar : TComponent;
+procedure TfrMain.acViewColorReplaceToolbarExecute(Sender: TObject);
 begin
+  tbrColorReplace.Visible := (Sender as TAction).Checked;
+end;
 
-  toolbarname := 'tbr' + Copy( (Sender as TAction).ActionComponent.Name, 4, Length((Sender as TAction).ActionComponent.Name) - 2);
-  toolbar := frMain.FindComponent(toolbarname);
-  if toolbar is TToolbar then
-    (toolbar as TToolbar).Visible := not (toolbar as TToolbar).Visible;
-  UpdateViewMenu;
+procedure TfrMain.acViewEditToolbarExecute(Sender: TObject);
+begin
+  tbrEditing.Visible := (Sender as TAction).Checked;
+end;
+
+procedure TfrMain.acViewExternalProgramToolbarExecute(Sender: TObject);
+begin
+  tbrExternalPrograms.Visible := (Sender as TAction).Checked;
+end;
+
+procedure TfrMain.acViewFileToolbarExecute(Sender: TObject);
+begin
+  tbrFile.Visible := (Sender as TAction).Checked;
+end;
+
+procedure TfrMain.acViewMovementToolbarExecute(Sender: TObject);
+begin
+  tbrMovement.Visible := (Sender as TAction).Checked;
+end;
+
+procedure TfrMain.acViewSearchToolbarExecute(Sender: TObject);
+begin
+  tbrSearch.Visible := (Sender as TAction).Checked;
+end;
+
+procedure TfrMain.acViewToolsToolbarExecute(Sender: TObject);
+begin
+  tbrTools.Visible := (Sender as TAction).Checked;
 end;
 
 procedure TfrMain.acErrorListExecute(Sender: TObject);
 begin
-  frErrorWindow.Visible := not frErrorWindow.Visible;
-  frErrorWindow.RestorePosition;;
-  UpdateViewMenu;
+  frErrorWindow.Visible := (Sender as TAction).Checked;
+  if frErrorWindow.Visible then
+  begin
+    frErrorWindow.RestorePosition;
+    frErrorWindow.acErrorCheck.Execute;
+  end;
 end;
 
 procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
 // Shows the model tree dialog
 begin
-  frModelTreeView.Visible := not frModelTreeView.Visible;
-  frModelTreeView.RestorePosition;;
-  UpdateViewMenu;
-end;
-
-procedure TfrMain.UpdateViewMenu;
-begin
-  //Main menu items
-  mnuFile.Checked := tbrFile.Visible;
-  mnuEditing.Checked := tbrEditing.Visible;
-  mnuTools.Checked := tbrTools.Visible;
-  mnuExternalPrograms.Checked := tbrExternalPrograms.Visible;
-  mnuColorReplace.Checked := tbrColorReplace.Visible;
-  mnuErrorList.Checked := frErrorWindow.Visible;
-  mnuModelTree.Checked := frModelTreeView.Visible;
-
-  //Popup menu items
-  pmuFile.Checked := tbrFile.Visible;
-  pmuEditing.Checked := tbrEditing.Visible;
-  pmuTools.Checked := tbrTools.Visible;
-  pmuExternalPrograms.Checked := tbrExternalPrograms.Visible;
-  pmuColorReplace.Checked := tbrColorReplace.Visible;
+  frModelTreeView.Visible := (Sender as TAction).Checked;
+  if frModelTreeView.Visible then
+    frModelTreeView.RestorePosition;
 end;
 
 // Other procedures
@@ -1453,7 +1539,6 @@ begin
       DocumentTabs.ActiveDocument.LastChanged := fileage;
     end;
   end;
-
 end;
 
 procedure TfrMain.FormDblClick(Sender: TObject);
@@ -1472,21 +1557,15 @@ begin
 end;
 
 procedure TfrMain.FormShow(Sender: TObject);
-// if app starts for first time this initializes application and updates controls
+// Inits the app and shows model tree if needed
 begin
   AppInitialize;
   frModelTreeView.RestorePosition;
+  acModelTreeView.Checked := frModelTreeView.Visible;
 end;
 
 Procedure TfrMain.AppInitialize;
-(*
-Description: Initializes Application:
-             1.) Show Splash
-             2.) Save Installdir (for plugins)
-             3.) Save no. of items in empty plugin list in pmmemo.tag
-             4.) Loads plugins
-             5.) assumes any params are files to load and loads them
-*)
+// Initializes Application
 var
   i: Integer;
   regT: TRegistry;
@@ -1509,8 +1588,16 @@ begin
 
     //Load form parameters from INI file
     LoadFormValues;
-    UpdateViewMenu;
-    
+
+    // View menu settings;
+    acViewFileToolbar.Checked := tbrFile.Visible;
+    acViewSearchToolbar.Checked := tbrSearch.Visible;
+    acViewExternalProgramToolbar.Checked := tbrExternalPrograms.Visible;
+    acViewMovementToolbar.Checked := tbrMovement.Visible;
+    acViewToolsToolbar.Checked := tbrTools.Visible;
+    acViewEditToolbar.Checked := tbrEditing.Visible;
+    acViewColorReplaceToolbar.Checked := tbrColorReplace.Visible;
+
     //Set defaults based on options
     editor.PositionDecimalPlaces := frOptions.sePntAcc.Value;
     editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
@@ -1959,6 +2046,7 @@ procedure TfrMain.LoadFormValues;
 var
   LDDPini: TMemIniFile;
   IniSection: string;
+  i: Integer;
 
 begin
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
@@ -1969,21 +2057,17 @@ begin
   Top := LDDPini.ReadInteger(IniSection, 'frMain_Top', Top);
   Width := LDDPini.ReadInteger(IniSection, 'frMain_Width', Width);
   Height := LDDPini.ReadInteger(IniSection, 'frMain_Height', Height);
-  tbrFile.Visible := LDDPini.ReadBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
-  tbrFile.Top := LDDPini.ReadInteger(IniSection, 'tbrFile_Top', tbrFile.Top);
-  tbrFile.Left := LDDPini.ReadInteger(IniSection, 'tbrFile_Left', tbrFile.Left);
-  tbrExternalPrograms.Visible := LDDPini.ReadBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
-  tbrExternalPrograms.Top := LDDPini.ReadInteger(IniSection, 'tbrExternalPrograms_Top', tbrExternalPrograms.Top);
-  tbrExternalPrograms.Left := LDDPini.ReadInteger(IniSection, 'tbrExternalPrograms_Left', tbrExternalPrograms.Left);
-  tbrTools.Visible := LDDPini.ReadBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
-  tbrTools.Top := LDDPini.ReadInteger(IniSection, 'tbrTools_Top', tbrTools.Top);
-  tbrTools.Left := LDDPini.ReadInteger(IniSection, 'tbrTools_Left', tbrTools.Left);
-  tbrEditing.Visible := LDDPini.ReadBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
-  tbrEditing.Top := LDDPini.ReadInteger(IniSection, 'tbrEditing_Top', tbrEditing.Top);
-  tbrEditing.Left := LDDPini.ReadInteger(IniSection, 'tbrEditing_Left', tbrEditing.Left);
-  tbrColorReplace.Visible := LDDPini.ReadBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
-  tbrColorReplace.Top := LDDPini.ReadInteger(IniSection, 'tbrColorReplace_Top', tbrColorReplace.Top);
-  tbrColorReplace.Left := LDDPini.ReadInteger(IniSection, 'tbrColorReplace_Left', tbrColorReplace.Left);
+
+  // Load toolbar settings
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TToolbar then
+      with Components[i] as TToolbar do
+      begin
+        Visible := LDDPini.ReadBool(IniSection, Name + '_Visible', True);
+        Top := LDDPini.ReadInteger(IniSection, Name + '_Top', Top);
+        Left := LDDPini.ReadInteger(IniSection, Name + '_Left', Left);
+      end;
+
   if LDDPini.ReadBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked) then
     mnuEnablePollingClick(nil);
   if LDDPini.ReadBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked) then
@@ -2008,6 +2092,7 @@ procedure TfrMain.SaveFormValues;
 var
   LDDPini: TMemIniFile;
   IniSection: string;
+  i: Integer;
 
 begin
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
@@ -2021,21 +2106,17 @@ begin
   LDDPini.WriteInteger(IniSection, 'frMain_Top', Top);
   LDDPini.WriteInteger(IniSection, 'frMain_Width', Width);
   LDDPini.WriteInteger(IniSection, 'frMain_Height', Height);
-  LDDPini.WriteBool(IniSection, 'tbrFile_Visible', tbrFile.Visible);
-  LDDPini.WriteInteger(IniSection, 'tbrFile_Top', tbrFile.Top);
-  LDDPini.WriteInteger(IniSection, 'tbrFile_Left', tbrFile.Left);
-  LDDPini.WriteBool(IniSection, 'tbrExternalPrograms_Visible', tbrExternalPrograms.Visible);
-  LDDPini.WriteInteger(IniSection, 'tbrExternalPrograms_Top', tbrExternalPrograms.Top);
-  LDDPini.WriteInteger(IniSection, 'tbrExternalPrograms_Left', tbrExternalPrograms.Left);
-  LDDPini.WriteBool(IniSection, 'tbrTools_Visible', tbrTools.Visible);
-  LDDPini.WriteInteger(IniSection, 'tbrTools_Top', tbrTools.Top);
-  LDDPini.WriteInteger(IniSection, 'tbrTools_Left', tbrTools.Left);
-  LDDPini.WriteBool(IniSection, 'tbrEditing_Visible', tbrEditing.Visible);
-  LDDPini.WriteInteger(IniSection, 'tbrEditing_Top', tbrEditing.Top);
-  LDDPini.WriteInteger(IniSection, 'tbrEditing_Left', tbrEditing.Left);
-  LDDPini.WriteBool(IniSection, 'tbrColorReplace_Visible', tbrColorReplace.Visible);
-  LDDPini.WriteInteger(IniSection, 'tbrColorReplace_Top', tbrColorReplace.Top);
-  LDDPini.WriteInteger(IniSection, 'tbrColorReplace_Left', tbrColorReplace.Left);
+
+  // Save toolbar settings
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TToolbar then
+      with Components[i] as TToolbar do
+      begin
+        LDDPini.WriteBool(IniSection, Name + '_Visible', Visible);
+        LDDPini.WriteInteger(IniSection, Name + '_Top', Top);
+        LDDPini.WriteInteger(IniSection, Name + '_Left', Left);
+      end;
+
   LDDPini.WriteBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked);
   LDDPini.WriteBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked);
   LDDPini.WriteBool(IniSection, 'mnuPollEvery1Sec_Checked', mnuPollEvery1Sec.Checked);

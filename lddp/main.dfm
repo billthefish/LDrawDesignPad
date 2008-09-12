@@ -1,8 +1,8 @@
 object frMain: TfrMain
   Left = 267
   Top = 61
-  Width = 800
-  Height = 660
+  Width = 900
+  Height = 760
   VertScrollBar.Range = 49
   ActiveControl = editor
   Caption = 'LDraw Design Pad'
@@ -25,8 +25,8 @@ object frMain: TfrMain
   object DocumentTabs: TSciDocumentTabControl
     Left = 0
     Top = 54
-    Width = 792
-    Height = 533
+    Width = 892
+    Height = 633
     Editor = editor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -44,8 +44,8 @@ object frMain: TfrMain
     object editor: TScintillaLDDP
       Left = 4
       Top = 24
-      Width = 784
-      Height = 505
+      Width = 884
+      Height = 605
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -465,8 +465,8 @@ object frMain: TfrMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 587
-    Width = 792
+    Top = 687
+    Width = 892
     Height = 19
     AutoHint = True
     Panels = <
@@ -486,7 +486,7 @@ object frMain: TfrMain
   object ControlBar1: TControlBar
     Left = 0
     Top = 0
-    Width = 792
+    Width = 892
     Height = 54
     Align = alTop
     AutoSize = True
@@ -499,8 +499,8 @@ object frMain: TfrMain
     RowSize = 27
     TabOrder = 0
     object tbrExternalPrograms: TToolBar
-      Left = 11
-      Top = 29
+      Left = 744
+      Top = 2
       Width = 128
       Height = 23
       Align = alNone
@@ -612,9 +612,9 @@ object frMain: TfrMain
       end
     end
     object tbrEditing: TToolBar
-      Left = 167
+      Left = 285
       Top = 2
-      Width = 236
+      Width = 267
       Height = 23
       Align = alNone
       AutoSize = True
@@ -675,20 +675,15 @@ object frMain: TfrMain
       object ToolButton21: TToolButton
         Left = 136
         Top = 0
-        Action = acFind
+        Action = acincIndent
       end
       object ToolButton22: TToolButton
         Left = 159
         Top = 0
-        Action = acFindNext
-      end
-      object ToolButton26: TToolButton
-        Left = 182
-        Top = 0
-        Action = acReplace
+        Action = acDecIndent
       end
       object ToolButton23: TToolButton
-        Left = 205
+        Left = 182
         Top = 0
         Width = 8
         Caption = 'ToolButton23'
@@ -696,13 +691,31 @@ object frMain: TfrMain
         Style = tbsSeparator
       end
       object ToolButton25: TToolButton
+        Left = 190
+        Top = 0
+        Action = acCommentBlock
+      end
+      object ToolButton26: TToolButton
         Left = 213
         Top = 0
-        Action = acReplaceColor
+        Action = acUncommentBlock
+      end
+      object ToolButton55: TToolButton
+        Left = 236
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton55'
+        ImageIndex = 7
+        Style = tbsSeparator
+      end
+      object ToolButton56: TToolButton
+        Left = 244
+        Top = 0
+        Action = acTrimLines
       end
     end
     object tbrColorReplace: TToolBar
-      Left = 152
+      Left = 337
       Top = 29
       Width = 405
       Height = 23
@@ -821,9 +834,9 @@ object frMain: TfrMain
       end
     end
     object tbrTools: TToolBar
-      Left = 416
+      Left = 565
       Top = 2
-      Width = 305
+      Width = 166
       Height = 23
       Align = alNone
       AutoSize = True
@@ -836,62 +849,13 @@ object frMain: TfrMain
       Indent = 5
       TabOrder = 4
       Wrapable = False
-      object ToolButton5: TToolButton
-        Left = 5
-        Top = 0
-        Action = acincIndent
-      end
-      object ToolButton6: TToolButton
-        Left = 28
-        Top = 0
-        Action = acDecIndent
-      end
-      object ToolButton39: TToolButton
-        Left = 51
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton39'
-        ImageIndex = 9
-        Style = tbsSeparator
-      end
-      object ToolButton24: TToolButton
-        Left = 59
-        Top = 0
-        Action = acCommentBlock
-      end
-      object ToolButton33: TToolButton
-        Left = 82
-        Top = 0
-        Action = acUncommentBlock
-      end
-      object ToolButton40: TToolButton
-        Left = 105
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton40'
-        ImageIndex = 9
-        Style = tbsSeparator
-      end
-      object ToolButton34: TToolButton
-        Left = 113
-        Top = 0
-        Action = acTrimLines
-      end
-      object ToolButton41: TToolButton
-        Left = 136
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton41'
-        ImageIndex = 9
-        Style = tbsSeparator
-      end
       object ToolButton35: TToolButton
-        Left = 144
+        Left = 5
         Top = 0
         Action = acInline
       end
       object ToolButton2: TToolButton
-        Left = 167
+        Left = 28
         Top = 0
         Caption = 'ToolButton2'
         DropdownMenu = pmMirror
@@ -899,40 +863,178 @@ object frMain: TfrMain
         PopupMenu = pmMirror
       end
       object ToolButton36: TToolButton
-        Left = 190
+        Left = 51
         Top = 0
         Action = acReverseWinding
       end
       object ToolButton37: TToolButton
-        Left = 213
+        Left = 74
         Top = 0
         Action = acTriangleCombine
       end
       object ToolButton38: TToolButton
-        Left = 236
+        Left = 97
         Top = 0
         Action = acSortSelection
       end
       object ToolButton43: TToolButton
-        Left = 259
+        Left = 120
         Top = 0
         Action = acAutoRound
       end
       object ToolButton9: TToolButton
-        Left = 282
+        Left = 143
         Top = 0
-        Hint = 'Check for errors|Check for errors'
-        Caption = 'Run Error Check'
+        Action = frErrorWindow.acErrorCheck
         ImageIndex = 22
+      end
+    end
+    object tbrMovement: TToolBar
+      Left = 11
+      Top = 29
+      Width = 313
+      Height = 23
+      Align = alNone
+      AutoSize = True
+      ButtonHeight = 23
+      ButtonWidth = 25
+      Caption = 'Move and Rotate'
+      Color = clBtnFace
+      DragMode = dmAutomatic
+      EdgeInner = esNone
+      EdgeOuter = esNone
+      Images = ilProgramIcons
+      Indent = 5
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      Wrapable = False
+      object ToolButton7: TToolButton
+        Left = 5
+        Top = 0
+        Action = acMoveXPos
+      end
+      object ToolButton29: TToolButton
+        Left = 30
+        Top = 0
+        Action = acMoveXNeg
+      end
+      object ToolButton42: TToolButton
+        Left = 55
+        Top = 0
+        Action = acMoveYPos
+      end
+      object ToolButton45: TToolButton
+        Left = 80
+        Top = 0
+        Action = acMoveYNeg
+      end
+      object ToolButton46: TToolButton
+        Left = 105
+        Top = 0
+        Action = acMoveZPos
+      end
+      object ToolButton47: TToolButton
+        Left = 130
+        Top = 0
+        Action = acMoveZNeg
+      end
+      object ToolButton5: TToolButton
+        Left = 155
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton5'
+        ImageIndex = 0
+        Style = tbsSeparator
+      end
+      object ToolButton48: TToolButton
+        Left = 163
+        Top = 0
+        Action = acMoveRotXPos
+      end
+      object ToolButton49: TToolButton
+        Left = 188
+        Top = 0
+        Action = acMoveRotXNeg
+      end
+      object ToolButton50: TToolButton
+        Left = 213
+        Top = 0
+        Action = acMoveRotYPos
+      end
+      object ToolButton51: TToolButton
+        Left = 238
+        Top = 0
+        Action = acMoveRotYNeg
+      end
+      object ToolButton52: TToolButton
+        Left = 263
+        Top = 0
+        Action = acMoveRotZPos
+      end
+      object ToolButton53: TToolButton
+        Left = 288
+        Top = 0
+        Action = acMoveRotZNeg
+      end
+    end
+    object tbrSearch: TToolBar
+      Left = 167
+      Top = 2
+      Width = 105
+      Height = 23
+      Align = alNone
+      AutoSize = True
+      ButtonHeight = 23
+      Caption = 'Search'
+      Color = clBtnFace
+      DragMode = dmAutomatic
+      EdgeInner = esNone
+      EdgeOuter = esNone
+      Images = ilProgramIcons
+      Indent = 5
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+      Wrapable = False
+      object ToolButton3: TToolButton
+        Left = 5
+        Top = 0
+        Action = acFind
+      end
+      object ToolButton27: TToolButton
+        Left = 28
+        Top = 0
+        Action = acFindNext
+      end
+      object ToolButton31: TToolButton
+        Left = 51
+        Top = 0
+        Action = acReplace
+      end
+      object ToolButton54: TToolButton
+        Left = 74
+        Top = 0
+        Width = 8
+        Caption = 'ToolButton54'
+        ImageIndex = 37
+        Style = tbsSeparator
+      end
+      object ToolButton44: TToolButton
+        Left = 82
+        Top = 0
+        Action = acReplaceColor
       end
     end
   end
   object MainMenu1: TMainMenu
     Images = ilProgramIcons
-    Left = 160
+    Left = 159
     Top = 112
     object File1: TMenuItem
-      Caption = 'File'
+      Caption = '&File'
       Hint = 'File Commands'
       object FileNewItem: TMenuItem
         Action = acFileNew
@@ -976,7 +1078,7 @@ object frMain: TfrMain
       end
     end
     object Edit1: TMenuItem
-      Caption = 'Edit'
+      Caption = '&Edit'
       Hint = 'Editing Commands'
       object Undo1: TMenuItem
         Action = acUndo
@@ -1002,6 +1104,12 @@ object frMain: TfrMain
       object N3: TMenuItem
         Caption = '-'
       end
+      object RandomizeColorsinSelection1: TMenuItem
+        Action = acRandomizeColors
+      end
+    end
+    object Search1: TMenuItem
+      Caption = '&Search'
       object Find1: TMenuItem
         Action = acFind
       end
@@ -1014,56 +1122,53 @@ object frMain: TfrMain
       object ChangeColor2: TMenuItem
         Action = acReplaceColor
       end
-      object RandomizeColorsinSelection1: TMenuItem
-        Action = acRandomizeColors
-      end
     end
     object View1: TMenuItem
-      Caption = 'View'
+      Caption = '&View'
       Hint = 'View Options'
       object Toolbars: TMenuItem
         Caption = '&Toolbars'
         Hint = 'Show or Hide Toolbars'
         object mnuFile: TMenuItem
-          Action = acToolbarVisibility
+          Action = acViewFileToolbar
           AutoCheck = True
-          Caption = 'File'
-          Checked = True
+        end
+        object mnuSearch: TMenuItem
+          Action = acViewSearchToolbar
+          AutoCheck = True
         end
         object mnuEditing: TMenuItem
-          Action = acToolbarVisibility
+          Action = acViewEditToolbar
           AutoCheck = True
-          Caption = 'Editing'
-          Checked = True
+        end
+        object mnuMovement: TMenuItem
+          Action = acViewMovementToolbar
+          AutoCheck = True
         end
         object mnuTools: TMenuItem
-          Action = acToolbarVisibility
+          Action = acViewToolsToolbar
           AutoCheck = True
-          Caption = 'Tools'
-          Checked = True
         end
         object mnuExternalPrograms: TMenuItem
-          Action = acToolbarVisibility
+          Action = acViewExternalProgramToolbar
           AutoCheck = True
-          Caption = 'External Programs'
-          Checked = True
         end
         object mnuColorReplace: TMenuItem
-          Action = acToolbarVisibility
+          Action = acViewColorReplaceToolbar
           AutoCheck = True
-          Caption = 'Color Replace'
-          Checked = True
         end
       end
       object mnuErrorList: TMenuItem
         Action = acErrorList
+        AutoCheck = True
       end
       object mnuModelTree: TMenuItem
         Action = acModelTreeView
+        AutoCheck = True
       end
     end
     object Insert1: TMenuItem
-      Caption = 'Insert'
+      Caption = '&Insert'
       Hint = 'Insert Commands'
       object StandardPartHeader1: TMenuItem
         Action = acInsertPartHeader
@@ -1076,7 +1181,7 @@ object frMain: TfrMain
       end
     end
     object Tools1: TMenuItem
-      Caption = 'Tools'
+      Caption = '&Tools'
       Hint = 'LDraw Tool Commands'
       object TrimLines1: TMenuItem
         Action = acTrimLines
@@ -1129,65 +1234,52 @@ object frMain: TfrMain
         Hint = 'Check for errors'
         ImageIndex = 21
         object E1: TMenuItem
-          Caption = 'Run Error Check'
-          Hint = 'Check for errors|Check for errors'
-          ImageIndex = 22
-          ShortCut = 121
+          Action = frErrorWindow.acErrorCheck
         end
         object N21: TMenuItem
           Caption = '-'
         end
         object MarkAll1: TMenuItem
-          Caption = 'Mark All'
-          Enabled = False
+          Action = frErrorWindow.acECMarkAll
         end
         object MarkAllofSelectedType1: TMenuItem
-          Caption = 'Mark All of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECMarkAllTyped
         end
         object UnmarkAll2: TMenuItem
-          Caption = 'Unmark All'
-          Enabled = False
+          Action = frErrorWindow.acECUnMarkAll
         end
         object UnmarkAllofSelectedType2: TMenuItem
-          Caption = 'Unmark All of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECUnMarkAllTyped
         end
         object N18: TMenuItem
           Caption = '-'
         end
         object AutofixSelectedError1: TMenuItem
-          Caption = 'Autofix Selected Error'
-          Enabled = False
+          Action = frErrorWindow.acECFixError
         end
         object N19: TMenuItem
           Caption = '-'
         end
         object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
-          Caption = 'Autofix All Marked Errors of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllMarkedErrorsTyped
         end
         object AutofixAllMarkedErrors1: TMenuItem
-          Caption = 'Autofix All Marked Errors'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllMarkedErrors
         end
         object N20: TMenuItem
           Caption = '-'
         end
         object AutofixAllErrorsofSelectedType1: TMenuItem
-          Caption = 'Autofix All Errors of Selected Type'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllErrorsTyped
         end
         object AutofixAllErrors1: TMenuItem
-          Caption = 'Autofix All Errors'
-          Enabled = False
+          Action = frErrorWindow.acECFixAllErrors
         end
         object N14: TMenuItem
           Caption = '-'
         end
         object CopyErrorListToClipboard1: TMenuItem
-          Caption = 'Copy Error List To Clipboard'
-          Enabled = False
+          Action = frErrorWindow.acECCopy
         end
       end
       object AutoRoundSelection1: TMenuItem
@@ -1210,7 +1302,7 @@ object frMain: TfrMain
       end
     end
     object Processing1: TMenuItem
-      Caption = 'Process'
+      Caption = '&Process'
       object Plugins1: TMenuItem
         Caption = '&Plugins'
         ImageIndex = 39
@@ -1249,7 +1341,7 @@ object frMain: TfrMain
       end
     end
     object Help1: TMenuItem
-      Caption = 'Help'
+      Caption = '&Help'
       Hint = 'Help Commands'
       object HelpAboutItem: TMenuItem
         Action = HelpAbout
@@ -1441,7 +1533,7 @@ object frMain: TfrMain
     end
     object acTrimLines: TAction
       Category = 'Editor'
-      Caption = 'Tr&im Lines'
+      Caption = 'Tr&im Blank Lines'
       Hint = 'Removes blank lines from selection'
       ImageIndex = 31
       OnExecute = acTrimLinesExecute
@@ -1508,6 +1600,7 @@ object frMain: TfrMain
       Hint = 'Print|Print current file'
       ImageIndex = 37
       ShortCut = 16464
+      OnExecute = acFilePrintExecute
     end
     object acFileCloseAll: TAction
       Category = 'File'
@@ -1539,6 +1632,7 @@ object frMain: TfrMain
     end
     object acModelTreeView: TAction
       Category = 'View Menu'
+      AutoCheck = True
       Caption = 'Model Tree'
       Hint = 'Show a Tree Model of this file including all submodels'
       OnExecute = acModelTreeViewExecute
@@ -1552,6 +1646,7 @@ object frMain: TfrMain
     object acBendableObject: TAction
       Category = 'Misc'
       Caption = 'Generate Bendable Object... '
+      ImageIndex = 59
       ShortCut = 16456
       OnExecute = acBendableObjectExecute
     end
@@ -1579,6 +1674,7 @@ object frMain: TfrMain
     object acRandomizeColors: TAction
       Category = 'Misc'
       Caption = 'Randomize Colors in Selection'
+      ImageIndex = 45
       OnExecute = acRandomizeColorsExecute
     end
     object acMirrorX: TAction
@@ -1615,13 +1711,9 @@ object frMain: TfrMain
       Caption = 'Editor Options...'
       OnExecute = acEditorOptionsExecute
     end
-    object acToolbarVisibility: TAction
-      Category = 'View Menu'
-      AutoCheck = True
-      OnExecute = acToolbarVisibilityExecute
-    end
     object acErrorList: TAction
       Category = 'View Menu'
+      AutoCheck = True
       Caption = 'Error List'
       OnExecute = acErrorListExecute
     end
@@ -1632,13 +1724,149 @@ object frMain: TfrMain
       ImageIndex = 7
       OnExecute = acFileCloseExecute
     end
+    object acMoveXPos: TAction
+      Category = 'Movement'
+      Caption = 'X +'
+      Hint = 'Move along the X axis (positive)'
+      ImageIndex = 48
+      OnExecute = acMoveXPosExecute
+    end
+    object acMoveXNeg: TAction
+      Category = 'Movement'
+      Caption = 'X -'
+      Hint = 'Move along the X axis (negative)'
+      ImageIndex = 47
+    end
+    object acMoveYPos: TAction
+      Category = 'Movement'
+      Caption = 'Y +'
+      Hint = 'Move along the Y axis (positive)'
+      ImageIndex = 52
+    end
+    object acMoveYNeg: TAction
+      Category = 'Movement'
+      Caption = 'Y -'
+      Hint = 'Move along the Y axis (negative)'
+      ImageIndex = 51
+    end
+    object acMoveZPos: TAction
+      Category = 'Movement'
+      Caption = 'Z +'
+      Hint = 'Move along the Z axis (positive)'
+      ImageIndex = 56
+    end
+    object acMoveZNeg: TAction
+      Category = 'Movement'
+      Caption = 'Z -'
+      Hint = 'Move along the Z axis (negative)'
+      ImageIndex = 55
+    end
+    object acMoveRotXPos: TAction
+      Category = 'Movement'
+      Caption = 'Rotate X +'
+      Hint = 'Rotate around the X axis (positive)'
+      ImageIndex = 50
+    end
+    object acMoveRotXNeg: TAction
+      Category = 'Movement'
+      Caption = 'Rotate X -'
+      Hint = 'Rotate around the X axis (negative)'
+      ImageIndex = 49
+    end
+    object acMoveRotYPos: TAction
+      Category = 'Movement'
+      Caption = 'Rotate Y +'
+      Hint = 'Rotate around the Y axis (positive)'
+      ImageIndex = 54
+    end
+    object acMoveRotYNeg: TAction
+      Category = 'Movement'
+      Caption = 'Rotate Y -'
+      Hint = 'Rotate around the Y axis (negative)'
+      ImageIndex = 53
+    end
+    object acMoveRotZPos: TAction
+      Category = 'Movement'
+      Caption = 'Rotate Z +'
+      Hint = 'Rotate around the Z axis (positive)'
+      ImageIndex = 58
+    end
+    object acMoveRotZNeg: TAction
+      Category = 'Movement'
+      Caption = 'Rotae Z -'
+      Hint = 'Rotate around the Z axis (negative)'
+      ImageIndex = 57
+    end
+    object acSaveAll: TAction
+      Category = 'File'
+      Caption = 'Save All'
+      Hint = 'Save all open documents'
+      ImageIndex = 46
+      OnExecute = acSaveAllExecute
+    end
+    object acViewFileToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'File'
+      Checked = True
+      Hint = 'Show/Hide the File Toolbar'
+      OnExecute = acViewFileToolbarExecute
+    end
+    object acViewSearchToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'Search'
+      Checked = True
+      Hint = 'Show/Hide the Search Toolbar'
+      OnExecute = acViewSearchToolbarExecute
+    end
+    object acViewToolsToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'Tools'
+      Checked = True
+      Hint = 'Show/Hide the Tools Toolbar'
+      OnExecute = acViewToolsToolbarExecute
+    end
+    object acViewExternalProgramToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'External Programs'
+      Checked = True
+      Hint = 'Show/Hide the Extarnal Programs Toolbar'
+      OnExecute = acViewExternalProgramToolbarExecute
+    end
+    object acViewMovementToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'Movement'
+      Checked = True
+      Hint = 'Show/Hide the Movement Toolbar'
+      OnExecute = acViewMovementToolbarExecute
+    end
+    object acViewEditToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'Edit'
+      Checked = True
+      Hint = 'Show/Hide the Edit Toolbar'
+      OnExecute = acViewEditToolbarExecute
+    end
+    object acViewColorReplaceToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'Color Replace'
+      Checked = True
+      Hint = 'Show/Hide the Color Replace Toolbar'
+      OnExecute = acViewColorReplaceToolbarExecute
+    end
   end
   object ilProgramIcons: TImageList
     Left = 40
     Top = 112
     Bitmap = {
-      494C01012E003100040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
-      000000000000360000002800000040000000D000000001001000000000000068
+      494C01013C004000040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000400000000001000001001000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1703,70 +1931,262 @@ object frMain: TfrMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000001F000000000000000000
+      000000000000000000000000000000000000000000000000000000001F001F00
+      1F001F001F001F0000000000000000000000000000000000000000001F001F00
+      1F001F001F001F00000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000001F00000000000000
+      0000000000000000000000000000000000000000000000001F001F0000000000
+      00000000000000001F001F000000000000000000000000001F001F0000000000
+      00000000000000001F001F000000000000001F00000000000000000000000000
+      00000000000000000000000000000000000000000000000000001F0000000000
+      000000000000000000000000000000000000000000001F000000000000000000
+      0000000000000000000000001F0000000000000000001F000000000000000000
+      0000000000000000000000001F00000000001F001F0000000000000000000000
+      000000000000000000000000000000000000000000000000000000001F000000
+      00000000000000000000000000000000000000001F0000000000000000000000
+      00000000000000000000000000001F00000000001F0000000000000000000000
+      00000000000000000000000000001F0000001F001F0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000001F00
+      00000000000000000000000000000000000000001F0000000000000000000000
+      00000000000000000000000000001F00000000001F0000000000000000000000
+      00000000000000000000000000001F0000001F001F0000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000000000000000000000000000004C4054
-      6054605440542050000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      1F00000000000000000000000000000000001F00000000000000000000000000
+      000000000000000000000000000000001F001F00000000000000000000000000
+      000000000000000000000000000000001F001F001F0000000000000000000000
+      00001F001F001F001F0000000000000000000000000000000000000000000000
+      00001F0000000000000000000000000000001F00000000000000000000000000
+      000000000000000000000000000000001F001F00000000000000000000000000
+      000000000000000000000000000000001F001F001F001F000000000000000000
+      1F001F001F001F001F001F000000000000000000000000000000000000000000
+      000000001F000000000000000000000000001F00000000000000000000000000
+      000000000000000000000000000000001F001F00000000000000000000000000
+      000000000000000000000000000000001F0000001F001F000000000000000000
+      1F001F00000000001F001F001F00000000000000000000000000000000000000
+      0000000000001F00000000000000000000001F00000000000000000000000000
+      000000000000000000000000000000001F001F00000000000000000000000000
+      000000000000000000000000000000001F0000001F001F000000000000001F00
+      1F0000000000000000001F001F00000000000000000000000000000000000000
+      00000000000000001F0000001F000000000000001F0000000000000000000000
+      00000000000000000000000000001F00000000001F0000000000000000000000
+      00000000000000000000000000001F00000000001F001F001F0000001F001F00
+      000000000000000000001F001F001F0000000000000000000000000000000000
+      000000000000000000001F001F001F00000000001F0000000000000000000000
+      00000000000000000000000000001F00000000001F0000000000000000000000
+      00000000000000000000000000001F000000000000001F001F001F001F001F00
+      0000000000000000000000001F001F0000000000000000000000000000000000
+      00000000000000001F001F001F001F0000000000000000000000000000000000
+      1F001F0000000000000000001F0000000000000000001F000000000000000000
+      1F001F0000000000000000000000000000000000000000001F001F001F000000
+      0000000000000000000000001F001F0000000000000000000000000000000000
+      000000000000000000001F001F001F001F00000000000000000000001F001F00
+      1F001F00000000001F001F000000000000000000000000001F001F0000000000
+      1F001F001F001F00000000000000000000000000000000000000000000000000
+      0000000000000000000000001F001F0000000000000000000000000000000000
+      00000000000000000000000000001F001F000000000000001F001F001F001F00
+      1F001F001F001F0000000000000000000000000000000000000000001F001F00
+      1F001F001F001F001F001F000000000000000000000000000000000000000000
+      0000000000000000000000001F001F0000000000000000000000000000000000
+      000000000000000000000000000000000000000000000000000000001F001F00
+      1F001F0000000000000000000000000000000000000000000000000000000000
+      1F001F001F001F00000000000000000000000000000000000000000000000000
+      00000000000000000000000000001F0000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      1F001F0000000000000000000000000000000000000000000000000000000000
+      1F001F0000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000001F001F00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F00000000000000000000000000000000001F001F001F00
+      1F001F001F001F001F00000000000000000000000000000000001F001F001F00
+      1F001F001F001F001F000000000000000000000000001F001F001F001F000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001F001F001F00000000000000000000001F001F00000000000000
+      000000000000000000001F001F0000000000000000001F001F00000000000000
+      000000000000000000001F001F00000000000000000000001F001F001F001F00
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001F001F001F0000000000000000001F0000000000000000000000
+      00000000000000000000000000001F00000000001F0000000000000000000000
+      00000000000000000000000000001F0000000000000000001F001F001F000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000001F001F001F001F001F00000000001F00000000000000000000000000
+      000000000000000000000000000000001F001F00000000000000000000000000
+      000000000000000000000000000000001F0000000000000000001F0000001F00
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000001F001F001F001F001F00000000001F00000000000000000000000000
+      000000000000000000000000000000001F001F00000000000000000000000000
+      000000000000000000000000000000001F000000000000000000000000000000
+      1F00000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000001F0000000000000000001F000000
+      000000000000000000000000000000001F001F00000000000000000000000000
+      0000000000001F0000000000000000001F000000000000000000000000000000
+      00001F0000000000000000000000000000000000000000000000000000000000
+      00000000000000001F00000000000000000000001F000000000000001F001F00
+      00000000000000000000000000001F00000000001F0000000000000000000000
+      000000001F001F000000000000001F0000000000000000000000000000000000
+      000000001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F000000000000000000000000001F001F001F001F001F00
+      1F00000000000000000000000000000000000000000000000000000000000000
+      00001F001F001F001F001F001F00000000000000000000000000000000000000
+      0000000000001F00000000000000000000000000000000000000000000000000
+      00000000000000001F00000000000000000000000000000000001F001F001F00
+      1F001F0000000000000000000000000000000000000000000000000000000000
+      1F001F001F001F001F0000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000001F001F001F001F00
+      1F001F001F000000000000000000000000000000000000000000000000001F00
+      1F001F001F001F001F001F000000000000000000000000000000000000000000
+      000000000000000000001F000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000001F00000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000001F0000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000001F000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000001F001F001F000000
+      0000000000000000000000000000000000000000000000001F001F001F000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000001F000000000000001F00
+      000000000000000000000000000000000000000000001F000000000000001F00
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000001F001F00000000000000000000001F0000000000000000000000
+      00000000000000000000000000000000000000001F0000000000000000000000
+      1F00000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000001F001F001F001F000000000000001F0000000000000000000000
+      00000000000000000000000000000000000000001F0000000000000000000000
+      1F0000001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000001F001F001F001F001F001F001F00
+      1F001F001F001F001F001F001F001F001F001F00000000000000000000000000
+      0000000000000000000000000000000000001F00000000000000000000000000
+      1F001F001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000001F001F001F001F00000000001F00000000000000000000000000
+      0000000000000000000000000000000000001F0000000000000000001F001F00
+      1F001F001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000001F001F0000000000000000001F00000000000000000000000000
+      000000001F000000000000000000000000001F00000000000000000000001F00
+      1F001F001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000001F00000000000000000000000000
+      00001F001F000000000000000000000000001F00000000000000000000000000
+      1F001F001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000001F00000000000000000000000000
+      1F001F001F000000000000000000000000001F00000000000000000000000000
+      00001F001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000001F00000000000000000000001F00
+      1F001F001F000000000000000000000000001F00000000000000000000000000
+      000000001F000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000001F0000000000000000001F001F00
+      1F001F001F000000000000000000000000001F00000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000001F001F001F001F001F00000000000000000000000000000000000000
+      0000000000000000000000000000000000001F00000000000000000000000000
+      1F001F001F000000000000000000000000001F00000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000001F001F001F001F001F00000000000000000000000000000000000000
+      00000000000000000000000000000000000000001F0000000000000000000000
+      1F0000001F0000000000000000000000000000001F0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001F001F001F000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000001F0000000000000000000000
+      1F000000000000000000000000000000000000001F0000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000001F001F001F000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000001F000000000000001F00
+      000000000000000000000000000000000000000000001F000000000000001F00
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000001F001F001F000000
+      0000000000000000000000000000000000000000000000001F001F001F000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000001F0000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000FF7FFF7FFF7FFF7FFF7FFF7FFF7F
+      FF7F00020002000200020002000200021F00000020392039FF7FFF7FFF7FFF7F
+      2039203920392039203920392039000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000001000
-      000010000000100000001000100010000000000000000000004C6058C060C060
-      C060C060C060C0606058004C0000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0000100000001000000010001000100000000040FF7FFF7FFF7FFF7FFF7FFF7F
+      FF7F0002000200020002000200021F001F008049E71CE05DFF7F00000000FF7F
+      1863786378637863FF7F517FE71C402900000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000001000
-      000000000000100000001000000000000000000000002050A060C060C060C060
-      C060C060C060C060C060A05C2050000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000010000000100000000000000000400040FF7FFF7FFF7FFF7FFF7F
+      FF7F000200020002000200021F001F001F008049E97EE05DFF7F00000000FF7F
+      18631863786378637863517FE97E4029000000000000000000001F001F000000
       0000000000000000000000000000000000000000000000000000000000001000
-      0000000000001000000000001000000000000000004CA064C06CC0648060A060
-      C060C060C060805CA060C060A05C004C00000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000100000000000100000000000004000400040FF7FFF7FFF7FFF7F
+      FF7F00020002000200021F001F001F001F00FF7FFF7FFF7FFF7F00000000FF7F
+      FF7FFF7FFF7F18637863517FE97E40290000000000001F001F001F001F000000
       0000000000000000000000000000000000000000000000000000000010001000
-      0000000010001000000000000000100000000000605CC070C06CE26C0C720365
-      A060A060E1600C6E0361A060C060605800000000000000000000000000000000
+      0000000010001000000000000000100000000040004000400040FF7FFF7FFF7F
+      FF7F0002000200021F001F001F001F001F00FF7F000000000000000000000000
+      00000000FF7F18631863517FE97E402900001F001F001F001F001F001F001F00
+      1F001F001F001F001F001F001F001F001F000000000000000000000000001000
+      00000000000010000000100010000000000000400040004000400040FF7FFF7F
+      FF7F000200021F001F001F001F001F001F00FF7F000000000000000000000000
+      00000000FF7F18631863517FE97E40290000000000001F001F001F001F000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000001000
-      000000000000100000001000100000000000004CC070C078A070CA75FF7F167B
-      C164A060D476FF7F0D6E805CC060C06020500000000000000000000000000000
+      000000000000000000000000000000000000004000400040004000400040FF7F
+      FF7F00021F001F001F001F001F001F001F00FF7FFF7FFF7FFF7F00000000FF7F
+      FF7FFF7FFF7F18631863517FE97E4029000000000000000000001F001F000000
       0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000040004000400040004000400040
+      FF7F1F001F001F001F001F001F001F001F008049517FE05DFF7F00000000FF7F
+      E05DE05DE05DE05DE05D517FE97E402900000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000002054C07CC07CC074C174917AFF7F
-      167BF576FF7FD476E260A060C060C06040540000000000000000000000000000
+      000000000000000000000000000000000000E07FE07FE07FE07FE07FE07FE07F
+      E07F000018631863186318631863186318638049517F517FFF7F00000000FF7F
+      517F517F517F517F517F517FE97E402900000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000E07FE07FE07FE07FE07FE07FE07F
+      007C000000001863186318631863186318638049517FE05DFF7FFF7FFF7FFF7F
+      E05DE05DE05DE05DE97E517FE97E402900000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000605C027DE17CC07CC078A074927A
-      FF7FFF7FF576A060A060C060C060C06060540000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000000000000000000000000000615CA87D237DC07CC07CC078D47A
-      FF7FFF7F177BC168A060C060C060C06060540000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000004058EB7DA97DC07CE27CD47EFF7F
-      D47E927AFF7F167B0369A064C060C06040540000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000050A979917E037DA97DFF7FF47E
-      C078A074917AFF7FEC71A068C064C060004C0000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000E07FE07FE07FE07FE07FE07F007C
+      007C000000000000186318631863186318638049517FE05D396780493967FF7F
+      FF7F18631863FF7FE05D517F517F402900000000000000000000000000000000
       0000000000000000000000000000000000000000000010000000100000001000
-      0000100010001000000010001000000000000000A364B37E917E247DC97DE17C
-      C07CC078C078A979E270C06CC068605800000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000010001000100000001000100000000000E07FE07FE07FE07FE07F007C007C
+      007C000000000000000018631863186318638049517FE05D3967804939677863
+      786310421042FF7F8049517F517F402900000000000000000000000000000000
       0000000000000000000000000000000000000000000010000000000000001000
-      000010000000000000000000000010000000000000506875177FB37E677DE17C
-      C07CC07CC07CA078C074C074A064004C00000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000010000000000000000000000010000000E07FE07FE07FE07F007C007C007C
+      007C000000000000000000001863186318638049E97EE05D3967804939677863
+      78638C31734E78638049517F517F402900000000000000000000000000000000
       0000000000000000000000000000000000000000000010000000000000001000
-      0000000010000000000010001000000000000000000020508875F57E377F917E
-      0C7ECA7DA97D877D027DA0682050000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000001000000000001000100000000000E07FE07FE07F007C007C007C007C
+      007C000000000000000000000000186318638049517FE05D396780493967FF7F
+      7863E71CE71CFF7F8049517F517F402900000000000000000000000000000000
       0000000000000000000000000000000000000000100010000000000010001000
-      0000000000001000000000000000100000000000000000000050C364CB79707E
-      917E4F7ECA7D24796060004C0000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000100000000000000010000000E07FE07F007C007C007C007C007C
+      007C000000000000000000000000000018638049517FE05D7863E05D39673967
+      39673967396739678049517F2039000000000000000000000000000000000000
       0000000000000000000000000000000000000000000010000000000000001000
-      0000100010000000000010001000000000000000000000000000000000504158
-      826061604058004C000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000010001000000000001000100000000000E07F007C007C007C007C007C007C
+      007C000000000000000000000000000000000000104210421042104210421042
+      1042104210421042104210420000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2472,16 +2892,28 @@ object frMain: TfrMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000424D3E000000000000003E000000
-      2800000040000000D00000000100010000000000800600000000000000000000
+      2800000040000000000100000100010000000000000800000000000000000000
       000000000000000000000000FFFFFF0000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000FFFFF81F00000000FD51E00700000000
-      FDD7C00300000000FDDB800100000000F99D800100000000FDD3000000000000
-      FFFF000000000000FF7F000000000000FE3F000000000000FC1F000000000000
-      FFFF000000000000D513800100000000DD7D800100000000DDB3C00300000000
-      99DDE00700000000DD33F81F00000000FFFFFFFFFFFFFFFFFFFFF781FFFFFFFF
+      00000000000000000000000000000000DFFFF81FF81FFFFFEFFFE7E7E7E77FFF
+      F7FFDFFBDFFB3FFFFBFFB81DB81D3FFFFDFFB9FDB9FD3FFFFEFF7CFE7CFE3F0F
+      FF7F7E7E7E7E1E07FFBF7F3E7F3E9E6381DF7F9E7F9E9CF39FEBB81DB81D89F1
+      CFF1BFFDBFFDC1F9E7E1FE7BDE7FE3F9F3F0F867E61FFFF9F9FCE01FF807FFF9
+      81FFF87FFE1FFFFDFFFFFE7FFE7FFFFFFFEFFFFFFFFFCFFFFFEFF00FF00FC3FF
+      FFC7CFF3CFF3E1FFFFC7BFFDBFFDE3FFFF837FFE7FFEF5FFFF837FFE7FFEFEFF
+      FFEF7BFE7FDEFF7FFCEFB9FDBF9DFFBFFCEFC0FFFF0381DFFCEFF073CE0F9FEF
+      FCEFE033CC07CFF7F86FFFF3CFFFE7FBFB6FFFF3CFFFF3FDF32FFFE187FFF9FE
+      FFEFFFEDB7FF81FFFFEFFFCC33FFFFFFFFFFE3EEE3FFFFEFFFFFDDE4DDFFFCEF
+      FFCFBFF1BEFFFCEFFFC3BFFBBEBFFCEF00007FF17E3FFCEFFFC37FE4783FF86F
+      DDCF7FAE7C3FFB6FC9FF7F3F7E3FF32FE3FF7E3F7F3FFFEFF7FF7C3F7FAEFFEF
+      E3FF783F7FE4FF83C9FF7E3F7FF1FF83DDFFBEBFBFFBFFC7FFFFBEFFBFF1FFC7
+      FFFFDDFFDDE4FFEFFFFFE3FFE3EEFFEFFFFF00008003FFFFFD5100000001FFFF
+      FDD700000001F3FFFDDB00000001C3FFF99D000000010000FDD300000001C3FF
+      FFFF00000001F3BBFF7F00000001FF93FE3F00000001FFC7FC1F00000001FFEF
+      FFFF00000001FFC7D51300000001FF93DD7D00000001FFBBDDB300000001FFFF
+      99DD00000003FFFFDD3300008007FFFFFFFFFFFFFFFFFFFFFFFFF781FFFFFFFF
       FFE3F381FF837FFFFC11C181FFC3BFF1F810D381FC63DDF1F010D781FE73FCF1
       0010DFFFFD7BFC7F0010FFFFFB8FFC3100108181F7CFC41300108181DFAFC437
       00108181CF7FC47FF000C3C3C6FFFCF7F800C3C3C3FFFDFBFC01E7E7C1FF8FFD
@@ -2675,33 +3107,32 @@ object frMain: TfrMain
     Left = 96
     Top = 80
     object pmuFile: TMenuItem
-      Action = acToolbarVisibility
+      Action = acViewFileToolbar
       AutoCheck = True
-      Caption = 'Files'
-      Checked = True
+    end
+    object pmuSearch: TMenuItem
+      Action = acViewSearchToolbar
+      AutoCheck = True
     end
     object pmuEditing: TMenuItem
-      Action = acToolbarVisibility
+      Action = acViewEditToolbar
       AutoCheck = True
-      Caption = 'Editing'
-      Checked = True
+    end
+    object pmuMovement: TMenuItem
+      Action = acViewMovementToolbar
+      AutoCheck = True
     end
     object pmuTools: TMenuItem
-      Action = acToolbarVisibility
+      Action = acViewToolsToolbar
       AutoCheck = True
-      Caption = 'Tools'
-      Checked = True
     end
     object pmuExternalPrograms: TMenuItem
-      Action = acToolbarVisibility
+      Action = acViewExternalProgramToolbar
       AutoCheck = True
-      Caption = 'External Programs'
-      Checked = True
     end
     object pmuColorReplace: TMenuItem
-      Action = acToolbarVisibility
+      Action = acViewColorReplaceToolbar
       AutoCheck = True
-      Caption = 'Color Replace'
     end
   end
   object OpenDialog1: TOpenDialog
@@ -3143,6 +3574,25 @@ object frMain: TfrMain
   object ApplicationEvents1: TApplicationEvents
     OnActivate = editorUpdateUI
     Left = 8
+    Top = 144
+  end
+  object printer: TSciPrinter
+    Editor = editor
+    Title = 'DelphiSci'
+    HeaderFont.Charset = DEFAULT_CHARSET
+    HeaderFont.Color = clBlack
+    HeaderFont.Height = -11
+    HeaderFont.Name = 'Arial'
+    HeaderFont.Style = []
+    FooterFont.Charset = DEFAULT_CHARSET
+    FooterFont.Color = clBlack
+    FooterFont.Height = -11
+    FooterFont.Name = 'Arial'
+    FooterFont.Style = []
+    ColorMode = sccmNormal
+    WordWrap = sciNoWrap
+    Magnification = 0
+    Left = 272
     Top = 144
   end
 end
