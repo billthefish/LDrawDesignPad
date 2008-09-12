@@ -27,27 +27,29 @@ unit DATCheck;
 
 interface
 
+uses
+  Contnrs;
+
 type
   TDATErrorType = (deRowAllZeros, deYColumnAllZeros, deSigularMatrix,
                    deCollinearVertices, deIdenticalVertices, deConcaveQuad,
                    deBowtieQuad, deNonCoplanerVertices, deIdenticalLine,
-                   deColor24Illegal);
+                   deColor24Illegal, deNil);
 
   TDATCoplanerType = (ctDet, ctDist, ctNormalAngle);
 
-  TDATError = record
-    case ErrorType: TDATErrorType of
-      deRowAllZeros: (Row: Byte);
-      deCollinearVertices: (CollinearValue: Extended;
-                            CollinearVertices: array[1..3] of Integer);
-      deBowtieQuad: (IsBowtieType1423: Boolean);
-      deNonCoplanerVertices: (CoplanerValue: Extended;
-                              CoplanerType: TDATCoplanerType);
-      deConcaveQuad: (SplitOn24: Boolean);
-      deIdenticalLine: (Line: Integer);
+  TDATError = class(TObject)
+    ErrorType: TDATErrorType;
+    Row: Byte;
+    CollinearValue: Extended;
+    CollinearVertices: array[1..3] of Integer;
+    IsBowtieType1423: Boolean;
+    CoplanerValue: Extended;
+    CoplanerType: TDATCoplanerType;
+    SplitOn24: Boolean;
+    Line: Integer;
+    procedure Assign(AError: TDATError);
   end;
-
-  TDATErrorList = array of TDATError;
 
 const
   strRow1AllZeros = 'Row 1 all zeros';
@@ -71,14 +73,27 @@ var
   PlaneNormalAngleLimit: Extended = 0;
   CollinearPointsThreshold: Extended = 0.0001;
 
-function L3CheckLine(const Line: string): TDATErrorList;
+function L3CheckLine(const Line: string): TObjectList;
 function GetErrorString(error: TDATError): string;
 
 implementation
 
 uses
   DATModel, DATBase, DATMath, DATUtils, SysUtils, Math;
-  
+
+procedure TDATError.Assign(AError: TDATError);
+begin
+  ErrorType := AError.ErrorType;
+  Row := AError.Row;
+  CollinearValue := AError.CollinearValue;
+  CollinearVertices := AError.CollinearVertices;
+  IsBowtieType1423 := AError.IsBowtieType1423;
+  CoplanerValue := AError.CoplanerValue;
+  CoplanerType := AError.CoplanerType;
+  SplitOn24 := AError.SplitOn24;
+  Line := AError.Line;
+end;
+
 function SubPartIsXZPrimitive(const Subp: string): Boolean;
 begin
   Result :=  (Pos('disc', Subp) > 0) or
@@ -191,14 +206,16 @@ begin
     Result := Angle2;
 end;
 
-function CheckSubPart(datsubpart: TDATSubPart): TDATErrorList;
+function CheckSubPart(datsubpart: TDATSubPart): TObjectList;
 
 var
   det, tempval: Extended;
   i: Integer;
+  error: TDATError;
 
 begin
-  SetLength(Result, 0);
+  Result := TObjectList.Create;
+  Result.Clear;
   with datsubpart do
   begin
     det := MatrixDet(Matrix);
@@ -212,9 +229,10 @@ begin
             det := MatrixDet(Matrix);
             if det <> 0 then
             begin
-              SetLength(Result, Length(Result) + 1);
-              Result[Length(Result) - 1].ErrorType := deRowAllZeros;
-              Result[Length(Result) - 1].Row := i;
+              error := TDATError.Create;
+              error.ErrorType := deRowAllZeros;
+              error.Row := i;
+              Result.Add(error);
               Break;
             end;
           end;
@@ -226,8 +244,9 @@ begin
             det := MatrixDet(Matrix);
             if det <> 0 then
             begin
-              SetLength(Result, Length(Result) + 1);
-              Result[Length(Result) - 1].ErrorType := deYColumnAllZeros;
+              error := TDATError.Create;
+              error.ErrorType := deYColumnAllZeros;
+              Result.Add(error);
               Break;
             end
             else
@@ -235,70 +254,84 @@ begin
           end;
         if det = 0 then
         begin
-          SetLength(Result, Length(Result) + 1);
-          Result[Length(Result) - 1].ErrorType := deSigularMatrix;
+          error := TDATError.Create;
+          error.ErrorType := deSigularMatrix;
+          Result.Add(error);
         end;
       end
       else
       begin
-        SetLength(Result, Length(Result) + 1);
-        Result[Length(Result) - 1].ErrorType := deSigularMatrix;
+        error := TDATError.Create;
+        error.ErrorType := deSigularMatrix;
+        Result.Add(error);
       end;
     if Color = 24 then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deColor24Illegal;
+      error := TDATError.Create;
+      error.ErrorType := deColor24Illegal;
+      Result.Add(error);
     end;
   end;
 end;
 
-function CheckLine2(const line: TDATLine): TDATErrorList;
+function CheckLine2(const line: TDATLine): TObjectList;
+
+var
+  error: TDATError;
+
 begin
-  SetLength(Result, 0);
+  Result := TObjectList.Create;
+  Result.Clear;
   with line do
     if CheckSamePoint(Point[1],Point[2]) then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deIdenticalVertices;
+      error := TDATError.Create;
+      error.ErrorType := deIdenticalVertices;
+      Result.Add(error);
     end;
 end;
 
-function CheckTri(const tri: TDATTriangle): TDATErrorList;
+function CheckTri(const tri: TDATTriangle): TObjectList;
 
 var
   dp: Extended;
+  error: TDATError;
 
 begin
-  SetLength(Result, 0);
+  Result := TObjectList.Create;
+  Result.Clear;
   with tri do
   begin
     if CheckSamePoint(Point[1],Point[2]) or
        CheckSamePoint(Point[2],Point[3]) or
        CheckSamePoint(Point[3],Point[1]) then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deIdenticalVertices;
+      error := TDATError.Create;
+      error.ErrorType := deIdenticalVertices;
+      Result.Add(error);
     end;
 
     dp := CheckLinearPoints(Point[1],Point[2],Point[3]);
     if dp < CollinearPointsThreshold then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deCollinearVertices;
-      Result[Length(Result) - 1].CollinearValue := dp;
+      error := TDATError.Create;
+      error.ErrorType := deCollinearVertices;
+      error.CollinearValue := dp;
+      Result.Add(error);
     end;
   end;
 end;
 
-function CheckQuad(const quad: TDATQuad): TDATErrorList;
+function CheckQuad(const quad: TDATQuad): TObjectList;
 
 var
   det, maxdist, maxangle, cp: Extended;
   A,B,C: Boolean;
   v01, v02, v03, v12, v13, v23: TDATPoint;
-
+  error: TDATError;
 begin
-  SetLength(Result, 0);
+  Result := TObjectList.Create;
+  Result.Clear;
   with quad do
   begin
     if CheckSamePoint(Point[1],Point[2]) or
@@ -308,56 +341,61 @@ begin
        CheckSamePoint(Point[1],Point[3]) or
        CheckSamePoint(Point[4],Point[2]) then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deIdenticalVertices;
+      error := TDATError.Create;;
+      error.ErrorType := deIdenticalVertices;
+      Result.Add(error);
       Exit;
     end;
 
     cp := CheckLinearPoints(Point[1],Point[2],Point[3]);
     if cp < CollinearPointsThreshold then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deCollinearVertices;
-      Result[Length(Result) - 1].CollinearValue := cp;
-      Result[Length(Result) - 1].CollinearVertices[1] := 1;
-      Result[Length(Result) - 1].CollinearVertices[2] := 2;
-      Result[Length(Result) - 1].CollinearVertices[3] := 3;
+      error := TDATError.Create;;
+      error.ErrorType := deCollinearVertices;
+      error.CollinearValue := cp;
+      error.CollinearVertices[1] := 1;
+      error.CollinearVertices[2] := 2;
+      error.CollinearVertices[3] := 3;
+      Result.Add(error);
       Exit;
     end;
 
     cp := CheckLinearPoints(Point[1],Point[2],Point[4]);
     if cp < CollinearPointsThreshold then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deCollinearVertices;
-      Result[Length(Result) - 1].CollinearValue := cp;
-      Result[Length(Result) - 1].CollinearVertices[1] := 1;
-      Result[Length(Result) - 1].CollinearVertices[2] := 2;
-      Result[Length(Result) - 1].CollinearVertices[3] := 4;
+      error := TDATError.Create;;
+      error.ErrorType := deCollinearVertices;
+      error.CollinearValue := cp;
+      error.CollinearVertices[1] := 1;
+      error.CollinearVertices[2] := 2;
+      error.CollinearVertices[3] := 4;
+      Result.Add(error);
       Exit;
     end;
 
     cp := CheckLinearPoints(Point[1],Point[3],Point[4]);
     if cp < CollinearPointsThreshold then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deCollinearVertices;
-      Result[Length(Result) - 1].CollinearValue := cp;
-      Result[Length(Result) - 1].CollinearVertices[1] := 1;
-      Result[Length(Result) - 1].CollinearVertices[2] := 3;
-      Result[Length(Result) - 1].CollinearVertices[3] := 4;
+      error := TDATError.Create;;
+      error.ErrorType := deCollinearVertices;
+      error.CollinearValue := cp;
+      error.CollinearVertices[1] := 1;
+      error.CollinearVertices[2] := 3;
+      error.CollinearVertices[3] := 4;
+      Result.Add(error);
       Exit;
     end;
 
     cp := CheckLinearPoints(Point[2],Point[3],Point[4]);
     if cp < CollinearPointsThreshold then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deCollinearVertices;
-      Result[Length(Result) - 1].CollinearValue := cp;
-      Result[Length(Result) - 1].CollinearVertices[1] := 2;
-      Result[Length(Result) - 1].CollinearVertices[2] := 3;
-      Result[Length(Result) - 1].CollinearVertices[3] := 4;
+      error := TDATError.Create;;
+      error.ErrorType := deCollinearVertices;
+      error.CollinearValue := cp;
+      error.CollinearVertices[1] := 2;
+      error.CollinearVertices[2] := 3;
+      error.CollinearVertices[3] := 4;
+      Result.Add(error);
       Exit;
     end;
 
@@ -376,37 +414,42 @@ begin
     begin
       if (B and (not C)) or (C and (not B)) then
       begin
-        SetLength(Result, Length(Result) + 1);
-        Result[Length(Result) - 1].ErrorType := deConcaveQuad;
-        Result[Length(Result) - 1].SplitOn24 := False;
+        error := TDATError.Create;;
+        error.ErrorType := deConcaveQuad;
+        error.SplitOn24 := False;
+        Result.Add(error);
       end;
     end
     else
       if B then
         if C then
         begin
-          SetLength(Result, Length(Result) + 1);
-          Result[Length(Result) - 1].ErrorType := deConcaveQuad;
-          Result[Length(Result) - 1].SplitOn24 := True;
+          error := TDATError.Create;;
+          error.ErrorType := deConcaveQuad;
+          error.SplitOn24 := True;
+          Result.Add(error);
         end
         else
         begin
-          SetLength(Result, Length(Result) + 1);
-          Result[Length(Result) - 1].ErrorType := deBowtieQuad;
-          Result[Length(Result) - 1].IsBowtieType1423 := True;
+          error := TDATError.Create;;
+          error.ErrorType := deBowtieQuad;
+          error.IsBowtieType1423 := True;
+          Result.Add(error);
         end
       else
         if C then
         begin
-          SetLength(Result, Length(Result) + 1);
-          Result[Length(Result) - 1].ErrorType := deBowtieQuad;
-          Result[Length(Result) - 1].IsBowtieType1423 := False;
+          error := TDATError.Create;;
+          error.ErrorType := deBowtieQuad;
+          error.IsBowtieType1423 := False;
+          Result.Add(error);
         end
         else
         begin
-          SetLength(Result, Length(Result) + 1);
-          Result[Length(Result) - 1].ErrorType := deConcaveQuad;
-          Result[Length(Result) - 1].SplitOn24 := True;
+          error := TDATError.Create;;
+          error.ErrorType := deConcaveQuad;
+          error.SplitOn24 := True;
+          Result.Add(error);
         end;
 
     if (DetThreshold > 0) then
@@ -414,10 +457,11 @@ begin
       det := CoPlanarCheckDet(Matrix);
       if det > DetThreshold then
       begin
-        SetLength(Result, Length(Result) + 1);
-        Result[Length(Result) - 1].ErrorType := deNonCoplanerVertices;
-        Result[Length(Result) - 1].CoplanerType := ctDet;
-        Result[Length(Result) - 1].CoplanerValue := det;
+        error := TDATError.Create;;
+        error.ErrorType := deNonCoplanerVertices;
+        error.CoplanerType := ctDet;
+        error.CoplanerValue := det;
+        Result.Add(error);
       end;
     end;
 
@@ -426,10 +470,11 @@ begin
       maxdist := CoPlanerCheckDist(Matrix);
       if maxdist > DistThreshold then
       begin
-        SetLength(Result, Length(Result) + 1);
-        Result[Length(Result) - 1].ErrorType := deNonCoplanerVertices;
-        Result[Length(Result) - 1].CoplanerType := ctDist;
-        Result[Length(Result) - 1].CoplanerValue := maxdist;
+        error := TDATError.Create;;
+        error.ErrorType := deNonCoplanerVertices;
+        error.CoplanerType := ctDist;
+        error.CoplanerValue := maxdist;
+        Result.Add(error);
       end;
     end;
 
@@ -438,34 +483,40 @@ begin
       maxangle := CoPlanerCheckNormalAngle(Matrix);
       if maxangle > PlaneNormalAngleLimit then
       begin
-        SetLength(Result, Length(Result) + 1);
-        Result[Length(Result) - 1].ErrorType := deNonCoplanerVertices;
-        Result[Length(Result) - 1].CoplanerType := ctNormalAngle;
-        Result[Length(Result) - 1].CoplanerValue := maxangle;
+        error := TDATError.Create;;
+        error.ErrorType := deNonCoplanerVertices;
+        error.CoplanerType := ctNormalAngle;
+        error.CoplanerValue := maxangle;
+        Result.Add(error);
       end;
     end;
 
   end;
 end;
 
-function CheckOpLine(const opline: TDATOpline): TDATErrorList;
+function CheckOpLine(const opline: TDATOpline): TObjectList;
+
+var
+  error: TDATError;
+
 begin
-  SetLength(Result, 0);
+  Result := TObjectList.Create;
+  Result.Clear;
   with opline do
     if CheckSamePoint(Point[1],Point[2]) or CheckSamePoint(Point[3],Point[4]) then
     begin
-      SetLength(Result, Length(Result) + 1);
-      Result[Length(Result) - 1].ErrorType := deIdenticalVertices;
+      error := TDATError.Create;;
+      error.ErrorType := deIdenticalVertices;
+      Result.Add(error);
     end;
 end;
 
-function L3CheckLine(const Line: string): TDATErrorList;
+function L3CheckLine(const Line: string): TObjectList;
 
 var
   DLine: TDATType;
 
 begin
-  SetLength(Result, 0);
   DLine := StrToDAT(Line);
   case DLine.LineType of
     1: Result := CheckSubPart(DLine as TDATSubPart);
@@ -473,6 +524,7 @@ begin
     3: Result := CheckTri(DLine as TDATTriangle);
     4: Result := CheckQuad(DLine as TDATQuad);
     5: Result := CheckOpLine(DLine as TDATOpline);
+    else Result := nil;
   end;
 
   DLine.Free;

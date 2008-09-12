@@ -58,7 +58,6 @@ object frErrorWindow: TfrErrorWindow
   end
   object JvDockClient1: TJvDockClient
     DirectDrag = False
-    DockStyle = frMain.JvDockDelphiStyle1
     CustomDock = False
     Left = 8
     Top = 16
@@ -121,55 +120,55 @@ object frErrorWindow: TfrErrorWindow
     end
     object acECFixError: TAction
       Category = 'Error Check'
-      Caption = 'Autofix Selected Error'
+      Caption = 'Fix Selected Error'
       Enabled = False
       OnExecute = acECFixErrorExecute
     end
     object acECFixAllErrors: TAction
       Category = 'Error Check'
-      Caption = 'Autofix All Errors'
+      Caption = 'Fix All Errors'
       Enabled = False
       OnExecute = acECFixAllErrorsExecute
     end
     object acECMarkAll: TAction
       Category = 'Error Check'
-      Caption = 'Mark All'
+      Caption = 'Mark All Errors'
       Enabled = False
       OnExecute = acECMarkAllExecute
     end
     object acECUnMarkAll: TAction
       Category = 'Error Check'
-      Caption = 'Unmark All'
+      Caption = 'Unmark All Errors'
       Enabled = False
       OnExecute = acECUnMarkAllExecute
     end
     object acECFixAllMarkedErrors: TAction
       Category = 'Error Check'
-      Caption = 'Autofix All Marked Errors'
+      Caption = 'Fix All Marked Errors'
       Enabled = False
       OnExecute = acECFixAllMarkedErrorsExecute
     end
     object acECFixAllMarkedErrorsTyped: TAction
       Category = 'Error Check'
-      Caption = 'Autofix All Marked Errors of Selected Type'
+      Caption = 'Fix All Marked Errors of Selected Type'
       Enabled = False
       OnExecute = acECFixAllMarkedErrorsTypedExecute
     end
     object acECFixAllErrorsTyped: TAction
       Category = 'Error Check'
-      Caption = 'Autofix All Errors of Selected Type'
+      Caption = 'Fix All Errors of Selected Type'
       Enabled = False
       OnExecute = acECFixAllErrorsTypedExecute
     end
     object acECMarkAllTyped: TAction
       Category = 'Error Check'
-      Caption = 'Mark All of Selected Type'
+      Caption = 'Mark All Errors of the Selected Type'
       Enabled = False
       OnExecute = acECMarkAllTypedExecute
     end
     object acECUnMarkAllTyped: TAction
       Category = 'Error Check'
-      Caption = 'Unmark All of Selected Type'
+      Caption = 'Unmark All Errors of the Selected Type'
       Enabled = False
       OnExecute = acECUnMarkAllTypedExecute
     end

@@ -22,7 +22,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 592
     Height = 333
-    ActivePage = TabSheet5
+    ActivePage = TabSheet2
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -650,10 +650,6 @@ object frOptions: TfrOptions
     object TabSheet2: TTabSheet
       Caption = 'Configuration &Values'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox2: TGroupBox
         Left = 0
         Top = 0
