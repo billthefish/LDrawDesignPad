@@ -28,7 +28,7 @@ uses
   SciScintillaBase, SciScintillaMemo, SciScintilla, SciScintillaLDDP,
   SciDocTabCtrl, Windows, Graphics, Forms, Messages, SysUtils, Types,
   StdCtrls, ShellAPI, sciPrint, SciScintillaOptionsFrm, SciAutoComplete,
-  SciCallTips, DATBase, AppEvnts;
+  SciCallTips, DATBase, AppEvnts, commonprocs;
 
 type
   TfrMain = class(TForm)
@@ -48,7 +48,7 @@ type
     acincIndent: TAction;
     acInline: TAction;
     acInsertPartHeader: TAction;
-    acInsertUpdateLine: TAction;
+    acInsertHistoryStatement: TAction;
     acL3Lab: TAction;
     acLDView: TAction;
     acMLCad: TAction;
@@ -138,8 +138,6 @@ type
     CopyItem: TMenuItem;
     PasteItem: TMenuItem;
     SelectAll1: TMenuItem;
-    Comment1: TMenuItem;
-    Uncomment1: TMenuItem;
     Toolbars: TMenuItem;
     mnuFile: TMenuItem;
     mnuEditing: TMenuItem;
@@ -161,8 +159,6 @@ type
     acMLCad1: TMenuItem;
     acL3Lab1: TMenuItem;
     mnuUserDefined: TMenuItem;
-    N6: TMenuItem;
-    TrimLines1: TMenuItem;
     InlinePart2: TMenuItem;
     Help1: TMenuItem;
     HelpAboutItem: TMenuItem;
@@ -212,11 +208,9 @@ type
     CombineTrianglesIntoQuad2: TMenuItem;
     SortByPosition1: TMenuItem;
     acRandomizeColors: TAction;
-    Processing1: TMenuItem;
     RandomizeColorsinSelection1: TMenuItem;
     RandomizeColorsinSelection2: TMenuItem;
     mnuPollOnRequest: TMenuItem;
-    N24: TMenuItem;
     acMirrorX: TAction;
     acMirrorY: TAction;
     acMirrorZ: TAction;
@@ -248,13 +242,10 @@ type
     tbnColor13: TToolButton;
     tbnColor14: TToolButton;
     tbnColor15: TToolButton;
-    UnIndent1: TMenuItem;
-    acincIdent1: TMenuItem;
     pmExternal: TPopupMenu;
     pmuColorReplace: TMenuItem;
     acSubFile: TAction;
     SubfileSelection1: TMenuItem;
-    N25: TMenuItem;
     SubfileSelection2: TMenuItem;
     Sort1: TMenuItem;
     http: TIdHTTP;
@@ -348,6 +339,51 @@ type
     acViewMovementToolbar: TAction;
     acViewEditToolbar: TAction;
     acViewColorReplaceToolbar: TAction;
+    IncreaseIndent1: TMenuItem;
+    DecreaseIndent1: TMenuItem;
+    Comment2: TMenuItem;
+    Uncomment2: TMenuItem;
+    rimBlankLines1: TMenuItem;
+    tbrGrid: TToolBar;
+    ToolButton6: TToolButton;
+    ToolButton24: TToolButton;
+    ToolButton33: TToolButton;
+    acMoveGridFine: TAction;
+    acMoveGridMedium: TAction;
+    acMoveGridCoarse: TAction;
+    acViewGridToolbar: TAction;
+    N11: TMenuItem;
+    Move1: TMenuItem;
+    Rotate1: TMenuItem;
+    RotateX1: TMenuItem;
+    X1: TMenuItem;
+    Y1: TMenuItem;
+    Y2: TMenuItem;
+    Z1: TMenuItem;
+    Z2: TMenuItem;
+    RotateX2: TMenuItem;
+    RotateX3: TMenuItem;
+    RotateY1: TMenuItem;
+    RotateY2: TMenuItem;
+    RotateZ1: TMenuItem;
+    RotaeZ1: TMenuItem;
+    GridGranularity1: TMenuItem;
+    ModelTree1: TMenuItem;
+    MediumGrid1: TMenuItem;
+    FineGrid1: TMenuItem;
+    N12: TMenuItem;
+    acMoveSnapToGrid: TAction;
+    SnaptoGrid1: TMenuItem;
+    Movement1: TMenuItem;
+    N9: TMenuItem;
+    N15: TMenuItem;
+    acPollEnablePolling: TAction;
+    acPollToSelectedLine: TAction;
+    acPoll1Second: TAction;
+    acPoll2Seconds: TAction;
+    acPoll5Seconds: TAction;
+    acPollOnDemand: TAction;
+    acPollCustom: TAction;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -370,7 +406,7 @@ type
     procedure acFindNextExecute(Sender: TObject);
     procedure acincIndentExecute(Sender: TObject);
     procedure acInsertPartHeaderExecute(Sender: TObject);
-    procedure acInsertUpdateLineExecute(Sender: TObject);
+    procedure acInsertHistoryStatementExecute(Sender: TObject);
     procedure acMRUListExecute(Sender: TObject);
     procedure acRedoExecute(Sender: TObject);
     procedure acReplaceColorExecute(Sender: TObject);
@@ -384,11 +420,6 @@ type
     procedure FormDblClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
-    procedure mnuEnablePollingClick(Sender: TObject);
-    procedure mnuPollToSelectedClick(Sender: TObject);
-    procedure mnuPollEvery5secClick(Sender: TObject);
-    procedure mnuPollEvery1secClick(Sender: TObject);
-    procedure mnuPollevery2secClick(Sender: TObject);
     procedure tmPollTimer(Sender: TObject);
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
@@ -405,7 +436,6 @@ type
     procedure MetaMenuClick(Sender: TObject);
     procedure acTriangleCombineExecute(Sender: TObject);
     procedure acRandomizeColorsExecute(Sender: TObject);
-    procedure mnuPollOnRequestClick(Sender: TObject);
     procedure acMirrorExecute(Sender: TObject);
     procedure acColorReplaceShortcutExecute(Sender: TObject);
     procedure tbUserDefinedClick(Sender: TObject);
@@ -423,7 +453,6 @@ type
     procedure DocumentTabsChange(Sender: TObject);
     procedure AppInstCmdLineReceived(Sender: TObject;
       CmdLine: TStrings);
-    procedure mnuPollOnCustomIntervalClick(Sender: TObject);
     procedure CloseFile1Click(Sender: TObject);
     procedure editorDwellStart(Sender: TObject; const position: Integer; x,
       y: Integer);
@@ -439,10 +468,33 @@ type
     procedure acViewEditToolbarExecute(Sender: TObject);
     procedure acViewColorReplaceToolbarExecute(Sender: TObject);
     procedure acMoveXPosExecute(Sender: TObject);
+    procedure acMoveXNegExecute(Sender: TObject);
+    procedure acMoveYPosExecute(Sender: TObject);
+    procedure acMoveYNegExecute(Sender: TObject);
+    procedure acMoveZPosExecute(Sender: TObject);
+    procedure acMoveZNegExecute(Sender: TObject);
+    procedure acMoveRotXPosExecute(Sender: TObject);
+    procedure acMoveRotXNegExecute(Sender: TObject);
+    procedure acMoveRotYPosExecute(Sender: TObject);
+    procedure acMoveRotYNegExecute(Sender: TObject);
+    procedure acMoveRotZPosExecute(Sender: TObject);
+    procedure acMoveRotZNegExecute(Sender: TObject);
+    procedure acViewGridToolbarExecute(Sender: TObject);
+    procedure acMoveGridCoarseExecute(Sender: TObject);
+    procedure acMoveGridMediumExecute(Sender: TObject);
+    procedure acMoveGridFineExecute(Sender: TObject);
+    procedure SetPollTime(Sender: TObject);
+    procedure acPollEnablePollingExecute(Sender: TObject);
+    procedure acPollToSelectedLineExecute(Sender: TObject);
+    procedure acPollOnDemandExecute(Sender: TObject);
 
-  protected
+  private
     TabRightClickIndex: Integer;
     Initialized: Boolean;
+    GridSetting: TGridSettings;
+    GridType: TGridType;
+
+  protected
     procedure AppInitialize;
     procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
     procedure BuildMetaMenu;
@@ -457,7 +509,7 @@ type
     procedure OpenFile(filename: string);
     procedure CloseFile(DocNumber: Integer);
     procedure SaveFile(DocNumber: Integer);
-    procedure UpdateMRU(NewFileName: TFileName= '');
+    procedure UpdateMRU(NewFileName: TFileName = '');
     procedure LoadFormValues;
     procedure SaveFormValues;
   end;
@@ -472,12 +524,13 @@ implementation
 
 uses
   about, options, colordialog, BezWindow, sorting, splash, 
-  BMP2LDraw, modeltreeview, dlgSubpart, commonprocs, windowsspecific,
+  BMP2LDraw, modeltreeview, dlgSubpart, windowsspecific,
   DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
-  STRUtils, Registry, IniFiles, SciResLang, Contnrs;
+  StrUtils, Registry, IniFiles, SciResLang, Contnrs;
 
 var
   splashscreen: TfrSplash;
+
 // General Editor Actions
 
 procedure TfrMain.acEditCutExecute(Sender: TObject);
@@ -563,7 +616,7 @@ begin
   editor.Modified := true;
 end;
 
-procedure TfrMain.acInsertUpdateLineExecute(Sender: TObject);
+procedure TfrMain.acInsertHistoryStatementExecute(Sender: TObject);
 // Insert standard update line
 begin
   editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos),
@@ -681,33 +734,12 @@ end;
 
 procedure TfrMain.acReverseWindingExecute(Sender: TObject);
 // Reverse the winding of a block of text
-var
-  startline, endline, i : Integer;
-  DATModel1: TDATModel;
-
 begin
-    DATModel1 := LDDPCreateDATModel;
-
-    editor.ExpandSelection(startline, endline);
-
-    if editor.SelLength <> 0 then
-    begin
-      DATModel1.ModelText := editor.SelText;
-
-      for i := 0 to DATModel1.Count-1 do
-        if DATModel1[i] is TDATPolygon then
-          (DATModel1[i] as TDATPolygon).ReverseWinding;
-
-      editor.SelText := DATModel1.ModelText;
-
-      editor.SelectLines(startline, endline);
-
-      DATModel1.Free;
-    end;
+  editor.ReverseWinding;
 end;
 
 procedure TfrMain.acTriangleCombineExecute(Sender: TObject);
-// Combine 2 triangle commnds into a quad command
+// Combine 2 triangle commands into a quad command
 // Also checks for non coplanarity and issues a warning
 var
   DModel: TDATModel;
@@ -1105,9 +1137,35 @@ begin
   frOptions.ShowModal;
 
   editor.OnlyRoundDuringAutoRound := frOptions.cboAutoRoundOnly.Checked;
+  editor.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+  editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
   mnuUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
   tbUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
+  acPollCustom.Tag := frOptions.seCustomPollInterval.Value * 1000;
 
+  case GridType of
+    gtCoarse:
+    begin
+      GridSetting.XStep := frOptions.seGridCoarseX.Value;
+      GridSetting.YStep := frOptions.seGridCoarseY.Value;
+      GridSetting.ZStep := frOptions.seGridCoarseZ.Value;
+      GridSetting.Angle := frOptions.seGridCoarseAngle.Value;
+    end;
+    gtMedium:
+    begin
+      GridSetting.XStep := frOptions.seGridMediumX.Value;
+      GridSetting.YStep := frOptions.seGridMediumY.Value;
+      GridSetting.ZStep := frOptions.seGridMediumZ.Value;
+      GridSetting.Angle := frOptions.seGridMediumAngle.Value;
+    end;
+    gtFine:
+    begin
+      GridSetting.XStep := frOptions.seGridFineX.Value;
+      GridSetting.YStep := frOptions.seGridFineY.Value;
+      GridSetting.ZStep := frOptions.seGridFineZ.Value;
+      GridSetting.Angle := frOptions.seGridFineAngle.Value;
+    end;
+  end;
   editorUpdateUI(Sender);
 end;
 
@@ -1154,17 +1212,17 @@ procedure TfrMain.acLSynthExecute(Sender: TObject);
 // Execues LSynth and replaces current text with the output
 var
   TempFile: TStringList;
-  CommandFile, CommandLine, InputFile, OutputFile:string;
+  CommandFile, CommandLine, InputFile, OutputFile: string;
 
 begin
-  if (not FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe')) then
+  if (not FileExists(frOptions.edLSynthDir.text + '\lsynthcp.exe')) then
   begin
     MessageDlg(_('You have to specify a valid path to lsynthcp.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
   end
   else
   begin
-    OutputFile := GetShortFileName(WinTempDir + GetTmpFileName);
+    OutputFile := GetShortFileName(tempFileName);
     TempFile := TstringList.create;
     CommandLine := GetShortFileName(frOptions.edLSynthDir.text) + '\lsynthcp.exe ';
     InputFile := GetShortFileName(ExtractFilePath(TempFileName)) + ExtractFileName(TempFileName);
@@ -1275,11 +1333,137 @@ end;
 
 // Movement actions
 
-procedure TfrMain.acMoveXPosExecute(Sender: TObject);
+procedure TfrMain.acMoveGridCoarseExecute(Sender: TObject);
 begin
-
+  if acMoveGridCoarse.Checked then
+  begin
+    GridType := gtCoarse;
+    GridSetting.XStep := frOptions.seGridCoarseX.Value;
+    GridSetting.YStep := frOptions.seGridCoarseY.Value;
+    GridSetting.ZStep := frOptions.seGridCoarseZ.Value;
+    GridSetting.Angle := frOptions.seGridCoarseAngle.Value;
+  end
+  else
+    if (not acMoveGridFine.Checked) and (acMoveGridMedium.Checked) then
+      acMoveGridCoarse.Checked := True;
 end;
 
+procedure TfrMain.acMoveGridMediumExecute(Sender: TObject);
+begin
+  if acMoveGridMedium.Checked then
+  begin
+    GridType := gtMedium;
+    GridSetting.XStep := frOptions.seGridMediumX.Value;
+    GridSetting.YStep := frOptions.seGridMediumY.Value;
+    GridSetting.ZStep := frOptions.seGridMediumZ.Value;
+    GridSetting.Angle := frOptions.seGridMediumAngle.Value;
+  end
+  else
+    if (not acMoveGridCoarse.Checked) and (acMoveGridFine.Checked) then
+      acMoveGridMedium.Checked := True;
+end;
+
+procedure TfrMain.acMoveGridFineExecute(Sender: TObject);
+begin
+  if acMoveGridFine.Checked then
+  begin
+    GridType := gtFine;
+    GridSetting.XStep := frOptions.seGridFineX.Value;
+    GridSetting.YStep := frOptions.seGridFineY.Value;
+    GridSetting.ZStep := frOptions.seGridFineZ.Value;
+    GridSetting.Angle := frOptions.seGridFineAngle.Value;
+  end
+  else
+    if (not acMoveGridCoarse.Checked) and (acMoveGridMedium.Checked) then
+      acMoveGridFine.Checked := True;
+end;
+
+procedure TfrMain.acMoveRotXNegExecute(Sender: TObject);
+begin
+  editor.RotateSelection(GridSetting.Angle, -1, 0, 0);
+end;
+
+procedure TfrMain.acMoveRotXPosExecute(Sender: TObject);
+begin
+  editor.RotateSelection(GridSetting.Angle, 1, 0, 0);
+end;
+
+procedure TfrMain.acMoveRotYNegExecute(Sender: TObject);
+begin
+  editor.RotateSelection(GridSetting.Angle, 0, -1, 0);
+end;
+
+procedure TfrMain.acMoveRotYPosExecute(Sender: TObject);
+begin
+  editor.RotateSelection(GridSetting.Angle, 0, 1, 0);
+end;
+
+procedure TfrMain.acMoveRotZNegExecute(Sender: TObject);
+begin
+  editor.RotateSelection(GridSetting.Angle, 0, 0, -1);
+end;
+
+procedure TfrMain.acMoveRotZPosExecute(Sender: TObject);
+begin
+  editor.RotateSelection(GridSetting.Angle, 0, 0, 1);
+end;
+
+procedure TfrMain.acMoveXNegExecute(Sender: TObject);
+begin
+  editor.TranslateSelection(-GridSetting.XStep, 0, 0);
+end;
+
+procedure TfrMain.acMoveXPosExecute(Sender: TObject);
+begin
+  editor.TranslateSelection(GridSetting.XStep, 0, 0);
+end;
+
+procedure TfrMain.acMoveYNegExecute(Sender: TObject);
+begin
+  editor.TranslateSelection(0, -GridSetting.YStep, 0);
+end;
+
+procedure TfrMain.acMoveYPosExecute(Sender: TObject);
+begin
+  editor.TranslateSelection(0, GridSetting.YStep, 0);
+end;
+
+procedure TfrMain.acMoveZNegExecute(Sender: TObject);
+begin
+  editor.TranslateSelection(0, 0, -GridSetting.ZStep);
+end;
+
+procedure TfrMain.acMoveZPosExecute(Sender: TObject);
+begin
+  editor.TranslateSelection(0, 0, GridSetting.ZStep);
+end;
+
+// Polling Actions
+
+procedure TfrMain.acPollEnablePollingExecute(Sender: TObject);
+begin
+  tmPoll.Enabled := acPollEnablePolling.Checked;
+end;
+
+procedure TfrMain.acPollOnDemandExecute(Sender: TObject);
+begin
+  acPollOnDemand.ShortCut := TextToShortCut('F11');
+  tmPoll.Enabled := False;
+  tmPollTimer(nil);
+end;
+
+procedure TfrMain.acPollToSelectedLineExecute(Sender: TObject);
+begin
+  // Do nothing;
+end;
+
+procedure TfrMain.SetPollTime(Sender: TObject);
+begin
+  tmPoll.Enabled := False;
+  tmPoll.Interval := (Sender as TAction).Tag;
+  tmPoll.Enabled := True;
+  acPollOnDemand.ShortCut := TextToShortCut('')
+end;
 
 // Search actions
 
@@ -1342,6 +1526,11 @@ begin
   tbrFile.Visible := (Sender as TAction).Checked;
 end;
 
+procedure TfrMain.acViewGridToolbarExecute(Sender: TObject);
+begin
+  tbrGrid.Visible := (Sender as TAction).Checked;
+end;
+
 procedure TfrMain.acViewMovementToolbarExecute(Sender: TObject);
 begin
   tbrMovement.Visible := (Sender as TAction).Checked;
@@ -1387,17 +1576,17 @@ var
 
 begin
    hDrop := Msg.WParam ;
-   NumberOfFiles := DragQueryFile(hDrop,$FFFFFFFF, nil, 0);
+   NumberOfFiles := DragQueryFile(hDrop, $FFFFFFFF, nil, 0);
    for fCounter := 1 to NumberOfFiles do
    begin
-     SetLength(fname, MAX_PATH); // Anticipate largest string size
-     SetLength(fname, DragQueryFile(HDrop, fCounter-1, PChar(fname),MAX_PATH));
-     if (lowercase(extractFIleExt(fname)) = '.dat') or
-        (lowercase(extractFIleExt(fname)) = '.mpd') or
-        (lowercase(extractFIleExt(fname)) = '.ldr') then
+     SetLength(fName, MAX_PATH); // Anticipate largest string size
+     SetLength(fName, DragQueryFile(HDrop, fCounter - 1, PChar(fname), MAX_PATH));
+     if (LowerCase(ExtractFileExt(fName)) = '.dat') or
+        (LowerCase(ExtractFileExt(fName)) = '.mpd') or
+        (LowerCase(ExtractFileExt(fName)) = '.ldr') then
        OpenFile(fName);
    end;
-   DragFinish (hDrop);
+   DragFinish(hDrop);
 end;
 
 procedure TfrMain.AppInstCmdLineReceived(Sender: TObject;
@@ -1587,6 +1776,7 @@ begin
     CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\uiconfig.ini'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\uiconfig.ini'), false);
 
     //Load form parameters from INI file
+    acMoveGridCoarse.Execute;
     LoadFormValues;
 
     // View menu settings;
@@ -1599,6 +1789,8 @@ begin
     acViewColorReplaceToolbar.Checked := tbrColorReplace.Visible;
 
     //Set defaults based on options
+    acPollCustom.Tag := frOptions.seCustomPollInterval.Value * 1000;
+
     editor.PositionDecimalPlaces := frOptions.sePntAcc.Value;
     editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
     editor.OnlyRoundDuringAutoRound := frOptions.cboAutoRoundOnly.Checked;
@@ -1919,70 +2111,14 @@ begin
  // do nothing
 end;
 
-procedure TfrMain.mnuPollEvery1secClick(Sender: TObject);
-// Set polling interval to 1 sec
-begin
-  mnuPollEvery1sec.Checked := true;
-  mnuPollOnRequest.ShortCut := 0;
-  tmPoll.Enabled := false;
-  tmPoll.Interval := 1000;
-  tmPoll.Enabled := true;
-end;
-
-
-procedure TfrMain.mnuPollevery2secClick(Sender: TObject);
-// Set polling interval to 2 secs
-begin
- mnuPollEvery2sec.Checked := true;
- mnuPollOnRequest.ShortCut := 0;
- tmPoll.Enabled := false;
- tmPoll.Interval := 2000;
- tmPoll.Enabled := true;
-
-end;
-
-procedure TfrMain.mnuPollEvery5secClick(Sender: TObject);
-// Set polling interval to 5 secs
-begin
-  mnuPollEvery5sec.Checked := true;
-  mnuPollOnRequest.ShortCut := 0;
-  tmPoll.Enabled := false;
-  tmPoll.Interval := 5000;
-  tmPoll.Enabled := true;
-end;
-
-procedure TfrMain.mnuPollOnCustomIntervalClick(Sender: TObject);
-begin
-  mnuPollOnCustomInterval.Checked := true;
-  mnuPollOnRequest.ShortCut := 0;
-  tmPoll.Enabled := false;
-  tmPoll.Interval := frOptions.seCustomPollInterval.Value * 1000;
-  tmPoll.Enabled := true;
-end;
-
-procedure TfrMain.mnuPollOnRequestClick(Sender: TObject);
-// Poll on request
-begin
-  mnuPollOnRequest.Checked := true;
-  mnuPollOnRequest.ShortCut := TextToShortcut('F11');
-  tmPoll.Enabled := false;
-  tmPollTimer(Sender);
-end;
-
-procedure TfrMain.mnuPollToSelectedClick(Sender: TObject);
-// Switch polling to selected line
-begin
-  mnuPollToSelected.Checked := not mnuPollToSelected.Checked;
-end;
-
 procedure TfrMain.tmPollTimer(Sender: TObject);
 // if polling time triggers the actual editor window is written to its firm assigned temp filename
 var
   st: TStringList;
 
 begin
-  if mnuEnablePolling.Checked and (DocumentTabs.Count > 0) then
-    if mnuPollToSelected.checked then
+  if acPollEnablePolling.Checked and (DocumentTabs.Count > 0) then
+    if acPollToSelectedLine.Checked then
     begin
       st := TStringList.Create;
       st.Text := editor.Lines.Text;
@@ -1991,15 +2127,6 @@ begin
       st.SaveToFile(tempFileName);
     end
     else editor.lines.SaveToFile(tempFileName);
-end;
-
-
-procedure TfrMain.mnuEnablePollingClick(Sender: TObject);
-// Activate Polling for L3Lab
-begin
-  mnuEnablePolling.Checked := not mnuEnablePolling.Checked;
-  if (mnuPollOnRequest.Checked) and (not mnuEnablePolling.Checked) then
-    mnuPollOnRequest.ShortCut := 0;
 end;
 
 procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
@@ -2068,20 +2195,27 @@ begin
         Left := LDDPini.ReadInteger(IniSection, Name + '_Left', Left);
       end;
 
-  if LDDPini.ReadBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked) then
-    mnuEnablePollingClick(nil);
-  if LDDPini.ReadBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked) then
-    mnuPollToSelectedClick(nil);
-  if LDDPini.ReadBool(IniSection, 'mnuPollEvery1Sec_Checked', mnuPollEvery1Sec.Checked) then
-    mnuPollEvery1SecClick(nil);
-  if LDDPini.ReadBool(IniSection, 'mnuPollEvery2Sec_Checked', mnuPollEvery2Sec.Checked) then
-    mnuPollEvery2SecClick(nil);
-  if LDDPini.ReadBool(IniSection, 'mnuPollEvery5Sec_Checked', mnuPollEvery5Sec.Checked) then
-    mnuPollEvery5SecClick(nil);
-  if LDDPini.ReadBool(IniSection, 'mnuPollOnCustomInterval_Checked', mnuPollOnCustomInterval.Checked) then
-    mnuPollOnCustomIntervalClick(nil);
-  if LDDPini.ReadBool(IniSection, 'mnuPollOnRequest_Checked', mnuPollOnRequest.Checked) then
-    mnuPollOnRequestClick(nil);
+  if LDDPini.ReadBool(IniSection, 'acMoveGridFine_Checked', acMoveGridFine.Checked) then
+    acMoveGridFine.Execute;
+  if LDDPini.ReadBool(IniSection, 'acMoveGridMedium_Checked', acMoveGridMedium.Checked) then
+    acMoveGridMedium.Execute;
+  if LDDPini.ReadBool(IniSection, 'acMoveGridCoarse_Checked', acMoveGridCoarse.Checked) then
+    acMoveGridCoarse.Execute;
+
+  if LDDPini.ReadBool(IniSection, 'acPollEnablePolling_Checked', acPollEnablePolling.Checked) then
+    acPollEnablePolling.Execute;
+  if LDDPini.ReadBool(IniSection, 'acPollToSelectedLine_Checked', acPollToSelectedLine.Checked) then
+    acPollToSelectedLine.Execute;
+  if LDDPini.ReadBool(IniSection, 'acPoll1Second_Checked', acPoll1Second.Checked) then
+    acPoll1Second.Execute;
+  if LDDPini.ReadBool(IniSection, 'acPoll2Seconds_Checked', acPoll2Seconds.Checked) then
+    acPoll2Seconds.Execute;
+  if LDDPini.ReadBool(IniSection, 'acPoll5Seconds_Checked', acPoll5Seconds.Checked) then
+    acPoll5Seconds.Execute;
+  if LDDPini.ReadBool(IniSection, 'acPollCustom_Checked', acPollCustom.Checked) then
+    acPollCustom.Execute;
+  if LDDPini.ReadBool(IniSection, 'acPollOnDemand_Checked', acPollOnDemand.Checked) then
+    acPollOnDemand.Execute;
   SearchReplaceDlg.ReplaceTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
   SearchReplaceDlg.SearchTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
   LDDPini.Free;
@@ -2117,13 +2251,18 @@ begin
         LDDPini.WriteInteger(IniSection, Name + '_Left', Left);
       end;
 
-  LDDPini.WriteBool(IniSection, 'mnuEnablePolling_Checked', mnuEnablePolling.Checked);
-  LDDPini.WriteBool(IniSection, 'mnuPollToSelected_Checked', mnuPollToSelected.Checked);
-  LDDPini.WriteBool(IniSection, 'mnuPollEvery1Sec_Checked', mnuPollEvery1Sec.Checked);
-  LDDPini.WriteBool(IniSection, 'mnuPollEvery2Sec_Checked', mnuPollEvery2Sec.Checked);
-  LDDPini.WriteBool(IniSection, 'mnuPollEvery5Sec_Checked', mnuPollEvery5Sec.Checked);
-  LDDPini.WriteBool(IniSection, 'mnuPollOnCustomInterval_Checked', mnuPollOnCustomInterval.Checked);
-  LDDPini.WriteBool(IniSection, 'mnuPollOnRequest_Checked', mnuPollOnRequest.Checked);
+  LDDPini.WriteBool(IniSection, 'acMoveGridFine_Checked', acMoveGridFine.Checked);
+  LDDPini.WriteBool(IniSection, 'acMoveGridMedium_Checked', acMoveGridMedium.Checked);
+  LDDPini.WriteBool(IniSection, 'acMoveGridCoarse_Checked', acMoveGridCoarse.Checked);
+
+  LDDPini.WriteBool(IniSection, 'acPollEnablePolling_Checked', acPollEnablePolling.Checked);
+  LDDPini.WriteBool(IniSection, 'acPollToSelectedLine_Checked', acPollToSelectedLine.Checked);
+  LDDPini.WriteBool(IniSection, 'acPoll1Second_Checked', acPoll1Second.Checked);
+  LDDPini.WriteBool(IniSection, 'acPoll2Seconds_Checked', acPoll2Seconds.Checked);
+  LDDPini.WriteBool(IniSection, 'acPoll5Seconds_Checked', acPoll5Seconds.Checked);
+  LDDPini.WriteBool(IniSection, 'acPollCustom_Checked', acPollCustom.Checked);
+  LDDPini.WriteBool(IniSection, 'acPollOnDemand_Checked', acPollOnDemand.Checked);
+
   LDDPini.WriteString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
   LDDPini.WriteString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
 

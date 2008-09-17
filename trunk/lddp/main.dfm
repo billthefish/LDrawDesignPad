@@ -2,7 +2,7 @@ object frMain: TfrMain
   Left = 267
   Top = 61
   Width = 900
-  Height = 760
+  Height = 800
   VertScrollBar.Range = 49
   ActiveControl = editor
   Caption = 'LDraw Design Pad'
@@ -26,7 +26,7 @@ object frMain: TfrMain
     Left = 0
     Top = 54
     Width = 892
-    Height = 633
+    Height = 673
     Editor = editor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -45,7 +45,7 @@ object frMain: TfrMain
       Left = 4
       Top = 24
       Width = 884
-      Height = 605
+      Height = 645
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -465,7 +465,7 @@ object frMain: TfrMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 687
+    Top = 727
     Width = 892
     Height = 19
     AutoHint = True
@@ -715,7 +715,7 @@ object frMain: TfrMain
       end
     end
     object tbrColorReplace: TToolBar
-      Left = 337
+      Left = 424
       Top = 29
       Width = 405
       Height = 23
@@ -1028,6 +1028,43 @@ object frMain: TfrMain
         Action = acReplaceColor
       end
     end
+    object tbrGrid: TToolBar
+      Left = 337
+      Top = 29
+      Width = 74
+      Height = 23
+      Align = alNone
+      AutoSize = True
+      ButtonHeight = 23
+      Caption = 'Grid'
+      Color = clBtnFace
+      DragMode = dmAutomatic
+      EdgeInner = esNone
+      EdgeOuter = esNone
+      Images = ilProgramIcons
+      Indent = 5
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 7
+      Wrapable = False
+      object ToolButton6: TToolButton
+        Left = 5
+        Top = 0
+        Action = acMoveGridCoarse
+      end
+      object ToolButton24: TToolButton
+        Left = 28
+        Top = 0
+        Action = acMoveGridMedium
+      end
+      object ToolButton33: TToolButton
+        Left = 51
+        Top = 0
+        Action = acMoveGridFine
+        PopupMenu = pmMemo
+      end
+    end
   end
   object MainMenu1: TMainMenu
     Images = ilProgramIcons
@@ -1104,8 +1141,120 @@ object frMain: TfrMain
       object N3: TMenuItem
         Caption = '-'
       end
+      object IncreaseIndent1: TMenuItem
+        Action = acincIndent
+      end
+      object DecreaseIndent1: TMenuItem
+        Action = acDecIndent
+      end
+      object Comment2: TMenuItem
+        Action = acCommentBlock
+      end
+      object Uncomment2: TMenuItem
+        Action = acUncommentBlock
+      end
+      object rimBlankLines1: TMenuItem
+        Action = acTrimLines
+      end
+      object N12: TMenuItem
+        Caption = '-'
+      end
+      object ReverseWinding1: TMenuItem
+        Action = acReverseWinding
+      end
+      object CombineTrianglesIntoQuad1: TMenuItem
+        Action = acTriangleCombine
+      end
+      object AutoRoundSelection1: TMenuItem
+        Action = acAutoRound
+      end
       object RandomizeColorsinSelection1: TMenuItem
         Action = acRandomizeColors
+      end
+    end
+    object Movement1: TMenuItem
+      Caption = 'Movement'
+      object GridGranularity1: TMenuItem
+        Caption = 'Grid Granularity'
+        object ModelTree1: TMenuItem
+          Action = acMoveGridCoarse
+          AutoCheck = True
+          GroupIndex = 5
+          RadioItem = True
+        end
+        object MediumGrid1: TMenuItem
+          Action = acMoveGridMedium
+          AutoCheck = True
+          GroupIndex = 5
+          RadioItem = True
+        end
+        object FineGrid1: TMenuItem
+          Action = acMoveGridFine
+          AutoCheck = True
+          GroupIndex = 5
+          RadioItem = True
+        end
+      end
+      object SnaptoGrid1: TMenuItem
+        Action = acMoveSnapToGrid
+      end
+      object N11: TMenuItem
+        Caption = '-'
+      end
+      object Move1: TMenuItem
+        Caption = 'Move'
+        object RotateX1: TMenuItem
+          Action = acMoveXPos
+        end
+        object X1: TMenuItem
+          Action = acMoveXNeg
+        end
+        object Y1: TMenuItem
+          Action = acMoveYPos
+        end
+        object Y2: TMenuItem
+          Action = acMoveYNeg
+        end
+        object Z1: TMenuItem
+          Action = acMoveZPos
+        end
+        object Z2: TMenuItem
+          Action = acMoveZNeg
+        end
+      end
+      object Rotate1: TMenuItem
+        Caption = 'Rotate'
+        object RotateX2: TMenuItem
+          Action = acMoveRotXPos
+        end
+        object RotateX3: TMenuItem
+          Action = acMoveRotXNeg
+        end
+        object RotateY1: TMenuItem
+          Action = acMoveRotYPos
+        end
+        object RotateY2: TMenuItem
+          Action = acMoveRotYNeg
+        end
+        object RotateZ1: TMenuItem
+          Action = acMoveRotZPos
+        end
+        object RotaeZ1: TMenuItem
+          Action = acMoveRotZNeg
+        end
+      end
+      object Mirror1: TMenuItem
+        Caption = 'Mirror'
+        ImageIndex = 42
+        object XAxis1: TMenuItem
+          Action = acMirrorX
+        end
+        object YAxis1: TMenuItem
+          Action = acMirrorY
+        end
+        object ZAxis1: TMenuItem
+          Action = acMirrorZ
+        end
       end
     end
     object Search1: TMenuItem
@@ -1174,7 +1323,7 @@ object frMain: TfrMain
         Action = acInsertPartHeader
       end
       object UpdateHeader1: TMenuItem
-        Action = acInsertUpdateLine
+        Action = acInsertHistoryStatement
       end
       object mnuMeta: TMenuItem
         Caption = 'META Statement'
@@ -1183,22 +1332,31 @@ object frMain: TfrMain
     object Tools1: TMenuItem
       Caption = '&Tools'
       Hint = 'LDraw Tool Commands'
-      object TrimLines1: TMenuItem
-        Action = acTrimLines
+      object Plugins1: TMenuItem
+        Caption = '&Plugins'
+        ImageIndex = 39
+        object Nonefound1: TMenuItem
+          Caption = '(None found)'
+        end
       end
-      object Comment1: TMenuItem
-        Action = acCommentBlock
+      object ExternalPrograms1: TMenuItem
+        Caption = 'External Programs'
+        object acLDView1: TMenuItem
+          Action = acLDView
+        end
+        object acMLCad1: TMenuItem
+          Action = acMLCad
+        end
+        object acL3Lab1: TMenuItem
+          Action = acL3Lab
+        end
+        object mnuUserDefined: TMenuItem
+          Caption = 'User Defined Program'
+          Hint = 'User Defined Program|Execute User Defined program'
+          ImageIndex = 34
+        end
       end
-      object Uncomment1: TMenuItem
-        Action = acUncommentBlock
-      end
-      object acincIdent1: TMenuItem
-        Action = acincIndent
-      end
-      object UnIndent1: TMenuItem
-        Action = acDecIndent
-      end
-      object N24: TMenuItem
+      object N15: TMenuItem
         Caption = '-'
       end
       object InlinePart2: TMenuItem
@@ -1206,25 +1364,6 @@ object frMain: TfrMain
       end
       object SubfileSelection1: TMenuItem
         Action = acSubFile
-      end
-      object N25: TMenuItem
-        Caption = '-'
-      end
-      object ReverseWinding1: TMenuItem
-        Action = acReverseWinding
-      end
-      object Mirror1: TMenuItem
-        Caption = 'Mirror Line On'
-        ImageIndex = 42
-        object XAxis1: TMenuItem
-          Action = acMirrorX
-        end
-        object YAxis1: TMenuItem
-          Action = acMirrorY
-        end
-        object ZAxis1: TMenuItem
-          Action = acMirrorZ
-        end
       end
       object N22: TMenuItem
         Caption = '-'
@@ -1282,14 +1421,21 @@ object frMain: TfrMain
           Action = frErrorWindow.acECCopy
         end
       end
-      object AutoRoundSelection1: TMenuItem
-        Action = acAutoRound
-      end
       object SortByPosition1: TMenuItem
         Action = acSortSelection
       end
-      object CombineTrianglesIntoQuad1: TMenuItem
-        Action = acTriangleCombine
+      object N9: TMenuItem
+        Caption = '-'
+      end
+      object ProcessthroughLSynth1: TMenuItem
+        Action = acLSynth
+        Caption = 'Process With LSynth...'
+      end
+      object ConvertBitmaptoLDraw1: TMenuItem
+        Action = acBMP2LDraw
+      end
+      object GenrateBendibleObject1: TMenuItem
+        Action = acBendableObject
       end
       object N7: TMenuItem
         Caption = '-'
@@ -1299,45 +1445,6 @@ object frMain: TfrMain
       end
       object EditorOptions1: TMenuItem
         Action = acEditorOptions
-      end
-    end
-    object Processing1: TMenuItem
-      Caption = '&Process'
-      object Plugins1: TMenuItem
-        Caption = '&Plugins'
-        ImageIndex = 39
-        object Nonefound1: TMenuItem
-          Caption = '(None found)'
-        end
-      end
-      object ExternalPrograms1: TMenuItem
-        Caption = 'External Programs'
-        object acLDView1: TMenuItem
-          Action = acLDView
-        end
-        object acMLCad1: TMenuItem
-          Action = acMLCad
-        end
-        object acL3Lab1: TMenuItem
-          Action = acL3Lab
-        end
-        object mnuUserDefined: TMenuItem
-          Caption = 'User Defined Program'
-          Hint = 'User Defined Program|Execute User Defined program'
-          ImageIndex = 34
-        end
-      end
-      object N6: TMenuItem
-        Caption = '-'
-      end
-      object ProcessthroughLSynth1: TMenuItem
-        Action = acLSynth
-      end
-      object ConvertBitmaptoLDraw1: TMenuItem
-        Action = acBMP2LDraw
-      end
-      object GenrateBendibleObject1: TMenuItem
-        Action = acBendableObject
       end
     end
     object Help1: TMenuItem
@@ -1508,12 +1615,12 @@ object frMain: TfrMain
       Hint = 'Insert a part header'
       OnExecute = acInsertPartHeaderExecute
     end
-    object acInsertUpdateLine: TAction
+    object acInsertHistoryStatement: TAction
       Category = 'Editor'
-      Caption = 'Update Header'
-      Hint = 'Insert an update line header'
-      ShortCut = 16469
-      OnExecute = acInsertUpdateLineExecute
+      Caption = 'History Statement'
+      Hint = 'Insert a !HISTORY statement'
+      ShortCut = 16456
+      OnExecute = acInsertHistoryStatementExecute
     end
     object acCommentBlock: TAction
       Category = 'Editor'
@@ -1638,7 +1745,7 @@ object frMain: TfrMain
       OnExecute = acModelTreeViewExecute
     end
     object acLSynth: TAction
-      Category = 'Misc'
+      Category = 'Externals'
       Caption = 'Process Through LSynth...'
       Hint = 'Run current text though LSynth'
       OnExecute = acLSynthExecute
@@ -1647,7 +1754,7 @@ object frMain: TfrMain
       Category = 'Misc'
       Caption = 'Generate Bendable Object... '
       ImageIndex = 59
-      ShortCut = 16456
+      ShortCut = 16450
       OnExecute = acBendableObjectExecute
     end
     object acAutoRound: TAction
@@ -1736,66 +1843,77 @@ object frMain: TfrMain
       Caption = 'X -'
       Hint = 'Move along the X axis (negative)'
       ImageIndex = 47
+      OnExecute = acMoveXNegExecute
     end
     object acMoveYPos: TAction
       Category = 'Movement'
       Caption = 'Y +'
       Hint = 'Move along the Y axis (positive)'
       ImageIndex = 52
+      OnExecute = acMoveYPosExecute
     end
     object acMoveYNeg: TAction
       Category = 'Movement'
       Caption = 'Y -'
       Hint = 'Move along the Y axis (negative)'
       ImageIndex = 51
+      OnExecute = acMoveYNegExecute
     end
     object acMoveZPos: TAction
       Category = 'Movement'
       Caption = 'Z +'
       Hint = 'Move along the Z axis (positive)'
       ImageIndex = 56
+      OnExecute = acMoveZPosExecute
     end
     object acMoveZNeg: TAction
       Category = 'Movement'
       Caption = 'Z -'
       Hint = 'Move along the Z axis (negative)'
       ImageIndex = 55
+      OnExecute = acMoveZNegExecute
     end
     object acMoveRotXPos: TAction
       Category = 'Movement'
       Caption = 'Rotate X +'
       Hint = 'Rotate around the X axis (positive)'
       ImageIndex = 50
+      OnExecute = acMoveRotXPosExecute
     end
     object acMoveRotXNeg: TAction
       Category = 'Movement'
       Caption = 'Rotate X -'
       Hint = 'Rotate around the X axis (negative)'
       ImageIndex = 49
+      OnExecute = acMoveRotXNegExecute
     end
     object acMoveRotYPos: TAction
       Category = 'Movement'
       Caption = 'Rotate Y +'
       Hint = 'Rotate around the Y axis (positive)'
       ImageIndex = 54
+      OnExecute = acMoveRotYPosExecute
     end
     object acMoveRotYNeg: TAction
       Category = 'Movement'
       Caption = 'Rotate Y -'
       Hint = 'Rotate around the Y axis (negative)'
       ImageIndex = 53
+      OnExecute = acMoveRotYNegExecute
     end
     object acMoveRotZPos: TAction
       Category = 'Movement'
       Caption = 'Rotate Z +'
       Hint = 'Rotate around the Z axis (positive)'
       ImageIndex = 58
+      OnExecute = acMoveRotZPosExecute
     end
     object acMoveRotZNeg: TAction
       Category = 'Movement'
       Caption = 'Rotae Z -'
       Hint = 'Rotate around the Z axis (negative)'
       ImageIndex = 57
+      OnExecute = acMoveRotZNegExecute
     end
     object acSaveAll: TAction
       Category = 'File'
@@ -1860,12 +1978,105 @@ object frMain: TfrMain
       Hint = 'Show/Hide the Color Replace Toolbar'
       OnExecute = acViewColorReplaceToolbarExecute
     end
+    object acMoveGridFine: TAction
+      Category = 'Movement'
+      AutoCheck = True
+      Caption = 'Fine Grid'
+      GroupIndex = 5
+      ImageIndex = 60
+      ShortCut = 120
+      OnExecute = acMoveGridFineExecute
+    end
+    object acMoveGridMedium: TAction
+      Category = 'Movement'
+      AutoCheck = True
+      Caption = 'Medium Grid'
+      GroupIndex = 5
+      ImageIndex = 61
+      ShortCut = 119
+      OnExecute = acMoveGridMediumExecute
+    end
+    object acMoveGridCoarse: TAction
+      Category = 'Movement'
+      AutoCheck = True
+      Caption = 'Coarse Grid'
+      Checked = True
+      GroupIndex = 5
+      ImageIndex = 62
+      ShortCut = 118
+      OnExecute = acMoveGridCoarseExecute
+    end
+    object acViewGridToolbar: TAction
+      Category = 'View Menu'
+      AutoCheck = True
+      Caption = 'acViewGridToolbar'
+      Checked = True
+      Hint = 'Show/Hide the Grid Toolbar'
+      OnExecute = acViewGridToolbarExecute
+    end
+    object acMoveSnapToGrid: TAction
+      Category = 'Movement'
+      Caption = 'Snap to Grid'
+    end
+    object acPollEnablePolling: TAction
+      Category = 'Polling'
+      AutoCheck = True
+      Caption = 'Enable Polling'
+      OnExecute = acPollEnablePollingExecute
+    end
+    object acPollToSelectedLine: TAction
+      Category = 'Polling'
+      AutoCheck = True
+      Caption = 'Poll To Selected Line'
+      OnExecute = acPollToSelectedLineExecute
+    end
+    object acPoll1Second: TAction
+      Tag = 1000
+      Category = 'Polling'
+      AutoCheck = True
+      Caption = '1 Second Poll Interval'
+      GroupIndex = 6
+      OnExecute = SetPollTime
+    end
+    object acPoll2Seconds: TAction
+      Tag = 2000
+      Category = 'Polling'
+      AutoCheck = True
+      Caption = '2 Seconds Poll Interval'
+      Checked = True
+      GroupIndex = 6
+      OnExecute = SetPollTime
+    end
+    object acPoll5Seconds: TAction
+      Tag = 5000
+      Category = 'Polling'
+      AutoCheck = True
+      Caption = '5 Seconds Poll Interval'
+      GroupIndex = 6
+      OnExecute = SetPollTime
+    end
+    object acPollOnDemand: TAction
+      Category = 'Polling'
+      AutoCheck = True
+      Caption = 'Poll on Demand'
+      GroupIndex = 6
+      ShortCut = 122
+      OnExecute = acPollOnDemandExecute
+    end
+    object acPollCustom: TAction
+      Tag = 300
+      Category = 'Polling'
+      AutoCheck = True
+      Caption = 'Custom Poll Interval'
+      GroupIndex = 6
+      OnExecute = SetPollTime
+    end
   end
   object ilProgramIcons: TImageList
     Left = 40
     Top = 112
     Bitmap = {
-      494C01013C004000040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01013F004000040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000000001000001001000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2893,11 +3104,11 @@ object frMain: TfrMain
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000424D3E000000000000003E000000
       2800000040000000000100000100010000000000000800000000000000000000
-      000000000000000000000000FFFFFF0000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000DFFFF81FF81FFFFFEFFFE7E7E7E77FFF
+      000000000000000000000000FFFFFF00FFFF0000FFFF0000000177EE00010000
+      555577EE7EFD0000000177EE7EFD0000555500007EFD0000000177EE7EFD0000
+      555577EE7EFD0000000177EE7EFD0000555577EE00010000000177EE7EFD0000
+      555577EE7EFD0000000100007EFD0000555577EE7EFD0000000177EE7EFD0000
+      555577EE7EFD00000001000000010000DFFFF81FF81FFFFFEFFFE7E7E7E77FFF
       F7FFDFFBDFFB3FFFFBFFB81DB81D3FFFFDFFB9FDB9FD3FFFFEFF7CFE7CFE3F0F
       FF7F7E7E7E7E1E07FFBF7F3E7F3E9E6381DF7F9E7F9E9CF39FEBB81DB81D89F1
       CFF1BFFDBFFDC1F9E7E1FE7BDE7FE3F9F3F0F867E61FFFF9F9FCE01FF807FFF9
@@ -2983,7 +3194,7 @@ object frMain: TfrMain
         Action = acInsertPartHeader
       end
       object UpdateHeader2: TMenuItem
-        Action = acInsertUpdateLine
+        Action = acInsertHistoryStatement
       end
       object mnuMeta2: TMenuItem
         Caption = 'META Statement'
@@ -3052,52 +3263,52 @@ object frMain: TfrMain
     Left = 128
     Top = 80
     object mnuEnablePolling: TMenuItem
-      Caption = 'Enable Polling'
+      Action = acPollEnablePolling
+      AutoCheck = True
       GroupIndex = 1
-      OnClick = mnuEnablePollingClick
     end
     object mnuPollToSelected: TMenuItem
-      Caption = 'Poll to selected line only'
+      Action = acPollToSelectedLine
+      AutoCheck = True
       GroupIndex = 1
-      OnClick = mnuPollToSelectedClick
     end
     object N8: TMenuItem
       Caption = '-'
       GroupIndex = 1
     end
     object mnuPollEvery1sec: TMenuItem
-      Caption = 'Poll every 1 sec'
-      GroupIndex = 2
+      Action = acPoll1Second
+      AutoCheck = True
+      GroupIndex = 6
       RadioItem = True
-      OnClick = mnuPollEvery1secClick
     end
     object mnuPollevery2sec: TMenuItem
-      Caption = 'Poll every 2 secs'
-      Checked = True
-      GroupIndex = 2
+      Action = acPoll2Seconds
+      AutoCheck = True
+      GroupIndex = 6
       RadioItem = True
-      OnClick = mnuPollevery2secClick
     end
     object mnuPollEvery5sec: TMenuItem
-      Caption = 'Poll every 5 secs'
-      GroupIndex = 2
+      Action = acPoll5Seconds
+      AutoCheck = True
+      GroupIndex = 6
       RadioItem = True
-      OnClick = mnuPollEvery5secClick
     end
     object mnuPollOnCustomInterval: TMenuItem
-      Caption = 'Poll on Custom Interval'
-      GroupIndex = 2
+      Action = acPollCustom
+      AutoCheck = True
+      GroupIndex = 6
       RadioItem = True
-      OnClick = mnuPollOnCustomIntervalClick
     end
     object mnuPollOnRequest: TMenuItem
-      Caption = 'Poll on Request'
-      GroupIndex = 2
+      Action = acPollOnDemand
+      AutoCheck = True
+      GroupIndex = 6
       RadioItem = True
-      OnClick = mnuPollOnRequestClick
     end
   end
   object tmPoll: TTimer
+    Enabled = False
     Interval = 3000
     OnTimer = tmPollTimer
     Left = 216

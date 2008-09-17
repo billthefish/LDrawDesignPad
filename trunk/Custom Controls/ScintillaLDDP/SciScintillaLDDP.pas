@@ -24,6 +24,9 @@ type
     procedure AutoRound;
     procedure SetLineColor(line, color: Integer);
     function GetLineColor(line: Integer): Integer;
+    procedure RotateSelection(w, x, y, z: Extended);
+    procedure TranslateSelection(x, y, z: Extended);
+    procedure ReverseWinding;
   published
     property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc default 15;
     property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc default 15;
@@ -123,6 +126,57 @@ begin
     DModel.Free;
 end;
 
+procedure TScintillaLDDP.ReverseWinding;
+var
+  startline, endline, i : Integer;
+  DModel: TDATModel;
+
+begin
+    if FOnlyRoundDuringAutoRound then
+      DModel := TDATModel.Create
+    else
+      DModel := CreateDATModel(PositionDecimalPlaces, RotationDecimalPlaces);
+
+    ExpandSelection(startline, endline);
+
+    if SelLength <> 0 then
+    begin
+      DModel.ModelText := SelText;
+
+      for i := 0 to DModel.Count-1 do
+        if DModel[i] is TDATPolygon then
+          (DModel[i] as TDATPolygon).ReverseWinding;
+
+      SelText := DModel.ModelText;
+
+      SelectLines(startline, endline);
+
+      DModel.Free;
+    end;
+end;
+
+procedure TScintillaLDDP.RotateSelection(w, x, y, z: Extended);
+var
+  DModel: TDATModel;
+  startline,endline: Integer;
+
+begin
+  ExpandSelection(startline, endline);
+
+  if FOnlyRoundDuringAutoRound then
+    DModel := TDATModel.Create
+  else
+    DModel := CreateDATModel(PositionDecimalPlaces, RotationDecimalPlaces);
+
+  DModel.ModelText := SelText;
+
+  DModel.Rotate(w, x, y, z);
+
+  SelText := DModel.ModelText;
+  SelectLines(startline, endline);
+  DModel.Free;
+end;
+
 procedure TScintillaLDDP.AutoRound;
 var
   DModel: TDATModel;
@@ -154,6 +208,28 @@ begin
     end;
     DLine.Free;
   end;
+end;
+
+procedure TScintillaLDDP.TranslateSelection(x, y, z: Extended);
+var
+  DModel: TDATModel;
+  startline,endline: Integer;
+
+begin
+  ExpandSelection(startline, endline);
+
+  if FOnlyRoundDuringAutoRound then
+    DModel := TDATModel.Create
+  else
+    DModel := CreateDATModel(PositionDecimalPlaces, RotationDecimalPlaces);
+
+  DModel.ModelText := SelText;
+
+  DModel.Translate(x, y, z);
+
+  SelText := DModel.ModelText;
+  SelectLines(startline, endline);
+  DModel.Free;
 end;
 
 function TScintillaLDDP.GetLineColor(line: Integer): Integer;

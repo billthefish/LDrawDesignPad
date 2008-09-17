@@ -32,7 +32,7 @@ type
     BitBtn1: TBitBtn;
     btnCancel: TBitBtn;
     OpenDialog: TOpenDialog;
-    PageControl1: TPageControl;
+    MainPages: TPageControl;
     tsExternal: TTabSheet;
     GroupBox1: TGroupBox;
     c: TBitBtn;
@@ -52,34 +52,18 @@ type
     Label4: TLabel;
     lbLdraw: TLabel;
     TabSheet1: TTabSheet;
-    TabSheet2: TTabSheet;
-    GroupBox2: TGroupBox;
-    cboDet: TCheckBox;
-    cboDist: TCheckBox;
-    Memo1: TMemo;
-    Memo2: TMemo;
     TabSheet3: TTabSheet;
     GroupBox4: TGroupBox;
     btnRescanPlugins: TBitBtn;
     cblPlugins: TCheckListBox;
     Label9: TLabel;
     rgStyle: TRadioGroup;
-    GroupBox5: TGroupBox;
-    lbPntAcc: TLabel;
-    lbRotAcc: TLabel;
     ColorDialog1: TColorDialog;
-    Label6: TLabel;
-    Memo3: TMemo;
     GroupBox7: TGroupBox;
     Label12: TLabel;
     edLSynthDir: TEdit;
     btLSynth: TBitBtn;
     lbLSynth: TLabel;
-    seDist: TJvValidateEdit;
-    seDet: TJvValidateEdit;
-    seCollinear: TJvValidateEdit;
-    sePntAcc: TJvValidateEdit;
-    seRotAcc: TJvValidateEdit;
     ColorBarSheet: TTabSheet;
     GroupBox9: TGroupBox;
     lbxColors: TListBox;
@@ -91,9 +75,6 @@ type
     lbColorNumber: TLabel;
     btnColorRestore: TBitBtn;
     lbxExternal: TListBox;
-    cboNormalAngle: TCheckBox;
-    Memo4: TMemo;
-    seNormalAngle: TJvValidateEdit;
     Panel2: TPanel;
     Memo5: TMemo;
     Panel3: TPanel;
@@ -110,18 +91,8 @@ type
     Panel4: TPanel;
     btnAddExternal: TButton;
     btnDelExternal: TButton;
-    cboAutoRoundOnly: TCheckBox;
     ColorBarCombo: TJvColorComboBox;
     TabSheet5: TTabSheet;
-    GroupBox6: TGroupBox;
-    Label1: TLabel;
-    seCustomPollInterval: TJvValidateEdit;
-    Label3: TLabel;
-    edUserName: TEdit;
-    edEmail: TEdit;
-    Label7: TLabel;
-    Label8: TLabel;
-    edName: TEdit;
     SearchPathsList: TListView;
     Panel5: TPanel;
     btnPathUp: TBitBtn;
@@ -134,7 +105,65 @@ type
     edSearchPath: TEdit;
     btnPathOpen: TBitBtn;
     OptionImages: TImageList;
-    procedure PageControl1Change(Sender: TObject);
+    TabSheet4: TTabSheet;
+    ConfigPages: TPageControl;
+    TabSheet6: TTabSheet;
+    TabSheet7: TTabSheet;
+    TabSheet8: TTabSheet;
+    cboDist: TCheckBox;
+    cboDet: TCheckBox;
+    cboNormalAngle: TCheckBox;
+    Label6: TLabel;
+    seDist: TJvValidateEdit;
+    seDet: TJvValidateEdit;
+    seNormalAngle: TJvValidateEdit;
+    seCollinear: TJvValidateEdit;
+    Memo3: TMemo;
+    Memo4: TMemo;
+    Memo2: TMemo;
+    Memo1: TMemo;
+    lbPntAcc: TLabel;
+    sePntAcc: TJvValidateEdit;
+    seRotAcc: TJvValidateEdit;
+    lbRotAcc: TLabel;
+    cboAutoRoundOnly: TCheckBox;
+    edName: TEdit;
+    Label3: TLabel;
+    Label7: TLabel;
+    edUserName: TEdit;
+    edEmail: TEdit;
+    Label8: TLabel;
+    Label1: TLabel;
+    seCustomPollInterval: TJvValidateEdit;
+    TabSheet2: TTabSheet;
+    GroupBox2: TGroupBox;
+    Label13: TLabel;
+    seGridFineX: TJvValidateEdit;
+    Label14: TLabel;
+    seGridFineY: TJvValidateEdit;
+    Label16: TLabel;
+    seGridFineZ: TJvValidateEdit;
+    Label18: TLabel;
+    seGridFineAngle: TJvValidateEdit;
+    GroupBox3: TGroupBox;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    seGridMediumX: TJvValidateEdit;
+    seGridMediumY: TJvValidateEdit;
+    seGridMediumZ: TJvValidateEdit;
+    seGridMediumAngle: TJvValidateEdit;
+    GroupBox5: TGroupBox;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    seGridCoarseX: TJvValidateEdit;
+    seGridCoarseY: TJvValidateEdit;
+    seGridCoarseZ: TJvValidateEdit;
+    seGridCoarseAngle: TJvValidateEdit;
+    procedure MainPagesChange(Sender: TObject);
     procedure btnRescanPluginsClick(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
     procedure btLDrawClick(Sender: TObject);
@@ -261,7 +290,7 @@ begin
 
 end;
 
-procedure TfrOptions.PageControl1Change(Sender: TObject);
+procedure TfrOptions.MainPagesChange(Sender: TObject);
 begin
   UpdateControls;
 end;
@@ -353,30 +382,19 @@ begin
   IniSection := 'LDDP Options';
   LDDPini.EraseSection(IniSection);
 
-  if frOptions.edLDrawDir.Text <> '' then
-    LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
-  LDDPini.WriteString(IniSection, 'edLDViewDir_Text', edLDViewDir.Text);
-  LDDPini.WriteString(IniSection, 'edMLCadDir_Text', edMLCadDir.Text);
-  LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
-  LDDPini.WriteString(IniSection, 'edL3LabDir_Text', edL3LabDir.Text);
-  LDDPini.WriteString(IniSection, 'edLSynthDir_Text', edLSynthDir.Text);
-  LDDPini.WriteString(IniSection, 'edExternal_Text', edExternal.Text);
-  LDDPini.WriteString(IniSection, 'edParameters_Text', edParameters.Text);
-  LDDPini.WriteString(IniSection, 'edEmail_Text', edEMail.Text);
-  LDDPini.WriteString(IniSection, 'edName_Text', edName.Text);
-  LDDPini.WriteString(IniSection, 'edUsername_Text', edUsername.Text);
-  LDDPini.WriteFloat(IniSection, 'seDet_Value', seDet.Value);
-  LDDPini.WriteFloat(IniSection, 'seDist_Value', seDist.Value);
-  LDDPini.WriteFloat(IniSection, 'seNormalAngle_Value', seNormalAngle.Value);
-  LDDPini.WriteFloat(IniSection, 'seCollinear_Value', seCollinear.Value);
-  LDDPini.WriteFloat(IniSection, 'seCustomPollInterval_Value', seCustomPollInterval.Value);
-  LDDPini.WriteInteger(IniSection, 'sePntAcc_Value', sePntAcc.Value);
-  LDDPini.WriteInteger(IniSection, 'seRotAcc_Value', seRotAcc.Value);
-  LDDPini.WriteBool(IniSection, 'cboDist_Checked', cboDist.Checked);
-  LDDPini.WriteBool(IniSection, 'cboDet_Checked', cboDet.Checked);
-  LDDPini.WriteBool(IniSection, 'cboNormalAngle_Checked', cboNormalAngle.Checked);
-  LDDPini.WriteBool(IniSection, 'cboAutoRoundOnly_Checked', cboAutoRoundOnly.Checked);
-  LDDPini.WriteInteger(IniSection, 'rgStyle_ItemIndex', rgStyle.ItemIndex);
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TJvValidateEdit then
+    begin
+      case (Components[i] as TJvValidateEdit).DisplayFormat of
+        dfFloat: LDDPini.WriteFloat(IniSection, Components[i].Name + '_Value', (Components[i] as TJvValidateEdit).Value);
+        dfInteger: LDDPini.WriteInteger(IniSection, Components[i].Name + '_Value', (Components[i] as TJvValidateEdit).Value);
+      end;
+    end
+    else if Components[i] is TEdit then
+      LDDPini.WriteString(IniSection, Components[i].Name + '_Text', (Components[i] as TEdit).Text)
+    else if Components[i] is TCheckBox then
+      LDDPini.WriteBool(IniSection, Components[i].Name + '_Checked', (Components[i] as TCheckbox).Checked);
+  LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
 
   for i := 0 to 15 do
     LDDPini.WriteString(IniSection, 'lbxColors_Item' + IntToStr(i), ColorBarList[i]);
@@ -408,32 +426,20 @@ begin
   IniSection := 'LDDP Options';
 
   //Restore various option parameters
-  edLDrawDir.Text := LDDPini.ReadString('LDraw','BaseDirectory', '');
-  edLDViewDir.Text := LDDPini.ReadString(IniSection, 'edLDViewDir_Text', '');
-  edMLCadDir.Text := LDDPini.ReadString(IniSection, 'edMLCadDir_Text', '');
-  edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
-  edL3LabDir.Text := LDDPini.ReadString(IniSection, 'edL3LabDir_Text', '');
-  edLSynthDir.Text := LDDPini.ReadString(IniSection, 'edLSynthDir_Text', '');
-  edEMail.Text := LDDPini.ReadString(IniSection, 'edEmail_Text', '');
-  edName.Text := LDDPini.ReadString(IniSection, 'edName_Text', '');
-  edUsername.Text := LDDPini.ReadString(IniSection, 'edUsername_Text', '');
-  seDet.Value := LDDPini.ReadFloat(IniSection, 'seDet_Value', 0.01);
-  if seDet.Value = 0 then seDet.Value := 0.01;
-  seDist.Value := LDDPini.ReadFloat(IniSection, 'seDist_Value', 0.1);
-  if seDist.Value = 0 then seDist.Value := 0.1;
-  seNormalAngle.Value := LDDPini.ReadFloat(IniSection, 'seNormalAngle_Value', 1);
-  if seNormalAngle.Value = 0 then seNormalAngle.Value := 1;
-  seCollinear.Value := LDDPini.ReadFloat(IniSection, 'seCollinear_Value', 0.0001);
-  if seCollinear.Value = 0 then seCollinear.Value := 0.0001;
-  seCustomPollInterval.Value := LDDPini.ReadFloat(IniSection, 'seCustomPollInterval_Value', 0.1);
-  sePntAcc.Value := LDDPini.ReadInteger(IniSection, 'sePntAcc_Value', 4);
-  if sePntAcc.Value = 0 then sePntAcc.Value := 4;
-  seRotAcc.Value := LDDPini.ReadInteger(IniSection, 'seRotAcc_Value', 4);
-  if seRotAcc.Value = 0 then seRotAcc.Value := 4;
-  cboDist.Checked := LDDPini.ReadBool(IniSection, 'cboDist_Checked', false);
-  cboDet.Checked := LDDPini.ReadBool(IniSection, 'cboDet_Checked', false);
-  cboNormalAngle.Checked := LDDPini.ReadBool(IniSection, 'cboNormalAngle_Checked', false);
-  cboAutoRoundOnly.Checked := LDDPini.ReadBool(IniSection, 'cboAutoRoundOnly_Checked', false);
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TJvValidateEdit then
+    begin
+      case (Components[i] as TJvValidateEdit).DisplayFormat of
+        dfFloat: (Components[i] as TJvValidateEdit).Value := 
+                   LDDPini.ReadFloat(IniSection, Components[i].Name + '_Value', (Components[i] as TJvValidateEdit).Value);
+        dfInteger: (Components[i] as TJvValidateEdit).Value :=
+                     LDDPini.ReadInteger(IniSection, Components[i].Name + '_Value', (Components[i] as TJvValidateEdit).Value);
+      end;
+    end
+    else if Components[i] is TEdit then
+      (Components[i] as TEdit).Text := LDDPini.ReadString(IniSection, Components[i].Name + '_Text', (Components[i] as TEdit).Text)
+    else if Components[i] is TCheckBox then
+      (Components[i] as TCheckbox).Checked := LDDPini.ReadBool(IniSection, Components[i].Name + '_Checked', (Components[i] as TCheckbox).Checked);
 
   //Read and set up color bar settings
   if LDDPini.ReadString(IniSection, 'lbxColors_Item0', 'none') = 'none' then
@@ -935,7 +941,7 @@ begin
   UpdateControls;
   SetConfigurationConstants;
   UpdateSearchPathList;
-  PageControl1.ActivePage:=tsExternal;
+  MainPages.ActivePage:=tsExternal;
 end;
 
 procedure TfrOptions.SearchPathsListSelectItem(Sender: TObject; Item: TListItem;

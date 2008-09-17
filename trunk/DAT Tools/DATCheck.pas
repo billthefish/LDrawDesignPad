@@ -37,12 +37,13 @@ type
                    deColor24Illegal, deNil);
 
   TDATCoplanerType = (ctDet, ctDist, ctNormalAngle);
+  TDATCollinearType = (clPoints123, clPoints124, clPoints134, clPoints234, clPointsAll);
 
   TDATError = class(TObject)
     ErrorType: TDATErrorType;
     Row: Byte;
     CollinearValue: Extended;
-    CollinearVertices: array[1..3] of Integer;
+    CollinearType: TDATCollinearType;
     IsBowtieType1423: Boolean;
     CoplanerValue: Extended;
     CoplanerType: TDATCoplanerType;
@@ -86,7 +87,7 @@ begin
   ErrorType := AError.ErrorType;
   Row := AError.Row;
   CollinearValue := AError.CollinearValue;
-  CollinearVertices := AError.CollinearVertices;
+  CollinearType := AError.CollinearType;
   IsBowtieType1423 := AError.IsBowtieType1423;
   CoplanerValue := AError.CoplanerValue;
   CoplanerType := AError.CoplanerType;
@@ -317,6 +318,7 @@ begin
       error := TDATError.Create;
       error.ErrorType := deCollinearVertices;
       error.CollinearValue := dp;
+      error.CollinearType := clPointsAll;
       Result.Add(error);
     end;
   end;
@@ -353,9 +355,7 @@ begin
       error := TDATError.Create;;
       error.ErrorType := deCollinearVertices;
       error.CollinearValue := cp;
-      error.CollinearVertices[1] := 1;
-      error.CollinearVertices[2] := 2;
-      error.CollinearVertices[3] := 3;
+      error.CollinearType := clPoints123;
       Result.Add(error);
       Exit;
     end;
@@ -366,9 +366,7 @@ begin
       error := TDATError.Create;;
       error.ErrorType := deCollinearVertices;
       error.CollinearValue := cp;
-      error.CollinearVertices[1] := 1;
-      error.CollinearVertices[2] := 2;
-      error.CollinearVertices[3] := 4;
+      error.CollinearType := clPoints124;
       Result.Add(error);
       Exit;
     end;
@@ -379,9 +377,7 @@ begin
       error := TDATError.Create;;
       error.ErrorType := deCollinearVertices;
       error.CollinearValue := cp;
-      error.CollinearVertices[1] := 1;
-      error.CollinearVertices[2] := 3;
-      error.CollinearVertices[3] := 4;
+      error.CollinearType := clPoints134;
       Result.Add(error);
       Exit;
     end;
@@ -392,9 +388,7 @@ begin
       error := TDATError.Create;;
       error.ErrorType := deCollinearVertices;
       error.CollinearValue := cp;
-      error.CollinearVertices[1] := 2;
-      error.CollinearVertices[2] := 3;
-      error.CollinearVertices[3] := 4;
+      error.CollinearType := clPoints234;
       Result.Add(error);
       Exit;
     end;
@@ -544,17 +538,17 @@ begin
     deSigularMatrix: Result := strSingularMatrix;
     deIdenticalVertices: Result := strIdenticalVertices;
     deCollinearVertices:
-      if (error.CollinearVertices[1] > 0) and
-         (error.CollinearVertices[2] > 0) and
-         (error.CollinearVertices[3] > 0) then
-        Result := 'Points ' + IntToStr(error.CollinearVertices[1]) + ', ' +
-                   IntToStr(error.CollinearVertices[2]) + ', and ' +
-                   IntToStr(error.CollinearVertices[3]) + ' have ' +
-                   strCollinearVertices + ' (' +
-                   FloatToStr(error.CollinearValue) + ')'
-      else
-        Result := strCollinearVertices + ' (' +
-                  FloatToStr(error.CollinearValue) + ')';
+    begin
+      case error.CollinearType of
+        clPoints123: Result := 'Points 1, 2, and 3 have ';
+        clPoints124: Result := 'Points 1, 2, and 4 have ';
+        clPoints134: Result := 'Points 1, 3, and 4 have ';
+        clPoints234: Result := 'Points 2, 3, and 4 have ';
+        clPointsAll: Result := '';
+      end;
+      Result := Result + strCollinearVertices + ' (' +
+                FloatToStr(error.CollinearValue) + ')'
+    end;
     deConcaveQuad:
       if error.SplitOn24 then
         Result := strConcaveSplit24

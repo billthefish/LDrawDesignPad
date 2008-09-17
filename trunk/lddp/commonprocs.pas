@@ -20,7 +20,15 @@ unit commonprocs;
 interface
 
 uses
-  DATModel, Menus;
+  DATModel, Menus, Classes;
+
+type
+  TGridSettings = record
+    XStep, YStep, ZStep: Extended;
+    Angle: Extended;
+  end;
+
+  TGridType = (gtCoarse, gtMedium, gtFine);
 
 function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
 function StripEndingCRLF(const str: string): string;
