@@ -59,7 +59,7 @@ const
 
 function DoCommand(Command: string; Flg: byte; Wait: Boolean): Boolean;
 function GetShortFileName(Const FileName : string): string;
-function WindowsDir:string;
+// function WindowsDir:string;
 function GetShellFolderPath(folder: string): string;
 function IniFilePath: string;
 function WinTempDir: string;

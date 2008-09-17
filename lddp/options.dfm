@@ -17,23 +17,19 @@ object frOptions: TfrOptions
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object PageControl1: TPageControl
+  object MainPages: TPageControl
     Left = 0
     Top = 0
     Width = 592
     Height = 333
-    ActivePage = TabSheet2
+    ActivePage = TabSheet4
     Align = alClient
     MultiLine = True
     TabOrder = 0
-    OnChange = PageControl1Change
+    OnChange = MainPagesChange
     object tsExternal: TTabSheet
       Caption = '&Program Paths'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
@@ -435,6 +431,572 @@ object frOptions: TfrOptions
         end
       end
     end
+    object TabSheet4: TTabSheet
+      Caption = 'Configuration &Values'
+      ImageIndex = 6
+      object ConfigPages: TPageControl
+        Left = 0
+        Top = 0
+        Width = 584
+        Height = 305
+        ActivePage = TabSheet2
+        Align = alClient
+        TabOrder = 0
+        object TabSheet6: TTabSheet
+          Caption = 'Error Check Values'
+          ExplicitWidth = 281
+          ExplicitHeight = 165
+          object Label6: TLabel
+            Left = 20
+            Top = 114
+            Width = 125
+            Height = 13
+            Caption = 'Collinear Points Threshold:'
+          end
+          object cboDist: TCheckBox
+            Left = 3
+            Top = 3
+            Width = 181
+            Height = 17
+            Caption = 'Dist Coplanarity Check Threshold:'
+            TabOrder = 0
+          end
+          object cboDet: TCheckBox
+            Left = 3
+            Top = 37
+            Width = 185
+            Height = 17
+            Caption = 'Det Coplanarity Check Threshold:'
+            TabOrder = 1
+          end
+          object cboNormalAngle: TCheckBox
+            Left = 3
+            Top = 71
+            Width = 174
+            Height = 19
+            Caption = 'Normal Angle Coplanarity Limit:'
+            Checked = True
+            State = cbChecked
+            TabOrder = 2
+          end
+          object seDist: TJvValidateEdit
+            Left = 183
+            Top = 1
+            Width = 81
+            Height = 21
+            CriticalPoints.MaxValueIncluded = False
+            CriticalPoints.MinValueIncluded = True
+            TrimDecimals = True
+            DisplayFormat = dfFloat
+            DecimalPlaces = 9
+            EditText = '0.1'
+            TabOrder = 3
+          end
+          object seDet: TJvValidateEdit
+            Left = 183
+            Top = 34
+            Width = 81
+            Height = 21
+            CriticalPoints.MaxValueIncluded = False
+            CriticalPoints.MinValueIncluded = True
+            TrimDecimals = True
+            DisplayFormat = dfFloat
+            DecimalPlaces = 9
+            EditText = '0.001'
+            TabOrder = 4
+          end
+          object seNormalAngle: TJvValidateEdit
+            Left = 183
+            Top = 70
+            Width = 81
+            Height = 21
+            CriticalPoints.MaxValueIncluded = False
+            CriticalPoints.MinValueIncluded = True
+            TrimDecimals = True
+            DisplayFormat = dfFloat
+            DecimalPlaces = 9
+            EditText = '1.000000000'
+            TabOrder = 5
+          end
+          object seCollinear: TJvValidateEdit
+            Left = 183
+            Top = 111
+            Width = 81
+            Height = 21
+            CriticalPoints.MaxValueIncluded = False
+            CriticalPoints.MinValueIncluded = True
+            TrimDecimals = True
+            DisplayFormat = dfFloat
+            DecimalPlaces = 9
+            EditText = '0.0001'
+            TabOrder = 6
+          end
+          object Memo3: TMemo
+            Left = 267
+            Top = 103
+            Width = 292
+            Height = 41
+            TabStop = False
+            BorderStyle = bsNone
+            Color = clBtnFace
+            Lines.Strings = (
+              'Only adjust this value if you want to change the pecent '
+              'deviation used for collinear point determination. (L3P uses '
+              '0.0001 by defualt)')
+            ReadOnly = True
+            TabOrder = 7
+          end
+          object Memo4: TMemo
+            Left = 267
+            Top = 70
+            Width = 292
+            Height = 27
+            TabStop = False
+            BorderStyle = bsNone
+            Color = clBtnFace
+            Lines.Strings = (
+              'Quads considered coplaner if the angle is less than or equal '
+              'to 3 degrees. An angle of less than 1 degree is recommended')
+            ReadOnly = True
+            TabOrder = 8
+          end
+          object Memo2: TMemo
+            Left = 267
+            Top = 34
+            Width = 292
+            Height = 33
+            TabStop = False
+            BorderStyle = bsNone
+            Color = clBtnFace
+            Lines.Strings = (
+              'Geometric primitives typically use 0.01. Hi-res primitives '
+              'typically use 0.001.  (Note: this check is depreciated)')
+            ReadOnly = True
+            TabOrder = 9
+          end
+          object Memo1: TMemo
+            Left = 267
+            Top = 1
+            Width = 292
+            Height = 33
+            TabStop = False
+            BorderStyle = bsNone
+            Color = clBtnFace
+            Lines.Strings = (
+              
+                'General files (parts, subparts and some primitives) typically us' +
+                'e '
+              'a value of 0.1. (Note: this check is depreciated)')
+            ReadOnly = True
+            TabOrder = 10
+          end
+        end
+        object TabSheet7: TTabSheet
+          Caption = 'Editor Behavior'
+          ImageIndex = 1
+          ExplicitWidth = 281
+          ExplicitHeight = 165
+          object lbPntAcc: TLabel
+            Left = 3
+            Top = 3
+            Width = 126
+            Height = 13
+            Caption = 'Position Decimal Accuracy'
+          end
+          object lbRotAcc: TLabel
+            Left = 3
+            Top = 30
+            Width = 160
+            Height = 13
+            Caption = 'Rotation Matrix Decimal Accuracy'
+          end
+          object Label1: TLabel
+            Left = 3
+            Top = 81
+            Width = 156
+            Height = 13
+            Caption = 'Custom Poll Interval (In Seconds)'
+          end
+          object sePntAcc: TJvValidateEdit
+            Left = 179
+            Top = 1
+            Width = 81
+            Height = 21
+            CriticalPoints.MaxValue = 15.000000000000000000
+            CriticalPoints.MaxValueIncluded = True
+            CriticalPoints.MinValueIncluded = True
+            EditText = '3'
+            TabOrder = 0
+          end
+          object seRotAcc: TJvValidateEdit
+            Left = 179
+            Top = 28
+            Width = 81
+            Height = 21
+            CriticalPoints.MaxValue = 15.000000000000000000
+            CriticalPoints.MaxValueIncluded = True
+            CriticalPoints.MinValueIncluded = True
+            EditText = '3'
+            TabOrder = 1
+          end
+          object cboAutoRoundOnly: TCheckBox
+            Left = 3
+            Top = 55
+            Width = 291
+            Height = 17
+            Caption = 'Only perform rounding when using the auto round function'
+            TabOrder = 2
+          end
+          object seCustomPollInterval: TJvValidateEdit
+            Left = 179
+            Top = 78
+            Width = 81
+            Height = 21
+            CriticalPoints.MinValue = 0.100000000000000000
+            CriticalPoints.MaxValueIncluded = False
+            CriticalPoints.MinValueIncluded = True
+            TrimDecimals = True
+            DisplayFormat = dfFloat
+            DecimalPlaces = 2
+            EditText = '0.50'
+            TabOrder = 3
+          end
+        end
+        object TabSheet8: TTabSheet
+          Caption = 'User Information'
+          ImageIndex = 2
+          ExplicitLeft = -228
+          ExplicitTop = -128
+          object Label3: TLabel
+            Left = 3
+            Top = 3
+            Width = 50
+            Height = 13
+            Caption = 'Full Name:'
+          end
+          object Label7: TLabel
+            Left = 3
+            Top = 30
+            Width = 118
+            Height = 13
+            Caption = 'Parts Tracker Username:'
+          end
+          object Label8: TLabel
+            Left = 3
+            Top = 57
+            Width = 28
+            Height = 13
+            Caption = 'Email:'
+          end
+          object edName: TEdit
+            Left = 59
+            Top = 1
+            Width = 203
+            Height = 21
+            TabOrder = 0
+          end
+          object edUserName: TEdit
+            Left = 124
+            Top = 28
+            Width = 138
+            Height = 21
+            TabOrder = 1
+          end
+          object edEmail: TEdit
+            Left = 59
+            Top = 55
+            Width = 203
+            Height = 21
+            TabOrder = 2
+          end
+        end
+        object TabSheet2: TTabSheet
+          Caption = 'Grid Settings'
+          ImageIndex = 3
+          object GroupBox2: TGroupBox
+            Left = 0
+            Top = 146
+            Width = 576
+            Height = 73
+            Align = alTop
+            Caption = 'Fine Grid Settings'
+            TabOrder = 0
+            ExplicitTop = 0
+            object Label13: TLabel
+              Left = 11
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'X Step'
+            end
+            object Label14: TLabel
+              Left = 98
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Y Step'
+            end
+            object Label16: TLabel
+              Left = 185
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Z Step'
+            end
+            object Label18: TLabel
+              Left = 272
+              Top = 20
+              Width = 70
+              Height = 13
+              Caption = 'Rotation Angle'
+            end
+            object seGridFineX: TJvValidateEdit
+              Left = 11
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '1'
+              TabOrder = 0
+            end
+            object seGridFineY: TJvValidateEdit
+              Left = 98
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '1'
+              TabOrder = 1
+            end
+            object seGridFineZ: TJvValidateEdit
+              Left = 185
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '1'
+              TabOrder = 2
+            end
+            object seGridFineAngle: TJvValidateEdit
+              Left = 272
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '10'
+              TabOrder = 3
+            end
+          end
+          object GroupBox3: TGroupBox
+            Left = 0
+            Top = 73
+            Width = 576
+            Height = 73
+            Align = alTop
+            Caption = 'Medium Grid Settings'
+            TabOrder = 1
+            ExplicitTop = 0
+            object Label20: TLabel
+              Left = 11
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'X Step'
+            end
+            object Label21: TLabel
+              Left = 98
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Y Step'
+            end
+            object Label22: TLabel
+              Left = 185
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Z Step'
+            end
+            object Label23: TLabel
+              Left = 272
+              Top = 20
+              Width = 70
+              Height = 13
+              Caption = 'Rotation Angle'
+            end
+            object seGridMediumX: TJvValidateEdit
+              Left = 11
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '5'
+              TabOrder = 0
+            end
+            object seGridMediumY: TJvValidateEdit
+              Left = 98
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '5'
+              TabOrder = 1
+            end
+            object seGridMediumZ: TJvValidateEdit
+              Left = 185
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '5'
+              TabOrder = 2
+            end
+            object seGridMediumAngle: TJvValidateEdit
+              Left = 272
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '45'
+              TabOrder = 3
+            end
+          end
+          object GroupBox5: TGroupBox
+            Left = 0
+            Top = 0
+            Width = 576
+            Height = 73
+            Align = alTop
+            Caption = 'Coarse Grid Settings'
+            TabOrder = 2
+            object Label24: TLabel
+              Left = 11
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'X Step'
+            end
+            object Label25: TLabel
+              Left = 98
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Y Step'
+            end
+            object Label26: TLabel
+              Left = 185
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Z Step'
+            end
+            object Label27: TLabel
+              Left = 272
+              Top = 20
+              Width = 70
+              Height = 13
+              Caption = 'Rotation Angle'
+            end
+            object seGridCoarseX: TJvValidateEdit
+              Left = 11
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '10'
+              TabOrder = 0
+            end
+            object seGridCoarseY: TJvValidateEdit
+              Left = 98
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '10'
+              TabOrder = 1
+            end
+            object seGridCoarseZ: TJvValidateEdit
+              Left = 185
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '10'
+              TabOrder = 2
+            end
+            object seGridCoarseAngle: TJvValidateEdit
+              Left = 272
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '90'
+              TabOrder = 3
+            end
+          end
+        end
+      end
+    end
     object TabSheet5: TTabSheet
       Caption = '&Search Paths'
       ImageIndex = 6
@@ -647,296 +1209,10 @@ object frOptions: TfrOptions
         end
       end
     end
-    object TabSheet2: TTabSheet
-      Caption = 'Configuration &Values'
-      ImageIndex = -1
-      object GroupBox2: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 584
-        Height = 169
-        Align = alTop
-        Caption = 'Error Check Options'
-        TabOrder = 0
-        object Label6: TLabel
-          Left = 37
-          Top = 133
-          Width = 125
-          Height = 13
-          Caption = 'Collinear Points Threshold:'
-        end
-        object cboDet: TCheckBox
-          Left = 20
-          Top = 56
-          Width = 185
-          Height = 17
-          Caption = 'Det Coplanarity Check Threshold:'
-          TabOrder = 1
-        end
-        object cboDist: TCheckBox
-          Left = 20
-          Top = 22
-          Width = 181
-          Height = 17
-          Caption = 'Dist Coplanarity Check Threshold:'
-          TabOrder = 0
-        end
-        object Memo1: TMemo
-          Left = 287
-          Top = 20
-          Width = 292
-          Height = 33
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            
-              'General files (parts, subparts and some primitives) typically us' +
-              'e '
-            'a value of 0.1. (Note: this check is depreciated)')
-          ReadOnly = True
-          TabOrder = 3
-        end
-        object Memo2: TMemo
-          Left = 287
-          Top = 53
-          Width = 292
-          Height = 33
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            'Geometric primitives typically use 0.01. Hi-res primitives '
-            'typically use 0.001.  (Note: this check is depreciated)')
-          ReadOnly = True
-          TabOrder = 4
-        end
-        object Memo3: TMemo
-          Left = 287
-          Top = 122
-          Width = 292
-          Height = 41
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            'Only adjust this value if you want to change the pecent '
-            'deviation used for collinear point determination. (L3P uses '
-            '0.0001 by defualt)')
-          ReadOnly = True
-          TabOrder = 2
-        end
-        object seDist: TJvValidateEdit
-          Left = 200
-          Top = 20
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '0.1'
-          TabOrder = 5
-        end
-        object seDet: TJvValidateEdit
-          Left = 200
-          Top = 53
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '0.001'
-          TabOrder = 6
-        end
-        object seCollinear: TJvValidateEdit
-          Left = 200
-          Top = 130
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '0.0001'
-          TabOrder = 7
-        end
-        object cboNormalAngle: TCheckBox
-          Left = 20
-          Top = 90
-          Width = 174
-          Height = 19
-          Caption = 'Normal Angle Coplanarity Limit:'
-          Checked = True
-          State = cbChecked
-          TabOrder = 8
-        end
-        object Memo4: TMemo
-          Left = 287
-          Top = 89
-          Width = 292
-          Height = 27
-          TabStop = False
-          BorderStyle = bsNone
-          Color = clBtnFace
-          Lines.Strings = (
-            'Quads considered coplaner if the angle is less than or equal '
-            'to 3 degrees. An angle of less than 1 degree is recommended')
-          ReadOnly = True
-          TabOrder = 9
-        end
-        object seNormalAngle: TJvValidateEdit
-          Left = 200
-          Top = 89
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 9
-          EditText = '1.000000000'
-          TabOrder = 10
-        end
-      end
-      object GroupBox5: TGroupBox
-        Left = 0
-        Top = 169
-        Width = 305
-        Height = 136
-        Align = alLeft
-        Caption = 'Decimal Accuracy'
-        TabOrder = 1
-        object lbPntAcc: TLabel
-          Left = 8
-          Top = 20
-          Width = 126
-          Height = 13
-          Caption = 'Position Decimal Accuracy'
-        end
-        object lbRotAcc: TLabel
-          Left = 8
-          Top = 47
-          Width = 160
-          Height = 13
-          Caption = 'Rotation Matrix Decimal Accuracy'
-        end
-        object sePntAcc: TJvValidateEdit
-          Left = 184
-          Top = 18
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValue = 15.000000000000000000
-          CriticalPoints.MaxValueIncluded = True
-          CriticalPoints.MinValueIncluded = True
-          EditText = '3'
-          TabOrder = 0
-        end
-        object seRotAcc: TJvValidateEdit
-          Left = 184
-          Top = 45
-          Width = 81
-          Height = 21
-          CriticalPoints.MaxValue = 15.000000000000000000
-          CriticalPoints.MaxValueIncluded = True
-          CriticalPoints.MinValueIncluded = True
-          EditText = '3'
-          TabOrder = 1
-        end
-        object cboAutoRoundOnly: TCheckBox
-          Left = 8
-          Top = 72
-          Width = 291
-          Height = 17
-          Caption = 'Only perform rounding when using the auto round function'
-          TabOrder = 2
-        end
-      end
-      object GroupBox6: TGroupBox
-        Left = 305
-        Top = 169
-        Width = 279
-        Height = 136
-        Align = alClient
-        Caption = 'Other Options'
-        TabOrder = 2
-        object Label1: TLabel
-          Left = 6
-          Top = 20
-          Width = 156
-          Height = 13
-          Caption = 'Custom Poll Interval (In Seconds)'
-        end
-        object Label3: TLabel
-          Left = 6
-          Top = 47
-          Width = 50
-          Height = 13
-          Caption = 'Full Name:'
-        end
-        object Label7: TLabel
-          Left = 6
-          Top = 74
-          Width = 118
-          Height = 13
-          Caption = 'Parts Tracker Username:'
-        end
-        object Label8: TLabel
-          Left = 6
-          Top = 101
-          Width = 28
-          Height = 13
-          Caption = 'Email:'
-        end
-        object seCustomPollInterval: TJvValidateEdit
-          Left = 184
-          Top = 18
-          Width = 81
-          Height = 21
-          CriticalPoints.MinValue = 0.100000000000000000
-          CriticalPoints.MaxValueIncluded = False
-          CriticalPoints.MinValueIncluded = True
-          TrimDecimals = True
-          DisplayFormat = dfFloat
-          DecimalPlaces = 2
-          EditText = '0.50'
-          TabOrder = 0
-        end
-        object edUserName: TEdit
-          Left = 127
-          Top = 72
-          Width = 138
-          Height = 21
-          TabOrder = 1
-        end
-        object edEmail: TEdit
-          Left = 62
-          Top = 99
-          Width = 203
-          Height = 21
-          TabOrder = 2
-        end
-        object edName: TEdit
-          Left = 62
-          Top = 45
-          Width = 203
-          Height = 21
-          TabOrder = 3
-        end
-      end
-    end
     object ColorBarSheet: TTabSheet
       Caption = '&Color Bar'
       ImageIndex = -1
       OnShow = ColorBarSheetShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
@@ -1081,10 +1357,6 @@ object frOptions: TfrOptions
     object TabSheet1: TTabSheet
       Caption = '&External Progams'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox7: TGroupBox
         Left = 223
         Top = 0
@@ -1323,10 +1595,6 @@ object frOptions: TfrOptions
     object TabSheet3: TTabSheet
       Caption = 'Plu&gins'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0
@@ -1528,16 +1796,16 @@ object frOptions: TfrOptions
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Open'
-    Left = 39
-    Top = 32
+    Left = 7
+    Top = 336
   end
   object ColorDialog1: TColorDialog
     Left = 72
-    Top = 32
+    Top = 336
   end
   object OptionImages: TImageList
-    Left = 8
-    Top = 32
+    Left = 40
+    Top = 336
     Bitmap = {
       494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001001000000000000008

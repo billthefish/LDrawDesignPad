@@ -30,6 +30,9 @@ requires
   vcl;
 
 contains
-  SciScintillaLDDP in 'SciScintillaLDDP.pas';
+  SciScintillaLDDP in 'SciScintillaLDDP.pas',
+  DATBase in '..\..\DAT Tools\DATBase.pas',
+  DATUtils in '..\..\DAT Tools\DATUtils.pas',
+  DATModel in '..\..\DAT Tools\DATModel.pas';
 
 end.
