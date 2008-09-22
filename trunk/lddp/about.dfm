@@ -27,7 +27,6 @@ object frAboutBox: TfrAboutBox
     Align = alTop
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitWidth = 378
     object ProgramIcon: TImage
       Left = 8
       Top = 12
@@ -183,14 +182,11 @@ object frAboutBox: TfrAboutBox
     Top = 49
     Width = 436
     Height = 217
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 378
     object TabSheet1: TTabSheet
       Caption = 'Credits'
-      ExplicitWidth = 370
-      ExplicitHeight = 133
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -223,6 +219,7 @@ object frAboutBox: TfrAboutBox
           'Philippe "Philo" Hurbain'
           '  Plane normal check derived from code by:'
           '  Philippe "Philo" Hurbain - 2007 - www.philohome.com'
+          '  Philo also provided a few icons'
           ''
           'Willy Tschager'
           '  Primary Beta Tester'
@@ -249,15 +246,11 @@ object frAboutBox: TfrAboutBox
           'Boston, MA  02111-1307, USA.')
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitWidth = 370
-        ExplicitHeight = 133
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Version History'
       ImageIndex = 1
-      ExplicitWidth = 370
-      ExplicitHeight = 133
       object Memo2: TMemo
         Left = 0
         Top = 0
@@ -266,6 +259,11 @@ object frAboutBox: TfrAboutBox
         Align = alClient
         Lines.Strings = (
           '+ = New feature  * = Bugfix   - = Removed feature'
+          ''
+          'v2.0'
+          
+            '+ Completely retooled and restructured LDDP.  Too many changes t' +
+            'o list here.'
           ''
           'v1.5.7'
           '+ Added ability to sort text on various criteria'
@@ -468,7 +466,6 @@ object frAboutBox: TfrAboutBox
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitTop = 3
       end
     end
   end
@@ -479,8 +476,6 @@ object frAboutBox: TfrAboutBox
     Height = 29
     Align = alBottom
     TabOrder = 2
-    ExplicitTop = 210
-    ExplicitWidth = 378
     object BitBtn1: TBitBtn
       Left = 360
       Top = 1
@@ -534,9 +529,6 @@ object frAboutBox: TfrAboutBox
         FDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFD
         FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
-      ExplicitLeft = 294
-      ExplicitTop = 6
-      ExplicitHeight = 25
     end
   end
 end

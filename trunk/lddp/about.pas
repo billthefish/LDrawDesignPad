@@ -61,7 +61,7 @@ begin
     Version.Caption := Version.Caption + ': ' + GetAppVersion(Application.ExeName)
   else
     Version.Caption := _('Version information not available');
-  PageControl1.ActivePageIndex := 0;  
+  PageControl1.ActivePageIndex := 0;
 end;
 
 procedure TfrAboutBox.FormCreate(Sender: TObject);

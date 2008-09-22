@@ -28,7 +28,7 @@ uses
   splash in 'splash.pas' {frSplash},
   colordialog in 'colordialog.pas' {frColorDialog},
   BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
-  modeltreeview in 'modeltreeview.pas' {frModelTreeView},
+  mpdexplorer in 'mpdexplorer.pas' {frModelTreeView},
   windowsspecific in 'windowsspecific.pas',
   BezWindow in 'BezWindow.pas' {frmDATCurve},
   dlgSubpart in 'dlgSubpart.pas' {frSubFile},

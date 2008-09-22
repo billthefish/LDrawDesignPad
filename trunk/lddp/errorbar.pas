@@ -147,6 +147,7 @@ end;
 procedure TfrErrorWindow.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveFormValues;
+  frMain.acErrorList.Checked := False;
 end;
 
 procedure TfrErrorWindow.FormCreate(Sender: TObject);
@@ -169,6 +170,7 @@ end;
 procedure TfrErrorWindow.FormShow(Sender: TObject);
 begin
   LoadFormValues;
+  frMain.acErrorList.Checked := True;
 end;
 
 // Error check actions

@@ -171,7 +171,7 @@ type
     acCheckforUpdate: TAction;
     acBMP2LDraw: TAction;
     ConvertBitmaptoLDraw1: TMenuItem;
-    acModelTreeView: TAction;
+    acMPDExplorer: TAction;
     mnuModelTree: TMenuItem;
     N7: TMenuItem;
     View1: TMenuItem;
@@ -384,6 +384,15 @@ type
     acPoll5Seconds: TAction;
     acPollOnDemand: TAction;
     acPollCustom: TAction;
+    Polling1: TMenuItem;
+    EnablePolling1: TMenuItem;
+    PollToSelectedLine1: TMenuItem;
+    N6: TMenuItem;
+    N1SecondPollInterval1: TMenuItem;
+    N2SecondsPollInterval1: TMenuItem;
+    N5SecondsPollInterval1: TMenuItem;
+    CustomPollInterval1: TMenuItem;
+    CustomPollInterval2: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -426,7 +435,7 @@ type
     procedure acFileCloseAllExecute(Sender: TObject);
     procedure acReverseWindingExecute(Sender: TObject);
     procedure acCheckforUpdateExecute(Sender: TObject);
-    procedure acModelTreeViewExecute(Sender: TObject);
+    procedure acMPDExplorerExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure acBMP2LDrawExecute(Sender: TObject);
     procedure acFindNextUpdate(Sender: TObject);
@@ -487,6 +496,10 @@ type
     procedure acPollEnablePollingExecute(Sender: TObject);
     procedure acPollToSelectedLineExecute(Sender: TObject);
     procedure acPollOnDemandExecute(Sender: TObject);
+    procedure acMoveSnapToGridExecute(Sender: TObject);
+    procedure editorModified(Sender: TObject; const position,
+      modificationType: Integer; text: PAnsiChar; const len, linesAdded, line,
+      foldLevelNow, foldLevelPrev: Integer);
 
   private
     TabRightClickIndex: Integer;
@@ -500,7 +513,6 @@ type
     procedure BuildMetaMenu;
     function tempFileName: string;
     procedure SetKeyWordList;
-    function CombineGeometrics(const line1, line2: TDATGeometric): TDATQuad;
 
   public
     PluginActionList: TActionList;
@@ -524,7 +536,7 @@ implementation
 
 uses
   about, options, colordialog, BezWindow, sorting, splash, 
-  BMP2LDraw, modeltreeview, dlgSubpart, windowsspecific,
+  BMP2LDraw, mpdexplorer, dlgSubpart, windowsspecific,
   DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
   StrUtils, Registry, IniFiles, SciResLang, Contnrs;
 
@@ -828,66 +840,9 @@ begin
   line2.Free;
 end;
 
-
-function tfrMain.CombineGeometrics(const line1, line2: TDATGeometric): TDATQuad;
-
-var
-  QuadPoints: array of TDATPoint;
-  j, k: Integer;
-  flag: Boolean;
-
-begin
-  for j := 1 to 3 do
-  begin
-    if Length(QuadPoints) > 0 then
-    begin
-      flag := false;
-      for k := 0 to Length(QuadPoints) - 1 do
-        if CheckSamePoint(line1.Point[j],QuadPoints[k]) then
-          flag := true;
-      if not flag then
-      begin
-        SetLength(QuadPoints, Length(QuadPoints) + 1);
-        QuadPoints[Length(QuadPoints) - 1] := line1.Point[j];
-      end;
-    end
-    else
-    begin
-      SetLength(QuadPoints,1);
-      QuadPoints[0] := line1.Point[j];
-    end;
-    flag := false;
-    for k := 0 to Length(QuadPoints) - 1 do
-      if CheckSamePoint(line2.Point[j],QuadPoints[k]) then
-        flag := true;
-    if not flag then
-    begin
-      SetLength(QuadPoints, Length(QuadPoints) + 1);
-      QuadPoints[Length(QuadPoints) - 1] := line2.Point[j];
-    end;
-  end;
-
-  if Length(QuadPoints) = 4 then
-  begin
-    Result := TDATQuad.Create;
-    Result.Point[1] := QuadPoints[0];
-    Result.Point[2] := QuadPoints[1];
-    Result.Point[3] := QuadPoints[2];
-    Result.Point[4] := QuadPoints[3];
-    Result.Color := line1.Color;
-  end
-  else
-    Result := nil;
-end;
-
-
 procedure TfrMain.acSubFileExecute(Sender: TObject);
 // Save a block of text as a separate file and add the appropriate subfile line
-var
-  startline, endline: Integer;
-
 begin
-  editor.ExpandSelection(startline, endline);
   frSubfile.ShowModal;
 end;
 
@@ -910,8 +865,8 @@ procedure TfrMain.acMLCadExecute(Sender: TObject);
 begin
   if editor.Modified then
     if MessageDlg(_('File has been modified. ' + #13#10 +
-                  'Do you want to save and then view the file in MLCad ' + #13#10 +
-                  'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
+                    'Do you want to save and then view the file in MLCad ' + #13#10 +
+                    'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
       acFileSaveExecute(Sender);
   if (not FileExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
     MessageDlg(_('You have to specify a valid path to MLCad.exe first!'), mtError, [mbOK], 0);
@@ -1225,7 +1180,7 @@ begin
     OutputFile := GetShortFileName(tempFileName);
     TempFile := TstringList.create;
     CommandLine := GetShortFileName(frOptions.edLSynthDir.text) + '\lsynthcp.exe ';
-    InputFile := GetShortFileName(ExtractFilePath(TempFileName)) + ExtractFileName(TempFileName);
+    InputFile := GetShortFileName(ExtractFilePath(tempFileName)) + ExtractFileName(tempFileName);
     editor.lines.SaveToFile(InputFile);
     TempFile.Add(CommandLine + ' ' + InputFile + ' ' + OutputFile);
     CommandFile := GetShortFileName(WinTempDir) + GetTmpFIleName + '.bat';
@@ -1408,6 +1363,59 @@ begin
   editor.RotateSelection(GridSetting.Angle, 0, 0, 1);
 end;
 
+procedure TfrMain.acMoveSnapToGridExecute(Sender: TObject);
+
+var
+  DModel: TDATModel;
+  i, startline, endline: integer;
+  diffx, diffy, diffz: Extended;
+
+begin
+  editor.ExpandSelection(startline, endline);
+
+  DModel := LDDPCreateDATModel;
+  DModel.ModelText := editor.SelText;
+
+  for i := 0 to DModel.Count - 1 do
+    if DModel[i] is TDATElement then
+    begin
+      diffx := 0;
+      diffy := 0;
+      diffz := 0;
+      if DModel[i] is TDATGeometric then
+        with DModel[i] as TDATGeometric do
+        begin
+          diffx := MaxX  - Trunc(MaxX / GridSetting.XStep) * GridSetting.XStep;
+          diffy := MaxY  - Trunc(MaxY / GridSetting.YStep) * GridSetting.YStep;
+          diffz := MaxZ  - Trunc(MaxZ / GridSetting.ZStep) * GridSetting.ZStep;
+        end
+      else if DModel[i] is TDATSubPart then
+        with DModel[i] as TDATSubPart do
+        begin
+          diffx := X  - Trunc(X / GridSetting.XStep) * GridSetting.XStep;
+          diffy := Y  - Trunc(Y / GridSetting.YStep) * GridSetting.YStep;
+          diffz := Z  - Trunc(Z / GridSetting.ZStep) * GridSetting.ZStep;
+        end;
+      if diffx >= (GridSetting.XStep / 2) then
+        diffx := GridSetting.XStep - diffx
+      else
+        diffx := -diffx;
+      if diffy >= (GridSetting.YStep / 2) then
+        diffy := GridSetting.YStep - diffy
+      else
+        diffy := -diffy;
+      if diffz >= (GridSetting.ZStep / 2) then
+        diffz := GridSetting.ZStep - diffz
+      else
+        diffz := -diffz;
+      (DModel[i] as TDATElement).Translate(diffx, diffy, diffz);
+    end;
+
+  editor.SelText := DModel.ModelText;
+  editor.SelectLines(startline, endline);
+  DModel.Free;
+end;
+
 procedure TfrMain.acMoveXNegExecute(Sender: TObject);
 begin
   editor.TranslateSelection(-GridSetting.XStep, 0, 0);
@@ -1548,7 +1556,11 @@ end;
 
 procedure TfrMain.acErrorListExecute(Sender: TObject);
 begin
-  frErrorWindow.Visible := (Sender as TAction).Checked;
+  if (Sender as TAction).Checked then
+    frErrorWindow.Show
+  else
+    frErrorWindow.Close;
+
   if frErrorWindow.Visible then
   begin
     frErrorWindow.RestorePosition;
@@ -1556,12 +1568,16 @@ begin
   end;
 end;
 
-procedure TfrMain.acModelTreeViewExecute(Sender: TObject);
+procedure TfrMain.acMPDExplorerExecute(Sender: TObject);
 // Shows the model tree dialog
 begin
-  frModelTreeView.Visible := (Sender as TAction).Checked;
-  if frModelTreeView.Visible then
-    frModelTreeView.RestorePosition;
+  if (Sender as TAction).Checked then
+    frMPDExplorer.Show
+  else
+    frMPDExplorer.Close;
+
+  if frMPDExplorer.Visible then
+    frMPDExplorer.RestorePosition;
 end;
 
 // Other procedures
@@ -1635,17 +1651,12 @@ begin
   end;
 end;
 
-procedure TfrMain.editorUpdateUI(Sender: TObject);
-var
-  i: Integer;
-  DLine: TDATType;
-  fileage: TDateTime;
-
+procedure TfrMain.editorModified(Sender: TObject; const position,
+  modificationType: Integer; text: PAnsiChar; const len, linesAdded, line,
+  foldLevelNow, foldLevelPrev: Integer);
 begin
   DocumentTabs.ActiveDocument.Modified := editor.Modified;
-
-  // Update panel values
-  if editor.Modified then
+  if DocumentTabs.ActiveDocument.Modified then
   begin
     if DocumentTabs.ActiveDocument.IsUntitled then
       DocumentTabs.ActiveDocument.TabName :=
@@ -1665,7 +1676,16 @@ begin
         ExtractFileName(DocumentTabs.ActiveDocument.FileName);
     Statusbar.Panels[2].Text:='';
   end;
+end;
 
+procedure TfrMain.editorUpdateUI(Sender: TObject);
+var
+  i: Integer;
+  DLine: TDATType;
+  fileage: TDateTime;
+
+begin
+  // Update panel values
   StatusBar.Panels[1].text := IntToStr(editor.CaretY) + ':' + IntToStr(editor.CaretX);
 
   // Set undo and redo state
@@ -1710,8 +1730,8 @@ begin
                            (editor.GetStyleAt(editor.GetCurrentPos) <> 17);
 
   // Update the model tree view
-  if frModelTreeView.Visible then
-    frModelTreeView.FormActivate(nil);
+  if frMPDExplorer.Visible then
+    frMPDExplorer.FormActivate(nil);
 
   // Check external changes
   if (not DocumentTabs.ActiveDocument.IsUntitled) and
@@ -1749,8 +1769,8 @@ procedure TfrMain.FormShow(Sender: TObject);
 // Inits the app and shows model tree if needed
 begin
   AppInitialize;
-  frModelTreeView.RestorePosition;
-  acModelTreeView.Checked := frModelTreeView.Visible;
+  frMPDExplorer.RestorePosition;
+  acMPDExplorer.Checked := frMPDExplorer.Visible;
 end;
 
 Procedure TfrMain.AppInitialize;
@@ -1799,8 +1819,8 @@ begin
 
     //Set editor properties filename and load properties
     EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
-//    if FileExists(EditorPropertyLoader.FileName) then
-//      EditorPropertyLoader.Load;
+    if FileExists(EditorPropertyLoader.FileName) then
+      EditorPropertyLoader.Load;
     DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 
     //Set InstallDir in registry for legacy plugin support
@@ -1838,6 +1858,7 @@ begin
   finally
     Screen.Cursor := crDefault;
     SplashScreen.Release;
+    Initialized := True;
   end;
 end;
 
@@ -1897,6 +1918,7 @@ var
   sc: TSearchRec;
 
 begin
+  // Set official part autocomplete
   with LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords do
   begin
     Clear;
@@ -1918,6 +1940,7 @@ begin
       until FindNext(sc) <> 0;
     FindClose(sc);
   end;
+  // Set Meta command auto complete
   with LanguageManager.LanguageList.Find('LDraw').Keywords[1].Keywords do
     CommaText := ReadUIConfigValue('MetaCommands');
 end;
@@ -2018,7 +2041,7 @@ begin
 
       if not Initialized then
       begin
-        splashscreen.lbState.Caption:=_('Initializing plugin:') + ' ' + sr.Name;
+        splashscreen.lbState.Caption := _('Initializing plugin:') + ' ' + sr.Name;
         splashscreen.Update;
       end;
 
