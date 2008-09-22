@@ -68,11 +68,12 @@ procedure TfrSubFile.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   SubFile: TStringList;
   FileType, subfilename: string;
-  i: Integer;
+  i, startline, endline: Integer;
 
 begin
   if ModalResult = mrOK then
   begin
+    frMain.editor.ExpandSelection(startline, endline);
     case rgType.ItemIndex of
       1: FileType := 'Submodel';
       2: FileType := 'Part';

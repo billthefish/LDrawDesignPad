@@ -57,7 +57,8 @@ object frErrorWindow: TfrErrorWindow
     OnSelectItem = ErrorListViewSelectItem
   end
   object JvDockClient1: TJvDockClient
-    DirectDrag = False
+    DirectDrag = True
+    DockStyle = frMain.JvDockDelphiStyle1
     CustomDock = False
     Left = 8
     Top = 16
