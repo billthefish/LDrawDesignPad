@@ -1312,10 +1312,6 @@ object frMain: TfrMain
         Action = acErrorList
         AutoCheck = True
       end
-      object mnuModelTree: TMenuItem
-        Action = acMPDExplorer
-        AutoCheck = True
-      end
     end
     object Insert1: TMenuItem
       Caption = '&Insert'
@@ -1780,13 +1776,6 @@ object frMain: TfrMain
       Caption = 'Convert Bitmap to LDraw...'
       Hint = 'Start BMP-2-LDraw Tool'
       OnExecute = acBMP2LDrawExecute
-    end
-    object acMPDExplorer: TAction
-      Category = 'View Menu'
-      AutoCheck = True
-      Caption = 'MPD Explorer'
-      Hint = 'Show a MPD file in tree format'
-      OnExecute = acMPDExplorerExecute
     end
     object acLSynth: TAction
       Category = 'Externals'

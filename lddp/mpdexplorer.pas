@@ -103,7 +103,7 @@ end;
 procedure TfrMPDExplorer.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveFormValues;
-  frMain.acMPDExplorer.Checked := False;
+//  frMain.acMPDExplorer.Checked := False;
 end;
 
 procedure TfrMPDExplorer.FormCreate(Sender: TObject);

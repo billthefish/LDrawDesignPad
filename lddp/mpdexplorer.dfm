@@ -1,4 +1,4 @@
-object frModelTreeView: TfrModelTreeView
+object frMPDExplorer: TfrMPDExplorer
   Left = 688
   Top = 149
   BorderStyle = bsSizeToolWin
