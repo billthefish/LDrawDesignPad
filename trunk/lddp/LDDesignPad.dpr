@@ -28,7 +28,6 @@ uses
   splash in 'splash.pas' {frSplash},
   colordialog in 'colordialog.pas' {frColorDialog},
   BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
-  mpdexplorer in 'mpdexplorer.pas' {frModelTreeView},
   windowsspecific in 'windowsspecific.pas',
   BezWindow in 'BezWindow.pas' {frmDATCurve},
   dlgSubpart in 'dlgSubpart.pas' {frSubFile},
@@ -55,7 +54,6 @@ begin
   Application.CreateForm(TfrOptions, frOptions);
   Application.CreateForm(TfrColorDialog, frColorDialog);
   Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
-  Application.CreateForm(TfrModelTreeView, frModelTreeView);
   Application.CreateForm(TfrmDATCurve, frmDATCurve);
   Application.CreateForm(TfrSubFile, frSubFile);
   Application.CreateForm(TfmSort, fmSort);

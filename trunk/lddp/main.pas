@@ -171,8 +171,6 @@ type
     acCheckforUpdate: TAction;
     acBMP2LDraw: TAction;
     ConvertBitmaptoLDraw1: TMenuItem;
-    acMPDExplorer: TAction;
-    mnuModelTree: TMenuItem;
     N7: TMenuItem;
     View1: TMenuItem;
     MarkAll1: TMenuItem;
@@ -435,7 +433,6 @@ type
     procedure acFileCloseAllExecute(Sender: TObject);
     procedure acReverseWindingExecute(Sender: TObject);
     procedure acCheckforUpdateExecute(Sender: TObject);
-    procedure acMPDExplorerExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure acBMP2LDrawExecute(Sender: TObject);
     procedure acFindNextUpdate(Sender: TObject);
@@ -536,7 +533,7 @@ implementation
 
 uses
   about, options, colordialog, BezWindow, sorting, splash, 
-  BMP2LDraw, mpdexplorer, dlgSubpart, windowsspecific,
+  BMP2LDraw, dlgSubpart, windowsspecific,
   DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
   StrUtils, Registry, IniFiles, SciResLang, Contnrs;
 
@@ -1568,18 +1565,6 @@ begin
   end;
 end;
 
-procedure TfrMain.acMPDExplorerExecute(Sender: TObject);
-// Shows the model tree dialog
-begin
-  if (Sender as TAction).Checked then
-    frMPDExplorer.Show
-  else
-    frMPDExplorer.Close;
-
-  if frMPDExplorer.Visible then
-    frMPDExplorer.RestorePosition;
-end;
-
 // Other procedures
 
 procedure TfrMain.FileIsDropped(var Msg: TMessage);
@@ -1715,7 +1700,7 @@ begin
     end;
   end;
 
-  // Check plugin type an enable as appropriate
+  // Check plugin type and enable as appropriate
   for i := 0 to PluginActionList.ActionCount - 1 do
   begin
     case (PluginActionList.Actions[i] as TAction).Tag of
@@ -1728,10 +1713,6 @@ begin
   // Check style state and enable auto complete and call tips for linetype 1 file
   AutoComplete.Disabled := (editor.GetStyleAt(editor.GetCurrentPos) <> 16) and
                            (editor.GetStyleAt(editor.GetCurrentPos) <> 17);
-
-  // Update the model tree view
-  if frMPDExplorer.Visible then
-    frMPDExplorer.FormActivate(nil);
 
   // Check external changes
   if (not DocumentTabs.ActiveDocument.IsUntitled) and
@@ -1769,8 +1750,6 @@ procedure TfrMain.FormShow(Sender: TObject);
 // Inits the app and shows model tree if needed
 begin
   AppInitialize;
-  frMPDExplorer.RestorePosition;
-  acMPDExplorer.Checked := frMPDExplorer.Visible;
 end;
 
 Procedure TfrMain.AppInitialize;

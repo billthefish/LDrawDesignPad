@@ -109,36 +109,6 @@ type
       function GetDATString:string; override;
   end;
 
-  TDATFinish = (finNone, finChrome, finPearlescent, finRubber, finMatteMettalic, finMetal);
-
-  (* Represents the !COLOUR Meta Command *)
-  TDATColour=record
-      Name: string;
-      Code: Integer;
-      MainColor, EdgeColor: TColor;
-      Alpha: Byte;
-      Luminance: Byte;
-      Finish: TDATFinish;
-      MaterialParams: string;
-  end;
-
-  TDATColourList = class(TObject)
-    private
-      FColorCollection: array of TDATColour;
-      procedure SetColour(Idx: Integer; Value: TDATColour);
-      function GetColour(Idx: Integer): TDATColour;
-      function GetCount: Integer;
-
-    public
-      function IndexOfColourCode(Code: Integer): Integer;
-      function IndexOfColourName(Name: string): Integer;
-      procedure Add(Colour: TDATColour); overload;
-      procedure Clear;
-
-      property Colour[idx: Integer]: TDATColour read GetColour write SetColour; default;
-      property Count:Integer read GetCount;
-  end;
-
   TDATElement=class(TDATType)
     private
       intColor: Integer;
@@ -328,6 +298,36 @@ type
       property x4: Extended index 10 read GetCoordinate write SetCoordinate;
       property y4: Extended index 11 read GetCoordinate write SetCoordinate;
       property z4: Extended index 12 read GetCoordinate write SetCoordinate;
+  end;
+
+  TDATFinish = (finNone, finChrome, finPearlescent, finRubber, finMatteMettalic, finMetal);
+
+  (* Represents the !COLOUR Meta Command *)
+  TDATColour=record
+      Name: string;
+      Code: Integer;
+      MainColor, EdgeColor: TColor;
+      Alpha: Byte;
+      Luminance: Byte;
+      Finish: TDATFinish;
+      MaterialParams: string;
+  end;
+
+  TDATColourList = class(TObject)
+    private
+      FColorCollection: array of TDATColour;
+      procedure SetColour(Idx: Integer; Value: TDATColour);
+      function GetColour(Idx: Integer): TDATColour;
+      function GetCount: Integer;
+
+    public
+      function IndexOfColourCode(Code: Integer): Integer;
+      function IndexOfColourName(Name: string): Integer;
+      procedure Add(Colour: TDATColour); overload;
+      procedure Clear;
+
+      property Colour[idx: Integer]: TDATColour read GetColour write SetColour; default;
+      property Count:Integer read GetCount;
   end;
 
 var

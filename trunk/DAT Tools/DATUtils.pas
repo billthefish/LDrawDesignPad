@@ -44,6 +44,7 @@ function DATColour(const Code: Integer; const Name: string;
 function CheckIdentPoints(const points1, points2: array of TDATPoint): Boolean;
 function BGRtoRGB(clr: TColor): TColor;
 function MakeStandardDATColourList: TDATColourList;
+function CombineGeometrics(const line1, line2: TDATGeometric): TDATQuad;
 
 implementation
 
@@ -319,6 +320,57 @@ begin
   end
   else
     Result := false;
+end;
+
+function CombineGeometrics(const line1, line2: TDATGeometric): TDATQuad;
+
+var
+  QuadPoints: array of TDATPoint;
+  j, k: Integer;
+  flag: Boolean;
+
+begin
+  for j := 1 to 3 do
+  begin
+    if Length(QuadPoints) > 0 then
+    begin
+      flag := false;
+      for k := 0 to Length(QuadPoints) - 1 do
+        if CheckSamePoint(line1.Point[j],QuadPoints[k]) then
+          flag := true;
+      if not flag then
+      begin
+        SetLength(QuadPoints, Length(QuadPoints) + 1);
+        QuadPoints[Length(QuadPoints) - 1] := line1.Point[j];
+      end;
+    end
+    else
+    begin
+      SetLength(QuadPoints,1);
+      QuadPoints[0] := line1.Point[j];
+    end;
+    flag := false;
+    for k := 0 to Length(QuadPoints) - 1 do
+      if CheckSamePoint(line2.Point[j],QuadPoints[k]) then
+        flag := true;
+    if not flag then
+    begin
+      SetLength(QuadPoints, Length(QuadPoints) + 1);
+      QuadPoints[Length(QuadPoints) - 1] := line2.Point[j];
+    end;
+  end;
+
+  if Length(QuadPoints) = 4 then
+  begin
+    Result := TDATQuad.Create;
+    Result.Point[1] := QuadPoints[0];
+    Result.Point[2] := QuadPoints[1];
+    Result.Point[3] := QuadPoints[2];
+    Result.Point[4] := QuadPoints[3];
+    Result.Color := line1.Color;
+  end
+  else
+    Result := nil;
 end;
 
 end.
