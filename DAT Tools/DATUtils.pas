@@ -20,7 +20,7 @@ unit DATUtils;
 interface
 
 uses
-  DATModel, DATBase, Graphics;
+  DATModel, DATBase, DATColour, Graphics;
 
 function CheckSamePoint(const p1,p2: TDATPoint): Boolean;
 function StrToDAT(strLine: string): TDATType;
