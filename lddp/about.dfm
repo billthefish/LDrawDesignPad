@@ -196,7 +196,7 @@ object frAboutBox: TfrAboutBox
         Lines.Strings = (
           'LDraw Design Pad'
           ''
-          'Copyright (C) 2002-2008 by the LDDP contributors'
+          'Copyright (C) 2002-2009 by the LDDP contributors'
           ''
           ' Orion Pobursky'
           ' Stephan Schonberg'
@@ -466,6 +466,7 @@ object frAboutBox: TfrAboutBox
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
+        ExplicitTop = 32
       end
     end
   end

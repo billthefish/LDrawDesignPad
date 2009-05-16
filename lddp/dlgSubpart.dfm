@@ -252,7 +252,7 @@ object frSubFile: TfrSubFile
     Width = 145
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
+    ItemHeight = 0
     Sorted = True
     TabOrder = 8
   end

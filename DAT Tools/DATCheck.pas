@@ -1,6 +1,6 @@
 unit DATCheck;
 (*
-  Copyright (C) 2003-2008 Orion Pobursky
+  Copyright (C) 2003-2009 Orion Pobursky
 
   This file is derived from:
     L3Input.cpp and L3Math.cpp
