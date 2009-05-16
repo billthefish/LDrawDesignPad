@@ -219,7 +219,9 @@ var
 
 implementation
 
-uses main, windowsspecific, ActnList, DATBase, DATCheck, DATUtils, StrUtils;
+uses
+  main, windowsspecific, ActnList, DATBase, DATCheck, DATUtils, DATColour,
+  StrUtils;
 
 {$R *.dfm}
 

@@ -22,7 +22,7 @@ interface
 uses
   gnugettext, Forms, StdCtrls, Buttons, ExtCtrls,Controls, ComCtrls, Classes,
   ActnList, Dialogs, Graphics, SysUtils, Math, JvExStdCtrls, JvCombobox,
-  JvColorCombo, DATBase;
+  JvColorCombo, DATColour;
 
 type
   TfrColorDialog = class(TForm)
@@ -54,7 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-  main, options, DATUtils;
+  main, options, DatBase, DATUtils;
 
 procedure TfrColorDialog.FormClose(Sender: TObject; var Action: TCloseAction);
 
