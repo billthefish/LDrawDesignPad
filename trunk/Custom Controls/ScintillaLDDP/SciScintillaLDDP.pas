@@ -94,7 +94,7 @@ procedure TScintillaLDDP.MirrorSelection(axis: TDATAxis);
 
 var
   DModel: TDATModel;
-  rows, i, j, startline, endline: integer;
+  i, startline, endline: integer;
 
 begin
     ExpandSelection(startline, endline);
@@ -109,23 +109,7 @@ begin
     for i := 0 to DModel.Count - 1 do
       if DModel[i] is TDATElement then
       begin
-        case DModel[i].LineType of
-          1,3: rows := 3;
-          2: rows := 2;
-          4,5: rows := 4;
-        else
-          rows := 0;
-        end;
-
-        if rows > 0 then
-          for j := 1 to rows do
-            (DModel[i] as TDATElement).MatrixVals[j, Ord(axis)] := -(DModel[i] as TDATElement).MatrixVals[j, Ord(axis)];
-        if DModel[i].LineType = 1 then
-          case axis of
-            axisX: (DModel[i] as TDATSubPart).X := -(DModel[i] as TDATSubPart).X;
-            axisY: (DModel[i] as TDATSubPart).Y := -(DModel[i] as TDATSubPart).Y;
-            axisZ: (DModel[i] as TDATSubPart).Z := -(DModel[i] as TDATSubPart).Z;
-          end;
+        (DModel[i] as TDATElement).Mirror(axis);
       end;
     SelText := DModel.ModelText;
     SelectLines(startline, endline);
