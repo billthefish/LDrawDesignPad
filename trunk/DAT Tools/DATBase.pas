@@ -66,7 +66,7 @@ type
 *)
   TDATType=class(TPersistent)
     private
-      strLine: string;
+      FLine: string;
 
     protected
       intLineType: Byte;
@@ -89,7 +89,7 @@ type
   (* Represents LineType 0 *)
   TDATComment=class(TDATType)
     private
-      strComment: string;
+      FComment: string;
 
     protected
       function GetDATString:string; override;
@@ -100,7 +100,7 @@ type
 
     published
       (* Get or Set the Comment portion of the DAT text*)
-      property Comment: string read strComment write strComment;
+      property Comment: string read FComment write FComment;
   end;
 
   (* Used as a place holder for a blank line (#13#10) *)
@@ -111,10 +111,10 @@ type
 
   TDATElement=class(TDATType)
     private
-      intColor: Integer;
+      FColor: Integer;
 
     protected
-      PntAcc, RotAcc: ShortInt;
+      FPntAcc, FRotAcc: ShortInt;
       FDATMatrix: TDATMatrix;
       function GetCoordinate(Index: Integer): Extended;
       procedure SetCoordinate(Index: Integer; Value: Extended);
@@ -134,55 +134,49 @@ type
 
       (* Multiply the current Object by the given Matrix *)
       procedure Transform(M: TDATMatrix;
-                            Reverse: Boolean = false); overload; virtual; abstract;
+                            Reverse: Boolean = false); virtual; abstract;
       (* Translate the current Object by x,y,z*)
       procedure Translate(x,y,z: Extended);
 
       (* Rotate the current Object by w around the vector [x,y,z,1] *)
       procedure Rotate(w,x,y,z: Extended);
 
+      (* Mirror the part on specified axis *)
+      procedure Mirror(axis: TDATAxis); virtual;
+
     published
-      property Color: Integer read intColor write intColor default 0;
-      property RotationDecimalPlaces: ShortInt read RotAcc write RotAcc default 15;
-      property PositionDecimalPlaces: ShortInt read PntAcc write PntAcc default 15;
+      property Color: Integer read FColor write FColor default 0;
+      property RotationDecimalPlaces: ShortInt read FRotAcc write FRotAcc default 15;
+      property PositionDecimalPlaces: ShortInt read FPntAcc write FPntAcc default 15;
   end;
 
   TDATSubPart=class(TDATElement)
     private
-      strSubPartFile: string;
-      strFileExt: string;
-      procedure SetSubPartFile(strSP: string);
-      function GetFileName: string;
+      FSubPart: string;
       function GetPosition: TDATPoint;
       procedure SetPosition(posit: TDATPoint);
       function GetRotationMatrix: TDATRotationMatrix;
       procedure SetRotationMatrix(rotmat: TDATRotationMatrix);
-      function M4Multiply(M1,M2:TDATMatrix): TDATMatrix;
 
     protected
-      function GetDATString:string; override;
-      procedure ProcessDATLine(strText:string); override;
+      function GetDATString: string; override;
+      procedure ProcessDATLine(strText: string); override;
 
     public
       constructor Create; override;
       property Position: TDATPoint read GetPosition write SetPosition;
 
-      (* The file reference plus extention *)
-      property FileName: string read GetFileName write SetSubPartFile;
       (* The file reference without extention *)
-      property SubPart: string read strSubPartFile write SetSubPartFile;
+      property SubPart: string read FSubPart write FSubPart;
 
-      procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; override;
-
-      (* Format for the array fed to this fuction is:
-          [x,y,z,rm11,rm12,rm13,rm21,rm22,rm23,rm31,rm32,rm33] *)
-      procedure Transform(M: array of Extended;
-                            Reverse: Boolean = false); overload;
+      procedure Transform(M: TDATMatrix; Reverse: Boolean = false); override;
 
       property RotationMatrix: TDATRotationMatrix read GetRotationMatrix write SetRotationMatrix;
       property X: Extended index 13 read GetCoordinate write SetCoordinate;
       property Y: Extended index 14 read GetCoordinate write SetCoordinate;
       property Z: Extended index 15 read GetCoordinate write SetCoordinate;
+
+      procedure Mirror(axis: TDATAxis); override;
   end;
 
 
@@ -300,36 +294,6 @@ type
       property z4: Extended index 12 read GetCoordinate write SetCoordinate;
   end;
 
-  TDATFinish = (finNone, finChrome, finPearlescent, finRubber, finMatteMettalic, finMetal);
-
-  (* Represents the !COLOUR Meta Command *)
-  TDATColour=record
-      Name: string;
-      Code: Integer;
-      MainColor, EdgeColor: TColor;
-      Alpha: Byte;
-      Luminance: Byte;
-      Finish: TDATFinish;
-      MaterialParams: string;
-  end;
-
-  TDATColourList = class(TObject)
-    private
-      FColorCollection: array of TDATColour;
-      procedure SetColour(Idx: Integer; Value: TDATColour);
-      function GetColour(Idx: Integer): TDATColour;
-      function GetCount: Integer;
-
-    public
-      function IndexOfColourCode(Code: Integer): Integer;
-      function IndexOfColourName(Name: string): Integer;
-      procedure Add(Colour: TDATColour); overload;
-      procedure Clear;
-
-      property Colour[idx: Integer]: TDATColour read GetColour write SetColour; default;
-      property Count:Integer read GetCount;
-  end;
-
 var
   LDrawBasePath: string = 'C:\Lego\LDRAW\';
 
@@ -347,6 +311,9 @@ const
 
 implementation
 
+uses
+  DATMath;
+
 {TDATType}
 
 constructor TDATType.Create;
@@ -358,12 +325,12 @@ end;
 function TDATType.GetDATString: string;
 
 begin
-  Result := strLine;
+  Result := FLine;
 end;
 
 procedure TDATType.ProcessDATLine(strText:string);
 begin
-  strLine := strText;
+  FLine := strText;
 end;
 
 {TDATComment}
@@ -373,9 +340,9 @@ begin
   strText := Trim(strText);
   if strText <> ''  then
     if ((strText[1] = '0') and (Length(strText) > 1)) then
-      strComment := Trim(Copy(strText,2,Length(strText)))
+      FComment := Trim(Copy(strText,2,Length(strText)))
     else
-      strComment := '';
+      FComment := '';
   intLineType := 0;
 end;
 
@@ -387,7 +354,7 @@ end;
 
 function TDATComment.GetDATString:string;
 begin
-  result := '0 ' + strComment;
+  result := '0 ' + FComment;
 end;
 
 {TDATBlankLine}
@@ -403,15 +370,23 @@ end;
 constructor TDATElement.Create;
 begin
   inherited Create;
-  intColor := 0;
-  PntAcc := 15;
-  RotAcc := 15;
+  FColor := 0;
+  FPntAcc := 15;
+  FRotAcc := 15;
   FDATMatrix[4,4] := 1;
 end;
 
 function TDATElement.GetMatrixVal(idx1,idx2: Integer): Extended;
 begin
   Result := FDATMatrix[idx1,idx2];
+end;
+
+procedure TDATElement.Mirror(axis: TDATAxis);
+begin
+  FDATMatrix[1, Ord(axis)] := -FDATMatrix[1, Ord(axis)];
+  FDATMatrix[2, Ord(axis)] := -FDATMatrix[2, Ord(axis)];
+  FDATMatrix[3, Ord(axis)] := -FDATMatrix[3, Ord(axis)];
+  FDATMatrix[4, Ord(axis)] := -FDATMatrix[4, Ord(axis)];
 end;
 
 procedure TDATElement.SetMatrixVal(idx1,idx2: Integer; Value: Extended);
@@ -512,18 +487,11 @@ begin
 
 end;
 
-function TDATSubPart.M4Multiply(M1,M2:TDATMatrix): TDATMatrix;
-
-var
-  i,j: Byte;
+procedure TDATSubPart.Mirror(axis: TDATAxis);
 
 begin
-  for i:= 1 to 4 do
-    for j:= 1 to 4 do
-      Result[i,j] := M1[i,1] * M2[1,j] +
-                     M1[i,2] * M2[2,j] +
-                     M1[i,3] * M2[3,j] +
-                     M1[i,4] * M2[4,j];
+  inherited Mirror(axis);
+  FDATMatrix[Ord(axis), 4] := -FDATMatrix[Ord(axis), 4];
 end;
 
 procedure TDATSubPart.Transform(M: TDATMatrix; Reverse: Boolean = false);
@@ -535,41 +503,13 @@ begin
     FDATMatrix := M4Multiply(M, FDATMatrix);
 end;
 
-procedure TDATSubPart.Transform(M: array of Extended; Reverse: Boolean = false);
-
-var
-  M1: TDATMatrix;
-
-begin
-  M1[1,1] := M[3];
-  M1[1,2] := M[4];
-  M1[1,3] := M[5];
-  M1[1,4] := M[0];
-
-  M1[2,1] := M[6];
-  M1[2,2] := M[7];
-  M1[2,3] := M[8];
-  M1[2,4] := M[1];
-
-  M1[3,1] := M[9];
-  M1[3,2] := M[10];
-  M1[3,3] := M[11];
-  M1[3,4] := M[2];
-
-  M1[4,1] := 0;
-  M1[4,2] := 0;
-  M1[4,3] := 0;
-  M1[4,4] := 1;
-  Transform(M1,Reverse);
-end;
-
 constructor TDATSubPart.Create;
 
 begin
   inherited Create;
   intLineType := 1;
   Matrix := FDATIdentityMatrix;
-  FileName := 'dummy.dat'
+  SubPart := 'dummy.dat'
 end;
 
 procedure TDATSubPart.SetPosition(posit:TDATPoint);
@@ -614,18 +554,6 @@ begin
   FDATMatrix[3,3] := rotmat[3,3];
 end;
 
-procedure TDATSubPart.SetSubPartFile(strSP: string);
-begin
-  strFileExt := LowerCase(ExtractFileExt(strSP));
-  if strFileExt = '' then strFileExt := '.dat';
-  strSubPartFile := LowerCase(ChangeFileExt(strSP,''));
-end;
-
-function TDATSubPart.GetFileName;
-begin
-  Result := ChangeFileExt(strSubPartFile,strFileExt);
-end;
-
 function TDATSubPart.GetDATString:string;
 
 var
@@ -648,7 +576,7 @@ begin
             FloatToStr(RoundTo(MatrixVals[3,1], -Abs(RotationDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[3,2], -Abs(RotationDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[3,3], -Abs(RotationDecimalPlaces))) + ' ' +
-            FileName;
+            SubPart;
 
   DecimalSeparator := strSep;
 end;
@@ -761,11 +689,11 @@ end;
 procedure TDATGeometric.Transform(M: TDATMatrix; Reverse: Boolean = false);
 
 var
-  M1: array[1..3] of Single;
+  M1: array[1..3] of Extended;
   i: Byte;
 
 begin
-  for i:= 1 to 4 do
+  for i := 1 to 4 do
   begin
     M1[1] := (M[1,1] * FDATMatrix[i,1]) +
              (M[1,2] * FDATMatrix[i,2]) +
@@ -982,7 +910,7 @@ begin
         Matrix := TmpMatrix;
       end;
     except
-      Exit;
+       Exit;
     end;
   finally
     TempList.Free;
@@ -1056,79 +984,6 @@ begin
   finally
     TempList.Free;
   end;
-end;
-
-{ TDATColourList }
-
-procedure TDATColourList.Add(Colour: TDATColour);
-// if color code of passed color is not already in the collection
-// then color is added, otherwise do nothing
-var
-  i: Integer;
-
-begin
-  if Length(FColorCollection) > 0 then
-    for i := 0 to Length(FColorCollection) - 1 do
-      if (FColorCollection[i].Code = Colour.Code) or
-         (FColorCollection[i].Name = Colour.Name) then
-         Exit;
-  SetLength(FColorCollection, Length(FColorCollection) + 1);
-  FColorCollection[High(FColorCollection)] := Colour;
-end;
-
-procedure TDATColourList.Clear;
-begin
-  SetLength(FColorCollection, 0);
-end;
-
-function TDATColourList.GetColour(Idx: Integer): TDATColour;
-begin
-  Result.Code := -1;
-  Result.Name := '';
-  if (Length(FColorCollection) > 0) and
-     (Idx >= 0) and
-     (Idx <= High(FColorCollection)) then
-    Result := FColorCollection[Idx];
-
-end;
-
-function TDATColourList.GetCount: Integer;
-begin
-  Result := Length(FColorCollection);
-end;
-
-function TDATColourList.IndexOfColourCode(Code: Integer): Integer;
-
-var
-  i: Integer;
-
-begin
-  Result := -1;
-  if Length(FColorCollection) > 0 then
-    for i := 0 to Length(FColorCollection) - 1 do
-      if (FColorCollection[i].Code = Code) then
-        Result := i;
-end;
-
-function TDATColourList.IndexOfColourName(Name: string): Integer;
-
-var
-  i: Integer;
-
-begin
-  Result := -1;
-  if Length(FColorCollection) > 0 then
-    for i := 0 to Length(FColorCollection) - 1 do
-      if (FColorCollection[i].Name = Name) then
-        Result := i;
-end;
-
-procedure TDATColourList.SetColour(Idx: Integer; Value: TDATColour);
-begin
-  if (Length(FColorCollection) > 0) and
-     (Idx >= 0) and
-     (Idx <= High(FColorCollection)) then
-    FColorCollection[Idx] := Value;
 end;
 
 initialization
