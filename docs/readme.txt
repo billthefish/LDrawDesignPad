@@ -32,8 +32,8 @@ Features are:
  -Use/define codesnippets
  -Editing features like Inlining of parts, commenting etc.
  -Seamless integration of L3P error check of parts at a button click
- -Integration of ML-Cad and LD-View or any external program
- -Plugin-Support!!!! Expand LDDesignPad with your own plugins in
+ -Integration of MLCad and LDView or any external program
+ -Plugin-Support!!!! Expand LDraw Design Pad with your own plugins in
  C++ or Delphi. Code samples / example plugins are included.
 
 Special thanks to Roland Melkert (melkert@chello.nl) who translated 
@@ -137,6 +137,9 @@ We especially thank you, the user, for downloading our program
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
+
+v2.0
++ Completely retooled and restructured LDDP.  Too many changes to list here.
 
 v1.5.7
 + Added ability to sort text on various criteria
