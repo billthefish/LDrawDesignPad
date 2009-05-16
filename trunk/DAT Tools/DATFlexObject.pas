@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2008 Orion Pobursky.
+{These sources are copyright (C) 2003-2009 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -181,11 +181,12 @@ var
   BezPoint1, BezPoint2, dummyPoint, lastPoint, pntC1, pntC2: TDATPoint;
   BezIntLen: array of Extended;
   BezIntPos: array of TDATPoint;
-  BezLength, LengthMod, Factor, Distance, Last, rlLength, rlCount: Extended;
+  BezLength, LengthMod, Factor, Distance, rlLength, rlCount: Extended;
   InteEpsilon, BezI, BezILast, I2: Extended;
   i, PointPerSegment, Iterations, MaxIterations: Byte;
   intCount,BezSearch: Word;
   PntDec, RotDec: Byte;
+  Last: Boolean;
 
 begin
   Clear;
@@ -278,14 +279,15 @@ begin
 
   if EuclidDistance(Line1.Position, Line2.Position) < (BezLength + LengthMod) then
   begin
-    PointPerSegment:= 12;
-    Factor:= 1;
-    Distance:= 0.5;
-    Last:= 1;
-    Iterations:= 0;
-    rlLength:= 0;
-    MaxIterations:= 100;
-    InteEpsilon:= 0.07;
+    PointPerSegment := 12;
+    MaxIterations := 100;
+    InteEpsilon := 0.07;
+
+    Factor := 1;
+    Distance := 0.5;
+    Last := True;
+    Iterations := 0;
+    rlLength := 0;
     SetLength(BezIntLen,Segments*PointPerSegment);
     SetLength(BezIntPos,Segments*PointPerSegment);
 
@@ -356,14 +358,14 @@ begin
       if rlLength < BezLength then
       begin
         Factor := Factor + Distance;
-        if Last = 0 then Distance := (Distance / 2) * 1.4;
-        Last := 1;
+        if not Last then Distance := (Distance / 2) * 1.4;
+        Last := True;
       end
       else
       begin
         Factor := Factor - Distance;
-        if Last = 1 then Distance := Distance / 2;
-        Last := 0;
+        if Last then Distance := Distance / 2;
+        Last := False;
       end;
       inc(Iterations);
     end;
