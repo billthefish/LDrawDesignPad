@@ -21,7 +21,7 @@ interface
 
 uses
   gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Math, Registry, IniFiles, DATBase, DATModel,
+  Dialogs, StdCtrls, ExtCtrls, Math, Registry, IniFiles, DATBase, DATFlexObject,
   JvEdit, Mask, JvMaskEdit, JvExStdCtrls, JvValidateEdit, Buttons;
 
 type
@@ -58,7 +58,7 @@ type
     procedure FormCreate(Sender: TObject);
 
   public
-    HoseDATCode: TDATBendibleObject;
+    HoseDATCode: TDATFlexObject;
     Line1, Line2: TDATSubPart;
   end;
 
@@ -107,7 +107,7 @@ begin
   TranslateComponent (self);
   Line1:=TDATSubPart.Create;
   Line2:=TDATSubPart.Create;
-  HoseDATCode := TDATBendibleObject.Create;
+  HoseDATCode := TDATFlexObject.Create;
 end;
 
 procedure TfrmDATCurve.FormActivate(Sender: TObject);
@@ -120,24 +120,24 @@ begin
   HoseDATCode.DefinedControlPoints := cbxContEnable.Checked;
   feCP1XChange(nil);
 
-  if ((Line1.Filename = '750.dat') and (Line2.Filename = '750.dat')) then
+  if ((Line1.SubPart = '750.dat') and (Line2.SubPart = '750.dat')) then
   begin
     lblType2.Caption := _('Hose Flexible 8.5L With Tabs');
     feLength.Value := 130;
   end
-  else if ((Line1.Filename = '752.dat') and (Line2.Filename = '752.dat')) then
+  else if ((Line1.SubPart = '752.dat') and (Line2.SubPart = '752.dat')) then
   begin
     lblType2.Caption := _('Hose Flexible 8.5L Without Tabs');
     HoseDATCode.ObjectType := boHoseNoTabs;
     feLength.Value := 130;
   end
-  else if ((Line1.Filename = '757.dat') and (Line2.Filename = '760.dat')) then
+  else if ((Line1.SubPart = '757.dat') and (Line2.SubPart = '760.dat')) then
   begin
     lblType2.Caption := _('Hose Flexible 12L');
     HoseDATCode.ObjectType := boHose12;
     feLength.Value := 188;
   end
-  else if ((Line1.Filename = '79.dat') and (Line2.Filename = '79.dat')) then
+  else if ((Line1.SubPart = '79.dat') and (Line2.SubPart = '79.dat')) then
   begin
     lblType2.Caption := _('Technic Ribbed Hose');
     lblLength.Caption := _('Enter number of notches to use:');
@@ -145,7 +145,7 @@ begin
     feLength.Visible := True;
   end
 
-  else if ((Line1.Filename = 'stud3a.dat') and (Line2.Filename = 'stud3a.dat')) then
+  else if ((Line1.SubPart = 'stud3a.dat') and (Line2.SubPart = 'stud3a.dat')) then
   begin
     lblType2.Caption := _('Technic Flexible Axle');
     lblLength.Caption :=
@@ -154,7 +154,7 @@ begin
     HoseDATCode.ObjectType := boFlexAxle;
   end
 
-  else if ((Line1.Filename = '76.dat') and (Line2.Filename = '76.dat')) then
+  else if ((Line1.SubPart = '76.dat') and (Line2.SubPart = '76.dat')) then
   begin
     lblType2.Caption := _('Technic Flex-System Hose');
     lblLength.Caption :=

@@ -1621,10 +1621,10 @@ begin
     if subp is TDATSubpart then
     begin
       DModel := TDATModel.Create;
-      if FileExists(LDrawBasePath + 'parts\' + (subp as TDATSubpart).FileName) then
-        DModel.LoadModel(LDrawBasePath + 'parts\' + (subp as TDATSubpart).FileName)
-      else if FileExists(LDrawBasePath + 'p\' + (subp as TDATSubpart).FileName) then
-        DModel.LoadModel(LDrawBasePath + 'p\' + (subp as TDATSubpart).FileName);
+      if FileExists(LDrawBasePath + 'parts\' + (subp as TDATSubpart).SubPart) then
+        DModel.LoadModel(LDrawBasePath + 'parts\' + (subp as TDATSubpart).SubPart)
+      else if FileExists(LDrawBasePath + 'p\' + (subp as TDATSubpart).SubPart) then
+        DModel.LoadModel(LDrawBasePath + 'p\' + (subp as TDATSubpart).SubPart);
 
       if (DModel.Count > 0) and (DModel[0] is TDATComment) then
         editor.CallTipShow(editor.PositionFromPointClose(x,y),

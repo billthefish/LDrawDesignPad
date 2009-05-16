@@ -22,7 +22,7 @@ interface
 uses
   gnugettext, SysUtils, Graphics, Controls, Forms, Menus,
   Types, Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls,
-  Classes, DatBase;
+  Classes, DATColour;
 
 type
   TfrBMP2LDrawMain = class(TForm)
@@ -87,7 +87,7 @@ var
 implementation
 
 uses
-  main, DATUtils;
+  main, DATBase, DATUtils;
 
 
 {$R *.dfm}

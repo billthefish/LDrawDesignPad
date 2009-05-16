@@ -39,7 +39,9 @@ uses
   DATCheck in '..\DAT Tools\DATCheck.pas',
   DATErrorFix in '..\DAT Tools\DATErrorFix.pas',
   DATMath in '..\DAT Tools\DATMath.pas',
-  DATModel in '..\DAT Tools\DATModel.pas';
+  DATModel in '..\DAT Tools\DATModel.pas',
+  DATFlexObject in '..\DAT Tools\DATFlexObject.pas',
+  DATColour in '..\DAT Tools\DATColour.pas';
 
 {$R *.res}
 
