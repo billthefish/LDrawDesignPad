@@ -4,7 +4,7 @@ object frmDATCurve: TfrmDATCurve
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Bendible Objects Creator'
-  ClientHeight = 236
+  ClientHeight = 233
   ClientWidth = 393
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -33,8 +33,8 @@ object frmDATCurve: TfrmDATCurve
     ParentFont = False
   end
   object lblMessage: TLabel
-    Left = 16
-    Top = 240
+    Left = 8
+    Top = 32
     Width = 3
     Height = 13
     Caption = ' '
@@ -65,7 +65,6 @@ object frmDATCurve: TfrmDATCurve
     Width = 97
     Height = 28
     Caption = 'Generate Curve'
-    Enabled = False
     ModalResult = 1
     TabOrder = 6
   end
@@ -127,7 +126,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 0
-      OnChange = feCP1XChange
+      OnChange = ControlPointChange
     end
     object feCP1Y: TJvValidateEdit
       Left = 64
@@ -141,7 +140,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 1
-      OnChange = feCP1XChange
+      OnChange = ControlPointChange
     end
     object feCP1Z: TJvValidateEdit
       Left = 120
@@ -155,7 +154,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 2
-      OnChange = feCP1XChange
+      OnChange = ControlPointChange
     end
   end
   object gbxCont2: TGroupBox
@@ -178,7 +177,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 0
-      OnChange = feCP1XChange
+      OnChange = ControlPointChange
     end
     object feCP2Y: TJvValidateEdit
       Left = 64
@@ -192,7 +191,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 1
-      OnChange = feCP1XChange
+      OnChange = ControlPointChange
     end
     object feCP2Z: TJvValidateEdit
       Left = 120
@@ -206,7 +205,7 @@ object frmDATCurve: TfrmDATCurve
       DecimalPlaces = 9
       EditText = '0'
       TabOrder = 2
-      OnChange = feCP1XChange
+      OnChange = ControlPointChange
     end
   end
   object gbxEndPoint: TGroupBox
@@ -246,7 +245,7 @@ object frmDATCurve: TfrmDATCurve
     Caption = 'Manually Enter Control Points'
     Enabled = False
     TabOrder = 4
-    OnClick = cbxContEnableClick
+    OnClick = EnableUserControlPoints
   end
   object feLength: TJvValidateEdit
     Left = 8
@@ -261,6 +260,7 @@ object frmDATCurve: TfrmDATCurve
     EditText = '0'
     HasMinValue = True
     TabOrder = 7
-    OnChange = feLengthChange
+    Visible = False
+    OnChange = ChangeLength
   end
 end

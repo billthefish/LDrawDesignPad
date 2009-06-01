@@ -56,7 +56,6 @@ begin
   Application.CreateForm(TfrOptions, frOptions);
   Application.CreateForm(TfrColorDialog, frColorDialog);
   Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
-  Application.CreateForm(TfrmDATCurve, frmDATCurve);
   Application.CreateForm(TfrSubFile, frSubFile);
   Application.CreateForm(TfmSort, fmSort);
   Application.CreateForm(TfrErrorWindow, frErrorWindow);

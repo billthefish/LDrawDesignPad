@@ -70,7 +70,7 @@ begin
     Result := TDATBlankLine.Create
   else
     if (Length(strCurrentLine) > 1) and
-       (strCurrentLine[2] = ' ') then
+       ((strCurrentLine[2] = #32) or (strCurrentLine[2] = #9)) then
       case strCurrentLine[1] of
         '0': Result := TDATComment.Create;
         '1': Result := TDATSubPart.Create;

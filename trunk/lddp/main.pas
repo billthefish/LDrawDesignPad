@@ -507,7 +507,6 @@ type
   protected
     procedure AppInitialize;
     procedure FileIsDropped(var Msg : TMessage); message WM_DropFiles ;
-    procedure BuildMetaMenu;
     function tempFileName: string;
     procedure SetKeyWordList;
 
@@ -1197,18 +1196,25 @@ procedure TfrMain.acBendableObjectExecute(Sender: TObject);
 // Show the bendible parts dialog and then insert the object
 var
   startline, endline: Integer;
-
+  frmDatCurve: TfrmDATCurve;
 begin
     editor.ExpandSelection(startline, endline);
     if endline - startline = 1 then
-      frmDATCurve.Line1.DATString := editor.Lines[startline];
-      frmDATCurve.Line2.DATString := editor.Lines[endline];
-      if frmDATCurve.ShowModal = mrOk then
-      begin
-        frmDATCurve.HoseDATCode.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-        frmDATCurve.HoseDATCode.PositionDecimalPlaces := frOptions.sePntAcc.Value;
-        editor.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
+    begin
+      frmDATCurve := TfrmDATCurve.Create(Application);
+      try
+        frmDATCurve.Line1.DATString := editor.Lines[startline];
+        frmDATCurve.Line2.DATString := editor.Lines[endline];
+        if frmDATCurve.ShowModal = mrOk then
+        begin
+          frmDATCurve.HoseDATCode.RotationDecimalPlaces := frOptions.seRotAcc.Value;
+          frmDATCurve.HoseDATCode.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+          editor.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
+        end;
+      finally
+        frmDATCurve.Free;
       end;
+    end;
 end;
 
 procedure TfrMain.acAutoRoundExecute(Sender: TObject);
@@ -1811,9 +1817,6 @@ begin
     //Load Plugins
     LoadPlugins;
 
-    //Set META menu commands
-    BuildMetaMenu;
-
     //Build the MRU list
     UpdateMRU;
 
@@ -1841,54 +1844,11 @@ begin
   end;
 end;
 
-procedure TfrMain.BuildMetaMenu;
-// Construct the meta command menu from the ini file
-var
-  MetaMenuIni: TInifile;
-  ParentMenuItem, ParentMenuItem2, ChildMenuItem: TMenuItem;
-  MetaSections, CurrentSection: TStringList;
-  SectionName: string;
-  i,j: Integer;
-
+procedure TfrMain.MetaMenuClick(Sender: TObject);
+// Insert the selected meta command
 begin
-  MetaSections := TStringList.Create;
-  MetaSections.Sorted := true;
-  CurrentSection := TStringList.Create;
-  MetaMenuIni := TInifile.Create(IniFilePath + '\uiconfig.ini');
-
-  MetaMenuIni.ReadSection('Meta Menu Items', MetaSections);
-
-  if MetaSections.Count > 0 then
-    for i := 0 to MetaSections.Count - 1 do
-    begin
-      SectionName := MetaMenuIni.ReadString('Meta Menu Items', MetaSections[i], '');
-      if MetaMenuIni.SectionExists(SectionName) then
-      begin
-        MetaMenuIni.ReadSection(SectionName,CurrentSection);
-        if CurrentSection.Count > 0 then
-        begin
-          ParentMenuItem := CreateMenuItem(SectionName, '', mnuMeta);
-          ParentMenuItem2 := CreateMenuItem(SectionName, '', mnuMeta2);
-          mnuMeta.Add(ParentMenuItem);
-          mnuMeta2.Add(ParentMenuItem2);
-          for j := 0 to CurrentSection.Count - 1 do
-          begin
-            ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
-            ChildMenuItem.OnClick := MetaMenuClick;
-            ParentMenuItem.Add(ChildMenuItem);
-            ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
-            ChildMenuItem.OnClick := MetaMenuClick;
-            ParentMenuItem2.Add(ChildMenuItem);
-          end;
-        end;
-      end;
-    end
-  else
-    mnuMeta.Enabled := False;
-
-  CurrentSection.Free;
-  MetaSections.Free;
-  MetaMenuIni.Free;
+  editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos), '0 ' +
+                      (Sender as TMenuItem).Hint);
 end;
 
 procedure TfrMain.SetKeyWordList;
@@ -1965,13 +1925,6 @@ begin
   begin
     TabRightClickIndex := DocumentTabs.IndexOfTabAt(X,Y);
   end else TabRightClickIndex := -1;
-end;
-
-procedure TfrMain.MetaMenuClick(Sender: TObject);
-// Insert the selected meta command
-begin
-  editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos), '0 ' +
-                      (Sender as TMenuItem).Hint);
 end;
 
 procedure Tfrmain.LoadPlugins;
