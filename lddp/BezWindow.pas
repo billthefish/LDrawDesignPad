@@ -50,20 +50,17 @@ type
     feCP2Y: TJvValidateEdit;
     feCP2Z: TJvValidateEdit;
     feLength: TJvValidateEdit;
-    procedure feLengthChange(Sender: TObject);
-    procedure cbxContEnableClick(Sender: TObject);
+    procedure ChangeLength(Sender: TObject);
+    procedure EnableUserControlPoints(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure feCP1XChange(Sender: TObject);
+    procedure ControlPointChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
 
   public
     HoseDATCode: TDATFlexObject;
     Line1, Line2: TDATSubPart;
   end;
-
-var
-  frmDATCurve: TfrmDATCurve;
 
 implementation
 
@@ -72,30 +69,26 @@ implementation
 uses
   DATUtils;
 
-procedure TfrmDATCurve.feLengthChange(Sender: TObject);
-
+procedure TfrmDATCurve.ChangeLength(Sender: TObject);
 begin
-  if feLength.Value > 0 then
+  HoseDATCode.Length := feLength.Value;
+  if HoseDATCode.ModelText <> '' then
   begin
-    HoseDATCode.Length := feLength.Value;
-    if HoseDATCode.ModelText <> '' then
-    begin
-      lblMessage.Caption := '';
-      btnGenerate.Enabled := True;
-      cbxContEnable.Enabled := True;
-    end
-    else
-    begin
-      lblMessage.Caption := _('Distance between the end points is longer than the specified length');
-      btnGenerate.Enabled := False;
-      cbxContEnable.Enabled := False;
-      gbxCont1.Enabled := False;
-      gbxCont2.Enabled := False;
-    end;
+    lblMessage.Caption := '';
+    btnGenerate.Enabled := True;
+    cbxContEnable.Enabled := True;
+  end
+  else
+  begin
+    lblMessage.Caption := _('Distance between the end points is longer than the specified length');
+    btnGenerate.Enabled := False;
+    cbxContEnable.Enabled := False;
+    gbxCont1.Enabled := False;
+    gbxCont2.Enabled := False;
   end;
 end;
 
-procedure TfrmDATCurve.cbxContEnableClick(Sender: TObject);
+procedure TfrmDATCurve.EnableUserControlPoints(Sender: TObject);
 begin
    gbxCont1.Enabled := cbxContEnable.Checked;
    gbxCont2.Enabled := cbxContEnable.Checked;
@@ -104,9 +97,9 @@ end;
 
 procedure TfrmDATCurve.FormCreate(Sender: TObject);
 begin
-  TranslateComponent (self);
-  Line1:=TDATSubPart.Create;
-  Line2:=TDATSubPart.Create;
+  TranslateComponent(self);
+  Line1 := TDATSubPart.Create;
+  Line2 := TDATSubPart.Create;
   HoseDATCode := TDATFlexObject.Create;
 end;
 
@@ -118,68 +111,69 @@ begin
   HoseDATCode.Color := Line1.Color;
 
   HoseDATCode.DefinedControlPoints := cbxContEnable.Checked;
-  feCP1XChange(nil);
+  ControlPointChange(nil);
 
   if ((Line1.SubPart = '750.dat') and (Line2.SubPart = '750.dat')) then
   begin
     lblType2.Caption := _('Hose Flexible 8.5L With Tabs');
-    feLength.Value := 130;
+    HoseDATCode.ObjectType := boHoseTabs;
   end
   else if ((Line1.SubPart = '752.dat') and (Line2.SubPart = '752.dat')) then
   begin
     lblType2.Caption := _('Hose Flexible 8.5L Without Tabs');
     HoseDATCode.ObjectType := boHoseNoTabs;
-    feLength.Value := 130;
   end
-  else if ((Line1.SubPart = '757.dat') and (Line2.SubPart = '760.dat')) then
+  else if ((Line1.SubPart = '757.dat') and (Line2.SubPart = '760.dat')) or
+          ((Line1.SubPart = '760.dat') and (Line2.SubPart = '757.dat')) then
   begin
     lblType2.Caption := _('Hose Flexible 12L');
+    if Line1.SubPart = '760.dat' then
+    begin
+      HoseDATCode.StartMatrix := Line2.Matrix;
+      HoseDATCode.EndMatrix := Line1.Matrix;
+    end;
     HoseDATCode.ObjectType := boHose12;
-    feLength.Value := 188;
   end
   else if ((Line1.SubPart = '79.dat') and (Line2.SubPart = '79.dat')) then
   begin
     lblType2.Caption := _('Technic Ribbed Hose');
-    lblLength.Caption := _('Enter number of notches to use:');
+    lblLength.Caption := _('Enter number of segments to use:');
     HoseDATCode.ObjectType := boRibbedHose;
     feLength.Visible := True;
   end
-
   else if ((Line1.SubPart = 'stud3a.dat') and (Line2.SubPart = 'stud3a.dat')) then
   begin
     lblType2.Caption := _('Technic Flexible Axle');
     lblLength.Caption :=
       _('Enter total length of the axle in LDU (1 Brick Width = 20 LDU) :');
-    feLength.Visible := True;
     HoseDATCode.ObjectType := boFlexAxle;
+    feLength.Visible := True;
   end
-
   else if ((Line1.SubPart = '76.dat') and (Line2.SubPart = '76.dat')) then
   begin
     lblType2.Caption := _('Technic Flex-System Hose');
     lblLength.Caption :=
       _('Enter total length of the hose in LDU (1 Brick Width = 20 LDU) :');
-    feLength.Visible := True;
     HoseDATCode.ObjectType := boFlexHose;
+    feLength.Visible := True;
   end
-
   else
   begin
     lblMessage.Caption :=
       _('Unsupported File Types.  Read the ReadMe file for supported file types');
   end;
+
+  ChangeLength(nil);
 end;
 
 procedure TfrmDATCurve.FormDestroy(Sender: TObject);
-
 begin
   Line1.Free;
   Line2.Free;
   HoseDATCode.Free;
 end;
 
-procedure TfrmDATCurve.feCP1XChange(Sender: TObject);
-
+procedure TfrmDATCurve.ControlPointChange(Sender: TObject);
 begin
   if cbxContEnable.Checked then
   begin

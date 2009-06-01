@@ -22,7 +22,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 592
     Height = 333
-    ActivePage = tsExternal
+    ActivePage = TabSheet3
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -30,10 +30,6 @@ object frOptions: TfrOptions
     object tsExternal: TTabSheet
       Caption = '&Program Paths'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
@@ -438,10 +434,6 @@ object frOptions: TfrOptions
     object TabSheet4: TTabSheet
       Caption = 'Configuration &Values'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConfigPages: TPageControl
         Left = 0
         Top = 0
@@ -452,10 +444,6 @@ object frOptions: TfrOptions
         TabOrder = 0
         object TabSheet6: TTabSheet
           Caption = 'Error Check Values'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object Label6: TLabel
             Left = 20
             Top = 114
@@ -673,10 +661,6 @@ object frOptions: TfrOptions
         object TabSheet8: TTabSheet
           Caption = 'User Information'
           ImageIndex = 2
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object Label3: TLabel
             Left = 3
             Top = 3
@@ -1008,10 +992,6 @@ object frOptions: TfrOptions
     object TabSheet5: TTabSheet
       Caption = '&Search Paths'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SearchPathsList: TListView
         Left = 0
         Top = 0
@@ -1225,10 +1205,6 @@ object frOptions: TfrOptions
       Caption = '&Color Bar'
       ImageIndex = -1
       OnShow = ColorBarSheetShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
@@ -1373,10 +1349,6 @@ object frOptions: TfrOptions
     object TabSheet1: TTabSheet
       Caption = '&External Progams'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox7: TGroupBox
         Left = 223
         Top = 0
@@ -1615,10 +1587,6 @@ object frOptions: TfrOptions
     object TabSheet3: TTabSheet
       Caption = 'Plu&gins'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0

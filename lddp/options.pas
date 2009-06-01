@@ -204,6 +204,7 @@ type
     procedure SetColorListToDefault;
     procedure SetDirectory(DCaption: string; EditControl: TEdit);
     procedure UpdateSearchPathList;
+    procedure BuildMetaMenu;
 
   public
     ExternalProgramList: TStringList;
@@ -220,8 +221,8 @@ var
 implementation
 
 uses
-  main, windowsspecific, ActnList, DATBase, DATCheck, DATUtils, DATColour,
-  StrUtils;
+  main, windowsspecific, commonprocs, ActnList, DATBase, DATCheck, DATUtils,
+  DATColour, StrUtils;
 
 {$R *.dfm}
 
@@ -481,8 +482,61 @@ begin
     Inc(i);
   end;
 
+  // Read and setup meta menu
+  BuildMetaMenu;
+
   CurrentItem.Free;
   LDDPini.Free;
+end;
+
+procedure TfrOptions.BuildMetaMenu;
+// Construct the meta command menu from the ini file
+var
+  MetaMenuIni: TInifile;
+  ParentMenuItem, ParentMenuItem2, ChildMenuItem: TMenuItem;
+  MetaSections, CurrentSection: TStringList;
+  SectionName: string;
+  i,j: Integer;
+
+begin
+  MetaSections := TStringList.Create;
+  MetaSections.Sorted := true;
+  CurrentSection := TStringList.Create;
+  MetaMenuIni := TInifile.Create(IniFilePath + '\uiconfig.ini');
+
+  MetaMenuIni.ReadSection('Meta Menu Items', MetaSections);
+
+  if MetaSections.Count > 0 then
+    for i := 0 to MetaSections.Count - 1 do
+    begin
+      SectionName := MetaMenuIni.ReadString('Meta Menu Items', MetaSections[i], '');
+      if MetaMenuIni.SectionExists(SectionName) then
+      begin
+        MetaMenuIni.ReadSection(SectionName,CurrentSection);
+        if CurrentSection.Count > 0 then
+        begin
+          ParentMenuItem := CreateMenuItem(SectionName, '', frMain.mnuMeta);
+          ParentMenuItem2 := CreateMenuItem(SectionName, '', frMain.mnuMeta2);
+          frMain.mnuMeta.Add(ParentMenuItem);
+          frMain.mnuMeta2.Add(ParentMenuItem2);
+          for j := 0 to CurrentSection.Count - 1 do
+          begin
+            ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
+            ChildMenuItem.OnClick := frMain.MetaMenuClick;
+            ParentMenuItem.Add(ChildMenuItem);
+            ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
+            ChildMenuItem.OnClick := frMain.MetaMenuClick;
+            ParentMenuItem2.Add(ChildMenuItem);
+          end;
+        end;
+      end;
+    end
+  else
+    frMain.mnuMeta.Enabled := False;
+
+  CurrentSection.Free;
+  MetaSections.Free;
+  MetaMenuIni.Free;
 end;
 
 procedure TfrOptions.btnColorSelectClick(Sender: TObject);
