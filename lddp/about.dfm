@@ -182,7 +182,7 @@ object frAboutBox: TfrAboutBox
     Top = 49
     Width = 436
     Height = 217
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 1
     object TabSheet1: TTabSheet
@@ -199,7 +199,6 @@ object frAboutBox: TfrAboutBox
           'Copyright (C) 2002-2009 by the LDDP contributors'
           ''
           ' Orion Pobursky'
-          ' Stephan Schonberg'
           ' Carsten Schmitz'
           ''
           'Special thanks to:'
@@ -224,8 +223,9 @@ object frAboutBox: TfrAboutBox
           'Willy Tschager'
           '  Primary Beta Tester'
           ''
-          'Anders Isaksson'
-          'Kevin Clague'
+          'Anders Isaksson (testing)'
+          'Kevin Clague (inspiriation)'
+          'Stephan Schonberg (former project contributor)'
           ''
           'This program is free software; you can redistribute it '
           'and/or modify it under the terms of the GNU General '
@@ -259,6 +259,13 @@ object frAboutBox: TfrAboutBox
         Align = alClient
         Lines.Strings = (
           '+ = New feature  * = Bugfix   - = Removed feature'
+          ''
+          'v2.0.1'
+          '* Fixed a few bug in the bendible part generator'
+          
+            '* Fixed a bug that caused LDDP in some cases to consider a line ' +
+            'invalid if tab '
+          '  characters were used to separate terms.'
           ''
           'v2.0'
           
@@ -466,7 +473,6 @@ object frAboutBox: TfrAboutBox
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitTop = 32
       end
     end
   end

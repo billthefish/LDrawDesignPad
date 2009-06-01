@@ -138,6 +138,11 @@ We especially thank you, the user, for downloading our program
 
 + = New feature  * = Bugfix   - = Removed feature
 
+v2.0.1
+* Fixed a few bug in the bendible part generator
+* Fixed a bug that caused LDDP in some cases to consider a line invalid if tab 
+  characters were used to separate terms.
+
 v2.0
 + Completely retooled and restructured LDDP.  Too many changes to list here.
 
