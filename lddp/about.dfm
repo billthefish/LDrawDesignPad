@@ -224,7 +224,7 @@ object frAboutBox: TfrAboutBox
           '  Primary Beta Tester'
           ''
           'Anders Isaksson (testing)'
-          'Kevin Clague (inspiriation)'
+          'Kevin Clague (inspiration)'
           'Stephan Schonberg (former project contributor)'
           ''
           'This program is free software; you can redistribute it '
@@ -259,9 +259,12 @@ object frAboutBox: TfrAboutBox
         Align = alClient
         Lines.Strings = (
           '+ = New feature  * = Bugfix   - = Removed feature'
+          'v2.0.2'
+          '* Fixed inlining broken in last version'
+          '* Fixed a few more bugs in the bendible part generator'
           ''
           'v2.0.1'
-          '* Fixed a few bug in the bendible part generator'
+          '* Fixed a few bugs in the bendible part generator'
           
             '* Fixed a bug that caused LDDP in some cases to consider a line ' +
             'invalid if tab '

@@ -100,13 +100,7 @@ Remarks:
 Thank you too to the other Code- and LDraw-Gurus for suggestions 
 and the great programs they wrote to make LDRAWing a lot easier:
 
-- Travis Cobbs
-- Steve Bliss
-- Lars C. Hassing
-- Tore Eriksson
-- Anders Isaksson
-
-Special Thanks to:
+Special thanks to:
 
 Lars C. Hassing
   Error Check feature derived from L3Check.cpp, L3Math.cpp
@@ -115,28 +109,36 @@ Lars C. Hassing
 
 Fredrik Glöckner
   Bendible Object Generator feature derived from 
-  Emacs LDraw Major-Mode
+  Emacs LDraw Major-Mode 
   Copyright (C) 1999-2002  Fredrik Glöckner (fredrigl@math.uio.no)
 
 Philippe "Philo" Hurbain
   Plane normal check derived from code by:
   Philippe "Philo" Hurbain - 2007 - www.philohome.com
+  Philo also provided a few icons
 
-Willy Tschager 
+Willy Tschager
   Primary Beta Tester
+
+Anders Isaksson (testing)
+Kevin Clague (inspiration)
+Stephan Schonberg (former project contributor)
 
 We especially thank you, the user, for downloading our program
 
    -The LDDP Development Team:
-      Carsten Schmitz
-      Stephen Schonberg
       Orion Pobursky
+      Carsten Schmitz
 
 
 7. Version History
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
+
+v2.0.2
+* Fixed inlining broken in last version
+* Fixed a few more bugs in the bendible part generator
 
 v2.0.1
 * Fixed a few bug in the bendible part generator

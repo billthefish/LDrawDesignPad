@@ -33,7 +33,7 @@ object frmDATCurve: TfrmDATCurve
     ParentFont = False
   end
   object lblMessage: TLabel
-    Left = 8
+    Left = 11
     Top = 32
     Width = 3
     Height = 13

@@ -50,7 +50,7 @@ type
       function BezierSum(u: Extended; Point1, Point2, Point3, Point4: TDATPoint): TDATPoint;
       function NormalizeVector(Vector: TDATPoint): TDATPoint;
       function BezMakeMatrix(Vector: TDATPoint): TDATRotationMatrix;
-
+      function MakeBezControlPoint(point1, point2: TDATPoint; Factor: Extended): TDATPoint;
 
     protected
       function GetModelText: string;
@@ -180,17 +180,23 @@ begin
                               v1[3], v2[3], v3[3]);
 end;
 
+function TDATFlexObject.MakeBezControlPoint(point1, point2: TDATPoint; Factor: Extended): TDATPoint;
+begin
+  Result :=
+    PointAdd(point1, PointMultiply(PointAdd(PointMultiply(point1, -1), point2), Factor));
+end;
+
 function TDATFlexObject.GetModelText: string;
 var
   Line1, Line2, TempPart: TDATSubPart;
   BezBegin, BezEnd, BezCont1, BezCont2: TDATPoint;
   FileType: string;
-  BezPoint1, BezPoint2, lastPoint, pntC1, pntC2: TDATPoint;
+  BezPoint1, BezPoint2, LastPoint, pntC1, pntC2: TDATPoint;
   BezIntLen: array of Extended;
   BezIntPos: array of TDATPoint;
-  BezLength, Factor, Distance, CalculatedLength, rlCount: Extended;
+  BezLength, Factor, Distance, CalculatedLength, PointCount: Extended;
   BezI, BezILast, I2: Extended;
-  Segments, i, Iterations, intCount, BezSearch: Integer;
+  Segments, i, Iterations, ArrayPos, BezSearch: Integer;
   Last, AddControlParts: Boolean;
 
 begin
@@ -239,11 +245,11 @@ begin
     begin
       Line1.SubPart := '757.dat';
       Line2.SubPart := '760.dat';
-      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 30.855,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 45,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -22.25,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -37,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezLength := 225;
+      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 26.8387,  0, 0, 1, 0,  0, 0, 0, 1));
+      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 38,  0, 0, 1, 0,  0, 0, 0, 1));
+      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -20,  0, 0, 1, 0,  0, 0, 0, 1));
+      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -25,  0, 0, 1, 0,  0, 0, 0, 1));
+      BezLength := 177.2;
       Segments := 33;
       FileType := '758.dat';
     end;
@@ -285,7 +291,7 @@ begin
     end;
   end;
 
-  if EuclidDistance(Line1.Position, Line2.Position) < BezLength then
+  if EuclidDistance(BezBegin, BezEnd) < BezLength then
   begin
     if FUserControl then
     begin
@@ -332,11 +338,6 @@ begin
       end;
     end;
 
-    Factor := 1;
-    Distance := 0.5;
-    Last := True;
-    Iterations := 0;
-    CalculatedLength := 0;
     SetLength(BezIntLen, Segments * PointsPerSegment);
     SetLength(BezIntPos, Segments * PointsPerSegment);
 
@@ -345,48 +346,59 @@ begin
       BezIntLen[i] := 0;
       BezIntPos[i] := FDATOriginPoint;
     end;
+
+    Factor := 1;
+    Distance := 0.5;
+    Last := True;
+    Iterations := 0;
+    CalculatedLength := 0;
+
     while (Iterations < MaxIterations) and
-          (abs(CalculatedLength - BezLength) > Epsilon) do
+          (Abs(CalculatedLength - BezLength) > Epsilon) do
     begin
-      rlCount := 0;
+      pntC1 := MakeBezControlPoint(BezBegin, BezCont1, Factor);
+      pntC2 := MakeBezControlPoint(BezEnd, BezCont2, Factor);
+
+      PointCount := 0;
       CalculatedLength := 0;
-      lastPoint := BezBegin;
-      pntC1 := PointAdd(BezBegin, PointMultiply( PointAdd( PointMultiply( BezBegin, -1), BezCont1),Factor));
-      pntC2 := PointAdd(BezEnd, PointMultiply( PointAdd( PointMultiply( BezEnd, -1), BezCont2),Factor));
-      while rlCount < (Segments * PointsPerSegment) do
+      LastPoint := BezBegin;
+
+      while PointCount < (Segments * PointsPerSegment) do
       begin
-        intCount := Round(rlCount);
-        BezIntPos[intCount] :=  BezierSum(((rlCount / Segments) / PointsPerSegment), BezBegin, pntC1, pntC2, BezEnd);
-        CalculatedLength := CalculatedLength + EuclidDistance(BezIntPos[intCount], lastPoint);
-        BezIntLen[intCount] := CalculatedLength;
-        lastPoint := BezIntPos[intCount];
-        rlCount := rlCount + 1;
+        ArrayPos := Round(PointCount);
+        BezIntPos[ArrayPos] :=  BezierSum(((PointCount / Segments) / PointsPerSegment), BezBegin, pntC1, pntC2, BezEnd);
+        CalculatedLength := CalculatedLength + EuclidDistance(BezIntPos[ArrayPos], LastPoint);
+        BezIntLen[ArrayPos] := CalculatedLength;
+        LastPoint := BezIntPos[ArrayPos];
+        PointCount := PointCount + 1;
       end;
+
       if CalculatedLength < BezLength then
       begin
         Factor := Factor + Distance;
-        if not Last then Distance := (Distance / 2) * 1.4;
+        if not Last then Distance := Distance * 0.7;
         Last := True;
       end
       else
       begin
         Factor := Factor - Distance;
-        if Last then Distance := Distance / 2;
+        if Last then Distance := Distance * 0.5;
         Last := False;
       end;
-      inc(Iterations);
+      Inc(Iterations);
     end;
-    rlCount := 0;
+
+    PointCount := 0;
     BezILast := 0;
     BezSearch := 0;
-    while rlCount < Segments do
+    while PointCount < Segments do
     begin
-      if rlCount = (Segments -1) then BezI := 1
+      if PointCount = (Segments - 1) then BezI := 1
       else
       begin
         while (BezSearch < (Segments * PointsPerSegment)) and
-              (BezIntLen[BezSearch] < ((CalculatedLength * (rlCount + 1)) / Segments)) do inc(BezSearch);
-        i2 :=  ((CalculatedLength * ((rlCount + 1) / Segments)) - BezIntLen[BezSearch-1]) /(BezIntLen[BezSearch] - BezIntLen[BezSearch-1]);
+              (BezIntLen[BezSearch] < ((CalculatedLength * (PointCount + 1)) / Segments)) do inc(BezSearch);
+        i2 :=  ((CalculatedLength * ((PointCount + 1) / Segments)) - BezIntLen[BezSearch-1]) /(BezIntLen[BezSearch] - BezIntLen[BezSearch-1]);
         BezI := ((i2 + BezSearch-1) / Segments) / PointsPerSegment;
       end;
 
@@ -401,22 +413,22 @@ begin
         boHoseTabs, boHoseNoTabs:
         begin
           TempPart.Position := GetBezierCoordinate(TempPart, DATMatrix(0, 0, 1, 0,  1.1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0, 1));
-          if rlCount = (Segments - 1) then
+          if PointCount = (Segments - 1) then
             TempPart.SubPart := '756.dat';
         end;
         boHose12:
           TempPart.Position := GetBezierCoordinate(TempPart, DATMatrix(0, 0, -1, 0,  0, -1, 0, 0,  -1, 0, 0, 0,  0, 0, 0, 1), True);
         boFlexAxle:
         begin
-          if rlCount < 5 then
+          if PointCount < 5 then
           begin
             TempPart.Position := GetBezierCoordinate(TempPart, DATMatrix(0, -1, 0, 0,  1, 0, 0, -2,  0, 0, 1, 0,  0, 0, 0, 1), True);
-            TempPart.SubPart := 's\faxle' + IntToStr(Round(rlCount) + 1) + '.dat';
+            TempPart.SubPart := 's\faxle' + IntToStr(Round(PointCount) + 1) + '.dat';
           end
-          else if rlCount > (Segments - 6) then
+          else if PointCount > (Segments - 6) then
           begin
             TempPart.Position := GetBezierCoordinate(TempPart, DATMatrix(0, 1, 0, 0,  -1, 0, 0, 2,  0, 0, 1, 0,  0, 0, 0, 1), True);
-            TempPart.SubPart := 's\faxle' + IntToStr(Segments - Round(rlCount)) + '.dat';
+            TempPart.SubPart := 's\faxle' + IntToStr(Segments - Round(PointCount)) + '.dat';
           end
           else
             TempPart.Position := GetBezierCoordinate(TempPart, DATMatrix(1, 0, 0, 0,  0, 4.26, 0, -2.13,  0, 0, 1, 0,  0, 0, 0, 1), True);
@@ -428,7 +440,7 @@ begin
       FModelText.Add(TempPart.DATString);
 
       BezILast := BezI;
-      rlCount := rlCount + 1;
+      PointCount := PointCount + 1;
     end;
 
     FModelText.Add('0 Start Point (' +
