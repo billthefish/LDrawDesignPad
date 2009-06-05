@@ -865,22 +865,22 @@ begin
       begin
         if (not Assigned(SearchPaths)) or (SearchPaths.Count = 0) then
         begin
-          if FileExists(strFilePath + FileName) then
-            InlineFile.LoadModel(strFilePath + FileName)
-          else if FileExists(LDrawBasePath + 'PARTS' + PathDelim + FileName) then
-            InlineFile.LoadModel(LDrawBasePath + 'PARTS' + PathDelim + FileName)
-          else if FileExists(LDrawBasePath + 'P' + PathDelim + FileName) then
-            InlineFile.LoadModel(LDrawBasePath + 'P' + PathDelim + FileName)
+          if FileExists(strFilePath + SubPart) then
+            InlineFile.LoadModel(strFilePath + SubPart)
+          else if FileExists(LDrawBasePath + 'PARTS' + PathDelim + SubPart) then
+            InlineFile.LoadModel(LDrawBasePath + 'PARTS' + PathDelim + SubPart)
+          else if FileExists(LDrawBasePath + 'P' + PathDelim + SubPart) then
+            InlineFile.LoadModel(LDrawBasePath + 'P' + PathDelim + SubPart)
         end
         else
         begin
-          if FileExists(strFilePath + FileName) then
-            InlineFile.LoadModel(strFilePath + FileName)
+          if FileExists(strFilePath + SubPart) then
+            InlineFile.LoadModel(strFilePath + SubPart)
           else
             for i := 0 to SearchPaths.Count - 1 do
-              if FileExists(SearchPaths[i] + PathDelim + FileName) then
+              if FileExists(SearchPaths[i] + PathDelim + SubPart) then
               begin
-                InlineFile.LoadModel(SearchPaths[i] + PathDelim + FileName);
+                InlineFile.LoadModel(SearchPaths[i] + PathDelim + SubPart);
                 Break;
               end;
         end;
