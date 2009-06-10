@@ -783,22 +783,27 @@ begin
             if errorlist.Count > 0 then
             begin
               for j := 0 to errorlist.Count - 1 do
-                if (errorlist[j] as TDATError).ErrorType = deBowtieQuad then
-                  if (errorlist[j] as TDATError).IsBowtieType1423 then
-                    FixBowtieQuad1423(quad)
-                  else
-                    FixBowtieQuad1243(quad);
+                if (errorlist[j] as TDATError).ErrorType = deBowtieQuad1423 then
+                  FixBowtieQuad1423(quad)
+                else if (errorlist[j] as TDATError).ErrorType = deBowtieQuad1243 then
+                  FixBowtieQuad1243(quad);
               errorlist := L3CheckLine(quad.DATString);
               for j := 0 to errorlist.Count - 1 do
-                if ((errorlist[j] as TDATError).ErrorType = deCollinearVertices) or
-                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVertices) or
-                   ((errorlist[j] as TDATError).ErrorType = deConcaveQuad) then
+                if ((errorlist[j] as TDATError).ErrorType = deCollinearVertices123) or
+                   ((errorlist[j] as TDATError).ErrorType = deCollinearVertices124) or
+                   ((errorlist[j] as TDATError).ErrorType = deCollinearVertices134) or
+                   ((errorlist[j] as TDATError).ErrorType = deCollinearVertices234) or
+                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesDet) or
+                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesDist) or
+                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesNormAngle) or
+                   ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit24) or
+                   ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit13) then
                   case MessageDlg(_('Combining these triangles:') + #13#10 +
                                     line1.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
                                     line2.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
-                                    _('will result in a concave quad or a quad with' + #13#10 +
-                                    'collinear or not coplaner vertices' + #13#10 +
-                                    'Combine anyway?'), mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
+                                    _('gives the following error:') + #13#10 +
+                                    GetErrorString(errorlist[j] as TDATError) + #13#10 + #13#10 +
+                                    _('Combine anyway?'), mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
                     mrNo:
                     begin
                       DoNotCombine := True;

@@ -31,24 +31,21 @@ uses
   Contnrs;
 
 type
-  TDATErrorType = (deRowAllZeros, deYColumnAllZeros, deSigularMatrix,
-                   deCollinearVertices, deIdenticalVertices, deConcaveQuad,
-                   deBowtieQuad, deNonCoplanerVertices, deIdenticalLine,
-                   deColor24Illegal, deNil);
+  TDATErrorType = (deRow1AllZeros, deRow2AllZeros, deRow3AllZeros,
+                   deYColumnAllZeros, deSigularMatrix,
+                   deCollinearVertices123, deCollinearVertices124,
+                   deCollinearVertices134, deCollinearVertices234,
+                   deCollinearVerticesAll, deIdenticalVertices,
+                   deConcaveQuadSplit13, deConcaveQuadSplit24,
+                   deBowtieQuad1423, deBowtieQuad1243, deNonCoplanerVerticesDet,
+                   deNonCoplanerVerticesDist, deNonCoplanerVerticesNormAngle,
+                   deIdenticalLine, deColor24Illegal, deNil);
 
   TDATCoplanerType = (ctDet, ctDist, ctNormalAngle);
-  TDATCollinearType = (clPoints123, clPoints124, clPoints134, clPoints234, clPointsAll);
 
   TDATError = class(TObject)
     ErrorType: TDATErrorType;
-    Row: Byte;
-    CollinearValue: Extended;
-    CollinearType: TDATCollinearType;
-    IsBowtieType1423: Boolean;
-    CoplanerValue: Extended;
-    CoplanerType: TDATCoplanerType;
-    SplitOn24: Boolean;
-    Line: Integer;
+    ErrorValue: Extended;
     procedure Assign(AError: TDATError);
   end;
 
@@ -85,14 +82,7 @@ uses
 procedure TDATError.Assign(AError: TDATError);
 begin
   ErrorType := AError.ErrorType;
-  Row := AError.Row;
-  CollinearValue := AError.CollinearValue;
-  CollinearType := AError.CollinearType;
-  IsBowtieType1423 := AError.IsBowtieType1423;
-  CoplanerValue := AError.CoplanerValue;
-  CoplanerType := AError.CoplanerType;
-  SplitOn24 := AError.SplitOn24;
-  Line := AError.Line;
+  ErrorValue := AError.ErrorValue;
 end;
 
 function SubPartIsXZPrimitive(const Subp: string): Boolean;
@@ -231,8 +221,11 @@ begin
             if det <> 0 then
             begin
               error := TDATError.Create;
-              error.ErrorType := deRowAllZeros;
-              error.Row := i;
+              case i of
+                1: error.ErrorType := deRow1AllZeros;
+                2: error.ErrorType := deRow1AllZeros;
+                3: error.ErrorType := deRow1AllZeros;
+              end;
               Result.Add(error);
               Break;
             end;
@@ -316,9 +309,8 @@ begin
     if dp < CollinearPointsThreshold then
     begin
       error := TDATError.Create;
-      error.ErrorType := deCollinearVertices;
-      error.CollinearValue := dp;
-      error.CollinearType := clPointsAll;
+      error.ErrorType := deCollinearVerticesAll;
+      error.ErrorValue := dp;
       Result.Add(error);
     end;
   end;
@@ -353,9 +345,8 @@ begin
     if cp < CollinearPointsThreshold then
     begin
       error := TDATError.Create;;
-      error.ErrorType := deCollinearVertices;
-      error.CollinearValue := cp;
-      error.CollinearType := clPoints123;
+      error.ErrorType := deCollinearVertices123;
+      error.ErrorValue := cp;
       Result.Add(error);
       Exit;
     end;
@@ -364,9 +355,8 @@ begin
     if cp < CollinearPointsThreshold then
     begin
       error := TDATError.Create;;
-      error.ErrorType := deCollinearVertices;
-      error.CollinearValue := cp;
-      error.CollinearType := clPoints124;
+      error.ErrorType := deCollinearVertices124;
+      error.ErrorValue := cp;
       Result.Add(error);
       Exit;
     end;
@@ -375,9 +365,8 @@ begin
     if cp < CollinearPointsThreshold then
     begin
       error := TDATError.Create;;
-      error.ErrorType := deCollinearVertices;
-      error.CollinearValue := cp;
-      error.CollinearType := clPoints134;
+      error.ErrorType := deCollinearVertices134;
+      error.ErrorValue := cp;
       Result.Add(error);
       Exit;
     end;
@@ -386,9 +375,8 @@ begin
     if cp < CollinearPointsThreshold then
     begin
       error := TDATError.Create;;
-      error.ErrorType := deCollinearVertices;
-      error.CollinearValue := cp;
-      error.CollinearType := clPoints234;
+      error.ErrorType := deCollinearVertices234;
+      error.ErrorValue := cp;
       Result.Add(error);
       Exit;
     end;
@@ -409,8 +397,7 @@ begin
       if (B and (not C)) or (C and (not B)) then
       begin
         error := TDATError.Create;;
-        error.ErrorType := deConcaveQuad;
-        error.SplitOn24 := False;
+        error.ErrorType := deConcaveQuadSplit13;
         Result.Add(error);
       end;
     end
@@ -419,30 +406,26 @@ begin
         if C then
         begin
           error := TDATError.Create;;
-          error.ErrorType := deConcaveQuad;
-          error.SplitOn24 := True;
+          error.ErrorType := deConcaveQuadSplit24;
           Result.Add(error);
         end
         else
         begin
           error := TDATError.Create;;
-          error.ErrorType := deBowtieQuad;
-          error.IsBowtieType1423 := True;
+          error.ErrorType := deBowtieQuad1423;
           Result.Add(error);
         end
       else
         if C then
         begin
           error := TDATError.Create;;
-          error.ErrorType := deBowtieQuad;
-          error.IsBowtieType1423 := False;
+          error.ErrorType := deBowtieQuad1243;
           Result.Add(error);
         end
         else
         begin
           error := TDATError.Create;;
-          error.ErrorType := deConcaveQuad;
-          error.SplitOn24 := True;
+          error.ErrorType := deConcaveQuadSplit24;
           Result.Add(error);
         end;
 
@@ -452,9 +435,8 @@ begin
       if det > DetThreshold then
       begin
         error := TDATError.Create;;
-        error.ErrorType := deNonCoplanerVertices;
-        error.CoplanerType := ctDet;
-        error.CoplanerValue := det;
+        error.ErrorType := deNonCoplanerVerticesDet;
+        error.ErrorValue := det;
         Result.Add(error);
       end;
     end;
@@ -465,9 +447,8 @@ begin
       if maxdist > DistThreshold then
       begin
         error := TDATError.Create;;
-        error.ErrorType := deNonCoplanerVertices;
-        error.CoplanerType := ctDist;
-        error.CoplanerValue := maxdist;
+        error.ErrorType := deNonCoplanerVerticesDist;
+        error.ErrorValue := maxdist;
         Result.Add(error);
       end;
     end;
@@ -478,9 +459,8 @@ begin
       if maxangle > PlaneNormalAngleLimit then
       begin
         error := TDATError.Create;;
-        error.ErrorType := deNonCoplanerVertices;
-        error.CoplanerType := ctNormalAngle;
-        error.CoplanerValue := maxangle;
+        error.ErrorType := deNonCoplanerVerticesNormAngle;
+        error.ErrorValue := maxangle;
         Result.Add(error);
       end;
     end;
@@ -527,49 +507,37 @@ end;
 function GetErrorString(error: TDATError): string;
 begin
   case error.ErrorType of
-    deRowAllZeros:
-      case error.Row of
-        1: Result := strRow1AllZeros;
-        2: Result := strRow2AllZeros;
-        3: Result := strRow3AllZeros;
-        else Result := '';
-      end;
+    deRow1AllZeros: Result := strRow1AllZeros;
+    deRow2AllZeros: Result := strRow1AllZeros;
+    deRow3AllZeros: Result := strRow1AllZeros;
     deYColumnAllZeros: Result := strYColumnAllZeros;
     deSigularMatrix: Result := strSingularMatrix;
     deIdenticalVertices: Result := strIdenticalVertices;
-    deCollinearVertices:
-    begin
-      case error.CollinearType of
-        clPoints123: Result := 'Points 1, 2, and 3 have ';
-        clPoints124: Result := 'Points 1, 2, and 4 have ';
-        clPoints134: Result := 'Points 1, 3, and 4 have ';
-        clPoints234: Result := 'Points 2, 3, and 4 have ';
-        clPointsAll: Result := '';
-      end;
-      Result := Result + strCollinearVertices + ' (' +
-                FloatToStr(error.CollinearValue) + ')'
-    end;
-    deConcaveQuad:
-      if error.SplitOn24 then
-        Result := strConcaveSplit24
-      else
-        Result := strConcaveSplit13;
-    deBowtieQuad:
-      if error.IsBowtieType1423 then
-        Result := strBowtie1423
-      else
-        Result := strBowtie1243;
-    deNonCoplanerVertices:
-      case error.CoplanerType of
-        ctDet: Result := strNonCoplanerVertices +
-                         ' (det = ' + FloatToStr(error.CoplanerValue) + ')';
-        ctDist: Result := strNonCoplanerVertices +
-                          ' (dist = ' + FloatToStr(error.CoplanerValue) + ')';
-        ctNormalAngle: Result := strNonCoplanerVertices +
-                       ' (angle = ' + FloatToStr(error.CoplanerValue) + ')';
-        else Result := '';
-      end;
-    deIdenticalLine: Result := strIdenticalLine + ' ' + IntToStr(error.Line);
+    deCollinearVertices123: Result := 'Points 1, 2, and 3 have ' +
+                                      strCollinearVertices + ' (' +
+                                      FloatToStr(error.ErrorValue) + ')';
+    deCollinearVertices124: Result := 'Points 1, 2, and 4 have ' +
+                                      strCollinearVertices + ' (' +
+                                      FloatToStr(error.ErrorValue) + ')';
+    deCollinearVertices134: Result := 'Points 1, 3, and 4 have ' +
+                                      strCollinearVertices + ' (' +
+                                      FloatToStr(error.ErrorValue) + ')';
+    deCollinearVertices234: Result := 'Points 2, 3, and 4 have ' +
+                                      strCollinearVertices + ' (' +
+                                      FloatToStr(error.ErrorValue) + ')';
+    deCollinearVerticesAll: Result := strCollinearVertices + ' (' +
+                                      FloatToStr(error.ErrorValue) + ')';
+    deConcaveQuadSplit24: Result := strConcaveSplit24;
+    deConcaveQuadSplit13: Result := strConcaveSplit13;
+    deBowtieQuad1423: Result := strBowtie1423;
+    deBowtieQuad1243: Result := strBowtie1243;
+    deNonCoplanerVerticesDet: Result := strNonCoplanerVertices +
+                              ' (det = ' + FloatToStr(error.ErrorValue) + ')';
+    deNonCoplanerVerticesDist: Result := strNonCoplanerVertices +
+                              ' (dist = ' + FloatToStr(error.ErrorValue) + ')';
+    deNonCoplanerVerticesNormAngle: Result := strNonCoplanerVertices +
+                              ' (angle = ' + FloatToStr(error.ErrorValue) + ')';
+    deIdenticalLine: Result := strIdenticalLine + ' ' + IntToStr(Trunc(error.ErrorValue));
     deColor24Illegal: Result := strColor24Illegal;
     else Result := '';
   end;
