@@ -136,8 +136,14 @@ begin
   error := TDATError(Item.Data);
   UnFixableError := (error.ErrorType = deIdenticalVertices) or
                     (error.ErrorType = deSigularMatrix) or
-                    (error.ErrorType = deCollinearVertices) or
-                    (error.ErrorType = deNonCoplanerVertices) or
+                    (error.ErrorType = deCollinearVertices123) or
+                    (error.ErrorType = deCollinearVertices124) or
+                    (error.ErrorType = deCollinearVertices134) or
+                    (error.ErrorType = deCollinearVertices234) or
+                    (error.ErrorType = deCollinearVerticesAll) or
+                    (error.ErrorType = deNonCoplanerVerticesDet) or
+                    (error.ErrorType = deNonCoplanerVerticesDist) or
+                    (error.ErrorType = deNonCoplanerVerticesNormAngle) or
                     (error.ErrorType = deColor24Illegal);
   acECFixError.Enabled := not UnFixableError;
   acECFixAllErrorsTyped.Enabled := not UnFixableError;
@@ -252,7 +258,7 @@ begin
       begin
         error := TDATError.Create;
         error.ErrorType := deIdenticalLine;
-        error.Line := iline + 1;
+        error.ErrorValue := iline + 1;
         AddError(IntToStr(i + 1), error)
       end
       else
@@ -354,27 +360,28 @@ begin
       // Fix the error
       with ErrorListView.Items[ErrorListView.ItemIndex] do
         case PError.ErrorType of
-          deRowAllZeros, deYColumnAllZeros:
+          deRow1AllZeros, deRow2AllZeros, deRow3AllZeros, deYColumnAllZeros:
           begin
             DATElem := TDATSubPart.Create;
             (DATElem as TDATSubPart).DATString :=
               frMain.editor.Lines[frMain.editor.CaretY - 1];
-            if PError.ErrorType = deRowAllZeros then
-              FixRowAllZeros(DATElem as TDATSubPart, PError.Row)
+            if PError.ErrorType = deYColumnAllZeros then
+              FixYColumnAllZeros(DATElem as TDATSubPart)
             else
-              FixYColumnAllZeros(DATElem as TDATSubPart);
+              FixRowAllZeros(DATElem as TDATSubPart, Trunc(PError.ErrorValue));
+
             frMain.editor.lines[frMain.editor.CaretY - 1] :=
               (DATElem as TDATSubPart).DATString;
             DATElem.Free;
             errorfixed := True;
           end;
-          deConcaveQuad:
+          deConcaveQuadSplit24, deConcaveQuadSplit13:
           begin
             DATElem := TDATQuad.Create;
             with DATElem as TDATQuad do
             begin
               DATString := frMain.editor.lines[frMain.editor.CaretY - 1];
-              if PError.SplitOn24 then
+              if PError.ErrorType = deConcaveQuadSplit24 then
                 SplitConcaveQuad24((DATElem as TDATQuad), tri1, tri2)
               else
                 SplitConcaveQuad13((DATElem as TDATQuad), tri1, tri2);
@@ -389,16 +396,16 @@ begin
                 IntToStr(StrToInt(ErrorListView.Items[i].SubItems[0]) + 1);
             errorfixed := True;
           end;
-          deBowtieQuad:
+          deBowtieQuad1423, deBowtieQuad1243:
           begin
             DATElem := TDATQuad.Create;
             with DATElem as TDATQuad do
             begin
               DATString := frMain.editor.lines[frMain.editor.CaretY - 1];
-              if PError.IsBowtieType1423 then
+              if PError.ErrorType = deBowtieQuad1423 then
                 FixBowtieQuad1423(DATElem as TDATQuad)
               else
-                FixBowtieQuad1423(DATElem as TDATQuad);
+                FixBowtieQuad1243(DATElem as TDATQuad);
               frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
               Free;
             end;
@@ -406,7 +413,7 @@ begin
           end;
           deIdenticalLine:
           begin
-            frMain.editor.lines[frMain.editor.CaretY-1]:='';
+            frMain.editor.lines[frMain.editor.CaretY-1] := '';
             errorfixed := True;
           end;
           else errorfixed := false;
