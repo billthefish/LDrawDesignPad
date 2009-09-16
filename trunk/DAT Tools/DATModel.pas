@@ -21,12 +21,7 @@ unit DATModel;
 interface
 
 uses
-  DATBase,
-  SysUtils,
-  Contnrs,
-  Classes,
-  Dialogs,
-  Math;
+  DATBase, Contnrs, Classes;
 
 type
 
@@ -34,14 +29,14 @@ type
                   dsMidX, dsMidY, dsMidZ,
                   dsMaxX, dsMaxY, dsMaxZ,
                   dsMinX, dsMinY, dsMinZ ,
-                  dsLineType);
+                  dsLineType, dsSubpart);
 
   TDATSortArray = array[1..3] of TDATSortTerm;
 
 { Base class for all DAT Model type Objects
   Essentially this is a specialized Object list for
   DAT Components }
-  TDATCustomModel=class(TPersistent)
+  TDATCustomModel=class(TObject)
     private
       FModelCollection: TObjectList;
       FPntAcc, FRotAcc: Byte;
@@ -65,13 +60,13 @@ type
       procedure Insert(Index: Integer; strLine: string); overload; virtual;
       procedure Insert(Index: Integer; objLine: TDATType); overload; virtual;
       procedure Exchange(Index1, Index2: Integer); virtual;
-      procedure Rotate(w,x,y,z: Extended); virtual;
+      procedure Rotate(w,x,y,z: Double); virtual;
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; virtual;
-      procedure Translate(x,y,z: Extended); virtual;
+      procedure Translate(x,y,z: Double); virtual;
       procedure Clear; virtual;
 
     public
-      constructor Create; virtual;
+      constructor Create(RotAcc: Integer = 15; PntAcc: Integer = 15); virtual;
       destructor Destroy; override;
       property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc;
       property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc;
@@ -108,7 +103,7 @@ type
       procedure LoadModel(DATFile: string);
 
       { Save a model to dat or ldr format.  MPD support not yet added}
-      procedure SaveModel(Filename: string);
+      procedure SaveModel(fname: string);
 
       {Delete line at index}
       procedure Delete(Index: Integer);
@@ -135,9 +130,9 @@ type
       procedure Insert(Index: Integer; strLine: string); overload; override;
       procedure Insert(Index: Integer; objLine: TDATType); overload; override;
       procedure Exchange(Index1, Index2: Integer); override;
-      procedure Rotate(w,x,y,z: Extended); override;
+      procedure Rotate(w,x,y,z: Double); override;
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; override;
-      procedure Translate(x,y,z: Extended); override;
+      procedure Translate(x,y,z: Double); override;
       procedure Clear; override;
   end;
 
@@ -179,7 +174,7 @@ type
 implementation
 
 uses
-  DATUtils;
+  SysUtils, DATUtils;
 
 // Compare Functions
 function CompareLineType(Line1, Line2: TDATType): Integer;
@@ -193,27 +188,64 @@ begin
     Result := -1;
 end;
 
+function CompareSubpart(Line1, Line2: TDATType): Integer;
+
+var
+  PartNumber1, PartNumber2, CompStr, i: Integer;
+  PartStr1, PartStr2: string;
+
+begin
+  Result := 0;
+
+  if (Line1.LineType = ltSubpart) and (Line2.LineType = ltSubPart) then
+  begin
+    PartStr1 := ExtractFileName((Line1 as TDATSubpart).SubPart);
+    PartStr2 := ExtractFileName((Line2 as TDATSubpart).SubPart);
+
+    i := 1;
+    while (PartStr1[i] >= '0') and (PartStr1[i] <= '9') do
+      inc(i);
+    PartNumber1 := StrToInt(Copy(PartStr1, 0, i - 1));
+
+    i := 1;
+    while (PartStr2[i] >= '0') and (PartStr2[i] <= '9') do
+      inc(i);
+    PartNumber2 := StrToInt(Copy(PartStr2, 0, i - 1));
+
+    CompStr := CompareStr(PartStr1, PartStr2);
+
+    if (PartNumber1 = PartNumber2) and (CompStr <> 0) then
+      Result := -CompStr
+    else if PartNumber1 < PartNumber2 then
+      Result := 1
+    else if PartNumber2 < PartNumber1 then
+      Result := -1;
+  end
+  else
+    Result := CompareLineType(Line1, Line2);
+
+end;
+
 function CompareColor(Line1, Line2: TDATType): Integer;
 
 begin
   Result := 0;
 
-  if ((Line1.LineType > 0) and (Line2.LineType > 0)) then
+  if (Line1.LineType > ltComment) and (Line2.LineType > ltComment) then
+  begin
     if (Line1 as TDATElement).Color > (Line2 as TDATElement).Color then
       Result := -1
     else if (Line2 as TDATElement).Color > (Line1 as TDATElement).Color then
       Result := 1;
-
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
-    Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
-    Result := -1;
+  end
+  else
+    Result := CompareLineType(Line1, Line2);
 end;
 
 function CompareMaxX(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -221,13 +253,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).MaxX;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).MaxX;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).X;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).X;
 
   if val1 > val2 then
@@ -235,16 +267,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareMaxY(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -252,13 +284,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).MaxY;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).MaxY;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).Y;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).Y;
 
   if val1 > val2 then
@@ -266,16 +298,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareMaxZ(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -283,13 +315,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).MaxZ;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).MaxZ;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).Z;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).Z;
 
   if val1 > val2 then
@@ -297,16 +329,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareMinX(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -314,13 +346,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).MinX;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).MinX;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).X;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).X;
 
   if val1 > val2 then
@@ -328,16 +360,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareMinY(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -345,13 +377,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).MinY;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).MinY;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).Y;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).Y;
 
   if val1 > val2 then
@@ -359,16 +391,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareMinZ(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -376,13 +408,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).MinZ;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).MinZ;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).Z;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).Z;
 
   if val1 > val2 then
@@ -390,16 +422,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareCenterX(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -407,13 +439,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).CenterX;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).CenterX;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).X;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).X;
 
   if val1 > val2 then
@@ -421,16 +453,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareCenterY(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -438,13 +470,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).CenterY;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).CenterY;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).Y;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).Y;
 
   if val1 > val2 then
@@ -452,16 +484,16 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
 function CompareCenterZ(Line1, Line2: TDATType): Integer;
 
 var
-  val1, val2: Extended;
+  val1, val2: Double;
 
 begin
   Result := 0;
@@ -469,13 +501,13 @@ begin
   val1 := 0;
   val2 := 0;
 
-  if (Line1.LineType > 1) then
+  if (Line1.LineType > ltSubpart) then
     val1 := (Line1 as TDATGeometric).CenterZ;
-  if (Line2.LineType > 1) then
+  if (Line2.LineType > ltSubpart) then
     val2 := (Line2 as TDATGeometric).CenterZ;
-  if (Line1.LineType = 1) then
+  if (Line1.LineType = ltSubpart) then
     val1 := (Line1 as TDATSubPart).Z;
-  if (Line2.LineType = 1) then
+  if (Line2.LineType = ltSubpart) then
     val2 := (Line2 as TDATSubPart).Z;
 
   if val1 > val2 then
@@ -483,19 +515,19 @@ begin
   else if val1 < val2 then
       Result := 1;
 
-  if (Line1.LineType = 0) and (Line2.LineType > 0) then
+  if (Line1.LineType = ltComment) and (Line2.LineType > ltComment) then
     Result := 1;
-  if (Line2.LineType = 0) and (Line1.LineType > 0) then
+  if (Line2.LineType = ltComment) and (Line1.LineType > ltComment) then
     Result := -1;
 end;
 
-constructor TDATCustomModel.Create;
+constructor TDATCustomModel.Create(RotAcc: Integer = 15; PntAcc: Integer = 15);
 
 begin
   inherited Create;
   FModelCollection := TObjectList.Create;
-  FPntAcc := 15;
-  FRotAcc := 15;
+  FPntAcc := PntAcc;
+  FRotAcc := RotAcc;
 end;
 
 destructor TDATCustomModel.Destroy;
@@ -519,7 +551,7 @@ begin
   if (Idx >= 0) and (Idx < Count) then
   begin
     Result := (FModelCollection[Idx] as TDATType);
-    if Result.LineType > 0 then
+    if Result.LineType > ltComment then
     begin
       (Result as TDATElement).RotationDecimalPlaces := RotationDecimalPlaces;
       (Result as TDATElement).PositionDecimalPlaces := PositionDecimalPlaces;
@@ -607,7 +639,7 @@ begin
   FModelCollection.Exchange(Index1, Index2);
 end;
 
-procedure TDATCustomModel.Rotate(w,x,y,z: Extended);
+procedure TDATCustomModel.Rotate(w,x,y,z: Double);
 
 var
   i: Integer;
@@ -629,7 +661,7 @@ begin
       (Lines[i] as TDATElement).Transform(M,Reverse);
 end;
 
-procedure TDATCustomModel.Translate(x,y,z: Extended);
+procedure TDATCustomModel.Translate(x,y,z: Double);
 
 var
   i: Integer;
@@ -673,6 +705,7 @@ begin
         dsMidZ: Result := CompareCenterZ(Line1,Line2);
         dsColor: Result := CompareColor(Line1,Line2);
         dsLineType: Result := CompareLineType(Line1,Line2);
+        dsSubpart: Result := CompareSubpart(Line1,Line2);
         else Result := 0;
       end;
 
@@ -737,58 +770,17 @@ function TDATModel.RemoveDuplicateLines: Boolean;
 
 var
   j, line: Integer;
-  IdentFlag: Boolean;
 
 begin
   Result := False;
   for line := Count - 1 downto 0 do
-  begin
     for j := line downto 0 do
-    begin
-      IdentFlag := False;
-      if Lines[j].LineType = Lines[line].LineType then
-        case Lines[j].LineType of
-          1: if Lines[line].DATString = Lines[j].DATString then
-               Delete(line);
-          2: if CheckIdentPoints([(Lines[line] as TDATLine).Point[1],
-                                  (Lines[line] as TDATLine).Point[2]],
-                                 [(Lines[j] as TDATLine).Point[1],
-                                  (Lines[j] as TDATLine).Point[2]]) then
-               IdentFlag := True;
-          3: if CheckIdentPoints([(Lines[line] as TDATTriangle).Point[1],
-                                  (Lines[line] as TDATTriangle).Point[2],
-                                  (Lines[line] as TDATTriangle).Point[3]],
-                                 [(Lines[j] as TDATTriangle).Point[1],
-                                  (Lines[j] as TDATTriangle).Point[2],
-                                  (Lines[j] as TDATTriangle).Point[3]]) then
-               IdentFlag := True;
-          4: if CheckIdentPoints([(Lines[line] as TDATQuad).Point[1],
-                                  (Lines[line] as TDATQuad).Point[2],
-                                  (Lines[line] as TDATQuad).Point[3],
-                                  (Lines[line] as TDATQuad).Point[4]],
-                                 [(Lines[j] as TDATQuad).Point[1],
-                                  (Lines[j] as TDATQuad).Point[2],
-                                  (Lines[j] as TDATQuad).Point[3],
-                                  (Lines[j] as TDATQuad).Point[4]]) then
-               IdentFlag := True;
-          5: if (CheckIdentPoints([(Lines[line] as TDATOpLine).Point[1],
-                                   (Lines[line] as TDATOpLine).Point[2]],
-                                  [(Lines[j] as TDATOpLine).Point[1],
-                                   (Lines[j] as TDATOpLine).Point[2]])) and
-                (CheckIdentPoints([(Lines[line] as TDATOpLine).Point[3],
-                                   (Lines[line] as TDATOpLine).Point[4]],
-                                  [(Lines[j] as TDATOpLine).Point[3],
-                                   (Lines[j] as TDATOpLine).Point[4]])) then
-               IdentFlag := True;
-        end;
-      if IdentFlag then
+      if SameDATLine(Lines[j], Lines[line]) then
       begin
         Delete(line);
         Result := True;
         Break;
-     end;
-    end;
-  end;
+      end;
 end;
 
 procedure TDATModel.LoadModel(DATFile: string);
@@ -810,7 +802,7 @@ begin
   ModelFile.Free;
 end;
 
-procedure TDATModel.SaveModel(Filename:string);
+procedure TDATModel.SaveModel(fname:string);
 
 var
   ModelFile: TStringList;
@@ -818,7 +810,7 @@ var
 begin
   ModelFile := TStringList.Create;
   ModelFile.Text := GetModelText;
-  ModelFile.SaveToFile(Filename);
+  ModelFile.SaveToFile(fname);
   ModelFile.Free;
 end;
 
@@ -867,10 +859,10 @@ begin
         begin
           if FileExists(strFilePath + SubPart) then
             InlineFile.LoadModel(strFilePath + SubPart)
-          else if FileExists(LDrawBasePath + 'PARTS' + PathDelim + SubPart) then
-            InlineFile.LoadModel(LDrawBasePath + 'PARTS' + PathDelim + SubPart)
-          else if FileExists(LDrawBasePath + 'P' + PathDelim + SubPart) then
-            InlineFile.LoadModel(LDrawBasePath + 'P' + PathDelim + SubPart)
+          else if FileExists(LDrawBasePath + PathDelim + 'PARTS' + PathDelim + SubPart) then
+            InlineFile.LoadModel(LDrawBasePath + PathDelim + 'PARTS' + PathDelim + SubPart)
+          else if FileExists(LDrawBasePath + PathDelim + 'P' + PathDelim + SubPart) then
+            InlineFile.LoadModel(LDrawBasePath + PathDelim + 'P' + PathDelim + SubPart)
         end
         else
         begin
@@ -993,7 +985,7 @@ begin
 end;
 
 
-procedure TDATModel.Rotate(w,x,y,z: Extended);
+procedure TDATModel.Rotate(w,x,y,z: Double);
 begin
   inherited Rotate(w,x,y,z);
 end;
@@ -1003,7 +995,7 @@ begin
   inherited Transform(M, Reverse);
 end;
 
-procedure TDATModel.Translate(x,y,z: Extended);
+procedure TDATModel.Translate(x,y,z: Double);
 begin
   inherited Translate(x,y,z);
 end;

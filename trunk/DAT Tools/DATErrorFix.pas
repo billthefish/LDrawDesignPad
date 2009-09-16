@@ -24,8 +24,8 @@ uses
 
 procedure FixBowtieQuad1243(quad: TDATQuad);
 procedure FixBowtieQuad1423(quad: TDATQuad);
-procedure SplitConcaveQuad13(quad: TDATQuad; out tri1, tri2: TDATTriangle);
-procedure SplitConcaveQuad24(quad: TDATQuad; out tri1, tri2: TDATTriangle);
+procedure SplitConcaveQuad13(const quad: TDATQuad; out tri1, tri2: TDATTriangle);
+procedure SplitConcaveQuad24(const quad: TDATQuad; out tri1, tri2: TDATTriangle);
 procedure FixRowAllZeros(subp: TDATSubPart; const Row: Integer);
 procedure FixYColumnAllZeros(subp: TDATSubPart);
 
@@ -34,7 +34,7 @@ implementation
 procedure FixBowtieQuad1243(quad: TDATQuad);
 
 var
-  tx,ty,tz: Extended;
+  tx,ty,tz: Double;
 
 begin
   with quad do
@@ -54,7 +54,7 @@ end;
 procedure FixBowtieQuad1423(quad: TDATQuad);
 
 var
-  tx,ty,tz: Extended;
+  tx,ty,tz: Double;
 
 begin
   with quad do
@@ -84,7 +84,7 @@ begin
   subp.MatrixVals[2,2] := 1;
 end;
 
-procedure SplitConcaveQuad13(quad: TDATQuad; out tri1, tri2: TDATTriangle);
+procedure SplitConcaveQuad13(const quad: TDATQuad; out tri1, tri2: TDATTriangle);
 begin
   tri1 := TDATTriangle.Create;
   tri2 := TDATTriangle.Create;
@@ -98,7 +98,7 @@ begin
   tri2.Point[3] := quad.Point[4];
 end;
 
-procedure SplitConcaveQuad24(quad: TDATQuad; out tri1, tri2: TDATTriangle);
+procedure SplitConcaveQuad24(const quad: TDATQuad; out tri1, tri2: TDATTriangle);
 begin
   tri1 := TDATTriangle.Create;
   tri2 := TDATTriangle.Create;

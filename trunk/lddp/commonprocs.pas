@@ -24,15 +24,15 @@ uses
 
 type
   TGridSettings = record
-    XStep, YStep, ZStep: Extended;
-    Angle: Extended;
+    XStep, YStep, ZStep: Double;
+    Angle: Double;
   end;
 
   TGridType = (gtCoarse, gtMedium, gtFine);
 
 function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
 function StripEndingCRLF(const str: string): string;
-function IsBlankLine(line: string): Boolean;
+function IsBlankLine(const line: string): Boolean;
 function GetTmpFileName: string;
 function LDDPCreateDATModel: TDATModel;
 
@@ -58,7 +58,7 @@ begin
   Result := Copy(str, 0, Length(str)-2);
 end;
 
-function IsBlankLine(line: string): Boolean;
+function IsBlankLine(const line: string): Boolean;
 begin
   Result := (line = '') or (line = #13#10) or (line = #10#13) or
             (line = #13) or (line = #10);

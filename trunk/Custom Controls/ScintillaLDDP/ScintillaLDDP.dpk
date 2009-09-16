@@ -33,6 +33,8 @@ contains
   SciScintillaLDDP in 'SciScintillaLDDP.pas',
   DATBase in '..\..\DAT Tools\DATBase.pas',
   DATUtils in '..\..\DAT Tools\DATUtils.pas',
-  DATModel in '..\..\DAT Tools\DATModel.pas';
+  DATModel in '..\..\DAT Tools\DATModel.pas',
+  DATMath in '..\..\DAT Tools\DATMath.pas',
+  DATColour in '..\..\DAT Tools\DATColour.pas';
 
 end.

@@ -24,13 +24,13 @@ uses
   DATBase;
 
 function M4Multiply(M1,M2:TDATMatrix): TDATMatrix;
-function MatrixDet(const m: TDATMatrix): Extended;
+function MatrixDet(const m: TDATMatrix): Double;
 function PointSubtract(const p1,p2: TDATPoint): TDATPoint;
 function PointAdd(const p1,p2: TDATPoint): TDATPoint;
-function PointMultiply(const p1: TDATPoint; const factor: Extended): TDATPoint;
+function PointMultiply(const p1: TDATPoint; const factor: Double): TDATPoint;
 function PointCrossProduct(const p1,p2: TDATPoint): TDATPoint;
-function PointDotProduct(const p1,p2: TDATPoint): Extended;
-function PointLength(const p1: TDATPoint): Extended;
+function PointDotProduct(const p1,p2: TDATPoint): Double;
+function PointNorm(const p1: TDATPoint): Double;
 
 implementation
 
@@ -48,7 +48,7 @@ begin
                      M1[i,4] * M2[4,j];
 end;
 
-function MatrixDet(const m: TDATMatrix): Extended;
+function MatrixDet(const m: TDATMatrix): Double;
 begin
   Result := m[1,1] * (m[2,2] * m[3,3] - m[3,2] * m[2,3]) +
             m[2,1] * (m[3,2] * m[1,3] - m[1,2] * m[3,3]) +
@@ -69,7 +69,7 @@ begin
   Result[3] := p1[3] + p2[3];
 end;
 
-function PointMultiply(const p1: TDATPoint; const factor: Extended): TDATPoint;
+function PointMultiply(const p1: TDATPoint; const factor: Double): TDATPoint;
 begin
   Result[1] := factor * p1[1];
   Result[2] := factor * p1[2];
@@ -83,14 +83,14 @@ begin
   Result[3] := (p1[1] * p2[2]) - (p1[2] * p2[1]);
 end;
 
-function PointDotProduct(const p1,p2: TDATPoint): Extended;
+function PointDotProduct(const p1,p2: TDATPoint): Double;
 begin
   Result := (p1[1] * p2[1]) + (p1[2] * p2[2]) + (p1[3] * p2[3]);
 end;
 
-function PointLength(const p1: TDATPoint): Extended;
+function PointNorm(const p1: TDATPoint): Double;
 begin
-  Result := Sqrt((p1[1] * p1[1]) + (p1[2] * p1[2]) + (p1[3] * p1[3]));
+  Result := Sqrt(PointDotProduct(p1, p1));
 end;
 
 end.

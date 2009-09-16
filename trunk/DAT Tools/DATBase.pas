@@ -20,20 +20,16 @@ unit DATBase;
 interface
 
 uses
-  SysUtils,
-  Classes,
-  Math,
-  Graphics,
-  Contnrs;
+  Classes, SysUtils;
 
 type
-//  EInvalidDATLine = class(Exception);
+  EInvalidDATLine = class(Exception);
 
   (* These types allow passing of fixed arrays between procedures
      instead of varible length arrays *)
-  TDATPoint = array[1..3] of Extended;
-  TDATMatrix = array[1..4,1..4] of Extended;
-  TDATRotationMatrix = array[1..3,1..3] of Extended;
+  TDATPoint = array[1..3] of Double;
+  TDATMatrix = array[1..4,1..4] of Double;
+  TDATRotationMatrix = array[1..3,1..3] of Double;
 
   // For operations involving axis
   TDATAxis = (axisX = 1, axisY = 2, axisZ = 3);
@@ -44,7 +40,10 @@ type
 
   //License Type
   TDATLicenseType = (ltCA, ltNonCA);
-                  
+
+  //Line Type
+  TDATLineType = (ltNil = -1, ltComment = 0, ltSubpart = 1,
+                  ltLine = 2, ltTriangle = 3, ltQuad = 4, ltOpLine = 5);
 (*
   The general structure of the DAT Classes is:
 
@@ -64,27 +63,30 @@ type
                                /     \          ----TDATOpLine
                TDATTriangle---        ---TDATQuad
 *)
-  TDATType=class(TPersistent)
-    private
-      FLine: string;
-
+  TDATType=class(TObject)
     protected
-      intLineType: Byte;
-      function GetDATString:string; virtual;
-      procedure ProcessDATLine(strText:string); virtual;
+      FLineType: TDATLineType;
+      function GetDATString: string; virtual; abstract;
+      procedure ProcessDATLine(strText: string); virtual; abstract;
 
     public
       constructor Create; virtual;
 
       (* Returns the linetype of the object *)
-      property LineType: Byte read intLineType;
+      property LineType: TDATLineType read FLineType;
 
       (* Get or set a properly formatted DAT text line that represents
          the DAT Object's values *)
       property DATString: string read GetDATString write ProcessDATLine;
   end;
 
-  TDATInvalidLine = TDATType;
+  (* Represent a line with an error *)
+  TDATInvalidLine = class(TDATType)
+    protected
+      FLine: string;
+      function GetDATString:string; override;
+      procedure ProcessDATLine(strText:string); override;
+  end;
 
   (* Represents LineType 0 *)
   TDATComment=class(TDATType)
@@ -96,7 +98,8 @@ type
       procedure ProcessDATLine(strText:string); override;
 
     public
-      constructor Create; override;
+      constructor Create; overload; override;
+      constructor Create(comment: string); reintroduce; overload;
 
     published
       (* Get or Set the Comment portion of the DAT text*)
@@ -107,6 +110,7 @@ type
   TDATBlankLine=class(TDATType)
     protected
       function GetDATString:string; override;
+      procedure ProcessDATLine(strText:string); override;
   end;
 
   TDATElement=class(TDATType)
@@ -116,10 +120,10 @@ type
     protected
       FPntAcc, FRotAcc: ShortInt;
       FDATMatrix: TDATMatrix;
-      function GetCoordinate(Index: Integer): Extended;
-      procedure SetCoordinate(Index: Integer; Value: Extended);
-      function GetMatrixVal(idx1,idx2: Integer): Extended;
-      procedure SetMatrixVal(idx1,idx2: Integer; Value: Extended);
+      function GetCoordinate(Index: Integer): Double;
+      procedure SetCoordinate(Index: Integer; Value: Double);
+      function GetMatrixVal(idx1,idx2: Integer): Double;
+      procedure SetMatrixVal(idx1,idx2: Integer; Value: Double);
 
     public
       constructor Create; override;
@@ -130,24 +134,23 @@ type
 
       (* Use this property to set individual numbers in the matrix (Linetype 1)
          or point set (Linetypes 2-5) *)
-      property MatrixVals[idx1,idx2: Integer]: Extended read GetMatrixVal write SetMatrixVal;
+      property MatrixVals[idx1,idx2: Integer]: Double read GetMatrixVal write SetMatrixVal;
+
+      property Color: Integer read FColor write FColor default 0;
+      property RotationDecimalPlaces: ShortInt read FRotAcc write FRotAcc default 15;
+      property PositionDecimalPlaces: ShortInt read FPntAcc write FPntAcc default 15;
 
       (* Multiply the current Object by the given Matrix *)
       procedure Transform(M: TDATMatrix;
                             Reverse: Boolean = false); virtual; abstract;
       (* Translate the current Object by x,y,z*)
-      procedure Translate(x,y,z: Extended);
+      procedure Translate(x,y,z: Double);
 
       (* Rotate the current Object by w around the vector [x,y,z,1] *)
-      procedure Rotate(w,x,y,z: Extended);
+      procedure Rotate(w,x,y,z: Double);
 
       (* Mirror the part on specified axis *)
       procedure Mirror(axis: TDATAxis); virtual;
-
-    published
-      property Color: Integer read FColor write FColor default 0;
-      property RotationDecimalPlaces: ShortInt read FRotAcc write FRotAcc default 15;
-      property PositionDecimalPlaces: ShortInt read FPntAcc write FPntAcc default 15;
   end;
 
   TDATSubPart=class(TDATElement)
@@ -172,9 +175,9 @@ type
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); override;
 
       property RotationMatrix: TDATRotationMatrix read GetRotationMatrix write SetRotationMatrix;
-      property X: Extended index 13 read GetCoordinate write SetCoordinate;
-      property Y: Extended index 14 read GetCoordinate write SetCoordinate;
-      property Z: Extended index 15 read GetCoordinate write SetCoordinate;
+      property X: Double index 13 read GetCoordinate write SetCoordinate;
+      property Y: Double index 14 read GetCoordinate write SetCoordinate;
+      property Z: Double index 15 read GetCoordinate write SetCoordinate;
 
       procedure Mirror(axis: TDATAxis); override;
   end;
@@ -184,23 +187,23 @@ type
     protected
       function GetPoint(idx: Integer): TDATPoint;
       procedure SetPoint(idx: Integer; Value: TDATPoint);
-      function GetExtremeValue(Index: Integer): Extended;
-      function GetCenterValue(Index: Integer): Extended;
+      function GetExtremeValue(Index: Integer): Double;
+      function GetCenterValue(Index: Integer): Double;
 
     public
       (* Use this property to get or set the individual points of the Line,
          Triangle, Quad or Optional Line as a TDATPoint type.  To set individual
          values (e.g. x1 only) use the RM property *)
       property Point[idx: Integer]: TDATPoint read GetPoint write SetPoint;
-      property MaxX: Extended index 1 read GetExtremeValue;
-      property MinX: Extended index 2 read GetExtremeValue;
-      property MaxY: Extended index 3 read GetExtremeValue;
-      property MinY: Extended index 4 read GetExtremeValue;
-      property MaxZ: Extended index 5 read GetExtremeValue;
-      property MinZ: Extended index 6 read GetExtremeValue;
-      property CenterX: Extended index 1 read GetCenterValue;
-      property CenterY: Extended index 2 read GetCenterValue;
-      property CenterZ: Extended index 3 read GetCenterValue;
+      property MaxX: Double index 1 read GetExtremeValue;
+      property MinX: Double index 2 read GetExtremeValue;
+      property MaxY: Double index 3 read GetExtremeValue;
+      property MinY: Double index 4 read GetExtremeValue;
+      property MaxZ: Double index 5 read GetExtremeValue;
+      property MinZ: Double index 6 read GetExtremeValue;
+      property CenterX: Double index 1 read GetCenterValue;
+      property CenterY: Double index 2 read GetCenterValue;
+      property CenterZ: Double index 3 read GetCenterValue;
 
       procedure Transform(M: TDATMatrix; Reverse: Boolean = false); override;
   end;
@@ -214,12 +217,12 @@ type
       constructor Create; override;
 
     published
-      property x1: Extended index 1 read GetCoordinate write SetCoordinate;
-      property y1: Extended index 2 read GetCoordinate write SetCoordinate;
-      property z1: Extended index 3 read GetCoordinate write SetCoordinate;
-      property x2: Extended index 4 read GetCoordinate write SetCoordinate;
-      property y2: Extended index 5 read GetCoordinate write SetCoordinate;
-      property z2: Extended index 6 read GetCoordinate write SetCoordinate;
+      property x1: Double index 1 read GetCoordinate write SetCoordinate;
+      property y1: Double index 2 read GetCoordinate write SetCoordinate;
+      property z1: Double index 3 read GetCoordinate write SetCoordinate;
+      property x2: Double index 4 read GetCoordinate write SetCoordinate;
+      property y2: Double index 5 read GetCoordinate write SetCoordinate;
+      property z2: Double index 6 read GetCoordinate write SetCoordinate;
   end;
 
   TDATOpLine=class(TDATGeometric)
@@ -231,18 +234,18 @@ type
       constructor Create; override;
 
     published
-      property x1: Extended index 1 read GetCoordinate write SetCoordinate;
-      property y1: Extended index 2 read GetCoordinate write SetCoordinate;
-      property z1: Extended index 3 read GetCoordinate write SetCoordinate;
-      property x2: Extended index 4 read GetCoordinate write SetCoordinate;
-      property y2: Extended index 5 read GetCoordinate write SetCoordinate;
-      property z2: Extended index 6 read GetCoordinate write SetCoordinate;
-      property x3: Extended index 7 read GetCoordinate write SetCoordinate;
-      property y3: Extended index 8 read GetCoordinate write SetCoordinate;
-      property z3: Extended index 9 read GetCoordinate write SetCoordinate;
-      property x4: Extended index 10 read GetCoordinate write SetCoordinate;
-      property y4: Extended index 11 read GetCoordinate write SetCoordinate;
-      property z4: Extended index 12 read GetCoordinate write SetCoordinate;
+      property x1: Double index 1 read GetCoordinate write SetCoordinate;
+      property y1: Double index 2 read GetCoordinate write SetCoordinate;
+      property z1: Double index 3 read GetCoordinate write SetCoordinate;
+      property x2: Double index 4 read GetCoordinate write SetCoordinate;
+      property y2: Double index 5 read GetCoordinate write SetCoordinate;
+      property z2: Double index 6 read GetCoordinate write SetCoordinate;
+      property x3: Double index 7 read GetCoordinate write SetCoordinate;
+      property y3: Double index 8 read GetCoordinate write SetCoordinate;
+      property z3: Double index 9 read GetCoordinate write SetCoordinate;
+      property x4: Double index 10 read GetCoordinate write SetCoordinate;
+      property y4: Double index 11 read GetCoordinate write SetCoordinate;
+      property z4: Double index 12 read GetCoordinate write SetCoordinate;
   end;
 
   TDATPolygon=class(TDATGeometric)
@@ -259,15 +262,15 @@ type
       constructor Create; override;
 
     published
-      property x1: Extended index 1 read GetCoordinate write SetCoordinate;
-      property y1: Extended index 2 read GetCoordinate write SetCoordinate;
-      property z1: Extended index 3 read GetCoordinate write SetCoordinate;
-      property x2: Extended index 4 read GetCoordinate write SetCoordinate;
-      property y2: Extended index 5 read GetCoordinate write SetCoordinate;
-      property z2: Extended index 6 read GetCoordinate write SetCoordinate;
-      property x3: Extended index 7 read GetCoordinate write SetCoordinate;
-      property y3: Extended index 8 read GetCoordinate write SetCoordinate;
-      property z3: Extended index 9 read GetCoordinate write SetCoordinate;
+      property x1: Double index 1 read GetCoordinate write SetCoordinate;
+      property y1: Double index 2 read GetCoordinate write SetCoordinate;
+      property z1: Double index 3 read GetCoordinate write SetCoordinate;
+      property x2: Double index 4 read GetCoordinate write SetCoordinate;
+      property y2: Double index 5 read GetCoordinate write SetCoordinate;
+      property z2: Double index 6 read GetCoordinate write SetCoordinate;
+      property x3: Double index 7 read GetCoordinate write SetCoordinate;
+      property y3: Double index 8 read GetCoordinate write SetCoordinate;
+      property z3: Double index 9 read GetCoordinate write SetCoordinate;
 
   end;
 
@@ -280,22 +283,22 @@ type
       constructor Create; override;
 
     published
-      property x1: Extended index 1 read GetCoordinate write SetCoordinate;
-      property y1: Extended index 2 read GetCoordinate write SetCoordinate;
-      property z1: Extended index 3 read GetCoordinate write SetCoordinate;
-      property x2: Extended index 4 read GetCoordinate write SetCoordinate;
-      property y2: Extended index 5 read GetCoordinate write SetCoordinate;
-      property z2: Extended index 6 read GetCoordinate write SetCoordinate;
-      property x3: Extended index 7 read GetCoordinate write SetCoordinate;
-      property y3: Extended index 8 read GetCoordinate write SetCoordinate;
-      property z3: Extended index 9 read GetCoordinate write SetCoordinate;
-      property x4: Extended index 10 read GetCoordinate write SetCoordinate;
-      property y4: Extended index 11 read GetCoordinate write SetCoordinate;
-      property z4: Extended index 12 read GetCoordinate write SetCoordinate;
+      property x1: Double index 1 read GetCoordinate write SetCoordinate;
+      property y1: Double index 2 read GetCoordinate write SetCoordinate;
+      property z1: Double index 3 read GetCoordinate write SetCoordinate;
+      property x2: Double index 4 read GetCoordinate write SetCoordinate;
+      property y2: Double index 5 read GetCoordinate write SetCoordinate;
+      property z2: Double index 6 read GetCoordinate write SetCoordinate;
+      property x3: Double index 7 read GetCoordinate write SetCoordinate;
+      property y3: Double index 8 read GetCoordinate write SetCoordinate;
+      property z3: Double index 9 read GetCoordinate write SetCoordinate;
+      property x4: Double index 10 read GetCoordinate write SetCoordinate;
+      property y4: Double index 11 read GetCoordinate write SetCoordinate;
+      property z4: Double index 12 read GetCoordinate write SetCoordinate;
   end;
 
 var
-  LDrawBasePath: string = 'C:\Lego\LDRAW\';
+  LDrawBasePath: string = 'C:\Lego\LDRAW';
 
 const
   FDATIdentityMatrix: TDATMatrix = ((1,0,0,0),
@@ -312,30 +315,20 @@ const
 implementation
 
 uses
-  DATMath;
+  Math, DATMath, DATUtils;
 
 {TDATType}
 
-constructor TDATType.Create;
+constructor TDATType.Create();
 
 begin
   inherited Create;
-end;
-
-function TDATType.GetDATString: string;
-
-begin
-  Result := FLine;
-end;
-
-procedure TDATType.ProcessDATLine(strText:string);
-begin
-  FLine := strText;
+  FLineType := ltNil;
 end;
 
 {TDATComment}
 
-procedure TDATComment.ProcessDATLine(strText:string);
+procedure TDATComment.ProcessDATLine(strText: string);
 begin
   strText := Trim(strText);
   if strText <> ''  then
@@ -343,18 +336,34 @@ begin
       FComment := Trim(Copy(strText,2,Length(strText)))
     else
       FComment := '';
-  intLineType := 0;
 end;
 
-constructor TDATComment.Create;
+constructor TDATComment.Create();
 begin
   inherited Create;
-  intLineType := 0;
+  FLineType := ltComment;
 end;
 
-function TDATComment.GetDATString:string;
+constructor TDATComment.Create(comment: string);
 begin
-  result := '0 ' + FComment;
+  Create;
+  FComment := Trim(comment);
+end;
+
+function TDATComment.GetDATString: string;
+begin
+  Result := '0 ' + FComment;
+end;
+
+{TDATInvalidLine}
+procedure TDATInvalidLine.ProcessDATLine(strText: string);
+begin
+  Fline := strText;
+end;
+
+function TDATInvalidLine.GetDATString: string;
+begin
+  Result := FLine;
 end;
 
 {TDATBlankLine}
@@ -363,6 +372,11 @@ function TDATBlankLine.GetDATString: string;
 
 begin
   Result := '';
+end;
+
+procedure TDATBlankLine.ProcessDATLine(strText: string);
+begin
+// do nothing
 end;
 
 {TDATElement}
@@ -376,7 +390,7 @@ begin
   FDATMatrix[4,4] := 1;
 end;
 
-function TDATElement.GetMatrixVal(idx1,idx2: Integer): Extended;
+function TDATElement.GetMatrixVal(idx1,idx2: Integer): Double;
 begin
   Result := FDATMatrix[idx1,idx2];
 end;
@@ -389,12 +403,12 @@ begin
   FDATMatrix[4, Ord(axis)] := -FDATMatrix[4, Ord(axis)];
 end;
 
-procedure TDATElement.SetMatrixVal(idx1,idx2: Integer; Value: Extended);
+procedure TDATElement.SetMatrixVal(idx1,idx2: Integer; Value: Double);
 begin
   FDATMatrix[idx1,idx2] := Value;
 end;
 
-function TDATElement.GetCoordinate(Index: Integer): Extended;
+function TDATElement.GetCoordinate(Index: Integer): Double;
 
 begin
   case Index of
@@ -417,7 +431,7 @@ begin
   end
 end;
 
-procedure TDATElement.SetCoordinate(Index: Integer; Value: Extended);
+procedure TDATElement.SetCoordinate(Index: Integer; Value: Double);
 
 begin
   case Index of
@@ -439,7 +453,7 @@ begin
   end;
 end;
 
-procedure TDATElement.Translate(x,y,z: Extended);
+procedure TDATElement.Translate(x,y,z: Double);
 
 var
   R: TDATMatrix;
@@ -455,11 +469,11 @@ begin
 
 end;
 
-procedure TDATElement.Rotate(w,x,y,z: Extended);
+procedure TDATElement.Rotate(w,x,y,z: Double);
 
 var
  R: TDATMatrix;
- t: Extended;
+ t: Double;
 
 begin
   R := FDATIdentityMatrix;
@@ -503,13 +517,13 @@ begin
     FDATMatrix := M4Multiply(M, FDATMatrix);
 end;
 
-constructor TDATSubPart.Create;
+constructor TDATSubPart.Create();
 
 begin
   inherited Create;
-  intLineType := 1;
+  FLineType := ltSubpart;
   Matrix := FDATIdentityMatrix;
-  SubPart := 'dummy.dat'
+  SubPart := 'dummy.dat';
 end;
 
 procedure TDATSubPart.SetPosition(posit:TDATPoint);
@@ -562,7 +576,7 @@ var
 begin
   strSep := DecimalSeparator;
 
-  Result := IntToStr(LineType) + ' ' +
+  Result := '1 ' +
             IntToStr(Color) + ' ' +
             FloatToStr(RoundTo(Matrix[1,4], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[2,4], -Abs(PositionDecimalPlaces))) + ' ' +
@@ -584,50 +598,50 @@ end;
 procedure TDATSubPart.ProcessDATLine(strText:string);
 
 var
-  TmpMatrix: TDATRotationMatrix;
-  TmpPosit: TDATPoint;
+  TmpMatrix: TDATMatrix;
   TmpLnType, TmpColor: Integer;
   TempList: TStringList;
   TmpSubpart: string;
 
 begin
-  TempList:= TStringList.Create;
-  TmpMatrix := FDATIdentityRotationMatrix;
-  TmpPosit := FDATOriginPoint;
+  TmpMatrix := FDATIdentityMatrix;
 
+  TempList:= TStringList.Create;
   try
     ExtractStrings([#9,#32], [#9,#32], PChar(Trim(strText)), TempList);
 
-    try
-      TmpLnType := StrToInt(TempList[0]);
-      if TmpLnType = 1 then
-      begin
+    if TempList.Count <> 15 then
+      raise EInvalidDATLine.Create('Invalid LDraw line: ' + strText)
+    else
+      try
+        TmpLnType := StrToInt(TempList[0]);
         TmpColor := StrToInt(TempList[1]);
-
-        TmpPosit[1] := StrToFloat(TempList[2]);
-        TmpPosit[2] := StrToFloat(TempList[3]);
-        TmpPosit[3] := StrToFloat(TempList[4]);
-
-        TmpMatrix[1,1] := StrToFloat(TempList[5]);
-        TmpMatrix[1,2] := StrToFloat(TempList[6]);
-        TmpMatrix[1,3] := StrToFloat(TempList[7]);
-        TmpMatrix[2,1] := StrToFloat(TempList[8]);
-        TmpMatrix[2,2] := StrToFloat(TempList[9]);
-        TmpMatrix[2,3] := StrToFloat(TempList[10]);
-        TmpMatrix[3,1] := StrToFloat(TempList[11]);
-        TmpMatrix[3,2] := StrToFloat(TempList[12]);
-        TmpMatrix[3,3] := StrToFloat(TempList[13]);
-
+      except
+        on E: Exception do
+          raise EInvalidDATLine.Create('Invalid LDraw line: ' + strText);
+      end;
+      if (TmpLnType = 1) and (TmpColor >= 0) then
+      begin
+        try
+          TmpMatrix := DATMatrix(StrToFloat(TempList[5]), StrToFloat(TempList[6]),
+                                 StrToFloat(TempList[7]), StrToFloat(TempList[2]),
+                                 StrToFloat(TempList[8]), StrToFloat(TempList[9]),
+                                 StrToFloat(TempList[10]), StrToFloat(TempList[3]),
+                                 StrToFloat(TempList[11]), StrToFloat(TempList[12]),
+                                 StrToFloat(TempList[13]), StrToFloat(TempList[4]),
+                                 0,0,0,1);
+        except
+          on E: Exception do
+            raise EInvalidDATLine.Create('Invalid LDraw line: ' + strText);
+        end;
         TmpSubpart := TempList[14];
 
-        intLineType := TmpLnType;
         Color := TmpColor;
-        RotationMatrix := TmpMatrix;
-        Position := TmpPosit;
+        Matrix := TmpMatrix;
         SubPart := TmpSubpart;
-      end;
-    except
-    end;
+      end
+      else
+      raise EInvalidDATLine.Create('Invalid LDraw line: ' + strText);
   finally
     TempList.Free;
   end;
@@ -647,7 +661,7 @@ begin
   FDATMatrix[idx,3] := Value[3];
 end;
 
-function TDATGeometric.GetExtremeValue(Index: Integer): Extended;
+function TDATGeometric.GetExtremeValue(Index: Integer): Double;
 
 var
   coord, i, j: Integer;
@@ -661,7 +675,7 @@ begin
       coord := 1;
   end;
 
-  j := LineType;
+  j := Integer(LineType);
 
   if j = 5 then j := 2;
 
@@ -674,13 +688,13 @@ begin
     end;
 end;
 
-function TDATGeometric.GetCenterValue(Index: Integer): Extended;
+function TDATGeometric.GetCenterValue(Index: Integer): Double;
 
 begin
   case LineType of
-    2,5: Result := (MatrixVals[1,Index] + MatrixVals[2,Index]) / 2;
-    3: Result := (MatrixVals[1,Index] + MatrixVals[2,Index] + MatrixVals[3,Index]) / 3;
-    4: Result := (MatrixVals[1,Index] + MatrixVals[2,Index] + MatrixVals[3,Index] + MatrixVals[4,Index]) / 4;
+    ltLine,ltOpLine: Result := (MatrixVals[1,Index] + MatrixVals[2,Index]) / 2;
+    ltTriangle: Result := (MatrixVals[1,Index] + MatrixVals[2,Index] + MatrixVals[3,Index]) / 3;
+    ltQuad: Result := (MatrixVals[1,Index] + MatrixVals[2,Index] + MatrixVals[3,Index] + MatrixVals[4,Index]) / 4;
     else
       result := 0;
   end;  
@@ -689,7 +703,7 @@ end;
 procedure TDATGeometric.Transform(M: TDATMatrix; Reverse: Boolean = false);
 
 var
-  M1: array[1..3] of Extended;
+  M1: array[1..3] of Double;
   i: Byte;
 
 begin
@@ -713,12 +727,12 @@ end;
 constructor TDATLine.Create;
 begin
   inherited Create;
-  intLineType := 2;
+  FLineType := ltLine;
 end;
 
 function TDATLine.GetDATString:string;
 begin
-  Result := IntToStr(LineType) + ' ' +
+  Result := '2 ' +
             IntToStr(Color) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
@@ -755,7 +769,6 @@ begin
         TmpMatrix[2,2] := StrToFloat(TempList[6]);
         TmpMatrix[2,3] := StrToFloat(TempList[7]);
 
-        intLineType := TmpLnType;
         Color := TmpColor;
         Matrix := TmpMatrix;
       end;
@@ -770,12 +783,12 @@ end;
 constructor TDATOpLine.Create;
 begin
   inherited Create;
-  intLineType := 5;
+  FLineType := ltOpLine;
 end;
 
 function TDATOpLine.GetDATString:string;
 begin
-  Result := IntToStr(LineType) + ' ' +
+  Result := '5 ' +
             IntToStr(Color) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
@@ -824,7 +837,6 @@ begin
         TmpMatrix[4,2] := StrToFloat(TempList[12]);
         TmpMatrix[4,3] := StrToFloat(TempList[13]);
 
-        intLineType := TmpLnType;
         Color := TmpColor;
         Matrix := TmpMatrix;
       end;
@@ -843,8 +855,8 @@ var
   i,j: Integer;
 
 begin
-  j:=intLineType;
-  for i := 1 to intLineType do
+  j := Integer(FLineType);
+  for i := 1 to j do
   begin
     tempArray[j,1] := FDATMatrix[i,1];
     tempArray[j,2] := FDATMatrix[i,2];
@@ -857,12 +869,12 @@ end;
 constructor TDATTriangle.Create;
 begin
   inherited Create;
-  intLineType := 3;
+  FLineType := ltTriangle;
 end;
 
 function TDATTriangle.GetDATString:string;
 begin
-  Result := IntToStr(LineType) + ' ' +
+  Result := '3 ' +
             IntToStr(Color) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
@@ -905,7 +917,6 @@ begin
         TmpMatrix[3,2] := StrToFloat(TempList[9]);
         TmpMatrix[3,3] := StrToFloat(TempList[10]);
 
-        intLineType := TmpLnType;
         Color := TmpColor;
         Matrix := TmpMatrix;
       end;
@@ -920,12 +931,12 @@ end;
 constructor TDATQuad.Create;
 begin
   inherited Create;
-  intLineType := 4;
+  FLineType := ltQuad;
 end;
 
 function TDATQuad.GetDATString:string;
 begin
-  Result := IntToStr(LineType) + ' ' +
+  Result := '4 ' +
             IntToStr(Color) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,1], -Abs(PositionDecimalPlaces))) + ' ' +
             FloatToStr(RoundTo(MatrixVals[1,2], -Abs(PositionDecimalPlaces))) + ' ' +
@@ -974,7 +985,6 @@ begin
         TmpMatrix[4,2] := StrToFloat(TempList[12]);
         TmpMatrix[4,3] := StrToFloat(TempList[13]);
 
-        intLineType := TmpLnType;
         Color := TmpColor;
         Matrix := TmpMatrix;
       end;
