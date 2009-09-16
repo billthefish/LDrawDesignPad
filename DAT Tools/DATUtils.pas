@@ -27,14 +27,14 @@ function StrToDAT(strLine: string): TDATType;
 function CreateDATModel(const PAcc, RAcc: Integer): TDATModel;
 function PositionFromMatrix(const DMatrix: TDATMatrix): TDATPoint;
 function RotationMatrixFromMatrix(const DMatrix: TDATMatrix): TDATRotationMatrix;
-function DATPoint(const X,Y,Z: Extended): TDATPoint;
+function DATPoint(const X,Y,Z: Double): TDATPoint;
 function DATMatrix(const M11,M12,M13,M14,
                    M21,M22,M23,M24,
                    M31,M32,M33,M34,
-                   M41,M42,M43,M44: Extended): TDATMatrix;
+                   M41,M42,M43,M44: Double): TDATMatrix;
 function DATRotationMatrix(const M11,M12,M13,
                            M21,M22,M23,
-                           M31,M32,M33: Extended): TDATRotationMatrix;
+                           M31,M32,M33: Double): TDATRotationMatrix;
 function DATColour(const Code: Integer; const Name: string;
                    const MainColor, EdgeColor: TColor;
                    const Alpha: Byte = 0;
@@ -42,9 +42,10 @@ function DATColour(const Code: Integer; const Name: string;
                    const Finish: TDATFinish = finNone;
                    const MaterialParams: string = ''): TDATColour;
 function CheckIdentPoints(const points1, points2: array of TDATPoint): Boolean;
-function BGRtoRGB(clr: TColor): TColor;
+function BGRtoRGB(const clr: TColor): TColor;
 function MakeStandardDATColourList: TDATColourList;
 function CombineGeometrics(const line1, line2: TDATGeometric): TDATQuad;
+function SameDATLine(line1, line2: TDATType): Boolean;
 
 implementation
 
@@ -64,13 +65,10 @@ var
 begin
   strCurrentLine := Trim(strLine);
 
-  if (strCurrentLine = '') or (strCurrentLine = #13#10) or
-     (strCurrentLine = #13) or (strCurrentLine = #10) or
-     (strCurrentLine = #10#13) then
+  if (strCurrentLine = '') then
     Result := TDATBlankLine.Create
   else
-    if (Length(strCurrentLine) > 1) and
-       ((strCurrentLine[2] = #32) or (strCurrentLine[2] = #9)) then
+    if ((Length(strCurrentLine) > 1) or (strCurrentLine[1] = '0')) then
       case strCurrentLine[1] of
         '0': Result := TDATComment.Create;
         '1': Result := TDATSubPart.Create;
@@ -78,27 +76,30 @@ begin
         '3': Result := TDATTriangle.Create;
         '4': Result := TDATQuad.Create;
         '5': Result := TDATOpLine.Create;
-      else Result := TDATInvalidLine.Create;
-    end
+        else Result := TDATInvalidLine.Create;
+      end
     else
       Result := TDATInvalidLine.Create;
   try
     Result.DATString := strLine;
   except
-    Result.Free;
-    Result := TDATInvalidLine.Create;
-    Result.DATString := strLine;
+    on E: EInvalidDATLine do
+    begin
+      Result.Free;
+      Result := TDATInvalidLine.Create;
+      Result.DATString := strLine;
+    end;
   end;
 end;
 
-function BGRtoRGB(clr: TColor): TColor;
+function BGRtoRGB(const clr: TColor): TColor;
 
 var
   sr: string;
 
 begin
-  sr := IntToHex(ColortoRGB(clr),6);
-  Result := strtoint('$' + Copy(sr,5,2) + Copy(sr,3,2) + Copy(sr,1,2));
+  sr := IntToHex(ColorToRGB(clr),6);
+  Result := StrToInt('$' + Copy(sr,5,2) + Copy(sr,3,2) + Copy(sr,1,2));
 end;
 
 function MakeStandardDATColourList: TDATColourList;
@@ -111,12 +112,12 @@ var
 
 begin
   Result := TDATColourList.Create;
-  if FileExists(LDrawBasePath + 'ldconfig.ldr') then
+  if FileExists(LDrawBasePath + PathDelim + 'ldconfig.ldr') then
   begin
     LDConfig := TStringList.Create;
     TempList:= TStringList.Create;
     try
-      LDConfig.LoadFromFile(LDrawBasePath + 'ldconfig.ldr');
+      LDConfig.LoadFromFile(LDrawBasePath + PathDelim + 'ldconfig.ldr');
       for i := 0 to 511 do
         Result.Add(DATColour(i, 'Color' + IntToStr(i), 0, 0));
 
@@ -232,7 +233,7 @@ begin
   Result[3,3] := DMatrix[3,3];
 end;
 
-function DATPoint(const X,Y,Z: Extended): TDATPoint;
+function DATPoint(const X,Y,Z: Double): TDATPoint;
 begin
   Result[1] := X;
   Result[2] := Y;
@@ -242,7 +243,7 @@ end;
 function DATMatrix(const M11,M12,M13,M14,
                          M21,M22,M23,M24,
                          M31,M32,M33,M34,
-                         M41,M42,M43,M44: Extended): TDATMatrix;
+                         M41,M42,M43,M44: Double): TDATMatrix;
 begin
   Result[1,1] := M11;
   Result[1,2] := M12;
@@ -264,7 +265,7 @@ end;
 
 function DATRotationMatrix(const M11,M12,M13,
                                  M21,M22,M23,
-                                 M31,M32,M33: Extended): TDATRotationMatrix;
+                                 M31,M32,M33: Double): TDATRotationMatrix;
 begin
   Result[1,1] := M11;
   Result[1,2] := M12;
@@ -371,6 +372,51 @@ begin
   end
   else
     Result := nil;
+end;
+
+function SameDATLine(line1, line2: TDATType): Boolean;
+begin
+  if line1.ClassName = line2.ClassName then
+    if line1 is TDATLine then
+      Result := CheckIdentPoints([(line1 as TDATLine).Point[1],
+                                  (line1 as TDATLine).Point[2]],
+                                 [(line2 as TDATLine).Point[1],
+                                  (line2 as TDATLine).Point[2]])
+    else
+      if line1 is TDATTriangle then
+        Result := CheckIdentPoints([(line1 as TDATTriangle).Point[1],
+                                    (line1 as TDATTriangle).Point[2],
+                                    (line1 as TDATTriangle).Point[3]],
+                                   [(line2 as TDATTriangle).Point[1],
+                                    (line2 as TDATTriangle).Point[2],
+                                    (line2 as TDATTriangle).Point[3]])
+      else
+        if line1 is TDATQuad then
+          Result := CheckIdentPoints([(line1 as TDATQuad).Point[1],
+                                      (line1 as TDATQuad).Point[2],
+                                      (line1 as TDATQuad).Point[3],
+                                      (line1 as TDATQuad).Point[4]],
+                                     [(line2 as TDATQuad).Point[1],
+                                      (line2 as TDATQuad).Point[2],
+                                      (line2 as TDATQuad).Point[3],
+                                      (line2 as TDATQuad).Point[4]])
+        else
+          if line1 is TDATOpline then
+            Result := (CheckIdentPoints([(line1 as TDATOpLine).Point[1],
+                                         (line1 as TDATOpLine).Point[2]],
+                                        [(line2 as TDATOpLine).Point[1],
+                                         (line2 as TDATOpLine).Point[2]])) and
+                      (CheckIdentPoints([(line1 as TDATOpLine).Point[3],
+                                         (line1 as TDATOpLine).Point[4]],
+                                        [(line2 as TDATOpLine).Point[3],
+                                         (line2 as TDATOpLine).Point[4]]))
+          else
+            if line1 is TDATSubpart then
+              Result := line1.DATString = line2.DATString
+            else
+              Result := False
+  else
+    Result := False;
 end;
 
 end.

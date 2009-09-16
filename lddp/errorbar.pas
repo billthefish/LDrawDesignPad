@@ -101,8 +101,7 @@ var
   PError: TDATError;
 
 begin
-  PError := TDATError.Create;
-  PError.Assign(ErrorRec);
+  PError := TDATError.Create(ErrorRec.ErrorType, ErrorRec.ErrorValue);
   error := ErrorListView.Items.Add;
   error.Checked := True;
   error.Data := Pointer(PError);
@@ -136,13 +135,8 @@ begin
   error := TDATError(Item.Data);
   UnFixableError := (error.ErrorType = deIdenticalVertices) or
                     (error.ErrorType = deSigularMatrix) or
-                    (error.ErrorType = deCollinearVertices123) or
-                    (error.ErrorType = deCollinearVertices124) or
-                    (error.ErrorType = deCollinearVertices134) or
-                    (error.ErrorType = deCollinearVertices234) or
-                    (error.ErrorType = deCollinearVerticesAll) or
-                    (error.ErrorType = deNonCoplanerVerticesDet) or
-                    (error.ErrorType = deNonCoplanerVerticesDist) or
+                    (error.ErrorType = deTriangleCollinear) or
+                    (error.ErrorType = deQuadCollinear) or
                     (error.ErrorType = deNonCoplanerVerticesNormAngle) or
                     (error.ErrorType = deColor24Illegal);
   acECFixError.Enabled := not UnFixableError;
@@ -211,43 +205,9 @@ begin
       begin
         for j := 0 to i - 1 do
         begin
-          if DATModel1[j].LineType = DATModel1[i].LineType then
-            case DATModel1[j].LineType of
-               1: if DATModel1[i].DATString = DATModel1[j].DATString then
-                    identline := True;
-               2: if CheckIdentPoints([(DATModel1[i] as TDATLine).Point[1],
-                                       (DATModel1[i] as TDATLine).Point[2]],
-                                      [(DATModel1[j] as TDATLine).Point[1],
-                                       (DATModel1[j] as TDATLine).Point[2]]) then
-                    identline := True;
-               3: if CheckIdentPoints([(DATModel1[i] as TDATTriangle).Point[1],
-                                       (DATModel1[i] as TDATTriangle).Point[2],
-                                       (DATModel1[i] as TDATTriangle).Point[3]],
-                                      [(DATModel1[j] as TDATTriangle).Point[1],
-                                       (DATModel1[j] as TDATTriangle).Point[2],
-                                       (DATModel1[j] as TDATTriangle).Point[3]]) then
-                    identline := True;
-               4: if CheckIdentPoints([(DATModel1[i] as TDATQuad).Point[1],
-                                       (DATModel1[i] as TDATQuad).Point[2],
-                                       (DATModel1[i] as TDATQuad).Point[3],
-                                       (DATModel1[i] as TDATQuad).Point[4]],
-                                      [(DATModel1[j] as TDATQuad).Point[1],
-                                       (DATModel1[j] as TDATQuad).Point[2],
-                                       (DATModel1[j] as TDATQuad).Point[3],
-                                       (DATModel1[j] as TDATQuad).Point[4]]) then
-                    identline := True;
-               5: if (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[1],
-                                        (DATModel1[i] as TDATOpLine).Point[2]],
-                                      [(DATModel1[j] as TDATOpLine).Point[1],
-                                       (DATModel1[j] as TDATOpLine).Point[2]])) and
-                     (CheckIdentPoints([(DATModel1[i] as TDATOpLine).Point[3],
-                                        (DATModel1[i] as TDATOpLine).Point[4]],
-                                      [(DATModel1[j] as TDATOpLine).Point[3],
-                                       (DATModel1[j] as TDATOpLine).Point[4]])) then
-                    identline := True;
-            end;
-          if identline then
+          if SameDATLine(DATModel1[j], DATModel1[i]) then
           begin
+            identline := true;
             iline := j;
             Break;
           end;
@@ -256,9 +216,7 @@ begin
       // Do not continue if line is identical
       if identline then
       begin
-        error := TDATError.Create;
-        error.ErrorType := deIdenticalLine;
-        error.ErrorValue := iline + 1;
+        error := TDATError.Create(deIdenticalLine, iline + 1);
         AddError(IntToStr(i + 1), error)
       end
       else
@@ -268,8 +226,7 @@ begin
         if errorlist.Count > 0 then
           for j := 0 to errorlist.Count - 1 do
             AddError(IntToStr(i + 1), (errorlist[j] as TDATError));
-        if Assigned(errorlist) then
-          errorlist.Free;
+        errorlist.Free;
       end;
     end;
 

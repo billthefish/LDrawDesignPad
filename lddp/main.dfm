@@ -2,7 +2,7 @@ object frMain: TfrMain
   Left = 267
   Top = 61
   Width = 900
-  Height = 800
+  Height = 828
   VertScrollBar.Range = 49
   ActiveControl = editor
   Caption = 'LDraw Design Pad'
@@ -25,8 +25,8 @@ object frMain: TfrMain
   object DocumentTabs: TSciDocumentTabControl
     Left = 0
     Top = 54
-    Width = 892
-    Height = 673
+    Width = 884
+    Height = 699
     Editor = editor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -41,11 +41,12 @@ object frMain: TfrMain
     OnMouseDown = DocumentTabsMouseDown
     DefaultExt = '.dat'
     OnClosing = DocumentTabsClosing
+    ExplicitHeight = 679
     object editor: TScintillaLDDP
       Left = 4
       Top = 24
-      Width = 884
-      Height = 645
+      Width = 876
+      Height = 671
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -466,8 +467,8 @@ object frMain: TfrMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 727
-    Width = 892
+    Top = 753
+    Width = 884
     Height = 19
     AutoHint = True
     Panels = <
@@ -483,11 +484,12 @@ object frMain: TfrMain
       item
         Width = 50
       end>
+    ExplicitTop = 733
   end
   object ControlBar1: TControlBar
     Left = 0
     Top = 0
-    Width = 892
+    Width = 884
     Height = 54
     Align = alTop
     AutoSize = True
@@ -887,7 +889,6 @@ object frMain: TfrMain
         Left = 143
         Top = 0
         Action = frErrorWindow.acErrorCheck
-        ImageIndex = 22
       end
     end
     object tbrMovement: TToolBar
@@ -1329,13 +1330,6 @@ object frMain: TfrMain
     object Tools1: TMenuItem
       Caption = '&Tools'
       Hint = 'LDraw Tool Commands'
-      object Plugins1: TMenuItem
-        Caption = '&Plugins'
-        ImageIndex = 39
-        object Nonefound1: TMenuItem
-          Caption = '(None found)'
-        end
-      end
       object ExternalPrograms1: TMenuItem
         Caption = 'External Programs'
         object acLDView1: TMenuItem
@@ -1414,52 +1408,64 @@ object frMain: TfrMain
         Hint = 'Check for errors'
         ImageIndex = 22
         object E1: TMenuItem
-          Action = frErrorWindow.acErrorCheck
+          Caption = 'Run Error Check'
+          Hint = 'Check for errors|Check for errors'
+          ShortCut = 121
         end
         object N21: TMenuItem
           Caption = '-'
         end
         object MarkAll1: TMenuItem
-          Action = frErrorWindow.acECMarkAll
+          Caption = 'Mark All Errors'
+          Enabled = False
         end
         object MarkAllofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECMarkAllTyped
+          Caption = 'Mark All Errors of the Selected Type'
+          Enabled = False
         end
         object UnmarkAll2: TMenuItem
-          Action = frErrorWindow.acECUnMarkAll
+          Caption = 'Unmark All Errors'
+          Enabled = False
         end
         object UnmarkAllofSelectedType2: TMenuItem
-          Action = frErrorWindow.acECUnMarkAllTyped
+          Caption = 'Unmark All Errors of the Selected Type'
+          Enabled = False
         end
         object N18: TMenuItem
           Caption = '-'
         end
         object AutofixSelectedError1: TMenuItem
-          Action = frErrorWindow.acECFixError
+          Caption = 'Fix Selected Error'
+          Enabled = False
         end
         object N19: TMenuItem
           Caption = '-'
         end
         object AutofixAllMarkedErrorsofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECFixAllMarkedErrorsTyped
+          Caption = 'Fix All Marked Errors of Selected Type'
+          Enabled = False
         end
         object AutofixAllMarkedErrors1: TMenuItem
-          Action = frErrorWindow.acECFixAllMarkedErrors
+          Caption = 'Fix All Marked Errors'
+          Enabled = False
         end
         object N20: TMenuItem
           Caption = '-'
         end
         object AutofixAllErrorsofSelectedType1: TMenuItem
-          Action = frErrorWindow.acECFixAllErrorsTyped
+          Caption = 'Fix All Errors of Selected Type'
+          Enabled = False
         end
         object AutofixAllErrors1: TMenuItem
-          Action = frErrorWindow.acECFixAllErrors
+          Caption = 'Fix All Errors'
+          Enabled = False
         end
         object N14: TMenuItem
           Caption = '-'
         end
         object CopyErrorListToClipboard1: TMenuItem
-          Action = frErrorWindow.acECCopy
+          Caption = 'Copy Error List To Clipboard'
+          Enabled = False
         end
       end
       object SortByPosition1: TMenuItem
@@ -1486,6 +1492,9 @@ object frMain: TfrMain
       object EditorOptions1: TMenuItem
         Action = acEditorOptions
       end
+    end
+    object PluginMenu: TMenuItem
+      Caption = '&Plugins'
     end
     object Help1: TMenuItem
       Caption = '&Help'
@@ -4257,9 +4266,6 @@ object frMain: TfrMain
       object mnuMeta2: TMenuItem
         Caption = 'META Statement'
       end
-    end
-    object Plugins3: TMenuItem
-      Caption = '&Plugins'
     end
     object N5: TMenuItem
       Caption = '-'

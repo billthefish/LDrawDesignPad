@@ -3,8 +3,8 @@ object fmSort: TfmSort
   Top = 307
   BorderStyle = bsDialog
   Caption = 'Sort'
-  ClientHeight = 232
-  ClientWidth = 271
+  ClientHeight = 248
+  ClientWidth = 283
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,19 +19,21 @@ object fmSort: TfmSort
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 188
-    Width = 271
+    Top = 204
+    Width = 283
     Height = 44
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitTop = 188
+    ExplicitWidth = 271
     DesignSize = (
-      271
+      283
       44)
     object btnCancel: TBitBtn
-      Left = 168
+      Left = 179
       Top = 12
-      Width = 97
+      Width = 95
       Height = 25
       Anchors = [akLeft, akTop, akRight, akBottom]
       Cancel = True
@@ -140,11 +142,13 @@ object fmSort: TfmSort
   object SortPanel: TPanel
     Left = 0
     Top = 0
-    Width = 271
-    Height = 188
+    Width = 283
+    Height = 204
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 271
+    ExplicitHeight = 188
     object Label1: TLabel
       Left = 9
       Top = 1
@@ -167,8 +171,8 @@ object fmSort: TfmSort
       Caption = 'Then sort on'
     end
     object rgScope: TRadioGroup
-      Left = 0
-      Top = 128
+      Left = 9
+      Top = 123
       Width = 129
       Height = 57
       Caption = 'Sorting Scope'
@@ -178,9 +182,9 @@ object fmSort: TfmSort
       TabOrder = 0
     end
     object rgSortDirection: TRadioGroup
-      Left = 136
-      Top = 128
-      Width = 129
+      Left = 144
+      Top = 123
+      Width = 130
       Height = 57
       Caption = 'Sort Direction'
       ItemIndex = 0
@@ -211,7 +215,8 @@ object fmSort: TfmSort
         'Min X'
         'Min Y'
         'Min Z'
-        'Linetype')
+        'Linetype'
+        'Subpart')
     end
     object cbSort2: TComboBox
       Left = 9
@@ -235,7 +240,8 @@ object fmSort: TfmSort
         'Min X'
         'Min Y'
         'Min Z'
-        'Linetype')
+        'Linetype'
+        'Subpart')
     end
     object cbSort3: TComboBox
       Left = 9
@@ -259,7 +265,17 @@ object fmSort: TfmSort
         'Min X'
         'Min Y'
         'Min Z'
-        'Linetype')
+        'Linetype'
+        'Subpart')
+    end
+    object PreserveMPD: TCheckBox
+      Left = 9
+      Top = 186
+      Width = 208
+      Height = 17
+      Caption = 'Preserve MPD File Structure'
+      TabOrder = 5
+      Visible = False
     end
   end
 end

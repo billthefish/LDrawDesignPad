@@ -27,6 +27,14 @@ type
   TDATFlexObjectType = (boHoseTabs, boHoseNoTabs, boHose12, boRibbedHose,
                             boFlexHose, boFlexAxle);
 
+  TDATFlexObjectData = record
+    StartFile, EndFile, MiddleFile: string;
+    StartMatrix, EndMatrix: TDATMatrix;
+    Cont1Matrix, Cont2Matrix: TDATMatrix;
+    TotalLength: Double;
+    Segments: Integer;
+  end;
+
   TDATFlexObject = class(TPersistent)
     private
       FModelText: TStringList;
@@ -34,23 +42,23 @@ type
       FCont1, FCont2: TDATPoint;
       FStartPoint, FEndPoint: TDATMatrix;
       FPntAcc, FRotAcc: Byte;
-      FLength: Extended;
+      FLength: Double;
       FColor: Integer;
       FUserControl: Boolean;
-      FEpsilon: Extended;
+      FEpsilon: Double;
       FMaxIterations: Integer;
       FPointsPerSegment: Integer;
 
-      function B0(t: Extended): Extended;
-      function B1(t: Extended): Extended;
-      function B2(t: Extended): Extended;
-      function B3(t: Extended): Extended;
+      function B0(t: Double): Double;
+      function B1(t: Double): Double;
+      function B2(t: Double): Double;
+      function B3(t: Double): Double;
       function GetBezierCoordinate(subp: TDATSubPart; Matrix: TDATMatrix; AssignMatrix: Boolean = False): TDATPoint;
-      function EuclidDistance(Point1, Point2: TDATPoint): Extended;
-      function BezierSum(u: Extended; Point1, Point2, Point3, Point4: TDATPoint): TDATPoint;
+      function EuclidDistance(Point1, Point2: TDATPoint): Double;
+      function BezierSum(u: Double; Point1, Point2, Point3, Point4: TDATPoint): TDATPoint;
       function NormalizeVector(Vector: TDATPoint): TDATPoint;
       function BezMakeMatrix(Vector: TDATPoint): TDATRotationMatrix;
-      function MakeBezControlPoint(point1, point2: TDATPoint; Factor: Extended): TDATPoint;
+      function MakeBezControlPoint(point1, point2: TDATPoint; Factor: Double): TDATPoint;
 
     protected
       function GetModelText: string;
@@ -65,14 +73,16 @@ type
       property StartMatrix: TDATMatrix read FStartPoint write FStartPoint;
       property EndMatrix: TDATMatrix read FEndPoint write FEndPoint;
       property Color: Integer read FColor write FColor;
-      property Length: Extended read FLength write FLength;
+      property Length: Double read FLength write FLength;
       property ModelText: string read GetModelText;
       property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc;
       property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc;
-      property Epsilon: Extended read FEpsilon write FEpsilon;
+      property Epsilon: Double read FEpsilon write FEpsilon;
       property MaxIterations: Integer read FMaxIterations write FMaxIterations;
       property PointsPerSegment: Integer read FPointsPerSegment write FPointsPerSegment;
   end;
+
+  function GetFlexObjectData(const L: Double; const FType: TDATFlexObjectType): TDATFlexObjectData;
 
 implementation
 
@@ -103,23 +113,23 @@ begin
   inherited;
 end;
 
-function TDATFlexObject.B0(t: Extended): Extended;
+function TDATFlexObject.B0(t: Double): Double;
 
 begin
   Result := Sqr(1 - t) * (1 - t);
 end;
 
-function TDATFlexObject.B1(t: Extended): Extended;
+function TDATFlexObject.B1(t: Double): Double;
 
 begin
   Result := 3 * Sqr(1 - t) * t;
 end;
-function TDATFlexObject.B2(t: Extended): Extended;
+function TDATFlexObject.B2(t: Double): Double;
 
 begin
   Result := 3 * (1 - t) * Sqr(t);
 end;
-function TDATFlexObject.B3(t: Extended): Extended;
+function TDATFlexObject.B3(t: Double): Double;
 
 begin
   Result := Sqr(t) * t;
@@ -134,7 +144,7 @@ begin
     subp.Matrix := Matrix;
 end;
 
-function TDATFlexObject.EuclidDistance(Point1, Point2: TDATPoint): Extended;
+function TDATFlexObject.EuclidDistance(Point1, Point2: TDATPoint): Double;
 
 begin
   Result:= Sqrt( Sqr(Point1[1] - Point2[1]) +
@@ -142,7 +152,7 @@ begin
                  Sqr(Point1[3] - Point2[3]));
 end;
 
-function TDATFlexObject.BezierSum(u: Extended; Point1, Point2, Point3, Point4: TDATPoint): TDATPoint;
+function TDATFlexObject.BezierSum(u: Double; Point1, Point2, Point3, Point4: TDATPoint): TDATPoint;
 
 begin
   Result := PointAdd(
@@ -157,10 +167,10 @@ end;
 function TDATFlexObject.NormalizeVector(Vector: TDATPoint):TDATPoint;
 
 var
-  sum: Extended;
+  sum: Double;
 
 begin
-  sum := PointLength(Vector);
+  sum := PointNorm(Vector);
   Result[1] := Vector[1] / sum;
   Result[2] := Vector[2] / sum;
   Result[3] := Vector[3] / sum;
@@ -180,7 +190,7 @@ begin
                               v1[3], v2[3], v3[3]);
 end;
 
-function TDATFlexObject.MakeBezControlPoint(point1, point2: TDATPoint; Factor: Extended): TDATPoint;
+function TDATFlexObject.MakeBezControlPoint(point1, point2: TDATPoint; Factor: Double): TDATPoint;
 begin
   Result :=
     PointAdd(point1, PointMultiply(PointAdd(PointMultiply(point1, -1), point2), Factor));
@@ -192,15 +202,15 @@ var
   BezBegin, BezEnd, BezCont1, BezCont2: TDATPoint;
   FileType: string;
   BezPoint1, BezPoint2, LastPoint, pntC1, pntC2: TDATPoint;
-  BezIntLen: array of Extended;
+  BezIntLen: array of Double;
   BezIntPos: array of TDATPoint;
-  BezLength, Factor, Distance, CalculatedLength, PointCount: Extended;
-  BezI, BezILast, I2: Extended;
+  BezLength, Factor, Distance, CalculatedLength, PointCount: Double;
+  BezI, BezILast, I2: Double;
   Segments, i, Iterations, ArrayPos, BezSearch: Integer;
-  Last, AddControlParts: Boolean;
+  Last: Boolean;
+  FlexObjData: TDATFlexObjectData;
 
 begin
-  AddControlParts := True;
   FModelText.Clear;
   Line1 := TDATSubPart.Create;
   Line2 := TDATSubPart.Create;
@@ -213,83 +223,18 @@ begin
   Line2.PositionDecimalPlaces := FPntAcc;
   Line2.RotationDecimalPlaces := FRotAcc;
 
-  Segments := 0;
-  BezLength := 0;
+  FlexObjData := GetFlexObjectData(FLength, FObjectType);
 
-  case FObjectType of
-    boHoseTabs:
-    begin
-      Line1.SubPart := '750.dat';
-      Line2.SubPart := '750.dat';
-      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezLength := 130;
-      Segments := 50;
-      FileType := '754.dat';
-    end;
-    boHoseNoTabs:
-    begin
-      Line1.SubPart := '752.dat';
-      Line2.SubPart := '752.dat';
-      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezLength := 130;
-      Segments := 50;
-      FileType := '754.dat';
-    end;
-    boHose12:
-    begin
-      Line1.SubPart := '757.dat';
-      Line2.SubPart := '760.dat';
-      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 26.8387,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 38,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -20,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -25,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezLength := 177.2;
-      Segments := 33;
-      FileType := '758.dat';
-    end;
-    boRibbedHose:
-    begin
-      Line1.SubPart := '79.dat';
-      Line2.SubPart := '79.dat';
-      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1));
-      Segments := Round(FLength);
-      BezLength := FLength * 6.2;
-      FileType := '80.dat';
-    end;
-    boFlexAxle:
-    begin
-      Line1.SubPart := 'stud3a.dat';
-      Line2.SubPart := 'stud3a.dat';
-      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, 0, 0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1));
-      Segments := Trunc(Round(FLength)/4);
-      BezLength := FLength;
-      FileType := 'axlehol8.dat';
-    end;
-    boFlexHose:
-    begin
-      Line1.SubPart := '76.dat';
-      Line2.SubPart := '76.dat';
-      BezBegin := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont1 := GetBezierCoordinate(Line1, DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezEnd := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1));
-      BezCont2 := GetBezierCoordinate(Line2, DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1));
-      Segments := Trunc(Round(FLength)/4);
-      BezLength := FLength;
-      FileType := '77.dat';
-    end;
-  end;
+  Line1.SubPart := FlexObjData.StartFile;
+  Line2.SubPart := FlexObjData.EndFile;
+  BezBegin := GetBezierCoordinate(Line1, FlexObjData.StartMatrix);
+  BezCont1 := GetBezierCoordinate(Line1, FlexObjData.EndMatrix);
+  BezEnd := GetBezierCoordinate(Line2, FlexObjData.Cont1Matrix);
+  BezCont2 := GetBezierCoordinate(Line2, FlexObjData.Cont2Matrix);
+  BezLength := FlexObjData.TotalLength;
+  Segments := FlexObjData.Segments;
+  FileType := FlexObjData.MiddleFile;
+
 
   if EuclidDistance(BezBegin, BezEnd) < BezLength then
   begin
@@ -463,8 +408,7 @@ begin
         'Curve Length: ' + FloatToStr(RoundTo(CalculatedLength, -4)));
     FModelText.Add('0 End Bezier Curve');
 
-    if AddControlParts then
-    begin
+(*
       Line1.Matrix := FDATIdentityMatrix;
       Line1.SubPart := 'axis.ldr';
 
@@ -486,11 +430,90 @@ begin
       Line1.Position := BezCont2;
       Line1.Color := 6;
       FModelText.Add(Line1.DATString);
-    end;
+*)
+
   end;
   Result := FModelText.Text;
   Line1.Free;
   Line2.Free;
+end;
+
+function GetFlexObjectData(const L: Double; const FType: TDATFlexObjectType): TDATFlexObjectData;
+begin
+  case FType of
+    boHoseTabs:
+      begin
+        Result.StartFile := '750.dat';
+        Result.EndFile := '750.dat';
+        Result.MiddleFile := '754.dat';
+        Result.StartMatrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.EndMatrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont1Matrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont2Matrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.TotalLength := 130;
+        Result.Segments := 30;
+      end;
+    boHoseNoTabs:
+      begin
+        Result.StartFile := '752.dat';
+        Result.EndFile := '752.dat';
+        Result.MiddleFile := '754.dat';
+        Result.StartMatrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.EndMatrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont1Matrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -5,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont2Matrix := DATMatrix(1, 0, 0, 0,  0, 1, 0, -15,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.TotalLength := 130;
+        Result.Segments := 30;
+      end;
+    boHose12:
+      begin
+        Result.StartFile := '757.dat';
+        Result.EndFile := '760.dat';
+        Result.MiddleFile := '758.dat';
+        Result.StartMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 26.8387,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.EndMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 38,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont1Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -20,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont2Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -25,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.TotalLength := 177.2;
+        Result.Segments := 33;
+      end;
+    boRibbedHose:
+      begin
+        Result.StartFile := '79.dat';
+        Result.EndFile := '79.dat';
+        Result.MiddleFile := '80.dat';
+        Result.StartMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.EndMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont1Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -3.2,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont2Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.TotalLength := L * 6.2;
+        Result.Segments := Round(L);
+      end;
+    boFlexHose:
+      begin
+        Result.StartFile := '76.dat';
+        Result.EndFile := '76.dat';
+        Result.MiddleFile := '77.dat';
+        Result.StartMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.EndMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont1Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont2Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, -10,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.TotalLength := L;
+        Result.Segments := Trunc(Round(L)/4);
+      end;
+    boFlexAxle:
+      begin
+        Result.StartFile := 'stud3a.dat';
+        Result.EndFile := 'stud3a.dat';
+        Result.MiddleFile := 'axlehol8.dat';
+        Result.StartMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.EndMatrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont1Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.Cont2Matrix :=  DATMatrix(1, 0, 0, 0,  0, 1, 0, 10,  0, 0, 1, 0,  0, 0, 0, 1);
+        Result.TotalLength := L;
+        Result.Segments := Trunc(Round(L)/4);
+      end;
+  end;
 end;
 
 end.

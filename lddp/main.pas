@@ -82,7 +82,6 @@ type
     N8: TMenuItem;
     N10: TMenuItem;
     Paste1: TMenuItem;
-    Plugins3: TMenuItem;
     pmMemo: TPopupMenu;
     pmPolling: TPopupMenu;
     pmToolbars: TPopupMenu;
@@ -150,8 +149,6 @@ type
     Replace1: TMenuItem;
     ChangeColor2: TMenuItem;
     Tools1: TMenuItem;
-    Plugins1: TMenuItem;
-    Nonefound1: TMenuItem;
     StandardPartHeader1: TMenuItem;
     UpdateHeader1: TMenuItem;
     ExternalPrograms1: TMenuItem;
@@ -391,6 +388,7 @@ type
     N5SecondsPollInterval1: TMenuItem;
     CustomPollInterval1: TMenuItem;
     CustomPollInterval2: TMenuItem;
+    PluginMenu: TMenuItem;
 
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
@@ -789,12 +787,7 @@ begin
                   FixBowtieQuad1243(quad);
               errorlist := L3CheckLine(quad.DATString);
               for j := 0 to errorlist.Count - 1 do
-                if ((errorlist[j] as TDATError).ErrorType = deCollinearVertices123) or
-                   ((errorlist[j] as TDATError).ErrorType = deCollinearVertices124) or
-                   ((errorlist[j] as TDATError).ErrorType = deCollinearVertices134) or
-                   ((errorlist[j] as TDATError).ErrorType = deCollinearVertices234) or
-                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesDet) or
-                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesDist) or
+                if ((errorlist[j] as TDATError).ErrorType = deQuadCollinear) or
                    ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesNormAngle) or
                    ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit24) or
                    ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit13) then
@@ -815,14 +808,12 @@ begin
                       DModel.Free;
                       line1.Free;
                       line2.Free;
-                      if Assigned(errorlist) then
-                        errorlist.Free;
+                      errorlist.Free;
                       Exit;
                     end;
                     else DoNotCombine := True;
                   end;
-              if Assigned(errorlist) then
-                errorlist.Free;
+              errorlist.Free;
             end;
 
             if not DoNotCombine then
@@ -1376,7 +1367,7 @@ procedure TfrMain.acMoveSnapToGridExecute(Sender: TObject);
 var
   DModel: TDATModel;
   i, startline, endline: integer;
-  diffx, diffy, diffz: Extended;
+  diffx, diffy, diffz: Double;
 
 begin
   editor.ExpandSelection(startline, endline);
@@ -1639,7 +1630,7 @@ begin
 
       if (DModel.Count > 0) and (DModel[0] is TDATComment) then
         editor.CallTipShow(editor.PositionFromPointClose(x,y),
-                           PCHar((DModel[0] as TDATComment).Comment));
+                           PChar((DModel[0] as TDATComment).Comment));
 
       subp.Free;
       DModel.Free;
@@ -1692,7 +1683,7 @@ begin
   if editor.SelLength = 0 then
   begin
     DLine := StrToDAT(editor.Lines[editor.CaretY - 1]);
-    acInline.Enabled := DLine.LineType = 1;
+    acInline.Enabled := DLine.LineType = ltSubpart;
     DLine.Free;
   end
   else
@@ -1702,7 +1693,7 @@ begin
     for i := editor.LineFromPosition(editor.SelStart) to editor.LineFromPosition(editor.SelStart+editor.SelLength) do
     begin
       DLine := StrToDAT(editor.Lines[i]);
-      if DLine.LineType = 1 then
+      if DLine.LineType = ltSubpart then
       begin
         acInline.Enabled := True;
         Break;
@@ -1866,19 +1857,19 @@ begin
   with LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords do
   begin
     Clear;
-    if FindFirst(LDrawBasePath + 'parts\*.dat', faAnyFile, sc) = 0 then
+    if FindFirst(LDrawBasePath + '\parts\*.dat', faAnyFile, sc) = 0 then
       repeat
         Add(LowerCase(ExtractFileName(sc.Name)));
       until FindNext(sc) <> 0;
-    if FindFirst(LDrawBasePath + 'parts\s\*.dat', faAnyFile, sc) = 0 then
+    if FindFirst(LDrawBasePath + '\parts\s\*.dat', faAnyFile, sc) = 0 then
       repeat
         Add(LowerCase('s\' + ExtractFileName(sc.Name)));
       until FindNext(sc) <> 0;
-    if FindFirst(LDrawBasePath + 'p\*.dat', faAnyFile, sc) = 0 then
+    if FindFirst(LDrawBasePath + '\p\*.dat', faAnyFile, sc) = 0 then
       repeat
         Add(LowerCase(ExtractFileName(sc.Name)));
       until FindNext(sc) <> 0;
-    if FindFirst(LDrawBasePath + 'p\48\*.dat', faAnyFile, sc) = 0 then
+    if FindFirst(LDrawBasePath + '\p\48\*.dat', faAnyFile, sc) = 0 then
       repeat
         Add(LowerCase('48\' + ExtractFileName(sc.Name)));
       until FindNext(sc) <> 0;
@@ -1962,10 +1953,8 @@ begin
           PluginActionList.Images.Delete(ImageIndex);
         Free;
       end;
-    while Plugins1.Count > 0 do
-      Plugins1.items[Plugins1.Count-1].free;
-    while Plugins3.Count > 0 do
-      Plugins3.items[Plugins3.Count-1].free;
+    while PluginMenu.Count > 0 do
+      PluginMenu.Items[PluginMenu.Count - 1].Free;
 
     //Find and add the plugins
     repeat
@@ -2006,28 +1995,20 @@ begin
       PluginAction.Name := ChangeFileExt(sr.Name,'');
       PluginAction.ActionList := PluginActionList;
 
-      PluginMenuItem := TMenuItem.Create(Plugins1);
+      PluginMenuItem := TMenuItem.Create(PluginMenu);
       PluginMenuItem.Action := PluginAction;
-      Plugins1.Insert(Plugins1.Count, PluginMenuItem);
-
-      PluginMenuItem := TMenuItem.Create(Plugins3);
-      PluginMenuItem.Action := PluginAction;
-      Plugins3.Insert(Plugins3.Count, PluginMenuItem);
+      PluginMenu.Insert(PluginMenu.Count, PluginMenuItem);
 
       frOptions.cblPlugins.Checked[frOptions.cblPlugins.Items.Count - 1] :=
         PluginAction.Enabled;
     until FindNext(sr) <> 0;
   end;
 
-  if (Plugins1.Count = 0) and (Plugins3.Count = 0) then
+  if PluginMenu.Count = 0 then
   begin
-    PluginMenuItem := CreateMenuItem(_('None Found'), '', Plugins1);
+    PluginMenuItem := CreateMenuItem(_('None Found'), '', PluginMenu);
     PluginMenuItem.Enabled := false;
-    Plugins1.Insert(Plugins1.Count, PluginMenuItem);
-
-    PluginMenuItem := CreateMenuItem(_('None Found'), '', Plugins3);
-    PluginMenuItem.Enabled := false;
-    Plugins3.Insert(Plugins3.Count, PluginMenuItem);
+    PluginMenu.Insert(PluginMenu.Count, PluginMenuItem);
   end;
 
   FindClose(sr);
@@ -2072,21 +2053,32 @@ begin
 end;
 
 procedure TfrMain.tmPollTimer(Sender: TObject);
-// if polling time triggers the actual editor window is written to its firm assigned temp filename
+// if polling time triggers the actual editor window is written to its 
+// firm assigned temp filename
 var
   st: TStringList;
 
 begin
   if acPollEnablePolling.Checked and (DocumentTabs.Count > 0) then
-    if acPollToSelectedLine.Checked then
-    begin
-      st := TStringList.Create;
-      st.Text := editor.Lines.Text;
-      while st.Count > editor.CaretY do
-        st.Delete(st.Count - 1);
-      st.SaveToFile(tempFileName);
-    end
-    else editor.lines.SaveToFile(tempFileName);
+    try
+      if acPollToSelectedLine.Checked then
+      begin
+        st := TStringList.Create;
+        st.Text := editor.Lines.Text;
+        while st.Count > editor.CaretY do
+          st.Delete(st.Count - 1);
+        st.SaveToFile(tempFileName);
+      end
+      else 
+        editor.lines.SaveToFile(tempFileName);
+    except
+      on E: Exception do
+      begin
+        mnuEnablePolling.Checked := False;
+        tmPoll.Enabled := False;
+        ShowMessage(E.Message);
+      end;
+    end;
 end;
 
 procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');

@@ -110,18 +110,11 @@ type
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
     TabSheet8: TTabSheet;
-    cboDist: TCheckBox;
-    cboDet: TCheckBox;
-    cboNormalAngle: TCheckBox;
     Label6: TLabel;
-    seDist: TJvValidateEdit;
-    seDet: TJvValidateEdit;
-    seNormalAngle: TJvValidateEdit;
-    seCollinear: TJvValidateEdit;
+    NormalAngleEdit: TJvValidateEdit;
+    CollinearMaxAngleEdit: TJvValidateEdit;
     Memo3: TMemo;
     Memo4: TMemo;
-    Memo2: TMemo;
-    Memo1: TMemo;
     lbPntAcc: TLabel;
     sePntAcc: TJvValidateEdit;
     seRotAcc: TJvValidateEdit;
@@ -163,6 +156,10 @@ type
     seGridCoarseY: TJvValidateEdit;
     seGridCoarseZ: TJvValidateEdit;
     seGridCoarseAngle: TJvValidateEdit;
+    Memo1: TMemo;
+    CollinearMinAngleEdit: TJvValidateEdit;
+    Label28: TLabel;
+    Label29: TLabel;
     procedure MainPagesChange(Sender: TObject);
     procedure btnRescanPluginsClick(Sender: TObject);
     procedure cblPluginsClickCheck(Sender: TObject);
@@ -236,53 +233,58 @@ begin
   strFound := _('Found!');
   strNotFound := _('Not found!');
 
-  lbLDraw.font.Color:=clRed;
-  lbldraw.Caption:= strNotFound;
-  lbLDView.font.Color:=clRed;
-  lbLDView.Caption:=strNotFound;
-  lbMLCAD.font.Color:=clRed;
-  lbMLCAD.Caption:=strNotFound;
-  lbL3Lab.font.Color:=clRed;
-  lbL3Lab.Caption:=strNotFound;
-  lbLSynth.font.Color:=clRed;
-  lbLSynth.Caption:=strNotFound;
+  lbLDraw.font.Color := clRed;
+  lbldraw.Caption := strNotFound;
+  lbLDView.font.Color := clRed;
+  lbLDView.Caption := strNotFound;
+  lbMLCAD.font.Color := clRed;
+  lbMLCAD.Caption := strNotFound;
+  lbL3Lab.font.Color := clRed;
+  lbL3Lab.Caption := strNotFound;
+  lbLSynth.font.Color := clRed;
+  lbLSynth.Caption := strNotFound;
 
-  if FileExists(frOptions.edLDrawDir.text+'\parts.lst') then begin
+  if FileExists(frOptions.edLDrawDir.text + '\ldconfig.ldr') then
+  begin
     lbLDraw.font.Color := clGreen;
-    lbldraw.Caption:= strFound;
+    lbldraw.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edLDViewDir.text+'\LDView.exe') then begin
-    lbLDView.font.Color:=clGreen;
-    lbLDView.Caption:=strFound;
+  if FileExists(frOptions.edLDViewDir.text + '\LDView.exe') then
+  begin
+    lbLDView.font.Color := clGreen;
+    lbLDView.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edMLCADDir.text+'\MLCAD.exe') then begin
-    lbMLCAD.font.Color:=clGreen;
-    lbMLCAD.Caption:=strFound;
+  if FileExists(frOptions.edMLCADDir.text + '\MLCAD.exe') then
+  begin
+    lbMLCAD.font.Color := clGreen;
+    lbMLCAD.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe') then begin
-    lbL3Lab.font.Color:=clGreen;
-    lbL3Lab.Caption:=strFound;
+  if FileExists(frOptions.edL3LabDir.text + '\L3Lab.exe') then
+  begin
+    lbL3Lab.font.Color := clGreen;
+    lbL3Lab.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edLSynthDir.text+'\lsynthcp.exe') then begin
-    lbLSynth.font.Color:=clGreen;
-    lbLSynth.Caption:=strFound;
+  if FileExists(frOptions.edLSynthDir.text + '\lsynthcp.exe') then
+  begin
+    lbLSynth.font.Color := clGreen;
+    lbLSynth.Caption := strFound;
   end;
 
-  if trim(frOptions.edExternal.text)='' then
-    lbExternal.Caption:=''
+  if Trim(frOptions.edExternal.Text) = '' then
+    lbExternal.Caption := ''
   else
-    if FileExists(frOptions.edExternal.text) then begin
-      lbExternal.font.Color:=clGreen;
-      lbExternal.Caption:=strFound;
+    if FileExists(frOptions.edExternal.Text) then begin
+      lbExternal.Font.Color := clGreen;
+      lbExternal.Caption := strFound;
     end
     else
     begin
-      lbExternal.font.Color:=clRed;
-      lbExternal.Caption:=strNotFound;
+      lbExternal.Font.Color := clRed;
+      lbExternal.Caption := strNotFound;
     end;
 
   for i := 0 to SearchPathsList.Items.Count - 1 do
@@ -325,25 +327,25 @@ end;
 
 procedure TfrOptions.btLDrawClick(Sender: TObject);
 begin
-  SetDirectory(_('Choose LDraw Library Location'),edLdrawDir);
+  SetDirectory(_('Choose LDraw Library Location'), edLdrawDir);
   UpdateControls;
 end;
 
 procedure TfrOptions.btLDViewClick(Sender: TObject);
 begin
-  SetDirectory(_('Choose LDView Location'),edLDViewDir);
+  SetDirectory(_('Choose LDView Location'), edLDViewDir);
   UpdateControls;
 end;
 
 procedure TfrOptions.btMLCadClick(Sender: TObject);
 begin
-  SetDirectory(_('Choose MLCad Location'),edMLCadDir);
+  SetDirectory(_('Choose MLCad Location'), edMLCadDir);
   UpdateControls;
 end;
 
 procedure TfrOptions.cClick(Sender: TObject);
 begin
-  SetDirectory(_('Choose L3Lab Location'),edL3LabDir);
+  SetDirectory(_('Choose L3Lab Location'), edL3LabDir);
   UpdateControls;
 end;
 
@@ -1055,22 +1057,18 @@ end;
 
 procedure TfrOptions.SetConfigurationConstants;
 begin
-  LDrawBasePath := edLdrawDir.Text + PathDelim;
+  LDrawBasePath := edLdrawDir.Text;
 
-  DetThreshold := 0;
-  DistThreshold := 0;
-  PlaneNormalAngleLimit := 0;
-  CollinearPointsThreshold := 0.0001;
+  PlaneNormalAngleLimit := 1;
+  CollinearMaxAngle := 179.9;
+  CollinearMinAngle := 0.025;
 
-  if (cboDet.Checked) then
-    DetThreshold := seDet.Value;
-  if cboDist.Checked then
-    DistThreshold := seDist.Value;
-  if cboNormalAngle.Checked then
-    PlaneNormalAngleLimit := seNormalAngle.Value;
-  if (seCollinear.Value > 0) or
-     (seCollinear.Text <> '') then
-    CollinearPointsThreshold := seCollinear.Value;
+  if NormalAngleEdit.Value > 0 then
+    PlaneNormalAngleLimit := NormalAngleEdit.Value;
+  if CollinearMaxAngleEdit.Value > 0 then
+    CollinearMaxAngle := CollinearMaxAngleEdit.Value;
+  if CollinearMinAngleEdit.Value > 0 then
+    CollinearMinAngle := CollinearMinAngleEdit.Value;
 end;
 
 end.

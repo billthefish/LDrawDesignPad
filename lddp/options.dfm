@@ -20,9 +20,9 @@ object frOptions: TfrOptions
   object MainPages: TPageControl
     Left = 0
     Top = 0
-    Width = 592
-    Height = 333
-    ActivePage = TabSheet3
+    Width = 584
+    Height = 331
+    ActivePage = tsExternal
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -33,8 +33,8 @@ object frOptions: TfrOptions
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
-        Width = 584
-        Height = 305
+        Width = 576
+        Height = 303
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
@@ -61,9 +61,9 @@ object frOptions: TfrOptions
         object Label5: TLabel
           Left = 8
           Top = 22
-          Width = 76
+          Width = 91
           Height = 13
-          Caption = 'LDraw (parts.lst)'
+          Caption = 'LDraw (ldconfig.ldr)'
         end
         object lbMLCAD: TLabel
           Left = 404
@@ -437,75 +437,37 @@ object frOptions: TfrOptions
       object ConfigPages: TPageControl
         Left = 0
         Top = 0
-        Width = 584
-        Height = 305
+        Width = 576
+        Height = 303
         ActivePage = TabSheet6
         Align = alClient
         TabOrder = 0
         object TabSheet6: TTabSheet
           Caption = 'Error Check Values'
           object Label6: TLabel
-            Left = 20
-            Top = 114
+            Left = 3
+            Top = 36
             Width = 125
             Height = 13
-            Caption = 'Collinear Points Threshold:'
+            Caption = 'Collinear Points Max Angle'
           end
-          object cboDist: TCheckBox
+          object Label28: TLabel
+            Left = 3
+            Top = 72
+            Width = 122
+            Height = 13
+            Caption = 'Collinear Points Min Angle'
+          end
+          object Label29: TLabel
             Left = 3
             Top = 3
-            Width = 181
-            Height = 17
-            Caption = 'Dist Coplanarity Check Threshold:'
-            TabOrder = 0
+            Width = 142
+            Height = 13
+            Caption = 'Normal Angle Coplanarity Limit'
           end
-          object cboDet: TCheckBox
-            Left = 3
-            Top = 37
-            Width = 185
-            Height = 17
-            Caption = 'Det Coplanarity Check Threshold:'
-            TabOrder = 1
-          end
-          object cboNormalAngle: TCheckBox
-            Left = 3
-            Top = 71
-            Width = 174
-            Height = 19
-            Caption = 'Normal Angle Coplanarity Limit:'
-            Checked = True
-            State = cbChecked
-            TabOrder = 2
-          end
-          object seDist: TJvValidateEdit
-            Left = 183
-            Top = 1
-            Width = 81
-            Height = 21
-            CriticalPoints.MaxValueIncluded = False
-            CriticalPoints.MinValueIncluded = True
-            TrimDecimals = True
-            DisplayFormat = dfFloat
-            DecimalPlaces = 9
-            EditText = '0.1'
-            TabOrder = 3
-          end
-          object seDet: TJvValidateEdit
-            Left = 183
-            Top = 34
-            Width = 81
-            Height = 21
-            CriticalPoints.MaxValueIncluded = False
-            CriticalPoints.MinValueIncluded = True
-            TrimDecimals = True
-            DisplayFormat = dfFloat
-            DecimalPlaces = 9
-            EditText = '0.001'
-            TabOrder = 4
-          end
-          object seNormalAngle: TJvValidateEdit
-            Left = 183
-            Top = 70
+          object NormalAngleEdit: TJvValidateEdit
+            Left = 163
+            Top = 0
             Width = 81
             Height = 21
             CriticalPoints.MaxValueIncluded = False
@@ -514,11 +476,14 @@ object frOptions: TfrOptions
             DisplayFormat = dfFloat
             DecimalPlaces = 9
             EditText = '1.000000000'
-            TabOrder = 5
+            HasMaxValue = True
+            HasMinValue = True
+            MaxValue = 180.000000000000000000
+            TabOrder = 0
           end
-          object seCollinear: TJvValidateEdit
-            Left = 183
-            Top = 111
+          object CollinearMaxAngleEdit: TJvValidateEdit
+            Left = 163
+            Top = 33
             Width = 81
             Height = 21
             CriticalPoints.MaxValueIncluded = False
@@ -526,27 +491,31 @@ object frOptions: TfrOptions
             TrimDecimals = True
             DisplayFormat = dfFloat
             DecimalPlaces = 9
-            EditText = '0.0001'
-            TabOrder = 6
+            EditText = '179.9'
+            HasMaxValue = True
+            HasMinValue = True
+            MaxValue = 180.000000000000000000
+            TabOrder = 1
           end
           object Memo3: TMemo
-            Left = 267
-            Top = 103
+            Left = 250
+            Top = 33
             Width = 292
-            Height = 41
+            Height = 30
             TabStop = False
             BorderStyle = bsNone
             Color = clBtnFace
             Lines.Strings = (
-              'Only adjust this value if you want to change the pecent '
-              'deviation used for collinear point determination. (L3P uses '
-              '0.0001 by defualt)')
+              
+                'Points are collinear if the angle defined by them is greater tha' +
+                'n '
+              '179.9 degrees')
             ReadOnly = True
-            TabOrder = 7
+            TabOrder = 2
           end
           object Memo4: TMemo
-            Left = 267
-            Top = 70
+            Left = 250
+            Top = 0
             Width = 292
             Height = 27
             TabStop = False
@@ -556,37 +525,37 @@ object frOptions: TfrOptions
               'Quads considered coplaner if the angle is less than or equal '
               'to 3 degrees. An angle of less than 1 degree is recommended')
             ReadOnly = True
-            TabOrder = 8
-          end
-          object Memo2: TMemo
-            Left = 267
-            Top = 34
-            Width = 292
-            Height = 33
-            TabStop = False
-            BorderStyle = bsNone
-            Color = clBtnFace
-            Lines.Strings = (
-              'Geometric primitives typically use 0.01. Hi-res primitives '
-              'typically use 0.001.  (Note: this check is depreciated)')
-            ReadOnly = True
-            TabOrder = 9
+            TabOrder = 3
           end
           object Memo1: TMemo
-            Left = 267
-            Top = 1
+            Left = 250
+            Top = 69
             Width = 292
-            Height = 33
+            Height = 30
             TabStop = False
             BorderStyle = bsNone
             Color = clBtnFace
             Lines.Strings = (
-              
-                'General files (parts, subparts and some primitives) typically us' +
-                'e '
-              'a value of 0.1. (Note: this check is depreciated)')
+              'Points are collinear if the angle defined by them is less than '
+              '0.025 degrees')
             ReadOnly = True
-            TabOrder = 10
+            TabOrder = 4
+          end
+          object CollinearMinAngleEdit: TJvValidateEdit
+            Left = 163
+            Top = 69
+            Width = 81
+            Height = 21
+            CriticalPoints.MaxValueIncluded = False
+            CriticalPoints.MinValueIncluded = True
+            TrimDecimals = True
+            DisplayFormat = dfFloat
+            DecimalPlaces = 9
+            EditText = '0.025'
+            HasMaxValue = True
+            HasMinValue = True
+            MaxValue = 180.000000000000000000
+            TabOrder = 5
           end
         end
         object TabSheet7: TTabSheet
@@ -710,7 +679,7 @@ object frOptions: TfrOptions
           object GroupBox2: TGroupBox
             Left = 0
             Top = 146
-            Width = 576
+            Width = 568
             Height = 73
             Align = alTop
             Caption = 'Fine Grid Settings'
@@ -803,7 +772,7 @@ object frOptions: TfrOptions
           object GroupBox3: TGroupBox
             Left = 0
             Top = 73
-            Width = 576
+            Width = 568
             Height = 73
             Align = alTop
             Caption = 'Medium Grid Settings'
@@ -896,7 +865,7 @@ object frOptions: TfrOptions
           object GroupBox5: TGroupBox
             Left = 0
             Top = 0
-            Width = 576
+            Width = 568
             Height = 73
             Align = alTop
             Caption = 'Coarse Grid Settings'
@@ -995,7 +964,7 @@ object frOptions: TfrOptions
       object SearchPathsList: TListView
         Left = 0
         Top = 0
-        Width = 584
+        Width = 576
         Height = 201
         Align = alTop
         Columns = <
@@ -1015,8 +984,8 @@ object frOptions: TfrOptions
       object Panel5: TPanel
         Left = 0
         Top = 201
-        Width = 584
-        Height = 104
+        Width = 576
+        Height = 102
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
@@ -1208,8 +1177,8 @@ object frOptions: TfrOptions
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
-        Width = 584
-        Height = 305
+        Width = 576
+        Height = 303
         Align = alClient
         Caption = 'Color Bar Colors'
         TabOrder = 0
@@ -1239,7 +1208,7 @@ object frOptions: TfrOptions
           Left = 2
           Top = 15
           Width = 137
-          Height = 288
+          Height = 286
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
@@ -1350,16 +1319,16 @@ object frOptions: TfrOptions
       Caption = '&External Progams'
       ImageIndex = -1
       object GroupBox7: TGroupBox
-        Left = 223
+        Left = 215
         Top = 0
         Width = 361
-        Height = 305
+        Height = 303
         Align = alRight
         Caption = 'User Defined Program Configuration'
         TabOrder = 0
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 242
+          Top = 240
           Width = 357
           Height = 61
           Align = alBottom
@@ -1377,7 +1346,7 @@ object frOptions: TfrOptions
           Left = 2
           Top = 145
           Width = 207
-          Height = 97
+          Height = 95
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -1385,7 +1354,7 @@ object frOptions: TfrOptions
             Left = 0
             Top = 0
             Width = 207
-            Height = 97
+            Height = 95
             Align = alClient
             BevelEdges = []
             BevelInner = bvNone
@@ -1472,7 +1441,7 @@ object frOptions: TfrOptions
           end
           object btExternal: TBitBtn
             Left = 331
-            Top = 0
+            Top = 27
             Width = 25
             Height = 21
             TabOrder = 3
@@ -1544,7 +1513,7 @@ object frOptions: TfrOptions
           Left = 209
           Top = 145
           Width = 150
-          Height = 97
+          Height = 95
           Align = alClient
           BevelEdges = []
           BevelOuter = bvNone
@@ -1552,7 +1521,7 @@ object frOptions: TfrOptions
           TabOrder = 3
           object btnAddExternal: TButton
             Left = 0
-            Top = 31
+            Top = 29
             Width = 150
             Height = 33
             Align = alBottom
@@ -1562,7 +1531,7 @@ object frOptions: TfrOptions
           end
           object btnDelExternal: TButton
             Left = 0
-            Top = 64
+            Top = 62
             Width = 150
             Height = 33
             Align = alBottom
@@ -1575,8 +1544,8 @@ object frOptions: TfrOptions
       object lbxExternal: TListBox
         Left = 0
         Top = 0
-        Width = 223
-        Height = 305
+        Width = 215
+        Height = 303
         Align = alClient
         ItemHeight = 13
         TabOrder = 1
@@ -1590,8 +1559,8 @@ object frOptions: TfrOptions
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0
-        Width = 584
-        Height = 305
+        Width = 576
+        Height = 303
         Align = alClient
         Caption = 'Configure Plugins'
         TabOrder = 0
@@ -1655,7 +1624,7 @@ object frOptions: TfrOptions
           Left = 2
           Top = 15
           Width = 285
-          Height = 288
+          Height = 286
           OnClickCheck = cblPluginsClickCheck
           Align = alLeft
           ItemHeight = 13
@@ -1666,14 +1635,14 @@ object frOptions: TfrOptions
   end
   object Panel1: TPanel
     Left = 0
-    Top = 333
-    Width = 592
+    Top = 331
+    Width = 584
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      592
+      584
       37)
     object BitBtn1: TBitBtn
       Left = 387

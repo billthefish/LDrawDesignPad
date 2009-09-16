@@ -120,9 +120,9 @@
 		</Linker>
 		<Directories>
 			<Directories Name="OutputDir"></Directories>
-			<Directories Name="UnitOutputDir">C:\Documents and Settings\Orion\My Documents\Lego\LDDP\Current Build\DCU</Directories>
-			<Directories Name="PackageDLLOutputDir">C:\Documents and Settings\Orion\My Documents\Lego\LDDP\Current Build</Directories>
-			<Directories Name="PackageDCPOutputDir">C:\Documents and Settings\Orion\My Documents\Lego\LDDP\Current Build\DCU</Directories>
+			<Directories Name="UnitOutputDir">C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</Directories>
+			<Directories Name="PackageDLLOutputDir">C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build</Directories>
+			<Directories Name="PackageDCPOutputDir">C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</Directories>
 			<Directories Name="SearchPath"></Directories>
 			<Directories Name="Packages"></Directories>
 			<Directories Name="Conditionals"></Directories>

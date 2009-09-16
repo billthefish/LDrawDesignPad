@@ -217,7 +217,7 @@ begin
     GetTempPath(lng, PChar(tempDir));
   end;
   if copy(tempdir,length(tempdir),1) <> '\' then
-    tempdir := tempdir+'\';
+    tempdir := tempdir + '\';
   Result:=tempDir;
 end;
 

@@ -37,6 +37,7 @@ type
     cbSort2: TComboBox;
     Label3: TLabel;
     cbSort3: TComboBox;
+    PreserveMPD: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -58,27 +59,41 @@ uses DATBase, DATModel, DATUtils, main, options, commonprocs;
 procedure TfmSort.btnOKClick(Sender: TObject);
 var
   DModel: TDATModel;
+  DMPDModel: TDATMPDModel;
   startline, endline, i: Integer;
-begin
-    DModel := LDDPCreateDATModel;
+  SortTerms: TDATSortArray;
 
+begin
     if fmSort.rgScope.ItemIndex = 0 then
       frMain.editor.SelectAll
     else
       frMain.editor.ExpandSelection(startline, endline);
 
-    DModel.ModelText := frMain.editor.SelText;
-
     for i := 1 to 3 do
       with (SortPanel.FindChildControl('cbSort' + IntToStr(i)) as TComboBox) do
         if ItemIndex >= 0 then
-          DModel.SortTerm[i] := TDATSortTerm(ItemIndex)
+          SortTerms[i] := TDATSortTerm(ItemIndex)
         else
-          DModel.SortTerm[i] := dsNil;
+          SortTerms[i] := dsNil;
 
-    DModel.Sort(rgSortDirection.ItemIndex < 1);
+    if PreserveMPD.Checked then
+    begin
+      DMPDModel := TDATMPDModel.Create;
+      DMPDModel.Free;
+    end
+    else
+    begin
+      DModel := LDDPCreateDATModel;
+      try
+        DModel.ModelText := frMain.editor.SelText;
+        DModel.SortTerms := SortTerms;
+        DModel.Sort(rgSortDirection.ItemIndex < 1);
+        frMain.editor.SelText := DModel.ModelText;
+      finally
+        DModel.Free;
+      end;
+    end;
 
-    frMain.editor.SelText := DModel.ModelText;
 end;
 
 procedure TfmSort.FormActivate(Sender: TObject);
