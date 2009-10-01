@@ -181,8 +181,8 @@ object frAboutBox: TfrAboutBox
     Left = 0
     Top = 49
     Width = 436
-    Height = 217
-    ActivePage = TabSheet2
+    Height = 223
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 1
     object TabSheet1: TTabSheet
@@ -191,7 +191,7 @@ object frAboutBox: TfrAboutBox
         Left = 0
         Top = 0
         Width = 428
-        Height = 189
+        Height = 195
         Align = alClient
         Lines.Strings = (
           'LDraw Design Pad'
@@ -216,7 +216,9 @@ object frAboutBox: TfrAboutBox
             'o)'
           ''
           'Philippe "Philo" Hurbain'
-          '  Plane normal check derived from code by:'
+          
+            '  Plane normal and collinear line check and derived from code by' +
+            ':'
           '  Philippe "Philo" Hurbain - 2007 - www.philohome.com'
           '  Philo also provided a few icons'
           ''
@@ -246,6 +248,7 @@ object frAboutBox: TfrAboutBox
           'Boston, MA  02111-1307, USA.')
         ScrollBars = ssVertical
         TabOrder = 0
+        ExplicitTop = 3
       end
     end
     object TabSheet2: TTabSheet
@@ -255,10 +258,17 @@ object frAboutBox: TfrAboutBox
         Left = 0
         Top = 0
         Width = 428
-        Height = 189
+        Height = 195
         Align = alClient
         Lines.Strings = (
           '+ = New feature  * = Bugfix   - = Removed feature'
+          ''
+          'v2.0.3'
+          
+            '+ Updated error check to use the new standard for collinear line' +
+            'ss'
+          '* Fixed LDConfig parsing bug'
+          ''
           'v2.0.2'
           '* Fixed inlining broken in last version'
           '* Fixed a few more bugs in the bendible part generator'
@@ -481,7 +491,7 @@ object frAboutBox: TfrAboutBox
   end
   object Panel2: TPanel
     Left = 0
-    Top = 266
+    Top = 272
     Width = 436
     Height = 29
     Align = alBottom

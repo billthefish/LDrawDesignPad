@@ -106,9 +106,7 @@ function MakeStandardDATColourList: TDATColourList;
 var
   LDConfig, TempList: TStringList;
   TempColor: TDATColour;
-  i, j, dithercode: Integer;
-  color1, color2: Integer;
-  dcolor: string;
+  i: Integer;
 
 begin
   Result := TDATColourList.Create;
@@ -118,8 +116,6 @@ begin
     TempList:= TStringList.Create;
     try
       LDConfig.LoadFromFile(LDrawBasePath + PathDelim + 'ldconfig.ldr');
-      for i := 0 to 511 do
-        Result.Add(DATColour(i, 'Color' + IntToStr(i), 0, 0));
 
       // We have to do 2 passes through LDConfig since edge colors can reference
       // a main color by color code
@@ -133,12 +129,10 @@ begin
           if (TempList[0] = '0') and (TempList[1] = '!COLOUR') and
              (TempList[3] = 'CODE') and (TempList[5] = 'VALUE') and
              (TempList[7] = 'EDGE') then
-          begin
-            TempColor := Result[Result.IndexOfColourCode(StrToInt(TempList[4]))];
-            TempColor.MainColor := BGRtoRGB(StringToColor(StringReplace(TempList[6], '#', '$', [rfReplaceAll])));
-            TempColor.Name := TempList[2];
-            Result[Result.IndexOfColourCode(StrToInt(TempList[4]))] := TempColor;
-          end;
+            Result.Add(DATColour(StrToInt(TempList[4]),
+                                 TempList[2],
+                                 BGRtoRGB(StringToColor(StringReplace(TempList[6], '#', '$', [rfReplaceAll]))),
+                                 0));
         end;
       // Pass 2
       for i := 0 to LDConfig.Count - 1 do
@@ -149,7 +143,7 @@ begin
              (TempList[3] = 'CODE') and (TempList[5] = 'VALUE') and
              (TempList[7] = 'EDGE') then
           begin
-            if pos(TempList[8], '#') > 0 then
+            if TempList[8][1] = '#' then
             begin
               TempColor := Result[Result.IndexOfColourCode(StrToInt(TempList[4]))];
               TempColor.EdgeColor := BGRtoRGB(StringToColor(StringReplace(TempList[6], '#', '$', [rfReplaceAll])));
@@ -163,40 +157,10 @@ begin
             end;
           end;
         end;
-      // Finally pass through the result to generate standard dithered colors
-      for i := 0 to 15 do
-        for j := 0 to 15 do
-        begin
-          dithercode := i + j * 16 + 256;
-          if Result[Result.IndexOfColourCode(dithercode)].Name =
-               'Color' + IntToStr(dithercode) then
-          begin
-            TempColor := Result[Result.IndexOfColourCode(dithercode)];
-            color1 := ColorToRGB(Result[Result.IndexOfColourCode(i)].MainColor);
-            color2 := ColorToRGB(Result[Result.IndexOfColourCode(j)].MainColor);
-            dcolor := IntToHex((Color1 + Color2) div 2, 6);
-            TempColor.MainColor :=
-              StringToColor('$' + dcolor);
-            TempColor.EdgeColor :=
-              Result[Result.IndexOfColourCode(i)].MainColor;
-            TempColor.Name :=
-              Result[Result.IndexOfColourCode(i)].Name + ' - ' +
-              Result[Result.IndexOfColourCode(j)].Name;
-            Result[Result.IndexOfColourCode(dithercode)] := TempColor;
-          end;
 
-        end;
       // Add color 16 and 24
-      TempColor.Name := 'Main Color';
-      TempColor.Code := 16;
-      TempColor.MainColor := $000001;
-      TempColor.EdgeColor := $000002;
-      Result[Result.IndexOfColourCode(16)] := TempColor;
-      TempColor.Name := 'Edge Color';
-      TempColor.Code := 24;
-      TempColor.MainColor := $000002;
-      TempColor.EdgeColor := $000001;
-      Result[Result.IndexOfColourCode(24)] := TempColor;
+      Result.Add(DATColour(16, 'Main Color', $000001, $000002));
+      Result.Add(DATColour(16, 'Edge Color', $000002, $000001));
     finally
       TempList.Free;
       LDConfig.Free;

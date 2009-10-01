@@ -13,9 +13,7 @@ Contents
 1. Installation
 ----------------
 
-The installer will do everything for you. Just install like every other program.
-
-If using the upgrade file, uzip the contents into the directory that LDDP is installed
+Unzip the contents into the directory that you want to install LDDP.
 
 
 2. Introduction
@@ -48,12 +46,12 @@ Supported File Types:
 Technic Ribbed Hoses (79.dat for endpoints)
 Technic Flexible Axles (stud3a.dat for endpoints)
 Technic Flex-System Hose (76.dat for endpoints)
-Hose 12L (Parts not yet official)
+Hose 12L
 
 Usage:
 Place the endpoints where you want them. Ensure they are listed on adjacent lines
 Select the two lines with the endpoints.
-Select Generate Bendible Object from the Tools menu
+Select Generate Bendible Object from the Tools menu (Ctrl-B)
 
 4. Plugin Capability
 --------------------
@@ -81,18 +79,7 @@ suggestions for features.
 
 Note to all plugin authors:
   As of Version 1.5, LDDP no longer uses the Registry. It now uses the LDraw INI 
-  file for it's configuration settings.  If you used settings other than the 
-  InstallDir in the Registry, your plugins will have to be updated to work.
-
-Remarks:
-
-- The palette file (colors.pal) isn't complete.
-  Some colors are missing, some have to be renamed. Use normal text editor
-  or LDDP to edit this file. Feel free to do this and please send us any updates
-  to this file so we can include it in the next release.
-
-- If you wrote a plugin for LDDP we will be happy to a put a link or the
-  plugin itself on the LDDP website!
+  file for it's configuration settings.
 
 6. Credits
 ----------
@@ -113,7 +100,7 @@ Fredrik Glöckner
   Copyright (C) 1999-2002  Fredrik Glöckner (fredrigl@math.uio.no)
 
 Philippe "Philo" Hurbain
-  Plane normal check derived from code by:
+  Plane normal and collinear line check derived from code by:
   Philippe "Philo" Hurbain - 2007 - www.philohome.com
   Philo also provided a few icons
 
@@ -135,6 +122,11 @@ We especially thank you, the user, for downloading our program
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
+
+
+v2.0.3
++ Updated error check to use the new standard for collinear liness
+* Fixed LDConfig parsing bug
 
 v2.0.2
 * Fixed inlining broken in last version
