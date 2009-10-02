@@ -22,7 +22,7 @@ object frOptions: TfrOptions
     Top = 0
     Width = 584
     Height = 331
-    ActivePage = tsExternal
+    ActivePage = TabSheet5
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -630,6 +630,10 @@ object frOptions: TfrOptions
         object TabSheet8: TTabSheet
           Caption = 'User Information'
           ImageIndex = 2
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Label3: TLabel
             Left = 3
             Top = 3

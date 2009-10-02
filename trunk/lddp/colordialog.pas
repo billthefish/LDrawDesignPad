@@ -134,14 +134,27 @@ procedure TfrColorDialog.UpdateColorCombos;
 //Update the color combo boxs from ldconfig.ldr
 var
   i: Integer;
+  color: TColor;
 
 begin
   ColourList := MakeStandardDATColourList;
   for i := 0 to ColourList.Count - 1 do
   begin
-    OldColorCombo.AddColor(ColourList[i].MainColor, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
-    NewColorCombo.AddColor(ColourList[i].MainColor, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
+    color := ColourList[i].MainColor;
+    while OldColorCombo.FindColor(color) >= 0 do
+      color := color + 1;
+    OldColorCombo.AddColor(color, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
+    NewColorCombo.AddColor(color, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
   end;
+  for i := 0 to 511 do
+    if ColourList.IndexOfColourCode(i) < 0 then
+    begin
+      color := i;
+      while OldColorCombo.FindColor(color) >= 0 do
+        color := color + 1;
+      OldColorCombo.AddColor(color, IntToStr(i) + ': Color' + IntToStr(i));
+      NewColorCombo.AddColor(color, IntToStr(i) + ': Color' + IntToStr(i));
+    end;
 end;
 
 end.

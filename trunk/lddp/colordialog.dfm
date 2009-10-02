@@ -27,7 +27,6 @@ object frColorDialog: TfrColorDialog
     Align = alClient
     Caption = 'Pick your color'
     TabOrder = 0
-    ExplicitHeight = 240
     object Label1: TLabel
       Left = 12
       Top = 19
@@ -93,7 +92,6 @@ object frColorDialog: TfrColorDialog
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 240
     DesignSize = (
       217
       41)
