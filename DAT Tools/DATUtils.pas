@@ -161,6 +161,7 @@ begin
       // Add color 16 and 24
       Result.Add(DATColour(16, 'Main Color', $000001, $000002));
       Result.Add(DATColour(16, 'Edge Color', $000002, $000001));
+
     finally
       TempList.Free;
       LDConfig.Free;
