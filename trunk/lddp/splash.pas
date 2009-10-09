@@ -23,7 +23,7 @@ uses
   gnugettext, Forms,Controls, StdCtrls, Graphics, Classes, ExtCtrls;
 
 type
-  TfrSplash = class(TForm)
+  TLDDPSplash = class(TForm)
     Image1: TImage;
     lbState: TLabel;
     procedure FormCreate(Sender: TObject);
@@ -34,13 +34,13 @@ type
   end;
 
 var
-  frSplash: TfrSplash;
+  LDDPSplash: TLDDPSplash;
 
 implementation
 
 {$R *.dfm}
 
-procedure TfrSplash.FormCreate(Sender: TObject);
+procedure TLDDPSplash.FormCreate(Sender: TObject);
 begin
   TranslateComponent (self);
 end;

@@ -24,7 +24,7 @@ uses
   ExtCtrls, SysUtils, Buttons, ComCtrls;
   
 type
-  TfrAboutBox = class(TForm)
+  TLDDPAbout = class(TForm)
     Panel1: TPanel;
     ProgramIcon: TImage;
     ProductName: TLabel;
@@ -45,7 +45,7 @@ type
   end;
 
 var
-  frAboutBox: TfrAboutBox;
+  LDDPAbout: TLDDPAbout;
 
 implementation
 
@@ -54,7 +54,7 @@ implementation
 uses
   windowsspecific;
 
-procedure TfrAboutBox.FormShow(Sender: TObject);
+procedure TLDDPAbout.FormShow(Sender: TObject);
 
 begin
   if GetAppVersion(Application.ExeName) <> '' then
@@ -64,9 +64,9 @@ begin
   PageControl1.ActivePageIndex := 0;
 end;
 
-procedure TfrAboutBox.FormCreate(Sender: TObject);
+procedure TLDDPAbout.FormCreate(Sender: TObject);
 begin
-  TranslateComponent (self);
+  TranslateComponent(self);
 end;
 
 end.

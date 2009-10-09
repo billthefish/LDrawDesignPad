@@ -78,10 +78,10 @@ end;
 
 function LDDPCreateDATModel: TDATModel;
 begin
-  if frOptions.cboAutoRoundOnly.Checked then
+  if LDDPOptions.cboAutoRoundOnly.Checked then
     Result := TDATModel.Create
   else
-    Result := CreateDATModel(frOptions.sePntAcc.Value, frOptions.seRotAcc.Value);
+    Result := CreateDATModel(LDDPOptions.sePntAcc.Value, LDDPOptions.seRotAcc.Value);
 end;
 
 end.

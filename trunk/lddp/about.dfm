@@ -1,4 +1,4 @@
-object frAboutBox: TfrAboutBox
+object LDDPAbout: TLDDPAbout
   Left = 445
   Top = 278
   Width = 442
@@ -248,12 +248,15 @@ object frAboutBox: TfrAboutBox
           'Boston, MA  02111-1307, USA.')
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitTop = 3
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Version History'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo2: TMemo
         Left = 0
         Top = 0

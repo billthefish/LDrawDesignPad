@@ -24,7 +24,7 @@ uses
   Dialogs, StdCtrls, Buttons, ExtCtrls;
 
 type
-  TfmSort = class(TForm)
+  TLDDPSortDlg = class(TForm)
     rgScope: TRadioGroup;
     cbSort1: TComboBox;
     Label1: TLabel;
@@ -48,7 +48,7 @@ type
   end;
 
 var
-  fmSort: TfmSort;
+  LDDPSortDlg: TLDDPSortDlg;
 
 implementation
 
@@ -56,7 +56,7 @@ uses DATBase, DATModel, DATUtils, main, options, commonprocs;
 {$R *.dfm}
 
 
-procedure TfmSort.btnOKClick(Sender: TObject);
+procedure TLDDPSortDlg.btnOKClick(Sender: TObject);
 var
   DModel: TDATModel;
   DMPDModel: TDATMPDModel;
@@ -64,10 +64,10 @@ var
   SortTerms: TDATSortArray;
 
 begin
-    if fmSort.rgScope.ItemIndex = 0 then
-      frMain.editor.SelectAll
+    if rgScope.ItemIndex = 0 then
+      LDDPMain.editor.SelectAll
     else
-      frMain.editor.ExpandSelection(startline, endline);
+      LDDPMain.editor.ExpandSelection(startline, endline);
 
     for i := 1 to 3 do
       with (SortPanel.FindChildControl('cbSort' + IntToStr(i)) as TComboBox) do
@@ -85,10 +85,10 @@ begin
     begin
       DModel := LDDPCreateDATModel;
       try
-        DModel.ModelText := frMain.editor.SelText;
+        DModel.ModelText := LDDPMain.editor.SelText;
         DModel.SortTerms := SortTerms;
         DModel.Sort(rgSortDirection.ItemIndex < 1);
-        frMain.editor.SelText := DModel.ModelText;
+        LDDPMain.editor.SelText := DModel.ModelText;
       finally
         DModel.Free;
       end;
@@ -96,15 +96,15 @@ begin
 
 end;
 
-procedure TfmSort.FormActivate(Sender: TObject);
+procedure TLDDPSortDlg.FormActivate(Sender: TObject);
 begin
-    if frMain.editor.SelLength > 0 then
-      fmSort.rgScope.ItemIndex := 1
+    if LDDPMain.editor.SelLength > 0 then
+      rgScope.ItemIndex := 1
     else
-      fmSort.rgScope.ItemIndex := 0;
+      rgScope.ItemIndex := 0;
 end;
 
-procedure TfmSort.FormCreate(Sender: TObject);
+procedure TLDDPSortDlg.FormCreate(Sender: TObject);
 begin
   TranslateComponent (self);
 end;

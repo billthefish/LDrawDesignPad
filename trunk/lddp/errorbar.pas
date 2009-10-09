@@ -118,11 +118,11 @@ begin
     L3PErrorLine := StrToInt(ErrorListView.Items[ErrorListView.Itemindex].SubItems[0]) - 1;
 
     // Highlight errorline.
-    frMain.editor.GotoLineEnsureVisible(L3PErrorLine);
-    frMain.editor.SelectLine(L3PErrorline);
+    LDDPMain.editor.GotoLineEnsureVisible(L3PErrorLine);
+    LDDPMain.editor.SelectLine(L3PErrorline);
 
     // Change focus from L3P error pane to editor pane
-    frMain.editor.SetFocus;
+    LDDPMain.editor.SetFocus;
 end;
 
 procedure TfrErrorWindow.ErrorListViewSelectItem(Sender: TObject;
@@ -147,7 +147,7 @@ end;
 procedure TfrErrorWindow.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveFormValues;
-  frMain.acErrorList.Checked := False;
+  LDDPMain.acErrorList.Checked := False;
 end;
 
 procedure TfrErrorWindow.FormCreate(Sender: TObject);
@@ -170,7 +170,7 @@ end;
 procedure TfrErrorWindow.FormShow(Sender: TObject);
 begin
   LoadFormValues;
-  frMain.acErrorList.Checked := True;
+  LDDPMain.acErrorList.Checked := True;
 end;
 
 // Error check actions
@@ -193,7 +193,7 @@ begin
   ErrorListView.Items.Clear;
 
   DATModel1 := TDATModel.Create;
-  DATModel1.ModelText := frMain.editor.Lines.Text;
+  DATModel1.ModelText := LDDPMain.editor.Lines.Text;
   iline := -1;
   
   for i := 0 to DATModel1.Count - 1 do
@@ -237,7 +237,7 @@ begin
       if not Visible then
       begin
         Visible := true;
-        ManualDock(frMain.JvDockServer1.BottomDockPanel, nil, alBottom);
+        ManualDock(LDDPMain.JvDockServer1.BottomDockPanel, nil, alBottom);
       end;
       acECFixAllErrors.Enabled := True;
       acECFixAllMarkedErrors.Enabled := True;
@@ -261,7 +261,7 @@ begin
       acECMarkAllTyped.Enabled := False;
       acECUnMarkAllTyped.Enabled := False;
       acECCopy.Enabled := False;
-      frMain.StatusBar.Panels[0].Text := _('No Errors Found!');
+      LDDPMain.StatusBar.Panels[0].Text := _('No Errors Found!');
     end;
   Screen.Cursor := crDefault;
 end;
@@ -321,13 +321,13 @@ begin
           begin
             DATElem := TDATSubPart.Create;
             (DATElem as TDATSubPart).DATString :=
-              frMain.editor.Lines[frMain.editor.CaretY - 1];
+              LDDPMain.editor.Lines[LDDPMain.editor.CaretY - 1];
             if PError.ErrorType = deYColumnAllZeros then
               FixYColumnAllZeros(DATElem as TDATSubPart)
             else
               FixRowAllZeros(DATElem as TDATSubPart, Trunc(PError.ErrorValue));
 
-            frMain.editor.lines[frMain.editor.CaretY - 1] :=
+            LDDPMain.editor.lines[LDDPMain.editor.CaretY - 1] :=
               (DATElem as TDATSubPart).DATString;
             DATElem.Free;
             errorfixed := True;
@@ -337,13 +337,13 @@ begin
             DATElem := TDATQuad.Create;
             with DATElem as TDATQuad do
             begin
-              DATString := frMain.editor.lines[frMain.editor.CaretY - 1];
+              DATString := LDDPMain.editor.lines[LDDPMain.editor.CaretY - 1];
               if PError.ErrorType = deConcaveQuadSplit24 then
                 SplitConcaveQuad24((DATElem as TDATQuad), tri1, tri2)
               else
                 SplitConcaveQuad13((DATElem as TDATQuad), tri1, tri2);
-              frMain.editor.Lines[frMain.editor.CaretY-1] := tri1.DATString;
-              frMain.editor.Lines.Insert(frMain.editor.CaretY, tri2.DATString);
+              LDDPMain.editor.Lines[LDDPMain.editor.CaretY-1] := tri1.DATString;
+              LDDPMain.editor.Lines.Insert(LDDPMain.editor.CaretY, tri2.DATString);
               Free;
             end;
             tri1.Free;
@@ -358,19 +358,19 @@ begin
             DATElem := TDATQuad.Create;
             with DATElem as TDATQuad do
             begin
-              DATString := frMain.editor.lines[frMain.editor.CaretY - 1];
+              DATString := LDDPMain.editor.lines[LDDPMain.editor.CaretY - 1];
               if PError.ErrorType = deBowtieQuad1423 then
                 FixBowtieQuad1423(DATElem as TDATQuad)
               else
                 FixBowtieQuad1243(DATElem as TDATQuad);
-              frMain.editor.lines[frMain.editor.CaretY-1] := DATString;
+              LDDPMain.editor.lines[LDDPMain.editor.CaretY-1] := DATString;
               Free;
             end;
             errorfixed := True;
           end;
           deIdenticalLine:
           begin
-            frMain.editor.lines[frMain.editor.CaretY-1] := '';
+            LDDPMain.editor.lines[LDDPMain.editor.CaretY-1] := '';
             errorfixed := True;
           end;
           else errorfixed := false;
@@ -457,8 +457,8 @@ begin
   for i := 0 to ErrorListView.Items.Count - 1 do
     errorlist := errorlist + 'Line ' + ErrorListView.Items[i].SubItems[0] +
                  ': ' + ErrorListView.Items[i].SubItems[1] +
-                 ': ' + frMain.editor.Lines[StrToInt(ErrorListView.Items[i].SubItems[0]) - 1] + #13#10;
-  frMain.editor.CopyText(Length(errorlist), PAnsiChar(errorlist));
+                 ': ' + LDDPMain.editor.Lines[StrToInt(ErrorListView.Items[i].SubItems[0]) - 1] + #13#10;
+  LDDPMain.editor.CopyText(Length(errorlist), PAnsiChar(errorlist));
 end;
 
 procedure TfrErrorWindow.LoadFormValues;
@@ -518,7 +518,7 @@ begin
   floating := LDDPini.ReadBool(IniSection, 'frErrorWindow_Floating', False);
 
   if Visible and not floating then
-    ManualDock(frMain.JvDockServer1.BottomDockPanel, nil, alBottom);
+    ManualDock(LDDPMain.JvDockServer1.BottomDockPanel, nil, alBottom);
 
   LDDPini.Free;
 end;

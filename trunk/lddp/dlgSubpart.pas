@@ -24,7 +24,7 @@ uses
   Dialogs, StdCtrls, Buttons, ExtCtrls;
 
 type
-  TfrSubFile = class(TForm)
+  TLDDPSubFileDlg = class(TForm)
     edFilename: TEdit;
     edAuthor: TEdit;
     rgType: TRadioGroup;
@@ -55,7 +55,7 @@ type
   end;
 
 var
-  frSubFile: TfrSubFile;
+  LDDPSubFileDlg: TLDDPSubFileDlg;
 
 implementation
 
@@ -64,7 +64,7 @@ implementation
 uses
   main, options, windowsspecific;
 
-procedure TfrSubFile.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TLDDPSubFileDlg.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   SubFile: TStringList;
   FileType, subfilename: string;
@@ -73,7 +73,7 @@ var
 begin
   if ModalResult = mrOK then
   begin
-    frMain.editor.ExpandSelection(startline, endline);
+    LDDPMain.editor.ExpandSelection(startline, endline);
     case rgType.ItemIndex of
       1: FileType := 'Submodel';
       2: FileType := 'Part';
@@ -115,11 +115,11 @@ begin
     if edKeywords.Text <> '' then
       SubFile.Add('0 !KEYWORDS ' + edKeywords.Text);
     SubFile.Add('');
-    SubFile.Add(frMain.editor.SelText);
+    SubFile.Add(LDDPMain.editor.SelText);
 
 
 
-    subfilename := ExtractFilePath(frMain.DocumentTabs.ActiveDocument.FileName) + edFileName.Text;
+    subfilename := ExtractFilePath(LDDPMain.DocumentTabs.ActiveDocument.FileName) + edFileName.Text;
 
     if FileExists(subfilename) and
        (MessageDlg(_('File of same name already exists.  Overwrite?'),
@@ -127,22 +127,22 @@ begin
       Exit;
 
     SubFile.SaveToFile(subfilename);
-    frMain.editor.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + edFileName.Text;
-    frMain.OpenFile(subfilename);
+    LDDPMain.editor.SelText := '1 16 0 0 0 1 0 0 0 1 0 0 0 1 ' + edFileName.Text;
+    LDDPMain.OpenFile(subfilename);
   end;
 end;
 
-procedure TfrSubFile.FormCreate(Sender: TObject);
+procedure TLDDPSubFileDlg.FormCreate(Sender: TObject);
 begin
   TranslateComponent (self);
   CategoryCombo.Items.CommaText := ReadUIConfigValue('LDrawCategories');
 end;
 
-procedure TfrSubFile.FormShow(Sender: TObject);
+procedure TLDDPSubFileDlg.FormShow(Sender: TObject);
 begin
-  edFilename.Text := ExtractFileName(frMain.DocumentTabs.ActiveDocument.Filename);
-  edAuthor.Text := frOptions.edName.Text;
-  edUsername.Text := frOptions.edUsername.Text;
+  edFilename.Text := ExtractFileName(LDDPMain.DocumentTabs.ActiveDocument.Filename);
+  edAuthor.Text := LDDPOptions.edName.Text;
+  edUsername.Text := LDDPOptions.edUsername.Text;
   edTitle.Text := '';
   edKeywords.Text := '';
   edHelpText.Clear;

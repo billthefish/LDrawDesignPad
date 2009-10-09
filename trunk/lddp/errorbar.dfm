@@ -58,7 +58,7 @@ object frErrorWindow: TfrErrorWindow
   end
   object JvDockClient1: TJvDockClient
     DirectDrag = True
-    DockStyle = frMain.JvDockDelphiStyle1
+    DockStyle = LDDPMain.JvDockDelphiStyle1
     CustomDock = False
     Left = 8
     Top = 16

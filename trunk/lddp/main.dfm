@@ -1,8 +1,8 @@
-object frMain: TfrMain
+object LDDPMain: TLDDPMain
   Left = 267
   Top = 61
   Width = 900
-  Height = 828
+  Height = 800
   VertScrollBar.Range = 49
   ActiveControl = editor
   Caption = 'LDraw Design Pad'
@@ -26,7 +26,7 @@ object frMain: TfrMain
     Left = 0
     Top = 54
     Width = 884
-    Height = 699
+    Height = 671
     Editor = editor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -41,12 +41,11 @@ object frMain: TfrMain
     OnMouseDown = DocumentTabsMouseDown
     DefaultExt = '.dat'
     OnClosing = DocumentTabsClosing
-    ExplicitHeight = 679
     object editor: TScintillaLDDP
       Left = 4
       Top = 24
       Width = 876
-      Height = 671
+      Height = 643
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -467,7 +466,7 @@ object frMain: TfrMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 753
+    Top = 725
     Width = 884
     Height = 19
     AutoHint = True
@@ -484,7 +483,6 @@ object frMain: TfrMain
       item
         Width = 50
       end>
-    ExplicitTop = 733
   end
   object ControlBar1: TControlBar
     Left = 0

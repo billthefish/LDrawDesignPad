@@ -25,7 +25,7 @@ uses
   JvEdit, Mask, JvMaskEdit, JvExStdCtrls, JvValidateEdit, Buttons;
 
 type
-  TfrmDATCurve = class(TForm)
+  TFlexObjectDlg = class(TForm)
     lblType: TLabel;
     btnGenerate: TButton;
     btnCancel: TButton;
@@ -69,7 +69,7 @@ implementation
 uses
   DATUtils;
 
-procedure TfrmDATCurve.ChangeLength(Sender: TObject);
+procedure TFlexObjectDlg.ChangeLength(Sender: TObject);
 begin
   HoseDATCode.Length := feLength.Value;
   if HoseDATCode.ModelText <> '' then
@@ -88,14 +88,14 @@ begin
   end;
 end;
 
-procedure TfrmDATCurve.EnableUserControlPoints(Sender: TObject);
+procedure TFlexObjectDlg.EnableUserControlPoints(Sender: TObject);
 begin
    gbxCont1.Enabled := cbxContEnable.Checked;
    gbxCont2.Enabled := cbxContEnable.Checked;
    HoseDATCode.DefinedControlPoints := cbxContEnable.Checked;
 end;
 
-procedure TfrmDATCurve.FormCreate(Sender: TObject);
+procedure TFlexObjectDlg.FormCreate(Sender: TObject);
 begin
   TranslateComponent(self);
   Line1 := TDATSubPart.Create;
@@ -103,7 +103,7 @@ begin
   HoseDATCode := TDATFlexObject.Create;
 end;
 
-procedure TfrmDATCurve.FormActivate(Sender: TObject);
+procedure TFlexObjectDlg.FormActivate(Sender: TObject);
 
 begin
   HoseDATCode.StartMatrix := Line1.Matrix;
@@ -166,14 +166,14 @@ begin
   ChangeLength(nil);
 end;
 
-procedure TfrmDATCurve.FormDestroy(Sender: TObject);
+procedure TFlexObjectDlg.FormDestroy(Sender: TObject);
 begin
   Line1.Free;
   Line2.Free;
   HoseDATCode.Free;
 end;
 
-procedure TfrmDATCurve.ControlPointChange(Sender: TObject);
+procedure TFlexObjectDlg.ControlPointChange(Sender: TObject);
 begin
   if cbxContEnable.Checked then
   begin
