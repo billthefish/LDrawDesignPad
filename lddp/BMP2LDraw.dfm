@@ -1,4 +1,4 @@
-object frBMP2LDrawMain: TfrBMP2LDrawMain
+object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
   Left = 474
   Top = 208
   BorderStyle = bsDialog

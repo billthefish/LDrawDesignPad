@@ -1,4 +1,4 @@
-object frmDATCurve: TfrmDATCurve
+object FlexObjectDlg: TFlexObjectDlg
   Left = 395
   Top = 123
   BorderIcons = [biSystemMenu]

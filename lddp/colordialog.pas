@@ -25,7 +25,7 @@ uses
   JvColorCombo, DATColour;
 
 type
-  TfrColorDialog = class(TForm)
+  TLDDPColorDlg = class(TForm)
     GroupBox1: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -47,7 +47,7 @@ type
   end;
 
 var
-  frColorDialog: TfrColorDialog;
+  LDDPColorDlg: TLDDPColorDlg;
 
 implementation
 
@@ -56,14 +56,14 @@ implementation
 uses
   main, options, DatBase, DATUtils;
 
-procedure TfrColorDialog.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TLDDPColorDlg.FormClose(Sender: TObject; var Action: TCloseAction);
 
 var
   i, startline, endline: Integer;
   newcolor, oldcolor: Integer;
 begin
   if ModalResult = mrOk then
-    with frMain.editor do
+    with LDDPMain.editor do
     begin
       oldcolor := StrToInt(System.Copy(OldColorCombo.Text, 0, Pos(':', OldColorCombo.Text) - 1));
       newcolor := StrToInt(System.Copy(NewColorCombo.Text, 0, Pos(':', NewColorCombo.Text) - 1));
@@ -86,12 +86,12 @@ begin
     end;
 end;
 
-procedure TfrColorDialog.FormCreate(Sender: TObject);
+procedure TLDDPColorDlg.FormCreate(Sender: TObject);
 begin
   TranslateComponent(self);
 end;
 
-procedure TfrColorDialog.FormShow(Sender: TObject);
+procedure TLDDPColorDlg.FormShow(Sender: TObject);
 
 var
   startline, endline: Integer;
@@ -105,11 +105,11 @@ begin
   rgOptions.Items.Add(_('Replace All'));
   rgOptions.ItemIndex := 0;
 
-  line := StrToDat(frMain.editor.Lines[frMain.editor.CaretY - 1]);
+  line := StrToDat(LDDPMain.editor.Lines[LDDPMain.editor.CaretY - 1]);
 
-  if frMain.editor.SelLength > 0 then
+  if LDDPMain.editor.SelLength > 0 then
   begin
-    frMain.editor.ExpandSelection(startline, endline);
+    LDDPMain.editor.ExpandSelection(startline, endline);
     rgOptions.ItemIndex := rgOptions.Items.Add(_('Replace For Selection'));
     rgOptions.ItemIndex := 1;
   end
@@ -124,13 +124,13 @@ begin
       OldColorCombo.FindColor(ColourList[ColourList.IndexOfColourCode((line as TDATElement).Color)].MainColor);
 end;
 
-procedure TfrColorDialog.cbxReplaceEverythingClick(Sender: TObject);
+procedure TLDDPColorDlg.cbxReplaceEverythingClick(Sender: TObject);
 begin
   OldColorCombo.Enabled := not cbxReplaceEverything.Checked;
   Label1.Enabled := not cbxReplaceEverything.Checked;
 end;
 
-procedure TfrColorDialog.UpdateColorCombos;
+procedure TLDDPColorDlg.UpdateColorCombos;
 //Update the color combo boxs from ldconfig.ldr
 var
   i: Integer;

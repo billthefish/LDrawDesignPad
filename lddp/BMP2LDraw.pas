@@ -25,7 +25,7 @@ uses
   Classes, DATColour;
 
 type
-  TfrBMP2LDrawMain = class(TForm)
+  TLDDPBMP2LDrawDlg = class(TForm)
     ScrollBox1: TScrollBox;
     Image1: TImage;
     PopupMenu1: TPopupMenu;
@@ -82,7 +82,7 @@ type
   end;
 
 var
-  frBMP2LDrawMain: TfrBMP2LDrawMain;
+  LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg;
 
 implementation
 
@@ -92,7 +92,7 @@ uses
 
 {$R *.dfm}
 
-function TfrBMP2LDrawMain.GetLDrawColor(const color: TColor): Integer;
+function TLDDPBMP2LDrawDlg.GetLDrawColor(const color: TColor): Integer;
 
 var
   DistanceSquared, i, B1, B2, G1, G2, R1, R2, SmallestDistanceSquared: Integer;
@@ -136,7 +136,7 @@ begin
   end;
 end;
 
-procedure TfrBMP2LDrawMain.BitBtn1Click(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.BitBtn1Click(Sender: TObject);
 begin
   if OpenDialog.Execute then
   begin
@@ -145,7 +145,7 @@ begin
   end;
 end;
 
-procedure TfrBMP2LDrawMain.btSaveClick(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.btSaveClick(Sender: TObject);
 
 var
   sr: TStringList;
@@ -205,7 +205,7 @@ begin
     end;
   end;
 
-  frBMP2LDrawMain.Enabled := False;
+  Enabled := False;
   pnProgress.Visible := true;
   ColourList := MakeStandardDATColourList;
   transclr := -1;
@@ -334,35 +334,35 @@ begin
     end;
   end;
 
-  frMain.Editor.Seltext := sr.text;
+  LDDPMain.Editor.Seltext := sr.text;
   sr.Free;
   pnProgress.Visible := False;
-  frBMP2LDrawMain.Enabled := true;
+  Enabled := true;
   quad.Free;
   ModalResult := mrOK;
 end;
 
-procedure TfrBMP2LDrawMain.FormShow(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.FormShow(Sender: TObject);
 begin
   pc.ActivePage := TabSheet1;
 end;
 
-procedure TfrBMP2LDrawMain.btNext1Click(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.btNext1Click(Sender: TObject);
 begin
   pc.ActivePage := TabSheet2;
 end;
 
-procedure TfrBMP2LDrawMain.BitBtn5Click(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.BitBtn5Click(Sender: TObject);
 begin
   pc.ActivePage := TabSheet3;
 end;
 
-procedure TfrBMP2LDrawMain.Button1Click(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.Button1Click(Sender: TObject);
 begin
   Screen.Cursor := crHandPoint;
 end;
 
-procedure TfrBMP2LDrawMain.Image1MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TLDDPBMP2LDrawDlg.Image1MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   if Screen.Cursor = crHandPoint then
@@ -374,19 +374,19 @@ begin
   end;
 end;
 
-procedure TfrBMP2LDrawMain.BitBtn6Click(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.BitBtn6Click(Sender: TObject);
 begin
   Edit1.Text := _('None');
   Edit1.Color := clWindow;
   Edit1.Font.Color := clBlack;
 end;
 
-procedure TfrBMP2LDrawMain.BitBtn4Click(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.BitBtn4Click(Sender: TObject);
 begin
   pc.ActivePage := TabSheet1;
 end;
 
-procedure TfrBMP2LDrawMain.TabSheet3Show(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.TabSheet3Show(Sender: TObject);
 begin
   edQuad.Enabled := Radiobutton2.Checked;
   if Radiobutton1.Checked then
@@ -396,7 +396,7 @@ begin
 
 end;
 
-procedure TfrBMP2LDrawMain.FormCreate(Sender: TObject);
+procedure TLDDPBMP2LDrawDlg.FormCreate(Sender: TObject);
 begin
   TranslateComponent(Self);
 end;

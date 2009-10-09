@@ -22,16 +22,16 @@ program LDDesignPad;
 uses
   gnugettext,
   Forms,
-  main in 'main.pas' {frMain},
-  about in 'about.pas' {frAboutBox},
-  options in 'options.pas' {frOptions},
-  splash in 'splash.pas' {frSplash},
-  colordialog in 'colordialog.pas' {frColorDialog},
-  BMP2LDraw in 'BMP2LDraw.pas' {frBMP2LDrawMain},
+  main in 'main.pas' {LDDPMain},
+  about in 'about.pas' {LDDPAbout},
+  options in 'options.pas' {LDDPOptions},
+  splash in 'splash.pas' {LDDPSplash},
+  colordialog in 'colordialog.pas' {LDDPColorDlg},
+  BMP2LDraw in 'BMP2LDraw.pas' {LDDPBMP2LDrawDlg},
   windowsspecific in 'windowsspecific.pas',
-  BezWindow in 'BezWindow.pas' {frmDATCurve},
-  dlgSubpart in 'dlgSubpart.pas' {frSubFile},
-  sorting in 'sorting.pas' {fmSort},
+  BezWindow in 'BezWindow.pas' {FlexObjectDlg},
+  dlgSubpart in 'dlgSubpart.pas' {LDDPSubFileDlg},
+  sorting in 'sorting.pas' {LDDPSortDlg},
   commonprocs in 'commonprocs.pas',
   errorbar in 'errorbar.pas' {frErrorWindow},
   DATUtils in '..\DAT Tools\DATUtils.pas',
@@ -51,13 +51,8 @@ begin
     Application.Initialize;
     Application.Title := 'LDraw Design Pad';
 
-    Application.CreateForm(TfrMain, frMain);
-  Application.CreateForm(TfrAboutBox, frAboutBox);
-  Application.CreateForm(TfrOptions, frOptions);
-  Application.CreateForm(TfrColorDialog, frColorDialog);
-  Application.CreateForm(TfrBMP2LDrawMain, frBMP2LDrawMain);
-  Application.CreateForm(TfrSubFile, frSubFile);
-  Application.CreateForm(TfmSort, fmSort);
+    Application.CreateForm(TLDDPMain, LDDPMain);
+  Application.CreateForm(TLDDPOptions, LDDPOptions);
   Application.CreateForm(TfrErrorWindow, frErrorWindow);
   finally
     screen.cursor:=0;

@@ -1,4 +1,4 @@
-object frSplash: TfrSplash
+object LDDPSplash: TLDDPSplash
   Left = 378
   Top = 232
   Width = 341
@@ -9,7 +9,7 @@ object frSplash: TfrSplash
   VertScrollBar.Visible = False
   BorderIcons = []
   BorderStyle = bsNone
-  Caption = 'frSplash'
+  Caption = 'LDDPSplash'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

@@ -1,4 +1,4 @@
-object frColorDialog: TfrColorDialog
+object LDDPColorDlg: TLDDPColorDlg
   Left = 709
   Top = 134
   Width = 223

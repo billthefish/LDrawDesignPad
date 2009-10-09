@@ -253,8 +253,8 @@ end;
 procedure LDDPCallBack(strCBCompleteText, strCBSelText: PChar); stdcall;
 // Accepts the (changed) Text and SelText from the plugin DLLs
 begin
-  frMain.strChangedCompleteText := string(strCBCompleteText);
-  frMain.strChangedSelText := string(strCBSelText);
+  LDDPMain.strChangedCompleteText := string(strCBCompleteText);
+  LDDPMain.strChangedSelText := string(strCBSelText);
 end;
 
 procedure CallPlugin(libname:string; FullText, SelectedText: string; var s1, s2, s3, s4: LongWord);

@@ -1,4 +1,4 @@
-object fmSort: TfmSort
+object LDDPSortDlg: TLDDPSortDlg
   Left = 360
   Top = 307
   BorderStyle = bsDialog
@@ -25,8 +25,6 @@ object fmSort: TfmSort
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 188
-    ExplicitWidth = 271
     DesignSize = (
       283
       44)
@@ -147,8 +145,6 @@ object fmSort: TfmSort
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 271
-    ExplicitHeight = 188
     object Label1: TLabel
       Left = 9
       Top = 1

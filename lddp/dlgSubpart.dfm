@@ -1,4 +1,4 @@
-object frSubFile: TfrSubFile
+object LDDPSubFileDlg: TLDDPSubFileDlg
   Left = 516
   Top = 376
   BorderStyle = bsDialog

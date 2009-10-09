@@ -27,7 +27,7 @@ uses
   JvColorCombo;
 
 type
-  TfrOptions = class(TForm)
+  TLDDPOptions = class(TForm)
     Panel1: TPanel;
     BitBtn1: TBitBtn;
     btnCancel: TBitBtn;
@@ -213,7 +213,7 @@ type
   end;
 
 var
-  frOptions: TfrOptions;
+  LDDPOptions: TLDDPOptions;
 
 implementation
 
@@ -223,7 +223,7 @@ uses
 
 {$R *.dfm}
 
-procedure TfrOptions.UpdateControls;
+procedure TLDDPOptions.UpdateControls;
 
 var
   strFound, strNotFound: string;
@@ -244,40 +244,40 @@ begin
   lbLSynth.font.Color := clRed;
   lbLSynth.Caption := strNotFound;
 
-  if FileExists(frOptions.edLDrawDir.text + '\ldconfig.ldr') then
+  if FileExists(edLDrawDir.text + '\ldconfig.ldr') then
   begin
     lbLDraw.font.Color := clGreen;
     lbldraw.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edLDViewDir.text + '\LDView.exe') then
+  if FileExists(edLDViewDir.text + '\LDView.exe') then
   begin
     lbLDView.font.Color := clGreen;
     lbLDView.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edMLCADDir.text + '\MLCAD.exe') then
+  if FileExists(edMLCADDir.text + '\MLCAD.exe') then
   begin
     lbMLCAD.font.Color := clGreen;
     lbMLCAD.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edL3LabDir.text + '\L3Lab.exe') then
+  if FileExists(edL3LabDir.text + '\L3Lab.exe') then
   begin
     lbL3Lab.font.Color := clGreen;
     lbL3Lab.Caption := strFound;
   end;
 
-  if FileExists(frOptions.edLSynthDir.text + '\lsynthcp.exe') then
+  if FileExists(edLSynthDir.text + '\lsynthcp.exe') then
   begin
     lbLSynth.font.Color := clGreen;
     lbLSynth.Caption := strFound;
   end;
 
-  if Trim(frOptions.edExternal.Text) = '' then
+  if Trim(edExternal.Text) = '' then
     lbExternal.Caption := ''
   else
-    if FileExists(frOptions.edExternal.Text) then begin
+    if FileExists(edExternal.Text) then begin
       lbExternal.Font.Color := clGreen;
       lbExternal.Caption := strFound;
     end
@@ -295,67 +295,67 @@ begin
 
 end;
 
-procedure TfrOptions.MainPagesChange(Sender: TObject);
+procedure TLDDPOptions.MainPagesChange(Sender: TObject);
 begin
   UpdateControls;
 end;
 
-procedure TfrOptions.btnReplacePathClick(Sender: TObject);
+procedure TLDDPOptions.btnReplacePathClick(Sender: TObject);
 begin
   if Assigned(SearchPathsList.Selected) then
     SearchPathsList.Selected.Caption := edSearchPath.Text;
   UpdateControls;
 end;
 
-procedure TfrOptions.btnRescanPluginsClick(Sender: TObject);
+procedure TLDDPOptions.btnRescanPluginsClick(Sender: TObject);
 begin
-  frMain.LoadPlugins;
+  LDDPMain.LoadPlugins;
 end;
 
-procedure TfrOptions.cblPluginsClickCheck(Sender: TObject);
+procedure TLDDPOptions.cblPluginsClickCheck(Sender: TObject);
 
 var
   PluginName: string;
   EnablePlugin: Boolean;
 
 begin
-  PluginName := frOptions.cblPlugins.Items[frOptions.cblplugins.Itemindex];
+  PluginName := cblPlugins.Items[cblplugins.Itemindex];
   PluginName := Copy(PluginName, 1, Pos(' -', PluginName) - 1);
-  EnablePlugin := frOptions.cblPlugins.State[frOptions.cblPlugins.Itemindex] = cbChecked;
-  (frMain.PluginActionList.FindComponent(PluginName) as TAction).Enabled := EnablePlugin;
+  EnablePlugin := cblPlugins.State[cblPlugins.Itemindex] = cbChecked;
+  (LDDPMain.PluginActionList.FindComponent(PluginName) as TAction).Enabled := EnablePlugin;
 end;
 
-procedure TfrOptions.btLDrawClick(Sender: TObject);
+procedure TLDDPOptions.btLDrawClick(Sender: TObject);
 begin
   SetDirectory(_('Choose LDraw Library Location'), edLdrawDir);
   UpdateControls;
 end;
 
-procedure TfrOptions.btLDViewClick(Sender: TObject);
+procedure TLDDPOptions.btLDViewClick(Sender: TObject);
 begin
   SetDirectory(_('Choose LDView Location'), edLDViewDir);
   UpdateControls;
 end;
 
-procedure TfrOptions.btMLCadClick(Sender: TObject);
+procedure TLDDPOptions.btMLCadClick(Sender: TObject);
 begin
   SetDirectory(_('Choose MLCad Location'), edMLCadDir);
   UpdateControls;
 end;
 
-procedure TfrOptions.cClick(Sender: TObject);
+procedure TLDDPOptions.cClick(Sender: TObject);
 begin
   SetDirectory(_('Choose L3Lab Location'), edL3LabDir);
   UpdateControls;
 end;
 
-procedure TfrOptions.btLSynthClick(Sender: TObject);
+procedure TLDDPOptions.btLSynthClick(Sender: TObject);
 begin
   SetDirectory(_('Choose lynthcp Location'),edLSynthDir);
   UpdateControls;
 end;
 
-procedure TfrOptions.SetDirectory(DCaption: string; EditControl: TEdit);
+procedure TLDDPOptions.SetDirectory(DCaption: string; EditControl: TEdit);
 var
   strDir: string;
 
@@ -366,7 +366,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.btExternalClick(Sender: TObject);
+procedure TLDDPOptions.btExternalClick(Sender: TObject);
 begin
   OpenDialog.InitialDir := ExtractFileDir(edExternal.Text);
   OpenDialog.Title := _('Select Program Location');
@@ -374,7 +374,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.SaveFormValues;
+procedure TLDDPOptions.SaveFormValues;
 
 var
   LDDPini: TMemIniFile;
@@ -399,7 +399,7 @@ begin
       LDDPini.WriteString(IniSection, Components[i].Name + '_Text', (Components[i] as TEdit).Text)
     else if Components[i] is TCheckBox then
       LDDPini.WriteBool(IniSection, Components[i].Name + '_Checked', (Components[i] as TCheckbox).Checked);
-  LDDPini.WriteString('LDraw','BaseDirectory',frOptions.edLDrawDir.Text);
+  LDDPini.WriteString('LDraw','BaseDirectory',edLDrawDir.Text);
 
   for i := 0 to 15 do
     LDDPini.WriteString(IniSection, 'lbxColors_Item' + IntToStr(i), ColorBarList[i]);
@@ -414,7 +414,7 @@ begin
   LDDPini.Free;
 end;
 
-procedure TfrOptions.LoadFormValues;
+procedure TLDDPOptions.LoadFormValues;
 
 var
   i: Integer;
@@ -491,7 +491,7 @@ begin
   LDDPini.Free;
 end;
 
-procedure TfrOptions.BuildMetaMenu;
+procedure TLDDPOptions.BuildMetaMenu;
 // Construct the meta command menu from the ini file
 var
   MetaMenuIni: TInifile;
@@ -517,31 +517,31 @@ begin
         MetaMenuIni.ReadSection(SectionName,CurrentSection);
         if CurrentSection.Count > 0 then
         begin
-          ParentMenuItem := CreateMenuItem(SectionName, '', frMain.mnuMeta);
-          ParentMenuItem2 := CreateMenuItem(SectionName, '', frMain.mnuMeta2);
-          frMain.mnuMeta.Add(ParentMenuItem);
-          frMain.mnuMeta2.Add(ParentMenuItem2);
+          ParentMenuItem := CreateMenuItem(SectionName, '', LDDPMain.mnuMeta);
+          ParentMenuItem2 := CreateMenuItem(SectionName, '', LDDPMain.mnuMeta2);
+          LDDPMain.mnuMeta.Add(ParentMenuItem);
+          LDDPMain.mnuMeta2.Add(ParentMenuItem2);
           for j := 0 to CurrentSection.Count - 1 do
           begin
             ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
-            ChildMenuItem.OnClick := frMain.MetaMenuClick;
+            ChildMenuItem.OnClick := LDDPMain.MetaMenuClick;
             ParentMenuItem.Add(ChildMenuItem);
             ChildMenuItem := CreateMenuItem(CurrentSection[j],MetaMenuIni.ReadString(SectionName,CurrentSection[j],''),ParentMenuItem);
-            ChildMenuItem.OnClick := frMain.MetaMenuClick;
+            ChildMenuItem.OnClick := LDDPMain.MetaMenuClick;
             ParentMenuItem2.Add(ChildMenuItem);
           end;
         end;
       end;
     end
   else
-    frMain.mnuMeta.Enabled := False;
+    LDDPMain.mnuMeta.Enabled := False;
 
   CurrentSection.Free;
   MetaSections.Free;
   MetaMenuIni.Free;
 end;
 
-procedure TfrOptions.btnColorSelectClick(Sender: TObject);
+procedure TLDDPOptions.btnColorSelectClick(Sender: TObject);
 begin
   if lbxColors.ItemIndex >= 0 then
     if ColorDialog1.Execute then
@@ -552,7 +552,7 @@ begin
     end;
 end;
 
-procedure TfrOptions.lbxColorsClick(Sender: TObject);
+procedure TLDDPOptions.lbxColorsClick(Sender: TObject);
 
 var
   SelectedColor: TStringList;
@@ -576,7 +576,7 @@ begin
     end;
 end;
 
-procedure TfrOptions.ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
+procedure TLDDPOptions.ColorButtonChange(ImageColor: TColor; ColorName, ColorNumber: string; ButtonIndex: Integer);
 
 var
   ColorButtonBitmap: TBitmap;
@@ -597,9 +597,9 @@ begin
     Polygon([Point(1,1), Point(1,14), Point (14,14), Point(14,1)]);
   end;
 
-  with frMain.tbrColorReplace.Buttons[ButtonIndex] do
+  with LDDPMain.tbrColorReplace.Buttons[ButtonIndex] do
   begin
-    ImageIndex := frMain.ilProgramIcons.AddMasked(ColorButtonBitmap, clFuchsia);
+    ImageIndex := LDDPMain.ilProgramIcons.AddMasked(ColorButtonBitmap, clFuchsia);
     Hint := ColorName + ' ' + ColorNumber;
     Caption := ColorName + ' ' + ColorNumber;
     Tag := StrToInt(ColorNumber);
@@ -607,7 +607,7 @@ begin
   ColorButtonBitmap.Free;
 end;
 
-procedure TfrOptions.edColorNameChange(Sender: TObject);
+procedure TLDDPOptions.edColorNameChange(Sender: TObject);
 begin
   if lbxColors.ItemIndex >= 0 then
   begin
@@ -620,7 +620,7 @@ begin
   end;
 end;
 
-procedure TfrOptions.ColorBarComboChange(Sender: TObject);
+procedure TLDDPOptions.ColorBarComboChange(Sender: TObject);
 var
   newcolornumber: Integer;
   newcolorname: string;
@@ -638,7 +638,7 @@ begin
                     IntToStr(edColorNumber.Value), lbxColors.ItemIndex);
 end;
 
-procedure TfrOptions.ColorBarSheetShow(Sender: TObject);
+procedure TLDDPOptions.ColorBarSheetShow(Sender: TObject);
 var
   i: Integer;
   ColourList: TDATColourList;
@@ -649,7 +649,7 @@ begin
   ColourList.Free;
 end;
 
-procedure TfrOptions.btnAddPathClick(Sender: TObject);
+procedure TLDDPOptions.btnAddPathClick(Sender: TObject);
 
 var
   SearchPath: TListItem;
@@ -661,7 +661,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.btnColorRestoreClick(Sender: TObject);
+procedure TLDDPOptions.btnColorRestoreClick(Sender: TObject);
 
 var
   i: Integer;
@@ -693,7 +693,7 @@ begin
   ColorBarCombo.Enabled := false;
 end;
 
-procedure TfrOptions.lbxExternalDblClick(Sender: TObject);
+procedure TLDDPOptions.lbxExternalDblClick(Sender: TObject);
 
 begin
   lbxExternal.ItemIndex := -1;
@@ -708,7 +708,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.MakeExternalMenuItem(ProgIndex:Integer);
+procedure TLDDPOptions.MakeExternalMenuItem(ProgIndex:Integer);
 
 var
   ExProgram: TStringList;
@@ -717,20 +717,20 @@ var
 begin
   ExProgram := TStringList.Create;
   ExProgram.CommaText := ExternalProgramList[ProgIndex];
-  MenuItem := TMenuItem.Create(frMain.mnuUserDefined);
-  MenuItem.Action := frMain.acUserDefined;
+  MenuItem := TMenuItem.Create(LDDPMain.mnuUserDefined);
+  MenuItem.Action := LDDPMain.acUserDefined;
   MenuItem.Caption := ExProgram[0];
   MenuItem.Tag := ProgIndex;
-  MenuItem2 := TMenuItem.Create(frMain.pmExternal);
-  MenuItem2.Action := frMain.acUserDefined;
+  MenuItem2 := TMenuItem.Create(LDDPMain.pmExternal);
+  MenuItem2.Action := LDDPMain.acUserDefined;
   MenuItem2.Caption := ExProgram[0];
   MenuItem2.Tag := ProgIndex;
-  frMain.mnuUserDefined.Add(MenuItem);
-  frMAin.pmExternal.Items.Add(MenuItem2);
+  LDDPMain.mnuUserDefined.Add(MenuItem);
+  LDDPMain.pmExternal.Items.Add(MenuItem2);
   ExProgram.Free;
 end;
 
-procedure TfrOptions.lbxExternalClick(Sender: TObject);
+procedure TLDDPOptions.lbxExternalClick(Sender: TObject);
 
 var
   ExProgram: TStringList;
@@ -748,14 +748,14 @@ begin
   ExProgram.Free;
 end;
 
-procedure TfrOptions.edExternalNameChange(Sender: TObject);
+procedure TLDDPOptions.edExternalNameChange(Sender: TObject);
 begin
   if lbxExternal.ItemIndex >= 0 then
   begin
     if edExternalName.Text = '' then
     begin
       ShowMessage(_('Program Name cannot be blank'));
-      edExternalName.Text := frMain.mnuUserDefined.Items[lbxExternal.ItemIndex].Caption;
+      edExternalName.Text := LDDPMain.mnuUserDefined.Items[lbxExternal.ItemIndex].Caption;
     end
     else
     begin
@@ -780,14 +780,14 @@ begin
       if (Sender as TComponent).Name = 'edExternalName' then
       begin
         lbxExternal.Items[lbxExternal.ItemIndex] := edExternalName.Text;
-        frMain.pmExternal.Items[lbxExternal.ItemIndex].Caption := edExternalName.Text;
-        frMain.mnuUserDefined.Items[lbxExternal.ItemIndex].Caption := edExternalName.Text;
+        LDDPMain.pmExternal.Items[lbxExternal.ItemIndex].Caption := edExternalName.Text;
+        LDDPMain.mnuUserDefined.Items[lbxExternal.ItemIndex].Caption := edExternalName.Text;
       end;
     end;
   end;
 end;
 
-procedure TfrOptions.edLdrawDirChange(Sender: TObject);
+procedure TLDDPOptions.edLdrawDirChange(Sender: TObject);
 
 var
   SearchPath: TListItem;
@@ -812,7 +812,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.edSearchPathChange(Sender: TObject);
+procedure TLDDPOptions.edSearchPathChange(Sender: TObject);
 var
   SearchPath: TListItem;
 
@@ -842,7 +842,7 @@ begin
 
 end;
 
-procedure TfrOptions.btnDeleteInvalidPathsClick(Sender: TObject);
+procedure TLDDPOptions.btnDeleteInvalidPathsClick(Sender: TObject);
 
 var
  i: Integer;
@@ -853,7 +853,7 @@ begin
       SearchPathsList.Items[i].Free;
 end;
 
-procedure TfrOptions.btnDeletePathClick(Sender: TObject);
+procedure TLDDPOptions.btnDeletePathClick(Sender: TObject);
 var
   SearchPath: TListItem;
 
@@ -866,7 +866,7 @@ begin
   end;
 end;
 
-procedure TfrOptions.btnDelExternalClick(Sender: TObject);
+procedure TLDDPOptions.btnDelExternalClick(Sender: TObject);
 
 var
   i: Integer;
@@ -877,11 +877,11 @@ begin
     if lbxExternal.ItemIndex + 1 < lbxExternal.Items.Count then
       for i := lbxExternal.ItemIndex + 1 to lbxExternal.Items.Count - 1 do
       begin
-        frMain.pmExternal.Items[i].Tag := frMain.pmExternal.Items[i].Tag - 1;
-        frMain.mnuUserDefined.Items[i].Tag := frMain.mnuUserDefined.Items[i].Tag - 1;
+        LDDPMain.pmExternal.Items[i].Tag := LDDPMain.pmExternal.Items[i].Tag - 1;
+        LDDPMain.mnuUserDefined.Items[i].Tag := LDDPMain.mnuUserDefined.Items[i].Tag - 1;
       end;
-    frMain.pmExternal.Items.Delete(lbxExternal.ItemIndex);
-    frMain.mnuUserDefined.Delete(lbxExternal.ItemIndex);
+    LDDPMain.pmExternal.Items.Delete(lbxExternal.ItemIndex);
+    LDDPMain.mnuUserDefined.Delete(lbxExternal.ItemIndex);
     ExternalProgramList.Delete(lbxExternal.ItemIndex);
     lbxExternal.Items.Delete(lbxExternal.ItemIndex);
     lbxExternal.ItemIndex := -1;
@@ -895,7 +895,7 @@ begin
   end;
 end;
 
-procedure TfrOptions.btnMLCadPathImportClick(Sender: TObject);
+procedure TLDDPOptions.btnMLCadPathImportClick(Sender: TObject);
 // Construct the meta command menu from the ini file
 var
   MLCadIni: TIniFile;
@@ -940,7 +940,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.btnPathDownClick(Sender: TObject);
+procedure TLDDPOptions.btnPathDownClick(Sender: TObject);
 
 var
   SearchPath: TListItem;
@@ -957,12 +957,12 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.btnPathOpenClick(Sender: TObject);
+procedure TLDDPOptions.btnPathOpenClick(Sender: TObject);
 begin
   SetDirectory(_('Choose Directory'),edSearchPath);
 end;
 
-procedure TfrOptions.btnPathUpClick(Sender: TObject);
+procedure TLDDPOptions.btnPathUpClick(Sender: TObject);
 
 var
   SearchPath: TListItem;
@@ -979,7 +979,7 @@ begin
   UpdateControls;
 end;
 
-procedure TfrOptions.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TLDDPOptions.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if ModalResult = mrOK then
     SaveFormValues
@@ -989,7 +989,7 @@ begin
   UpdateSearchPathList;
 end;
 
-procedure TfrOptions.FormCreate(Sender: TObject);
+procedure TLDDPOptions.FormCreate(Sender: TObject);
 begin
   TranslateComponent(Self);
   LoadFormValues;
@@ -1002,13 +1002,13 @@ begin
   MainPages.ActivePage:=tsExternal;
 end;
 
-procedure TfrOptions.SearchPathsListSelectItem(Sender: TObject; Item: TListItem;
+procedure TLDDPOptions.SearchPathsListSelectItem(Sender: TObject; Item: TListItem;
   Selected: Boolean);
 begin
   edSearchPath.Text := Item.Caption;
 end;
 
-procedure TfrOptions.SetColorListToDefault;
+procedure TLDDPOptions.SetColorListToDefault;
 var
   i: Integer;
   ColorList: TDATColourList;
@@ -1040,7 +1040,7 @@ begin
                          IntToStr(ColorList[ColorList.IndexOfColourCode(i)].MainColor);
 end;
 
-procedure TfrOptions.UpdateSearchPathList;
+procedure TLDDPOptions.UpdateSearchPathList;
 
 var
   i: Integer;
@@ -1055,7 +1055,7 @@ begin
     SearchPaths.Add(SearchPathsList.Items[i].Caption);
 end;
 
-procedure TfrOptions.SetConfigurationConstants;
+procedure TLDDPOptions.SetConfigurationConstants;
 begin
   LDrawBasePath := edLdrawDir.Text;
 

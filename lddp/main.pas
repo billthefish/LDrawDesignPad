@@ -31,7 +31,7 @@ uses
   SciCallTips, DATBase, AppEvnts, commonprocs;
 
 type
-  TfrMain = class(TForm)
+  TLDDPMain = class(TForm)
     acCommentBlock: TAction;
     acCommentBlock1: TMenuItem;
     acDecIndent: TAction;
@@ -522,7 +522,7 @@ type
 
 
 var
-  frMain: TfrMain;
+  LDDPMain: TLDDPMain;
 
 implementation
 
@@ -534,42 +534,39 @@ uses
   DATModel, DATUtils, DATCheck, DATErrorFix, SciStreamDefault,
   StrUtils, Registry, IniFiles, SciResLang, Contnrs;
 
-var
-  splashscreen: TfrSplash;
-
 // General Editor Actions
 
-procedure TfrMain.acEditCutExecute(Sender: TObject);
+procedure TLDDPMain.acEditCutExecute(Sender: TObject);
 // Cut text from active editor window
 begin
  editor.Cut;
 end;
 
-procedure TfrMain.acEditCopyExecute(Sender: TObject);
+procedure TLDDPMain.acEditCopyExecute(Sender: TObject);
 // Copy text from active editor window
 begin
  editor.Copy;
 end;
 
-procedure TfrMain.acEditPasteExecute(Sender: TObject);
+procedure TLDDPMain.acEditPasteExecute(Sender: TObject);
 // Paste text into active editor window
 begin
   editor.Paste;
 end;
 
-procedure TfrMain.acUndoExecute(Sender: TObject);
+procedure TLDDPMain.acUndoExecute(Sender: TObject);
 // Undo in active editor child
 begin
   editor.Undo;
 end;
 
-procedure TfrMain.acRedoExecute(Sender: TObject);
+procedure TLDDPMain.acRedoExecute(Sender: TObject);
 // Redo in active editor child
 begin
   editor.Redo;
 end;
 
-procedure TfrMain.acIncIndentExecute(Sender: TObject);
+procedure TLDDPMain.acIncIndentExecute(Sender: TObject);
 // Indent line/selection based on tabWidth
 var
   currentindent, lineindent, startline, endline, i: Integer;
@@ -586,7 +583,7 @@ begin
   end;
 end;
 
-procedure TfrMain.acDecIndentExecute(Sender: TObject);
+procedure TLDDPMain.acDecIndentExecute(Sender: TObject);
 // Un-indent line/selection based on tabWidth
 var
   currentindent, startline, endline, i: Integer;
@@ -604,7 +601,7 @@ begin
   end;
 end;
 
-procedure TfrMain.acInsertPartHeaderExecute(Sender: TObject);
+procedure TLDDPMain.acInsertPartHeaderExecute(Sender: TObject);
 // Insert standard LDraw part header
 var
   HeaderText: string;
@@ -612,9 +609,9 @@ var
 begin
   HeaderText := '0 Part name'+ #13#10 +
                 '0 Name: ' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + #13#10 +
-                '0 Author: ' + frOptions.edName.text;
-  if frOptions.edUsername.text <> '' then
-    HeaderText := HeaderText + ' [' + frOptions.edUsername.text + ']';
+                '0 Author: ' + LDDPOptions.edName.text;
+  if LDDPOptions.edUsername.text <> '' then
+    HeaderText := HeaderText + ' [' + LDDPOptions.edUsername.text + ']';
 
   HeaderText := HeaderText + #13#10 + '0 !LDRAW_ORG Unofficial Part';
 
@@ -622,16 +619,16 @@ begin
   editor.Modified := true;
 end;
 
-procedure TfrMain.acInsertHistoryStatementExecute(Sender: TObject);
+procedure TLDDPMain.acInsertHistoryStatementExecute(Sender: TObject);
 // Insert standard update line
 begin
   editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos),
                '0 !HISTORY ' + FormatDateTime('yyyy-mm-dd', Now) + ' [' +
-               frOptions.edUsername.text + '] Update description');
+               LDDPOptions.edUsername.text + '] Update description');
   editor.Modified := true;
 end;
 
-procedure TfrMain.acCommentBlockExecute(Sender: TObject);
+procedure TLDDPMain.acCommentBlockExecute(Sender: TObject);
 // Comment selected text
 var
   j:integer;
@@ -655,7 +652,7 @@ begin
   commenttext.Free;
 end;
 
-procedure TfrMain.acUncommentBlockExecute(Sender: TObject);
+procedure TLDDPMain.acUncommentBlockExecute(Sender: TObject);
 // Uncomment selected text
 var
   j: Integer;
@@ -677,7 +674,7 @@ begin
   DModel.Free;
 end;
 
-procedure TfrMain.acTrimLinesExecute(Sender: TObject);
+procedure TLDDPMain.acTrimLinesExecute(Sender: TObject);
 // Trim empty Lines
 var
   j:integer;
@@ -701,7 +698,7 @@ begin
   trimtext.Free;
 end;
 
-procedure TfrMain.acInlineExecute(Sender: TObject);
+procedure TLDDPMain.acInlineExecute(Sender: TObject);
 // Inline - Transform a subfile command into an expanded list of the subfiles contents
 var
   i: Integer;
@@ -723,7 +720,7 @@ begin
       DATModel1.Insert(i,'0 Original Line: ' + DATModel1[i+2].DATString );
       DATModel1.Insert(i+4, '0 End of Inlined Part');
       DATModel1.Insert(i+5, '');
-      DATModel1.InlinePart(i+3, frOptions.SearchPaths);
+      DATModel1.InlinePart(i+3, LDDPOptions.SearchPaths);
     end;
 
   editor.SelText := DATModel1.ModelText;
@@ -732,19 +729,19 @@ begin
   DATModel1.Free;
 end;
 
-procedure TfrMain.acSelectAllExecute(Sender: TObject);
+procedure TLDDPMain.acSelectAllExecute(Sender: TObject);
 // Select all text in active editor child
 begin
   editor.SelectAll;
 end;
 
-procedure TfrMain.acReverseWindingExecute(Sender: TObject);
+procedure TLDDPMain.acReverseWindingExecute(Sender: TObject);
 // Reverse the winding of a block of text
 begin
   editor.ReverseWinding;
 end;
 
-procedure TfrMain.acTriangleCombineExecute(Sender: TObject);
+procedure TLDDPMain.acTriangleCombineExecute(Sender: TObject);
 // Combine 2 triangle commands into a quad command
 // Also checks for non coplanarity and issues a warning
 var
@@ -832,27 +829,35 @@ begin
   line2.Free;
 end;
 
-procedure TfrMain.acSubFileExecute(Sender: TObject);
+procedure TLDDPMain.acSubFileExecute(Sender: TObject);
 // Save a block of text as a separate file and add the appropriate subfile line
+var
+  SubFileDlg: TLDDPSubFileDlg;
+
 begin
-  frSubfile.ShowModal;
+  SubFileDlg := TLDDPSubFileDlg.Create(Application);
+  try
+    SubFileDlg.ShowModal;
+  finally
+    SubFileDlg.Free;
+  end;
 end;
 
 // External Program actions
 
-procedure TfrMain.acLDViewExecute(Sender: TObject);
+procedure TLDDPMain.acLDViewExecute(Sender: TObject);
 // Execute LDView with active file
 begin
-  if (not FileExists(frOptions.edLDVIEWDir.text + '\LDVIEW.exe')) then begin
+  if (not FileExists(LDDPOptions.edLDVIEWDir.text + '\LDVIEW.exe')) then begin
     MessageDlg(_('You have to specify a valid path to LDView.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     Exit;
   end;
   editor.Lines.SaveToFile(tempFileName);
-  DoCommand(frOptions.edLDVIEWDir.text + '\LDVIEW.exe -Poll=3 "' + tempFileName + '"',SW_SHOWNA,false);
+  DoCommand(LDDPOptions.edLDVIEWDir.text + '\LDVIEW.exe -Poll=3 "' + tempFileName + '"',SW_SHOWNA,false);
 end;
 
-procedure TfrMain.acMLCadExecute(Sender: TObject);
+procedure TLDDPMain.acMLCadExecute(Sender: TObject);
 // Execute MLCad with active file
 begin
   if editor.Modified then
@@ -860,15 +865,15 @@ begin
                     'Do you want to save and then view the file in MLCad ' + #13#10 +
                     'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
       acFileSaveExecute(Sender);
-  if (not FileExists(frOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
+  if (not FileExists(LDDPOptions.edMLCADDir.text+'\MLCAD.exe')) then begin
     MessageDlg(_('You have to specify a valid path to MLCad.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     Exit;
   end;
-  DoCommand(frOptions.edMLCadDir.text+'\MLCAD.exe "' + DocumentTabs.ActiveDocument.FileName + '"',SW_SHOWNA,false);
+  DoCommand(LDDPOptions.edMLCadDir.text+'\MLCAD.exe "' + DocumentTabs.ActiveDocument.FileName + '"',SW_SHOWNA,false);
 end;
 
-procedure TfrMain.acUserDefinedExecute(Sender: TObject);
+procedure TLDDPMain.acUserDefinedExecute(Sender: TObject);
 // Execute user defined program with active file
 var
   opt: byte;
@@ -898,7 +903,7 @@ var
 
 begin
   ExProgram := TStringList.Create;
-  ExProgram.CommaText := frOptions.ExternalProgramList[(Sender as TAction).ActionComponent.Tag];
+  ExProgram.CommaText := LDDPOptions.ExternalProgramList[(Sender as TAction).ActionComponent.Tag];
   if not FileExists(ExProgram[1]) then
   begin
     MessageDlg(_('You have to specify a valid external program first!'), mtError, [mbOK], 0);
@@ -921,29 +926,29 @@ begin
   ExProgram.Free;
 end;
 
-procedure TfrMain.acL3LabExecute(Sender: TObject);
+procedure TLDDPMain.acL3LabExecute(Sender: TObject);
 // Execute L3Lab with active file
 begin
-  if (not FileExists(frOptions.edL3LabDir.text+'\L3Lab.exe')) then
+  if (not FileExists(LDDPOptions.edL3LabDir.text+'\L3Lab.exe')) then
   begin
     MessageDlg(_('You have to specify a valid path to L3Lab.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
   end;
   editor.lines.savetofile(tempFileName);
-  DOCommand(frOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "' + tempFileName + '"',SW_SHOWNA,false);
+  DOCommand(LDDPOptions.edL3LabDir.text+'\L3Lab.exe -PollSilent -NoCache -DontAddToMRU -NotReusable -FromLDAO -A.707,0,.707,.354,.866,-.354,-.612,.5,.612 "' + tempFileName + '"',SW_SHOWNA,false);
 end;
 
 // File actions
 
-procedure TfrMain.acFileNewExecute(Sender: TObject);
+procedure TLDDPMain.acFileNewExecute(Sender: TObject);
 // Creates a new untitled document
 begin
   DocumentTabs.NewDocument;
   DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 end;
 
-procedure TfrMain.acFileOpenExecute(Sender: TObject);
+procedure TLDDPMain.acFileOpenExecute(Sender: TObject);
 // Opens chosen existing filenames in a new tab
 var
   i: Integer;
@@ -954,13 +959,13 @@ begin
       OpenFile(OpenDialog1.Files[i]);
 end;
 
-procedure TfrMain.acFilePrintExecute(Sender: TObject);
+procedure TLDDPMain.acFilePrintExecute(Sender: TObject);
 begin
   printer.Title := DocumentTabs.ActiveDocument.FileName;
   printer.Print;
 end;
 
-procedure TfrMain.OpenFile(filename: string);
+procedure TLDDPMain.OpenFile(filename: string);
 // Open the specified file and set initial data
 begin
   if FileExists(filename) then
@@ -973,13 +978,13 @@ begin
     MessageDlg(_('File ') + DocumentTabs.ActiveDocument.Filename + _(' not found'), mtError, [mbOK], 0);
 end;
 
-procedure TfrMain.acFileSaveExecute(Sender: TObject);
+procedure TLDDPMain.acFileSaveExecute(Sender: TObject);
 // Save file to disk if it already exists otherwise run Save As
 begin
   SaveFile(DocumentTabs.ActiveDocument.Index);
 end;
 
-procedure TfrMain.acFileSaveAsExecute(Sender: TObject);
+procedure TLDDPMain.acFileSaveAsExecute(Sender: TObject);
 // Saves a file to disk after asking for filename
 begin
   SaveDialog1.FileName := DocumentTabs.ActiveDocument.FileName;
@@ -994,7 +999,7 @@ begin
   end;
 end;
 
-procedure TfrMain.acSaveAllExecute(Sender: TObject);
+procedure TLDDPMain.acSaveAllExecute(Sender: TObject);
 // Save all open documents
 var
   i: Integer;
@@ -1004,7 +1009,7 @@ begin
      SaveFile(i);
 end;
 
-procedure TfrMain.SaveFile(DocNumber: Integer);
+procedure TLDDPMain.SaveFile(DocNumber: Integer);
 // Save the file of the specified tab
 var
   fileage: TDateTime;
@@ -1021,13 +1026,13 @@ begin
   end;
 end;
 
-procedure TfrMain.acFileExitExecute(Sender: TObject);
+procedure TLDDPMain.acFileExitExecute(Sender: TObject);
 // Close application
 begin
   Close;
 end;
 
-procedure TfrMain.acFileRevertExecute(Sender: TObject);
+procedure TLDDPMain.acFileRevertExecute(Sender: TObject);
 // Reloads active document losing any changes
 begin
   if MessageDlg(_('Reload last saved version?' + #13#10 +
@@ -1035,7 +1040,7 @@ begin
     OpenFile(DocumentTabs.ActiveDocument.FileName);
 end;
 
-procedure TfrMain.acFileCloseAllExecute(Sender: TObject);
+procedure TLDDPMain.acFileCloseAllExecute(Sender: TObject);
 // Closes all open document tabs
 var
   i: Integer;
@@ -1045,13 +1050,13 @@ begin
      CloseFile(i);
 end;
 
-procedure TfrMain.acFileCloseExecute(Sender: TObject);
+procedure TLDDPMain.acFileCloseExecute(Sender: TObject);
 // Close tab under cursor
 begin
   CloseFile(DocumentTabs.ActiveDocument.Index);
 end;
 
-procedure TfrMain.CloseFile(DocNumber: Integer);
+procedure TLDDPMain.CloseFile(DocNumber: Integer);
 var
   LastTab: Boolean;
 
@@ -1062,7 +1067,7 @@ begin
     DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 end;
 
-procedure TfrMain.CloseFile1Click(Sender: TObject);
+procedure TLDDPMain.CloseFile1Click(Sender: TObject);
 begin
   if TabRightClickIndex >= 0 then
     CloseFile(TabRightClickIndex);
@@ -1070,59 +1075,67 @@ end;
 
 // Help actions
 
-procedure TfrMain.HelpAboutExecute(Sender: TObject);
+procedure TLDDPMain.HelpAboutExecute(Sender: TObject);
 // Show the 'About' Box
+var
+  AboutDlg: TLDDPAbout;
+
 begin
-  frAboutBox.ShowModal;
+  AboutDlg := TLDDPAbout.Create(Application);
+  try
+    AboutDlg.ShowModal;
+  finally
+    AboutDlg.Free;
+  end;
 end;
 
 // Misc actions
 
-procedure TfrMain.acOptionsExecute(Sender: TObject);
+procedure TLDDPMain.acOptionsExecute(Sender: TObject);
 // Show options window
 begin
-  frOptions.ShowModal;
+  LDDPOptions.ShowModal;
 
-  editor.OnlyRoundDuringAutoRound := frOptions.cboAutoRoundOnly.Checked;
-  editor.PositionDecimalPlaces := frOptions.sePntAcc.Value;
-  editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-  mnuUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
-  tbUserDefined.Enabled := frOptions.ExternalProgramList.Count > 0;
-  acPollCustom.Tag := frOptions.seCustomPollInterval.Value * 1000;
+  editor.OnlyRoundDuringAutoRound := LDDPOptions.cboAutoRoundOnly.Checked;
+  editor.PositionDecimalPlaces := LDDPOptions.sePntAcc.Value;
+  editor.RotationDecimalPlaces := LDDPOptions.seRotAcc.Value;
+  mnuUserDefined.Enabled := LDDPOptions.ExternalProgramList.Count > 0;
+  tbUserDefined.Enabled := LDDPOptions.ExternalProgramList.Count > 0;
+  acPollCustom.Tag := LDDPOptions.seCustomPollInterval.Value * 1000;
 
   case GridType of
     gtCoarse:
     begin
-      GridSetting.XStep := frOptions.seGridCoarseX.Value;
-      GridSetting.YStep := frOptions.seGridCoarseY.Value;
-      GridSetting.ZStep := frOptions.seGridCoarseZ.Value;
-      GridSetting.Angle := frOptions.seGridCoarseAngle.Value;
+      GridSetting.XStep := LDDPOptions.seGridCoarseX.Value;
+      GridSetting.YStep := LDDPOptions.seGridCoarseY.Value;
+      GridSetting.ZStep := LDDPOptions.seGridCoarseZ.Value;
+      GridSetting.Angle := LDDPOptions.seGridCoarseAngle.Value;
     end;
     gtMedium:
     begin
-      GridSetting.XStep := frOptions.seGridMediumX.Value;
-      GridSetting.YStep := frOptions.seGridMediumY.Value;
-      GridSetting.ZStep := frOptions.seGridMediumZ.Value;
-      GridSetting.Angle := frOptions.seGridMediumAngle.Value;
+      GridSetting.XStep := LDDPOptions.seGridMediumX.Value;
+      GridSetting.YStep := LDDPOptions.seGridMediumY.Value;
+      GridSetting.ZStep := LDDPOptions.seGridMediumZ.Value;
+      GridSetting.Angle := LDDPOptions.seGridMediumAngle.Value;
     end;
     gtFine:
     begin
-      GridSetting.XStep := frOptions.seGridFineX.Value;
-      GridSetting.YStep := frOptions.seGridFineY.Value;
-      GridSetting.ZStep := frOptions.seGridFineZ.Value;
-      GridSetting.Angle := frOptions.seGridFineAngle.Value;
+      GridSetting.XStep := LDDPOptions.seGridFineX.Value;
+      GridSetting.YStep := LDDPOptions.seGridFineY.Value;
+      GridSetting.ZStep := LDDPOptions.seGridFineZ.Value;
+      GridSetting.Angle := LDDPOptions.seGridFineAngle.Value;
     end;
   end;
   editorUpdateUI(Sender);
 end;
 
-procedure TfrMain.acHomepageExecute(Sender: TObject);
+procedure TLDDPMain.acHomepageExecute(Sender: TObject);
 // Open LDDP project homepage
 begin
-  OpenInBrowser('http://www.lddp.net');
+  OpenInBrowser('http://lddp.sourceforge.net');
 end;
 
-procedure TfrMain.acMRUListExecute(Sender: TObject);
+procedure TLDDPMain.acMRUListExecute(Sender: TObject);
 // Opens a file from the MRU Manager
 begin
   if FileExists((Sender as TMenuItem).Caption) then
@@ -1131,7 +1144,7 @@ begin
     MessageDlg(_('File ') + (Sender as TMenuItem).Caption + _(' not found!'), mtError, [mbOK], 0);
 end;
 
-procedure TfrMain.acCheckforUpdateExecute(Sender: TObject);
+procedure TLDDPMain.acCheckforUpdateExecute(Sender: TObject);
 // Checks for a newer version looking for a special url
 var
   strVersionHTTP: string;
@@ -1149,20 +1162,28 @@ begin
   end;
 end;
 
-procedure TfrMain.acBMP2LDrawExecute(Sender: TObject);
+procedure TLDDPMain.acBMP2LDrawExecute(Sender: TObject);
 // Show the BMP2DAT dialog
+var
+  BMP2LDrawDlg: TLDDPBMP2LDrawDlg;
+
 begin
-  frBMP2LDrawMain.ShowModal;
+  BMP2LDrawDlg := TLDDPBMP2LDrawDlg.Create(Application);
+  try
+    BMP2LDrawDlg.ShowModal;
+  finally
+    BMP2LDrawDlg.Free;
+  end;
 end;
 
-procedure TfrMain.acLSynthExecute(Sender: TObject);
+procedure TLDDPMain.acLSynthExecute(Sender: TObject);
 // Execues LSynth and replaces current text with the output
 var
   TempFile: TStringList;
   CommandFile, CommandLine, InputFile, OutputFile: string;
 
 begin
-  if (not FileExists(frOptions.edLSynthDir.text + '\lsynthcp.exe')) then
+  if (not FileExists(LDDPOptions.edLSynthDir.text + '\lsynthcp.exe')) then
   begin
     MessageDlg(_('You have to specify a valid path to lsynthcp.exe first!'), mtError, [mbOK], 0);
     acOptionsExecute(Sender);
@@ -1171,7 +1192,7 @@ begin
   begin
     OutputFile := GetShortFileName(tempFileName);
     TempFile := TstringList.create;
-    CommandLine := GetShortFileName(frOptions.edLSynthDir.text) + '\lsynthcp.exe ';
+    CommandLine := GetShortFileName(LDDPOptions.edLSynthDir.text) + '\lsynthcp.exe ';
     InputFile := GetShortFileName(ExtractFilePath(tempFileName)) + ExtractFileName(tempFileName);
     editor.lines.SaveToFile(InputFile);
     TempFile.Add(CommandLine + ' ' + InputFile + ' ' + OutputFile);
@@ -1188,23 +1209,24 @@ begin
   end;
 end;
 
-procedure TfrMain.acBendableObjectExecute(Sender: TObject);
+procedure TLDDPMain.acBendableObjectExecute(Sender: TObject);
 // Show the bendible parts dialog and then insert the object
 var
   startline, endline: Integer;
-  frmDatCurve: TfrmDATCurve;
+  frmDatCurve: TFlexObjectDlg;
+
 begin
     editor.ExpandSelection(startline, endline);
     if endline - startline = 1 then
     begin
-      frmDATCurve := TfrmDATCurve.Create(Application);
+      frmDATCurve := TFlexObjectDlg.Create(Application);
       try
         frmDATCurve.Line1.DATString := editor.Lines[startline];
         frmDATCurve.Line2.DATString := editor.Lines[endline];
         if frmDATCurve.ShowModal = mrOk then
         begin
-          frmDATCurve.HoseDATCode.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-          frmDATCurve.HoseDATCode.PositionDecimalPlaces := frOptions.sePntAcc.Value;
+          frmDATCurve.HoseDATCode.RotationDecimalPlaces := LDDPOptions.seRotAcc.Value;
+          frmDATCurve.HoseDATCode.PositionDecimalPlaces := LDDPOptions.sePntAcc.Value;
           editor.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
         end;
       finally
@@ -1213,19 +1235,27 @@ begin
     end;
 end;
 
-procedure TfrMain.acAutoRoundExecute(Sender: TObject);
+procedure TLDDPMain.acAutoRoundExecute(Sender: TObject);
 // Auto rounds selection to decimal places in the options
 begin
   editor.AutoRound;
 end;
 
-procedure TfrMain.acSortSelectionExecute(Sender: TObject);
+procedure TLDDPMain.acSortSelectionExecute(Sender: TObject);
 // Show the sort dialog
+var
+  SortDlg: TLDDPSortDlg;
+
 begin
-  fmSort.ShowModal;
+  SortDlg := TLDDPSortDlg.Create(Application);
+  try
+    SortDlg.ShowModal;
+  finally
+    SortDlg.Free;
+  end;
 end;
 
-procedure TfrMain.acRandomizeColorsExecute(Sender: TObject);
+procedure TLDDPMain.acRandomizeColorsExecute(Sender: TObject);
 // Randomizes the colors of the selection
 var
   RandColor, i, startline, endline: Integer;
@@ -1250,7 +1280,7 @@ begin
     editor.SelectLines(startline, endline);
 end;
 
-procedure TfrMain.acMirrorExecute(Sender: TObject);
+procedure TLDDPMain.acMirrorExecute(Sender: TObject);
 // Mirrors the selected lines
 begin
     case (Sender as TComponent).Tag of
@@ -1260,7 +1290,7 @@ begin
     end;
 end;
 
-procedure TfrMain.acEditorOptionsExecute(Sender: TObject);
+procedure TLDDPMain.acEditorOptionsExecute(Sender: TObject);
 // Show the Scintilla editor options
 begin
   with TSciOptionsForm.Create(Self) do
@@ -1278,7 +1308,7 @@ begin
     KeyListNumberSE.ReadOnly := true;
     OptionPages.OnChange := nil;
 
-    Editor := frMain.editor;
+    Editor := LDDPMain.editor;
     if ShowModal = mrOK then
       EditorPropertyLoader.Save;
     Free;
@@ -1287,82 +1317,82 @@ end;
 
 // Movement actions
 
-procedure TfrMain.acMoveGridCoarseExecute(Sender: TObject);
+procedure TLDDPMain.acMoveGridCoarseExecute(Sender: TObject);
 begin
   if acMoveGridCoarse.Checked then
   begin
     GridType := gtCoarse;
-    GridSetting.XStep := frOptions.seGridCoarseX.Value;
-    GridSetting.YStep := frOptions.seGridCoarseY.Value;
-    GridSetting.ZStep := frOptions.seGridCoarseZ.Value;
-    GridSetting.Angle := frOptions.seGridCoarseAngle.Value;
+    GridSetting.XStep := LDDPOptions.seGridCoarseX.Value;
+    GridSetting.YStep := LDDPOptions.seGridCoarseY.Value;
+    GridSetting.ZStep := LDDPOptions.seGridCoarseZ.Value;
+    GridSetting.Angle := LDDPOptions.seGridCoarseAngle.Value;
   end
   else
     if (not acMoveGridFine.Checked) and (acMoveGridMedium.Checked) then
       acMoveGridCoarse.Checked := True;
 end;
 
-procedure TfrMain.acMoveGridMediumExecute(Sender: TObject);
+procedure TLDDPMain.acMoveGridMediumExecute(Sender: TObject);
 begin
   if acMoveGridMedium.Checked then
   begin
     GridType := gtMedium;
-    GridSetting.XStep := frOptions.seGridMediumX.Value;
-    GridSetting.YStep := frOptions.seGridMediumY.Value;
-    GridSetting.ZStep := frOptions.seGridMediumZ.Value;
-    GridSetting.Angle := frOptions.seGridMediumAngle.Value;
+    GridSetting.XStep := LDDPOptions.seGridMediumX.Value;
+    GridSetting.YStep := LDDPOptions.seGridMediumY.Value;
+    GridSetting.ZStep := LDDPOptions.seGridMediumZ.Value;
+    GridSetting.Angle := LDDPOptions.seGridMediumAngle.Value;
   end
   else
     if (not acMoveGridCoarse.Checked) and (acMoveGridFine.Checked) then
       acMoveGridMedium.Checked := True;
 end;
 
-procedure TfrMain.acMoveGridFineExecute(Sender: TObject);
+procedure TLDDPMain.acMoveGridFineExecute(Sender: TObject);
 begin
   if acMoveGridFine.Checked then
   begin
     GridType := gtFine;
-    GridSetting.XStep := frOptions.seGridFineX.Value;
-    GridSetting.YStep := frOptions.seGridFineY.Value;
-    GridSetting.ZStep := frOptions.seGridFineZ.Value;
-    GridSetting.Angle := frOptions.seGridFineAngle.Value;
+    GridSetting.XStep := LDDPOptions.seGridFineX.Value;
+    GridSetting.YStep := LDDPOptions.seGridFineY.Value;
+    GridSetting.ZStep := LDDPOptions.seGridFineZ.Value;
+    GridSetting.Angle := LDDPOptions.seGridFineAngle.Value;
   end
   else
     if (not acMoveGridCoarse.Checked) and (acMoveGridMedium.Checked) then
       acMoveGridFine.Checked := True;
 end;
 
-procedure TfrMain.acMoveRotXNegExecute(Sender: TObject);
+procedure TLDDPMain.acMoveRotXNegExecute(Sender: TObject);
 begin
   editor.RotateSelection(GridSetting.Angle, -1, 0, 0);
 end;
 
-procedure TfrMain.acMoveRotXPosExecute(Sender: TObject);
+procedure TLDDPMain.acMoveRotXPosExecute(Sender: TObject);
 begin
   editor.RotateSelection(GridSetting.Angle, 1, 0, 0);
 end;
 
-procedure TfrMain.acMoveRotYNegExecute(Sender: TObject);
+procedure TLDDPMain.acMoveRotYNegExecute(Sender: TObject);
 begin
   editor.RotateSelection(GridSetting.Angle, 0, -1, 0);
 end;
 
-procedure TfrMain.acMoveRotYPosExecute(Sender: TObject);
+procedure TLDDPMain.acMoveRotYPosExecute(Sender: TObject);
 begin
   editor.RotateSelection(GridSetting.Angle, 0, 1, 0);
 end;
 
-procedure TfrMain.acMoveRotZNegExecute(Sender: TObject);
+procedure TLDDPMain.acMoveRotZNegExecute(Sender: TObject);
 begin
   editor.RotateSelection(GridSetting.Angle, 0, 0, -1);
 end;
 
-procedure TfrMain.acMoveRotZPosExecute(Sender: TObject);
+procedure TLDDPMain.acMoveRotZPosExecute(Sender: TObject);
 begin
   editor.RotateSelection(GridSetting.Angle, 0, 0, 1);
 end;
 
-procedure TfrMain.acMoveSnapToGridExecute(Sender: TObject);
+procedure TLDDPMain.acMoveSnapToGridExecute(Sender: TObject);
 
 var
   DModel: TDATModel;
@@ -1415,56 +1445,56 @@ begin
   DModel.Free;
 end;
 
-procedure TfrMain.acMoveXNegExecute(Sender: TObject);
+procedure TLDDPMain.acMoveXNegExecute(Sender: TObject);
 begin
   editor.TranslateSelection(-GridSetting.XStep, 0, 0);
 end;
 
-procedure TfrMain.acMoveXPosExecute(Sender: TObject);
+procedure TLDDPMain.acMoveXPosExecute(Sender: TObject);
 begin
   editor.TranslateSelection(GridSetting.XStep, 0, 0);
 end;
 
-procedure TfrMain.acMoveYNegExecute(Sender: TObject);
+procedure TLDDPMain.acMoveYNegExecute(Sender: TObject);
 begin
   editor.TranslateSelection(0, -GridSetting.YStep, 0);
 end;
 
-procedure TfrMain.acMoveYPosExecute(Sender: TObject);
+procedure TLDDPMain.acMoveYPosExecute(Sender: TObject);
 begin
   editor.TranslateSelection(0, GridSetting.YStep, 0);
 end;
 
-procedure TfrMain.acMoveZNegExecute(Sender: TObject);
+procedure TLDDPMain.acMoveZNegExecute(Sender: TObject);
 begin
   editor.TranslateSelection(0, 0, -GridSetting.ZStep);
 end;
 
-procedure TfrMain.acMoveZPosExecute(Sender: TObject);
+procedure TLDDPMain.acMoveZPosExecute(Sender: TObject);
 begin
   editor.TranslateSelection(0, 0, GridSetting.ZStep);
 end;
 
 // Polling Actions
 
-procedure TfrMain.acPollEnablePollingExecute(Sender: TObject);
+procedure TLDDPMain.acPollEnablePollingExecute(Sender: TObject);
 begin
   tmPoll.Enabled := acPollEnablePolling.Checked;
 end;
 
-procedure TfrMain.acPollOnDemandExecute(Sender: TObject);
+procedure TLDDPMain.acPollOnDemandExecute(Sender: TObject);
 begin
   acPollOnDemand.ShortCut := TextToShortCut('F11');
   tmPoll.Enabled := False;
   tmPollTimer(nil);
 end;
 
-procedure TfrMain.acPollToSelectedLineExecute(Sender: TObject);
+procedure TLDDPMain.acPollToSelectedLineExecute(Sender: TObject);
 begin
   // Do nothing;
 end;
 
-procedure TfrMain.SetPollTime(Sender: TObject);
+procedure TLDDPMain.SetPollTime(Sender: TObject);
 begin
   tmPoll.Enabled := False;
   tmPoll.Interval := (Sender as TAction).Tag;
@@ -1474,31 +1504,39 @@ end;
 
 // Search actions
 
-procedure TfrMain.acFindExecute(Sender: TObject);
+procedure TLDDPMain.acFindExecute(Sender: TObject);
 // Execute Find Dialogue
 begin
   SearchReplaceDlg.ShowSearchDialog;
 end;
 
-procedure TfrMain.acReplaceExecute(Sender: TObject);
+procedure TLDDPMain.acReplaceExecute(Sender: TObject);
 // Execute Replace Dialogue
 begin
   SearchReplaceDlg.ShowReplaceDialog;
 end;
 
-procedure TfrMain.acReplaceColorExecute(Sender: TObject);
+procedure TLDDPMain.acReplaceColorExecute(Sender: TObject);
 // Replace Colors using a color dialogue
+var
+  ReplaceColorDlg: TLDDPColorDlg;
+
 begin
-  frColorDialog.ShowModal;
+  ReplaceColorDlg := TLDDPColorDlg.Create(Application);
+  try
+    ReplaceColorDlg.ShowModal;
+  finally
+    ReplaceColorDlg.Free;
+  end;
 end;
 
-procedure TfrMain.acFindNextExecute(Sender: TObject);
+procedure TLDDPMain.acFindNextExecute(Sender: TObject);
 // Find Next occurence of a previous find procedure
 begin
   SearchReplaceDlg.DoSearchReplaceText(false,SearchReplaceDlg.SearchBackwards);
 end;
 
-procedure TfrMain.acColorReplaceShortcutExecute(Sender: TObject);
+procedure TLDDPMain.acColorReplaceShortcutExecute(Sender: TObject);
 // Replace the color of the selection with the clicked color on the color bar
 var
   i, startline, endline: Integer;
@@ -1513,47 +1551,47 @@ begin
 end;
 
 // View Menu actions
-procedure TfrMain.acViewColorReplaceToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewColorReplaceToolbarExecute(Sender: TObject);
 begin
   tbrColorReplace.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acViewEditToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewEditToolbarExecute(Sender: TObject);
 begin
   tbrEditing.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acViewExternalProgramToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewExternalProgramToolbarExecute(Sender: TObject);
 begin
   tbrExternalPrograms.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acViewFileToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewFileToolbarExecute(Sender: TObject);
 begin
   tbrFile.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acViewGridToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewGridToolbarExecute(Sender: TObject);
 begin
   tbrGrid.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acViewMovementToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewMovementToolbarExecute(Sender: TObject);
 begin
   tbrMovement.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acViewSearchToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewSearchToolbarExecute(Sender: TObject);
 begin
   tbrSearch.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acViewToolsToolbarExecute(Sender: TObject);
+procedure TLDDPMain.acViewToolsToolbarExecute(Sender: TObject);
 begin
   tbrTools.Visible := (Sender as TAction).Checked;
 end;
 
-procedure TfrMain.acErrorListExecute(Sender: TObject);
+procedure TLDDPMain.acErrorListExecute(Sender: TObject);
 begin
   if (Sender as TAction).Checked then
     frErrorWindow.Show
@@ -1569,7 +1607,7 @@ end;
 
 // Other procedures
 
-procedure TfrMain.FileIsDropped(var Msg: TMessage);
+procedure TLDDPMain.FileIsDropped(var Msg: TMessage);
 // Accepts files dropped from explorer
 var
    hDrop: THandle ;
@@ -1592,7 +1630,7 @@ begin
    DragFinish(hDrop);
 end;
 
-procedure TfrMain.AppInstCmdLineReceived(Sender: TObject;
+procedure TLDDPMain.AppInstCmdLineReceived(Sender: TObject;
   CmdLine: TStrings);
 var
   i: Integer;
@@ -1603,13 +1641,13 @@ begin
     OpenFile(CmdLine[i]);
 end;
 
-procedure TfrMain.editorDwellEnd(Sender: TObject; const position: Integer; x,
+procedure TLDDPMain.editorDwellEnd(Sender: TObject; const position: Integer; x,
   y: Integer);
 begin
   editor.CallTipCancel;
 end;
 
-procedure TfrMain.editorDwellStart(Sender: TObject; const position: Integer; x,
+procedure TLDDPMain.editorDwellStart(Sender: TObject; const position: Integer; x,
   y: Integer);
 
 var
@@ -1638,7 +1676,7 @@ begin
   end;
 end;
 
-procedure TfrMain.editorModified(Sender: TObject; const position,
+procedure TLDDPMain.editorModified(Sender: TObject; const position,
   modificationType: Integer; text: PAnsiChar; const len, linesAdded, line,
   foldLevelNow, foldLevelPrev: Integer);
 begin
@@ -1665,7 +1703,7 @@ begin
   end;
 end;
 
-procedure TfrMain.editorUpdateUI(Sender: TObject);
+procedure TLDDPMain.editorUpdateUI(Sender: TObject);
 var
   i: Integer;
   DLine: TDATType;
@@ -1733,13 +1771,13 @@ begin
   end;
 end;
 
-procedure TfrMain.FormDblClick(Sender: TObject);
+procedure TLDDPMain.FormDblClick(Sender: TObject);
 // Opens the file open dialog if the background is double clicked
 begin
   acFileOpen.Execute;
 end;
 
-procedure TfrMain.FormCreate(Sender: TObject);
+procedure TLDDPMain.FormCreate(Sender: TObject);
 begin
 //  frMain.OnActivate := DocumentTabsChange;
   TranslateComponent(Self);
@@ -1748,22 +1786,23 @@ begin
   PluginActionList := TActionList.Create(Self);
 end;
 
-procedure TfrMain.FormShow(Sender: TObject);
+procedure TLDDPMain.FormShow(Sender: TObject);
 // Inits the app and shows model tree if needed
 begin
   AppInitialize;
 end;
 
-Procedure TfrMain.AppInitialize;
+Procedure TLDDPMain.AppInitialize;
 // Initializes Application
 var
   i: Integer;
   regT: TRegistry;
+  SplashScreen: TLDDPSplash;
 
 begin
   if Initialized then Exit;
   
-  SplashScreen := TfrSplash.Create(Application);
+  SplashScreen := TLDDPSplash.Create(Application);
   try
     //Show splash screen
     SplashScreen.lbState.Caption:=_('Initializing plugins...');
@@ -1790,11 +1829,11 @@ begin
     acViewColorReplaceToolbar.Checked := tbrColorReplace.Visible;
 
     //Set defaults based on options
-    acPollCustom.Tag := frOptions.seCustomPollInterval.Value * 1000;
+    acPollCustom.Tag := LDDPOptions.seCustomPollInterval.Value * 1000;
 
-    editor.PositionDecimalPlaces := frOptions.sePntAcc.Value;
-    editor.RotationDecimalPlaces := frOptions.seRotAcc.Value;
-    editor.OnlyRoundDuringAutoRound := frOptions.cboAutoRoundOnly.Checked;
+    editor.PositionDecimalPlaces := LDDPOptions.sePntAcc.Value;
+    editor.RotationDecimalPlaces := LDDPOptions.seRotAcc.Value;
+    editor.OnlyRoundDuringAutoRound := LDDPOptions.cboAutoRoundOnly.Checked;
 
     editor.CallTipSetFore(clBlack);
 
@@ -1835,19 +1874,19 @@ begin
 
   finally
     Screen.Cursor := crDefault;
-    SplashScreen.Release;
+    SplashScreen.Free;
     Initialized := True;
   end;
 end;
 
-procedure TfrMain.MetaMenuClick(Sender: TObject);
+procedure TLDDPMain.MetaMenuClick(Sender: TObject);
 // Insert the selected meta command
 begin
   editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos), '0 ' +
                       (Sender as TMenuItem).Hint);
 end;
 
-procedure TfrMain.SetKeyWordList;
+procedure TLDDPMain.SetKeyWordList;
 // Set lookup the official part files put them in the keyword list
 var
   sc: TSearchRec;
@@ -1880,13 +1919,13 @@ begin
     CommaText := ReadUIConfigValue('MetaCommands');
 end;
 
-procedure TfrMain.DocumentTabsChange(Sender: TObject);
+procedure TLDDPMain.DocumentTabsChange(Sender: TObject);
 begin
   if frErrorWindow.Visible  then
     frErrorWindow.acErrorCheck.Execute;
 end;
 
-procedure TfrMain.DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
+procedure TLDDPMain.DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
   var AllowClose: Boolean);
 
 begin
@@ -1914,7 +1953,7 @@ begin
     DeleteFile(tempFilename);
 end;
 
-procedure TfrMain.DocumentTabsMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TLDDPMain.DocumentTabsMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   if Button = mbRight then
@@ -1923,7 +1962,7 @@ begin
   end else TabRightClickIndex := -1;
 end;
 
-procedure Tfrmain.LoadPlugins;
+procedure TLDDPMain.LoadPlugins;
 // Load all plugins and create menu entries,
 // add names to a stringlist and enumerate entries by tag
 var
@@ -1942,8 +1981,8 @@ begin
   if Findfirst(PluginPath + '*.dl*',faAnyFile,sr) = 0 then
   begin
     //Clear the options dialog and plugin string list
-    frOptions.cblPlugins.Clear;
-    frOptions.cblPlugins.Sorted := false;
+    LDDPOptions.cblPlugins.Clear;
+    LDDPOptions.cblPlugins.Sorted := false;
 
     //Free all the old plugin actions and menu items
     while PluginActionList.ActionCount > 0 do
@@ -1965,13 +2004,7 @@ begin
       for i := 1 to 6 do
         PluginInfoList.Add(PluginInfo(PluginFile,i));
 
-      if not Initialized then
-      begin
-        splashscreen.lbState.Caption := _('Initializing plugin:') + ' ' + sr.Name;
-        splashscreen.Update;
-      end;
-
-      frOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
+      LDDPOptions.cblPlugins.Items.Add(ChangeFileExt(sr.Name,'') +
                                      ' - ' + PluginInfoList[3]);
 
       imgix := -1;
@@ -1999,7 +2032,7 @@ begin
       PluginMenuItem.Action := PluginAction;
       PluginMenu.Insert(PluginMenu.Count, PluginMenuItem);
 
-      frOptions.cblPlugins.Checked[frOptions.cblPlugins.Items.Count - 1] :=
+      LDDPOptions.cblPlugins.Checked[LDDPOptions.cblPlugins.Items.Count - 1] :=
         PluginAction.Enabled;
     until FindNext(sr) <> 0;
   end;
@@ -2012,11 +2045,11 @@ begin
   end;
 
   FindClose(sr);
-  frOptions.cblPlugins.Sorted := True;
+  LDDPOptions.cblPlugins.Sorted := True;
   PluginInfoList.Free;
 end;
 
-procedure TfrMain.PluginClick(Sender: TObject);
+procedure TLDDPMain.PluginClick(Sender: TObject);
 // Start Plugin related to the tag of the action
 var
  libname: string;
@@ -2046,13 +2079,13 @@ end;
 
 // Polling procedures
 
-procedure TfrMain.btPollingClick(Sender: TObject);
+procedure TLDDPMain.btPollingClick(Sender: TObject);
 // Does nothing.. but needed so the polling button isn't deactivated
 begin
  // do nothing
 end;
 
-procedure TfrMain.tmPollTimer(Sender: TObject);
+procedure TLDDPMain.tmPollTimer(Sender: TObject);
 // if polling time triggers the actual editor window is written to its 
 // firm assigned temp filename
 var
@@ -2081,7 +2114,7 @@ begin
     end;
 end;
 
-procedure TfrMain.UpdateMRU(NewFileName: TFileName = '');
+procedure TLDDPMain.UpdateMRU(NewFileName: TFileName = '');
 // Update the Most Recently Used list
 var
   MRUSectionList: TStringList;
@@ -2120,7 +2153,7 @@ begin
   MRUSectionList.Free;
 end;
 
-procedure TfrMain.LoadFormValues;
+procedure TLDDPMain.LoadFormValues;
 // Loads form values from the LDDP.ini file
 var
   LDDPini: TMemIniFile;
@@ -2173,7 +2206,7 @@ begin
   LDDPini.Free;
 end;
 
-procedure TfrMain.SaveFormValues;
+procedure TLDDPMain.SaveFormValues;
 // Saves form values to the LDDP.ini file
 var
   LDDPini: TMemIniFile;
@@ -2222,14 +2255,14 @@ begin
   LDDPini.Free;
 end;
 
-function TfrMain.tempFileName:string;
+function TLDDPMain.tempFileName:string;
 // Creates and returns a unique temporary filename
 begin
   Result := ExtractFilePath(DocumentTabs.ActiveDocument.FileName) + PathDelim +
             ChangeFileExt(ExtractFileName(DocumentTabs.ActiveDocument.FileName), '.lddptmp');
 end;
 
-procedure TfrMain.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TLDDPMain.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   i: Integer;
 
@@ -2259,17 +2292,17 @@ begin
   PluginActionList.Free;
 end;
 
-procedure TfrMain.SearchReplaceDlgTextNotFound(Sender: TObject);
+procedure TLDDPMain.SearchReplaceDlgTextNotFound(Sender: TObject);
 begin
   acFindNext.Enabled := false;
 end;
 
-procedure TfrMain.acFindNextUpdate(Sender: TObject);
+procedure TLDDPMain.acFindNextUpdate(Sender: TObject);
 begin
   acFindNext.Enabled := SearchReplaceDlg.SearchText <> '';
 end;
 
-procedure TfrMain.tbUserDefinedClick(Sender: TObject);
+procedure TLDDPMain.tbUserDefinedClick(Sender: TObject);
 begin
 // Empty. Required for Button to be enabled
 end;
