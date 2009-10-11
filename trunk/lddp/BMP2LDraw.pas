@@ -123,9 +123,9 @@ begin
 
   for i := 0 to ColourList.Count - 1 do
   begin
-    R2 := GetRValue(ColourList[i].MainColor);
-    G2 := GetGValue(ColourList[i].MainColor);
-    B2 := GetBValue(ColourList[i].MainColor);
+    R2 := GetRValue(ColourList[i].MainColour);
+    G2 := GetGValue(ColourList[i].MainColour);
+    B2 := GetBValue(ColourList[i].MainColour);
 
     DistanceSquared := Sqr(R1 - R2) + Sqr(G1 - G2) + Sqr(B1 - B2);
     if DistanceSquared < SmallestDistanceSquared then

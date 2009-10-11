@@ -54,7 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-  main, options, DatBase, DATUtils;
+  main, options, DATBase, DATUtils, JclGraphUtils;
 
 procedure TLDDPColorDlg.FormClose(Sender: TObject; var Action: TCloseAction);
 
@@ -84,6 +84,7 @@ begin
           SetLineColor(i, newcolor);
       EndUndoAction;    
     end;
+  ColourList.Free; 
 end;
 
 procedure TLDDPColorDlg.FormCreate(Sender: TObject);
@@ -94,7 +95,7 @@ end;
 procedure TLDDPColorDlg.FormShow(Sender: TObject);
 
 var
-  startline, endline: Integer;
+  startline, endline, c: Integer;
   line: TDATType;
 
 begin
@@ -117,11 +118,10 @@ begin
   begin
     rgOptions.Items.Add(_('Replace Current Line Only'));
     rgOptions.ItemIndex := 1;
-  end;
-
-  if line is TDATElement then
+    c := ColourList.IndexOfColourCode((line as TDATElement).Color);
     OldColorCombo.ItemIndex :=
-      OldColorCombo.FindColor(ColourList[ColourList.IndexOfColourCode((line as TDATElement).Color)].MainColor);
+      OldColorCombo.FindColor(ColourList[c].MainColour);
+  end;
 end;
 
 procedure TLDDPColorDlg.cbxReplaceEverythingClick(Sender: TObject);
@@ -134,26 +134,33 @@ procedure TLDDPColorDlg.UpdateColorCombos;
 //Update the color combo boxs from ldconfig.ldr
 var
   i: Integer;
-  color: TColor;
+  color: TDATColour;
 
 begin
   ColourList := MakeStandardDATColourList;
+  ColourList.Sort;
+
   for i := 0 to ColourList.Count - 1 do
   begin
-    color := ColourList[i].MainColor;
-    while OldColorCombo.FindColor(color) >= 0 do
-      color := color + 1;
-    OldColorCombo.AddColor(color, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
-    NewColorCombo.AddColor(color, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
+    while OldColorCombo.FindColor(ColourList[i].MainColour) >= 0 do
+      ColourList[i].MainColour := SetRGBValue(GetColorRed(ColourList[i].MainColour) + 1,
+                                             GetColorGreen(ColourList[i].MainColour) + 1,
+                                             GetColorBlue(ColourList[i].MainColour) + 1);
+      OldColorCombo.AddColor(ColourList[i].MainColour, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].ColourName, '_', ' ', [rfReplaceAll]));
+      NewColorCombo.AddColor(ColourList[i].MainColour, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].ColourName, '_', ' ', [rfReplaceAll]));
   end;
+
+  // Add undefined colors for legacy color number support
   for i := 0 to 511 do
     if ColourList.IndexOfColourCode(i) < 0 then
     begin
-      color := i;
-      while OldColorCombo.FindColor(color) >= 0 do
-        color := color + 1;
-      OldColorCombo.AddColor(color, IntToStr(i) + ': Color' + IntToStr(i));
-      NewColorCombo.AddColor(color, IntToStr(i) + ': Color' + IntToStr(i));
+      color := DATUtils.DATColour(i, 'Undefined_' + IntToStr(i), i, 0);
+      ColourList.Add(color);
+      while OldColorCombo.FindColor(ColourList[ColourList.IndexOfColourCode(i)].MainColour) >= 0 do
+        ColourList[ColourList.IndexOfColourCode(i)].MainColour :=
+          ColourList[ColourList.IndexOfColourCode(i)].MainColour + 1;
+      OldColorCombo.AddColor(ColourList[ColourList.IndexOfColourCode(i)].MainColour, IntToStr(i) + ': Undefined');
+      NewColorCombo.AddColor(ColourList[ColourList.IndexOfColourCode(i)].MainColour, IntToStr(i) + ': Undefined');
     end;
 end;
 

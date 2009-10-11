@@ -562,9 +562,17 @@ begin
 end;
 
 procedure TDATCustomModel.SetLine(Idx:Integer; Value: TDATType);
+var
+  TempDAT: TObject;
+
 begin
   if (Idx >= 0) and (Idx < Count) then
+  begin
+    TempDAT := FModelCollection[Idx];
     FModelCollection[Idx] := Value;
+    if Assigned(TempDAT) then
+      TempDAT.Free;
+  end;
 end;
 
 function TDATCustomModel.GetModelText: string;
@@ -1023,9 +1031,17 @@ begin
 end;
 
 procedure TDATMPDModel.SetModel(Idx:Integer; Value: TDATModel);
+var
+  TempModel: TObject;
+
 begin
   if (Idx >= 0) and (Idx < Count) then
+  begin
+    TempModel := FModelCollection[Idx];
     FModelCollection[Idx] := Value;
+    if Assigned(TempModel) then
+      TempModel.Free;
+  end;
 end;
 
 function TDATMPDModel.GetModelText: string;

@@ -21,40 +21,98 @@ unit DATColour;
 interface
 
 uses
-  Graphics;
+  Graphics, Contnrs, DATBase;
 
 type
   TDATFinish = (finNone, finChrome, finPearlescent, finRubber, finMatteMetallic, finMetal);
 
   (* Represents the !COLOUR Meta Command *)
-  TDATColour=record
-      Name: string;
-      Code: Integer;
-      MainColor, EdgeColor: TColor;
-      Alpha: Byte;
-      Luminance: Byte;
-      Finish: TDATFinish;
-      MaterialParams: string;
+  TDATColour = class(TDATType)
+    protected
+      FName: string;
+      FCode: Integer;
+      FMainColour, FEdgeColour: TColor;
+      FAlpha: Byte;
+      FLuminance: Byte;
+      FFinish: TDATFinish;
+      FMaterial: string;
+      function GetDATString: string; override;
+      procedure ProcessDATLine(strText: string); override;
+
+    public
+      constructor Create; override;
+      property ColourName: string read FName write FName;
+      property Code: Integer read FCode write FCode;
+      property MainColour: TColor read FMainColour write FMainColour;
+      property EdgeColour: TColor read FEdgeColour write FEdgeColour;
+      property Alpha: Byte read FAlpha write FAlpha;
+      property Luminance: Byte read FLuminance write FLuminance;
+      property Finish: TDATFinish read FFinish write FFinish;
+      property Material: string read FMaterial write FMaterial;
   end;
+
+  TDATColourSortTerm = (csCode, csColourName, csMainColour);
 
   TDATColourList = class(TObject)
     private
-      FColorCollection: array of TDATColour;
+      FColorCollection: TObjectList;
+      FSortTerm: TDATColourSortTerm;
       procedure SetColour(Idx: Integer; Value: TDATColour);
       function GetColour(Idx: Integer): TDATColour;
       function GetCount: Integer;
+      procedure DoSort(Start, Finish: Integer; Reverse: Boolean = False);
+      function Compare(Color1, Color2: TDATColour; Reverse: Boolean = False): Integer;
 
     public
-      function IndexOfColourCode(Code: Integer): Integer;
-      function IndexOfColourName(Name: string): Integer;
-      procedure Add(Colour: TDATColour); overload;
+      constructor Create;
+      destructor Destroy; override;
+
+      function IndexOfColourCode(const RCode: Integer): Integer;
+      function IndexOfColourName(const RName: string): Integer;
+      procedure Add(Colour: TDATColour);
+      procedure Sort(Reverse: Boolean = False);
       procedure Clear;
 
+      property SortTerm: TDATColourSortTerm read FSortTerm write FSortTerm;
       property Colour[idx: Integer]: TDATColour read GetColour write SetColour; default;
       property Count:Integer read GetCount;
   end;
 
 implementation
+
+uses
+  SysUtils;
+// Color Compare Fuctions for sorting
+
+function CompareCode(const Code1, Code2: Integer): Integer;
+
+begin
+  Result := 0;
+
+  if Code1 < Code2 then
+    Result := -1
+  else if Code2 < Code1 then
+    Result := 1;
+end;
+
+function CompareName(const Name1, Name2: string): Integer;
+
+begin
+  Result := CompareText(Name1, Name2);
+end;
+
+function CompareMainColor(const Color1, Color2: Integer): Integer;
+
+begin
+  Result := 0;
+
+  if Color1 < Color2 then
+    Result := 1
+  else if Color2 < Color1 then
+    Result := -1;
+end;
+
+{TDATColourList}
 
 procedure TDATColourList.Add(Colour: TDATColour);
 // if color code of passed color is not already in the collection
@@ -63,68 +121,150 @@ var
   i: Integer;
 
 begin
-  if Length(FColorCollection) > 0 then
-    for i := 0 to Length(FColorCollection) - 1 do
-      if (FColorCollection[i].Code = Colour.Code) or
-         (FColorCollection[i].Name = Colour.Name) then
+  if FColorCollection.Count > 0 then
+    for i := 0 to FColorCollection.Count - 1 do
+      if ((FColorCollection[i] as TDATColour).Code = Colour.Code) or
+         ((FColorCollection[i] as TDATColour).ColourName = Colour.ColourName) then
          Exit;
-  SetLength(FColorCollection, Length(FColorCollection) + 1);
-  FColorCollection[High(FColorCollection)] := Colour;
+  FColorCollection.Add(Colour);
+  Sort;
 end;
 
 procedure TDATColourList.Clear;
 begin
-  SetLength(FColorCollection, 0);
+  FColorCollection.Clear;
+end;
+
+function TDATColourList.Compare(Color1, Color2: TDATColour; Reverse: Boolean): Integer;
+begin
+  case FSortTerm of
+    csCode: Result := CompareCode(Color1.Code, Color2.Code);
+    csColourName: Result := CompareName(Color1.ColourName, Color2.ColourName);
+    csMainColour: Result := CompareMainColor(Color1.MainColour, Color2.MainColour);
+    else Result := 0;
+  end;
+  if Reverse then Result := -Result;
+end;
+
+constructor TDATColourList.Create;
+begin
+  inherited;
+  FColorCollection := TObjectList.Create;
+  FSortTerm := csCode;
+end;
+
+destructor TDATColourList.Destroy;
+begin
+  FColorCollection.Free;
+  inherited;
+end;
+
+procedure TDATColourList.DoSort(Start, Finish: Integer; Reverse: Boolean);
+var
+  i, j: Integer;
+  Color1: TDATColour;
+
+begin
+  repeat
+    i := Start;
+    j := Finish;
+
+    Color1 := Colour[(Start + Finish) shr 1];
+    repeat
+      while Compare(Colour[i], Color1, Reverse) < 0 do
+        Inc(i);
+      while Compare(Colour[j], Color1, Reverse) > 0 do
+        Dec(j);
+      if i <= j then
+      begin
+        FColorCollection.Exchange(i,j);
+        Inc(i);
+        Dec(j);
+      end;
+    until i > j;
+    if Start < j then
+      DoSort(Start, j, Reverse);
+    Start := i;
+  until i >= Finish;
 end;
 
 function TDATColourList.GetColour(Idx: Integer): TDATColour;
 begin
-  Result.Code := -1;
-  Result.Name := '';
-  if (Length(FColorCollection) > 0) and
-     (Idx >= 0) and
-     (Idx <= High(FColorCollection)) then
-    Result := FColorCollection[Idx];
-
+  if (FColorCollection.Count > 0) and
+     (Idx <= FColorCollection.Count - 1) then
+    Result := (FColorCollection[Idx] as TDATColour)
+  else
+    Result := nil;
 end;
 
 function TDATColourList.GetCount: Integer;
 begin
-  Result := Length(FColorCollection);
+  Result := FColorCollection.Count;
 end;
 
-function TDATColourList.IndexOfColourCode(Code: Integer): Integer;
+function TDATColourList.IndexOfColourCode(const RCode: Integer): Integer;
 
 var
   i: Integer;
 
 begin
   Result := -1;
-  if Length(FColorCollection) > 0 then
-    for i := 0 to Length(FColorCollection) - 1 do
-      if (FColorCollection[i].Code = Code) then
-        Result := i;
+  for i := 0 to FColorCollection.Count - 1 do
+    if ((FColorCollection[i] as TDATColour).Code = RCode) then
+      Result := i;
 end;
 
-function TDATColourList.IndexOfColourName(Name: string): Integer;
+function TDATColourList.IndexOfColourName(const RName: string): Integer;
 
 var
   i: Integer;
 
 begin
   Result := -1;
-  if Length(FColorCollection) > 0 then
-    for i := 0 to Length(FColorCollection) - 1 do
-      if (FColorCollection[i].Name = Name) then
-        Result := i;
+  for i := 0 to FColorCollection.Count - 1 do
+    if ((FColorCollection[i] as TDATColour).ColourName = RName) then
+      Result := i;
 end;
 
 procedure TDATColourList.SetColour(Idx: Integer; Value: TDATColour);
+var
+  TempColor: TObject;
+
 begin
-  if (Length(FColorCollection) > 0) and
-     (Idx >= 0) and
-     (Idx <= High(FColorCollection)) then
+  if (FColorCollection.Count > 0) and
+     (Idx <= FColorCollection.Count - 1) and
+     (IndexOfColourCode(Value.Code) < 0) and
+     (IndexOfColourName(Value.ColourName) < 0) then
+  begin
+    TempColor := FColorCollection[Idx];
     FColorCollection[Idx] := Value;
+    if Assigned(TempColor) then
+      TempColor.Free;
+  end;
+end;
+
+procedure TDATColourList.Sort(Reverse: Boolean = False);
+begin
+  DoSort(0, Count-1, Reverse);
+end;
+
+{ TDATColour }
+
+constructor TDATColour.Create;
+begin
+  inherited;
+  FLineType := ltComment;
+end;
+
+function TDATColour.GetDATString: string;
+begin
+  // Returns empty string for now
+  Result := '';
+end;
+
+procedure TDATColour.ProcessDATLine(strText: string);
+begin
+ // Blank for now
 end;
 
 end.

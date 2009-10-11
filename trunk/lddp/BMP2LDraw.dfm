@@ -181,10 +181,6 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
     object TabSheet2: TTabSheet
       ImageIndex = 1
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Bevel2: TBevel
         Left = 4
         Top = 4

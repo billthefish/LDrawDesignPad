@@ -22,7 +22,7 @@ object LDDPOptions: TLDDPOptions
     Top = 0
     Width = 584
     Height = 331
-    ActivePage = TabSheet5
+    ActivePage = TabSheet4
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -30,10 +30,6 @@ object LDDPOptions: TLDDPOptions
     object tsExternal: TTabSheet
       Caption = '&Program Paths'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
@@ -438,24 +434,16 @@ object LDDPOptions: TLDDPOptions
     object TabSheet4: TTabSheet
       Caption = 'Configuration &Values'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConfigPages: TPageControl
         Left = 0
         Top = 0
         Width = 576
         Height = 303
-        ActivePage = TabSheet6
+        ActivePage = TabSheet7
         Align = alClient
         TabOrder = 0
         object TabSheet6: TTabSheet
           Caption = 'Error Check Values'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object Label6: TLabel
             Left = 3
             Top = 36
@@ -977,10 +965,6 @@ object LDDPOptions: TLDDPOptions
     object TabSheet5: TTabSheet
       Caption = '&Search Paths'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SearchPathsList: TListView
         Left = 0
         Top = 0
@@ -1194,10 +1178,6 @@ object LDDPOptions: TLDDPOptions
       Caption = '&Color Bar'
       ImageIndex = -1
       OnShow = ColorBarSheetShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
@@ -1342,10 +1322,6 @@ object LDDPOptions: TLDDPOptions
     object TabSheet1: TTabSheet
       Caption = '&External Progams'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox7: TGroupBox
         Left = 215
         Top = 0
@@ -1584,10 +1560,6 @@ object LDDPOptions: TLDDPOptions
     object TabSheet3: TTabSheet
       Caption = 'Plu&gins'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0
