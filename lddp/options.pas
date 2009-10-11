@@ -645,7 +645,7 @@ var
 begin
   ColourList := MakeStandardDATColourList;
   for i := 0 to ColourList.Count - 1 do
-    ColorBarCombo.AddColor(ColourList[i].MainColor, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].Name, '_', ' ', [rfReplaceAll]));
+    ColorBarCombo.AddColor(ColourList[i].MainColour, IntToStr(ColourList[i].Code) + ': ' + StringReplace(ColourList[i].ColourName, '_', ' ', [rfReplaceAll]));
   ColourList.Free;
 end;
 
@@ -1035,9 +1035,10 @@ begin
 
   for i := 0 to ColorBarList.Count - 1 do
     if ColorList.IndexOfColourCode(i) >= 0 then
-      ColorBarList[i] := '"' + StringReplace(ColorList[ColorList.IndexOfColourCode(i)].Name, '_', ' ', [rfReplaceAll]) + '",' +
+      ColorBarList[i] := '"' + StringReplace(ColorList[ColorList.IndexOfColourCode(i)].ColourName, '_', ' ', [rfReplaceAll]) + '",' +
                          IntToStr(ColorList[ColorList.IndexOfColourCode(i)].Code) + ',' +
-                         IntToStr(ColorList[ColorList.IndexOfColourCode(i)].MainColor);
+                         IntToStr(ColorList[ColorList.IndexOfColourCode(i)].MainColour);
+  ColorList.Free;                       
 end;
 
 procedure TLDDPOptions.UpdateSearchPathList;

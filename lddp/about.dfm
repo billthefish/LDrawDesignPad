@@ -182,7 +182,7 @@ object LDDPAbout: TLDDPAbout
     Top = 49
     Width = 436
     Height = 223
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 1
     object TabSheet1: TTabSheet
@@ -253,10 +253,6 @@ object LDDPAbout: TLDDPAbout
     object TabSheet2: TTabSheet
       Caption = 'Version History'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Memo2: TMemo
         Left = 0
         Top = 0
@@ -266,10 +262,13 @@ object LDDPAbout: TLDDPAbout
         Lines.Strings = (
           '+ = New feature  * = Bugfix   - = Removed feature'
           ''
+          'v2.0.4'
+          '* Fixed several bugs with the color replace dialog'
+          ''
           'v2.0.3'
           
             '+ Updated error check to use the new standard for collinear line' +
-            'ss'
+            's'
           '* Fixed LDConfig parsing bug'
           ''
           'v2.0.2'

@@ -36,11 +36,11 @@ function DATRotationMatrix(const M11,M12,M13,
                            M21,M22,M23,
                            M31,M32,M33: Double): TDATRotationMatrix;
 function DATColour(const Code: Integer; const Name: string;
-                   const MainColor, EdgeColor: TColor;
+                   const MainColour, EdgeColour: TColor;
                    const Alpha: Byte = 0;
                    const Luminance: Byte = 0;
                    const Finish: TDATFinish = finNone;
-                   const MaterialParams: string = ''): TDATColour;
+                   const Material: string = ''): TDATColour;
 function CheckIdentPoints(const points1, points2: array of TDATPoint): Boolean;
 function BGRtoRGB(const clr: TColor): TColor;
 function MakeStandardDATColourList: TDATColourList;
@@ -146,13 +146,13 @@ begin
             if TempList[8][1] = '#' then
             begin
               TempColor := Result[Result.IndexOfColourCode(StrToInt(TempList[4]))];
-              TempColor.EdgeColor := BGRtoRGB(StringToColor(StringReplace(TempList[6], '#', '$', [rfReplaceAll])));
+              TempColor.EdgeColour := BGRtoRGB(StringToColor(StringReplace(TempList[6], '#', '$', [rfReplaceAll])));
               Result[Result.IndexOfColourCode(StrToInt(TempList[4]))] := TempColor;
             end
             else
             begin
               TempColor := Result[Result.IndexOfColourCode(StrToInt(TempList[4]))];
-              TempColor.EdgeColor := Result[Result.IndexOfColourCode(StrToInt(TempList[8]))].MainColor;
+              TempColor.EdgeColour := Result[Result.IndexOfColourCode(StrToInt(TempList[8]))].MainColour;
               Result[Result.IndexOfColourCode(StrToInt(TempList[4]))] := TempColor;
             end;
           end;
@@ -244,20 +244,21 @@ begin
 end;
 
 function DATColour(const Code: Integer; const Name: string;
-                   const MainColor, EdgeColor: TColor;
+                   const MainColour, EdgeColour: TColor;
                    const Alpha: Byte = 0;
                    const Luminance: Byte = 0;
                    const Finish: TDATFinish = finNone;
-                   const MaterialParams: string = ''): TDATColour;
+                   const Material: string = ''): TDATColour;
 begin
+  Result := TDATColour.Create;
   Result.Code := Code;
-  Result.Name := Name;
-  Result.MainColor := MainColor;
-  Result.EdgeColor := EdgeColor;
+  Result.ColourName := Name;
+  Result.MainColour := MainColour;
+  Result.EdgeColour := EdgeColour;
   Result.Alpha := Alpha;
   Result.Luminance := Luminance;
   Result.Finish := Finish;
-  Result.MaterialParams := MaterialParams;
+  Result.Material := Material;
 end;
 
 function CheckIdentPoints(const points1, points2: array of TDATPoint): Boolean;

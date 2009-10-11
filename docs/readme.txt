@@ -123,6 +123,8 @@ We especially thank you, the user, for downloading our program
 
 + = New feature  * = Bugfix   - = Removed feature
 
+v2.0.4
+* Fixed several bugs with the color replace dialog
 
 v2.0.3
 + Updated error check to use the new standard for collinear liness
