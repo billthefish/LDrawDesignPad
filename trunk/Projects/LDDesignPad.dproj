@@ -1,0 +1,146 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{6BE5F755-203C-4F0C-8942-9EA9D896BC70}</ProjectGuid>
+			<MainSource>LDDesignPad.dpr</MainSource>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+			<ProjectVersion>12.0</ProjectVersion>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_DependencyCheckOutputName>..\Current Build\LDDesignPad.exe</DCC_DependencyCheckOutputName>
+			<DCC_UnitSearchPath>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Custom Controls\ScintillaLDDP;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UsePackage>vclx;vcl;rtl;dbrtl;vcldb;adortl;dbxcds;dbexpress;vclib;ibxpress;vclactnband;xmlrtl;inet;IntrawebDB_80_100;Intraweb_80_100;vclie;inetdbbde;inetdbxpress;IndyCore;IndySystem;dclOfficeXP;VclSmp;soaprtl;dsnap;IndyProtocols;bdertl;teeui;teedb;tee;vcldbx;Jcl;JvCoreD10R;JvBandsD10R;JclVcl;JvDBD10R;JvStdCtrlsD10R;JvDlgsD10R;JvSystemD10R;JvBDED10R;JvCmpD10R;JvCryptD10R;JvCtrlsD10R;JvCustomD10R;JvDockingD10R;JvDotNetCtrlsD10R;JvEDID10R;JvGlobusD10R;JvHMID10R;JvInterpreterD10R;JvJansD10R;JvManagedThreadsD10R;JvMMD10R;JvNetD10R;JvPageCompsD10R;JvPluginD10R;JvPrintPreviewD10R;JvRuntimeDesignD10R;JvTimeFrameworkD10R;JvUIBD10R;JvValidatorsD10R;JvWizardD10R;JvXPCtrlsD10R;JvAppFrmD10R</DCC_UsePackage>
+			<DCC_ImageBase>00400000</DCC_ImageBase>
+			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<DCC_BplOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</DCC_BplOutput>
+			<DCC_ExeOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build</DCC_ExeOutput>
+			<DCC_Platform>x86</DCC_Platform>
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+			<DCC_N>true</DCC_N>
+			<DCC_K>false</DCC_K>
+			<DCC_DcpOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</DCC_DcpOutput>
+			<DCC_S>false</DCC_S>
+			<DCC_DcuOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</DCC_DcuOutput>
+			<DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
+			<DCC_F>false</DCC_F>
+			<DCC_E>false</DCC_E>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+			<DCC_DebugInformation>false</DCC_DebugInformation>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+		</PropertyGroup>
+		<ItemGroup>
+			<DelphiCompile Include="LDDesignPad.dpr">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="..\DAT Tools\DATUtils.pas"/>
+			<DCCReference Include="..\DAT Tools\DATBase.pas"/>
+			<DCCReference Include="..\DAT Tools\DATCheck.pas"/>
+			<DCCReference Include="..\DAT Tools\DATErrorFix.pas"/>
+			<DCCReference Include="..\DAT Tools\DATMath.pas"/>
+			<DCCReference Include="..\DAT Tools\DATModel.pas"/>
+			<DCCReference Include="..\DAT Tools\DATFlexObject.pas"/>
+			<DCCReference Include="..\DAT Tools\DATColour.pas"/>
+			<DCCReference Include="..\Source\Forms\about.pas">
+				<Form>LDDPAbout</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Forms\BezWindow.pas">
+				<Form>FlexObjectDlg</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Forms\BMP2LDraw.pas">
+				<Form>LDDPBMP2LDrawDlg</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Forms\dlgSubpart.pas">
+				<Form>LDDPSubFileDlg</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Forms\errorbar.pas">
+				<Form>frErrorWindow</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Forms\main.pas">
+				<Form>LDDPMain</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Forms\sorting.pas">
+				<Form>LDDPSortDlg</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Forms\splash.pas">
+				<Form>LDDPSplash</Form>
+			</DCCReference>
+			<DCCReference Include="..\Source\Units\commonprocs.pas"/>
+			<DCCReference Include="..\Source\Units\lddpoptions.pas"/>
+			<DCCReference Include="..\Source\Units\windowsspecific.pas"/>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType>VCLApplication</Borland.ProjectType>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Source>
+						<Source Name="MainSource">LDDesignPad.dpr</Source>
+					</Source>
+					<Parameters>
+						<Parameters Name="UseLauncher">False</Parameters>
+						<Parameters Name="LoadAllSymbols">True</Parameters>
+						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+					</Parameters>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">2</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">4</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1033</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">2.0.4.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright">(c) the LDDP project contributors</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+					</VersionInfoKeys>
+				</Delphi.Personality>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+	</Project>

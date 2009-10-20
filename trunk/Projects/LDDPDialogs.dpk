@@ -1,0 +1,48 @@
+package LDDPDialogs;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$IMPLICITBUILD OFF}
+{$DEFINE DEBUG}
+
+requires
+  rtl,
+  vcl,
+  vclx,
+  vclimg,
+  dbrtl,
+  Jcl,
+  JclVcl,
+  JvCoreD14R,
+  JvStdCtrlsD14R,
+  JvCustomD14R,
+  SynEdit_R2009,
+  PLDDPSynEdit;
+
+contains
+  LDDPColorReplaceFrm in '..\Source\Forms\LDDPColorReplaceFrm.pas' {LDDPColorReplaceForm},
+  LDDPOptionsFrm in '..\Source\Forms\LDDPOptionsFrm.pas' {LDDPOptionsForm},
+  LDDPDialogsReg in '..\Source\Units\LDDPDialogsReg.pas',
+  LDDPDlgs in '..\Source\Units\LDDPDlgs.pas';
+
+end.
