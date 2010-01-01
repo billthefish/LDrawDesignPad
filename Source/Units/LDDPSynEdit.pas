@@ -14,6 +14,7 @@ type
     FGridSetting: TLDDPGridSetting;
     procedure SetLDDPOptions(const Value: TLDDPOptions);
     procedure SetGridSetting(const Value: TLDDPGridSetting);
+
   protected
     { Protected declarations }
 
@@ -41,6 +42,8 @@ type
     procedure GridMoveY(Negative: Boolean = False);
     procedure GridMoveZ(Negative: Boolean = False);
     procedure SnapToGrid;
+    function GetLineIndent(line: Integer): Integer;
+    procedure SetLineIndent(line: Integer);
 
   published
     property LDDPOptions: TLDDPOptions read FLDDPOptions write SetLDDPOptions;
@@ -168,8 +171,6 @@ procedure TLDDPSynEdit.SelectLines(StartLine, EndLine: Integer);
 begin
   SelStart := RowColToCharIndex(BufferCoord(0, StartLine));
   SelEnd := RowColToCharIndex(BufferCoord(0, EndLine))
-//  SetCaretXY(GetLineEndPosition(endline));
-//  SetAnchor(PositionFromLine(startline));
 end;
 
 procedure TLDDPSynEdit.ExpandSelection(out startln, endln: Integer);
@@ -195,18 +196,6 @@ begin
   endln := endline;
 end;
 
-(*
-function TLDDPSynEdit.CaretX: Integer;
-begin
-  Result := GetColumn(GetCurrentPos) + 1;
-end;
-
-function TLDDPSynEdit.CaretY: Integer;
-begin
-  Result := LineFromPosition(GetCurrentPos) + 1;
-end;
-*)
-
 constructor TLDDPSynEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -215,8 +204,9 @@ end;
 
 destructor TLDDPSynEdit.Destroy;
 begin
-  FLDDPOptions.Free;
   inherited;
+  if Assigned(FLDDPOptions) then
+    FLDDPOptions.Free;
 end;
 
 procedure TLDDPSynEdit.MirrorSelection(axis: TDATAxis);
@@ -340,6 +330,11 @@ begin
   end;
 end;
 
+procedure TLDDPSynEdit.SetLineIndent(line: Integer);
+begin
+
+end;
+
 procedure TLDDPSynEdit.SnapToGrid;
 
 var
@@ -427,6 +422,11 @@ begin
   else
     Result := -1;
   DLine.Free;
+end;
+
+function TLDDPSynEdit.GetLineIndent(line: Integer): Integer;
+begin
+
 end;
 
 function TLDDPSynEdit.GridAngle: Double;

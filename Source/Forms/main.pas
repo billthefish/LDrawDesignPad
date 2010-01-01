@@ -26,7 +26,7 @@ uses
   Forms, Messages, SysUtils, Types, StdCtrls, ShellAPI, DATBase, AppEvnts,
   commonprocs, LDDPDlgs, LDDPSynEdit, SynEdit, SynEditMiscClasses,
   SynEditSearch, SynEditOptionsDialog, SynEditPrint, SynEditHighlighter,
-  SynHighlighterLDraw, SynCompletionProposal;
+  SynHighlighterLDraw, SynCompletionProposal, LDDPSynEditDocTabs;
 
 type
   TLDDPMain = class(TForm)
@@ -385,6 +385,7 @@ type
     EditorOptions: TSynEditOptionsDialog;
     SearchDlg: TSynEditSearch;
     DocumentTabs: TLDDPDocumentTabControl;
+    editor: TLDDPSynEdit;
     procedure acHomepageExecute(Sender: TObject);
     procedure acL3LabExecute(Sender: TObject);
     procedure acLDViewExecute(Sender: TObject);
@@ -442,7 +443,6 @@ type
     procedure acEditorOptionsExecute(Sender: TObject);
     procedure SearchReplaceDlgTextNotFound(Sender: TObject);
     procedure acErrorListExecute(Sender: TObject);
-//    procedure editorUpdateUI(Sender: TObject);
     procedure acFileCloseExecute(Sender: TObject);
     procedure DocumentTabsClosing(Sender: TObject; const TabIndex: Integer;
       var AllowClose: Boolean);
@@ -489,6 +489,7 @@ type
 //      modificationType: Integer; text: PAnsiChar; const len, linesAdded, line,
 //      foldLevelNow, foldLevelPrev: Integer);
     procedure acMoveSnapToGridExecute(Sender: TObject);
+    procedure editorStatusChange(Sender: TObject; Changes: TSynStatusChanges);
 
   private
     TabRightClickIndex: Integer;
@@ -527,7 +528,7 @@ uses
   about, BezWindow, sorting, splash, 
   BMP2LDraw, dlgSubpart, windowsspecific,
   DATModel, DATUtils, DATCheck, DATErrorFix,
-  StrUtils, Registry, IniFiles, SciResLang, Contnrs, DATColour;
+  StrUtils, Registry, IniFiles, Contnrs, DATColour;
 
 // General Editor Actions
 
@@ -617,7 +618,7 @@ end;
 procedure TLDDPMain.acInsertHistoryStatementExecute(Sender: TObject);
 // Insert standard update line
 begin
-  editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos),
+  editor.Lines.Insert(editor.CaretX,
                '0 !HISTORY ' + FormatDateTime('yyyy-mm-dd', Now) + ' [' +
                editor.LDDPOptions.Username + '] Update description');
   editor.Modified := true;
@@ -783,12 +784,12 @@ begin
                    ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesNormAngle) or
                    ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit24) or
                    ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit13) then
-                  case MessageDlg(_('Combining these triangles:') + #13#10 +
-                                    line1.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i) + ')' + #13#10 +
-                                    line2.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelStart) + i + 1) + ')' + #13#10 +
-                                    _('gives the following error:') + #13#10 +
+                  case MessageDlg('Combining these triangles:' + #13#10 +
+                                    line1.DATString + ' (Line: ' + IntToStr(editor.CharIndexToRowCol(editor.SelStart).Line + i) + ')' + #13#10 +
+                                    line2.DATString + ' (Line: ' + IntToStr(editor.CharIndexToRowCol(editor.SelStart).Line + i + 1) + ')' + #13#10 +
+                                    'gives the following error:' + #13#10 +
                                     GetErrorString(errorlist[j] as TDATError) + #13#10 + #13#10 +
-                                    _('Combine anyway?'), mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
+                                    'Combine anyway?', mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
                     mrNo:
                     begin
                       DoNotCombine := True;
@@ -844,7 +845,7 @@ procedure TLDDPMain.acLDViewExecute(Sender: TObject);
 // Execute LDView with active file
 begin
   if (not FileExists(editor.LDDPOptions.LDViewPath + '\LDVIEW.exe')) then begin
-    MessageDlg(_('You have to specify a valid path to LDView.exe first!'), mtError, [mbOK], 0);
+    MessageDlg('You have to specify a valid path to LDView.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     Exit;
   end;
@@ -856,12 +857,12 @@ procedure TLDDPMain.acMLCadExecute(Sender: TObject);
 // Execute MLCad with active file
 begin
   if editor.Modified then
-    if MessageDlg(_('File has been modified. ' + #13#10 +
+    if MessageDlg('File has been modified. ' + #13#10 +
                     'Do you want to save and then view the file in MLCad ' + #13#10 +
-                    'or cancel the operation?'), mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
+                    'or cancel the operation?', mtWarning, [mbOK, mbCancel], 0) =mrcancel then exit;
       acFileSaveExecute(Sender);
   if (not FileExists(editor.LDDPOptions.MLCadPath + '\MLCAD.exe')) then begin
-    MessageDlg(_('You have to specify a valid path to MLCad.exe first!'), mtError, [mbOK], 0);
+    MessageDlg('You have to specify a valid path to MLCad.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     Exit;
   end;
@@ -901,7 +902,7 @@ begin
   ExProgram.CommaText := editor.LDDPOptions.ExternalProgramList[(Sender as TAction).ActionComponent.Tag];
   if not FileExists(ExProgram[1]) then
   begin
-    MessageDlg(_('You have to specify a valid external program first!'), mtError, [mbOK], 0);
+    MessageDlg('You have to specify a valid external program first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
   end;
@@ -926,7 +927,7 @@ procedure TLDDPMain.acL3LabExecute(Sender: TObject);
 begin
   if (not FileExists(editor.LDDPOptions.L3LabPath + '\L3Lab.exe')) then
   begin
-    MessageDlg(_('You have to specify a valid path to L3Lab.exe first!'), mtError, [mbOK], 0);
+    MessageDlg('You have to specify a valid path to L3Lab.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
     exit;
   end;
@@ -940,7 +941,6 @@ procedure TLDDPMain.acFileNewExecute(Sender: TObject);
 // Creates a new untitled document
 begin
   DocumentTabs.NewDocument;
-  DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 end;
 
 procedure TLDDPMain.acFileOpenExecute(Sender: TObject);
@@ -967,16 +967,15 @@ begin
   begin
     DocumentTabs.Open(filename);
     UpdateMRU(filename);
-    DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
   end
   else
-    MessageDlg(_('File ') + DocumentTabs.ActiveDocument.Filename + _(' not found'), mtError, [mbOK], 0);
+    MessageDlg('File ' + DocumentTabs.ActiveDocument.Filename + ' not found', mtError, [mbOK], 0);
 end;
 
 procedure TLDDPMain.acFileSaveExecute(Sender: TObject);
 // Save file to disk if it already exists otherwise run Save As
 begin
-  SaveFile(DocumentTabs.ActiveDocument.Index);
+  SaveFile(DocumentTabs.ActiveDocument.DocIndex);
 end;
 
 procedure TLDDPMain.acFileSaveAsExecute(Sender: TObject);
@@ -990,7 +989,7 @@ begin
       UpdateMRU(SaveDialog1.FileName);
     DocumentTabs.ActiveDocument.FileName := SaveDialog1.FileName;
     DocumentTabs.ActiveDocument.TabName := ExtractFileName(DocumentTabs.ActiveDocument.FileName);
-    SaveFile(DocumentTabs.ActiveDocument.Index);
+    SaveFile(DocumentTabs.ActiveDocument.DocIndex);
   end;
 end;
 
@@ -1014,7 +1013,7 @@ begin
     acFileSaveAs.Execute
   else
   begin
-    editor.SaveToFile(DocumentTabs.ActiveDocument.Filename);
+    editor.Lines.SaveToFile(DocumentTabs.ActiveDocument.Filename);
     DocumentTabs.ActiveDocument.Modified := editor.Modified;
     SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
     DocumentTabs.ActiveDocument.LastChanged := fileage;
@@ -1030,8 +1029,8 @@ end;
 procedure TLDDPMain.acFileRevertExecute(Sender: TObject);
 // Reloads active document losing any changes
 begin
-  if MessageDlg(_('Reload last saved version?' + #13#10 +
-                  'All changes will be lost!'), mtConfirmation, [mbYes, mbNo], 0)=mrYes then
+  if MessageDlg('Reload last saved version?' + #13#10 +
+                  'All changes will be lost!', mtConfirmation, [mbYes, mbNo], 0)=mrYes then
     OpenFile(DocumentTabs.ActiveDocument.FileName);
 end;
 
@@ -1048,18 +1047,12 @@ end;
 procedure TLDDPMain.acFileCloseExecute(Sender: TObject);
 // Close tab under cursor
 begin
-  CloseFile(DocumentTabs.ActiveDocument.Index);
+  CloseFile(DocumentTabs.ActiveDocument.DocIndex);
 end;
 
 procedure TLDDPMain.CloseFile(DocNumber: Integer);
-var
-  LastTab: Boolean;
-
 begin
-  LastTab := DocumentTabs.Count <= 1;
   DocumentTabs.Close(DocNumber);
-  if LastTab then
-    DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
 end;
 
 procedure TLDDPMain.CloseFile1Click(Sender: TObject);
@@ -1090,41 +1083,12 @@ procedure TLDDPMain.acOptionsExecute(Sender: TObject);
 // Show options window
 begin
   OptionsDlg.Execute;
-  editorUpdateUI(Sender);
+  if DirectoryExists(editor.LDDPOptions.LDrawPath) then
+    LDrawBasePath := editor.LDDPOptions.LDrawPath;
+  editorStatusChange(Sender,[scAll]);
+  MakeColorBar;
+  MakeExternalPrograms;
 end;
-(*
-//  editor.OnlyRoundDuringAutoRound := LDDPOptionsFrm.cboAutoRoundOnly.Checked;
-//  editor.PositionDecimalPlaces := LDDPOptionsFrm.sePntAcc.Value;
-//  editor.RotationDecimalPlaces := LDDPOptionsFrm.seRotAcc.Value;
-//  mnuUserDefined.Enabled := LDDPOptionsFrm.ExternalProgramList.Count > 0;
-//  tbUserDefined.Enabled := LDDPOptionsFrm.ExternalProgramList.Count > 0;
-  acPollCustom.Tag := LDDPOptionsFrm.seCustomPollInterval.Value * 1000;
-
-  case GridType of
-    gtCoarse:
-    begin
-      GridSetting.XStep := LDDPOptionsFrm.seGridCoarseX.Value;
-      GridSetting.YStep := LDDPOptionsFrm.seGridCoarseY.Value;
-      GridSetting.ZStep := LDDPOptionsFrm.seGridCoarseZ.Value;
-      GridSetting.Angle := LDDPOptionsFrm.seGridCoarseAngle.Value;
-    end;
-    gtMedium:
-    begin
-      GridSetting.XStep := LDDPOptionsFrm.seGridMediumX.Value;
-      GridSetting.YStep := LDDPOptionsFrm.seGridMediumY.Value;
-      GridSetting.ZStep := LDDPOptionsFrm.seGridMediumZ.Value;
-      GridSetting.Angle := LDDPOptionsFrm.seGridMediumAngle.Value;
-    end;
-    gtFine:
-    begin
-      GridSetting.XStep := LDDPOptionsFrm.seGridFineX.Value;
-      GridSetting.YStep := LDDPOptionsFrm.seGridFineY.Value;
-      GridSetting.ZStep := LDDPOptionsFrm.seGridFineZ.Value;
-      GridSetting.Angle := LDDPOptionsFrm.seGridFineAngle.Value;
-    end;
-  end;
-end;
-*)
 
 procedure TLDDPMain.acHomepageExecute(Sender: TObject);
 // Open LDDP project homepage
@@ -1138,7 +1102,7 @@ begin
   if FileExists((Sender as TMenuItem).Caption) then
     OpenFile((Sender as TMenuItem).Caption)
   else
-    MessageDlg(_('File ') + (Sender as TMenuItem).Caption + _(' not found!'), mtError, [mbOK], 0);
+    MessageDlg('File ' + (Sender as TMenuItem).Caption + ' not found!', mtError, [mbOK], 0);
 end;
 
 procedure TLDDPMain.acBMP2LDrawExecute(Sender: TObject);
@@ -1164,7 +1128,7 @@ var
 begin
   if (not FileExists(editor.LDDPOptions.LSynthPath + '\lsynthcp.exe')) then
   begin
-    MessageDlg(_('You have to specify a valid path to lsynthcp.exe first!'), mtError, [mbOK], 0);
+    MessageDlg('You have to specify a valid path to lsynthcp.exe first!', mtError, [mbOK], 0);
     acOptionsExecute(Sender);
   end
   else
@@ -1241,7 +1205,7 @@ var
 
 begin
     editor.ExpandSelection(startline, endline);
-    editor.BeginUndoAction;
+    editor.BeginUndoBlock;
     for i := startline to endline do
     begin
       Randomize;
@@ -1255,7 +1219,7 @@ begin
           RandColor := Trunc(Random(16));
       editor.SetLineColor(i, RandColor);
     end;
-    editor.EndUndoAction;
+    editor.EndUndoBlock;
     editor.SelectLines(startline, endline);
 end;
 
@@ -1270,27 +1234,18 @@ begin
 end;
 
 procedure TLDDPMain.acEditorOptionsExecute(Sender: TObject);
-// Show the Scintilla editor options
+// Show the editor options form
+var
+  op: TSynEditorOptionsContainer;
+
 begin
-  with TSciOptionsForm.Create(Self) do
-  begin
-    OptionPages.ActivePage := OptionsPage;
-
-    //Hide/Disable controls that aren't relavent to LDDP
-    LanguageCBBox.Visible := false;
-    KeyListAdd.Visible := false;
-    KeyListDelete.Visible := false;
-    otherPage.TabVisible := false;
-    AddStyleB.Visible := false;
-    DeleteStyleB.Visible := false;
-    StyleNumberSE.ReadOnly := true;
-    KeyListNumberSE.ReadOnly := true;
-    OptionPages.OnChange := nil;
-
-    Editor := LDDPMain.editor;
-    if ShowModal = mrOK then
-      EditorPropertyLoader.Save;
-    Free;
+  op := TSynEditorOptionsContainer.Create(nil);
+  try
+    op.Assign(editor);
+    if EditorOptions.Execute(op) then
+      op.AssignTo(editor);
+  finally
+    op.Free;
   end;
 end;
 
@@ -1426,13 +1381,13 @@ end;
 procedure TLDDPMain.acFindExecute(Sender: TObject);
 // Execute Find Dialogue
 begin
-  SearchReplaceDlg.ShowSearchDialog;
+//  SearchReplaceDlg.ShowSearchDialog;
 end;
 
 procedure TLDDPMain.acReplaceExecute(Sender: TObject);
 // Execute Replace Dialogue
 begin
-  SearchReplaceDlg.ShowReplaceDialog;
+//  SearchReplaceDlg.ShowReplaceDialog;
 end;
 
 procedure TLDDPMain.acReplaceColorExecute(Sender: TObject);
@@ -1444,7 +1399,7 @@ end;
 procedure TLDDPMain.acFindNextExecute(Sender: TObject);
 // Find Next occurence of a previous find procedure
 begin
-  SearchReplaceDlg.DoSearchReplaceText(false,SearchReplaceDlg.SearchBackwards);
+//  SearchReplaceDlg.DoSearchReplaceText(false,SearchReplaceDlg.SearchBackwards);
 end;
 
 procedure TLDDPMain.acColorReplaceShortcutExecute(Sender: TObject);
@@ -1454,10 +1409,10 @@ var
 
 begin
     editor.ExpandSelection(startline, endline);
-    editor.BeginUndoAction;
+    editor.BeginUndoBlock;
     for i := startline to endline do
       editor.SetLineColor(i, (Sender as TComponent).Tag);
-    editor.EndUndoAction;
+    editor.EndUndoBlock;
     editor.SelectLines(startline, endline);
 end;
 
@@ -1588,34 +1543,9 @@ begin
   end;
 end;
 
-procedure TLDDPMain.editorModified(Sender: TObject; const position,
-  modificationType: Integer; text: PAnsiChar; const len, linesAdded, line,
-  foldLevelNow, foldLevelPrev: Integer);
-begin
-  DocumentTabs.ActiveDocument.Modified := editor.Modified;
-  if DocumentTabs.ActiveDocument.Modified then
-  begin
-    if DocumentTabs.ActiveDocument.IsUntitled then
-      DocumentTabs.ActiveDocument.TabName :=
-        '<' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + '> *'
-    else
-      DocumentTabs.ActiveDocument.TabName :=
-        ExtractFileName(DocumentTabs.ActiveDocument.FileName) + ' *';
-    Statusbar.Panels[2].Text:=_('Modified')
-  end
-  else
-  begin
-    if DocumentTabs.ActiveDocument.IsUntitled then
-      DocumentTabs.ActiveDocument.TabName :=
-        '<' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + '>'
-    else
-      DocumentTabs.ActiveDocument.TabName :=
-        ExtractFileName(DocumentTabs.ActiveDocument.FileName);
-    Statusbar.Panels[2].Text:='';
-  end;
-end;
-
-procedure TLDDPMain.editorUpdateUI(Sender: TObject);
+*)
+procedure TLDDPMain.editorStatusChange(Sender: TObject;
+  Changes: TSynStatusChanges);
 var
   i: Integer;
   DLine: TDATType;
@@ -1640,7 +1570,7 @@ begin
   begin
     acInline.Enabled := False;
 
-    for i := editor.LineFromPosition(editor.SelStart) to editor.LineFromPosition(editor.SelStart+editor.SelLength) do
+    for i := editor.CharIndexToRowCol(editor.SelStart).Line to editor.CharIndexToRowCol(editor.SelEnd).Line do
     begin
       DLine := StrToDAT(editor.Lines[i]);
       if DLine.LineType = ltSubpart then
@@ -1663,8 +1593,8 @@ begin
   end;
 
   // Check style state and enable auto complete and call tips for linetype 1 file
-  AutoComplete.Disabled := (editor.GetStyleAt(editor.GetCurrentPos) <> 16) and
-                           (editor.GetStyleAt(editor.GetCurrentPos) <> 17);
+//  AutoComplete.Disabled := (editor.GetStyleAt(editor.GetCurrentPos) <> 16) and
+//                           (editor.GetStyleAt(editor.GetCurrentPos) <> 17);
 
   // Check external changes
   if (not DocumentTabs.ActiveDocument.IsUntitled) and
@@ -1673,16 +1603,41 @@ begin
     SysUtils.FileAge(DocumentTabs.ActiveDocument.FileName, fileage);
     if fileage <> DocumentTabs.ActiveDocument.LastChanged then
     begin
-      if MessageDlg(_('File has been externally changed.' + #13#10 +
+      if MessageDlg('File has been externally changed.' + #13#10 +
                       'Reload last saved version?' + #13#10 +
-                      'All changes will be lost!'),
+                      'All changes will be lost!',
                     mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
         OpenFile(DocumentTabs.ActiveDocument.FileName);
       DocumentTabs.ActiveDocument.LastChanged := fileage;
     end;
   end;
+
+  DocumentTabs.ActiveDocument.Modified := editor.Modified;
+  if DocumentTabs.ActiveDocument.Modified then
+  begin
+    if DocumentTabs.ActiveDocument.IsUntitled then
+      DocumentTabs.ActiveDocument.TabName :=
+        '<' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + '> *'
+    else
+      DocumentTabs.ActiveDocument.TabName :=
+        ExtractFileName(DocumentTabs.ActiveDocument.FileName) + ' *';
+    Statusbar.Panels[2].Text:='Modified';
+  end
+  else
+  begin
+    if DocumentTabs.ActiveDocument.IsUntitled then
+      DocumentTabs.ActiveDocument.TabName :=
+        '<' + ExtractFileName(DocumentTabs.ActiveDocument.FileName) + '>'
+    else
+      DocumentTabs.ActiveDocument.TabName :=
+        ExtractFileName(DocumentTabs.ActiveDocument.FileName);
+    Statusbar.Panels[2].Text:='';
+  end;
+
 end;
-*)
+
+//procedure TLDDPMain.editorUpdateUI(Sender: TObject);
+
 procedure TLDDPMain.FormDblClick(Sender: TObject);
 // Opens the file open dialog if the background is double clicked
 begin
@@ -1692,7 +1647,6 @@ end;
 procedure TLDDPMain.FormCreate(Sender: TObject);
 begin
 //  frMain.OnActivate := DocumentTabsChange;
-  TranslateComponent(Self);
   DragAcceptFiles(Handle,True);
   Initialized := False;
   PluginActionList := TActionList.Create(Self);
@@ -1717,7 +1671,7 @@ begin
   SplashScreen := TLDDPSplash.Create(Application);
   try
     //Show splash screen
-    SplashScreen.lbState.Caption:=_('Initializing plugins...');
+    SplashScreen.lbState.Caption:='Initializing plugins...';
     SplashScreen.show;
     SplashScreen.update;
     Screen.Cursor := crHourGlass;
@@ -1725,7 +1679,7 @@ begin
     // Check if the App Data folder exists and create it if not
     if not DirectoryExists(GetShellFolderPath('AppData') + '\LDDP') then
       CreateDir(GetShellFolderPath('AppData') + '\LDDP');
-    CopyFile(PAnsiChar(ExtractFilePath(Application.ExeName) + '\uiconfig.ini'), PAnsiChar(GetShellFolderPath('AppData') + '\LDDP\uiconfig.ini'), false);
+    CopyFile(PWideChar(ExtractFilePath(Application.ExeName) + '\uiconfig.ini'), PWideChar(GetShellFolderPath('AppData') + '\LDDP\uiconfig.ini'), false);
 
     //Load form parameters from INI file
     acMoveGridCoarse.Execute;
@@ -1741,13 +1695,12 @@ begin
     acViewEditToolbar.Checked := tbrEditing.Visible;
     acViewColorReplaceToolbar.Checked := tbrColorReplace.Visible;
 
-    editor.CallTipSetFore(clBlack);
+ //   editor.CallTipSetFore(clBlack);
 
     //Set editor properties filename and load properties
-    EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
-    if FileExists(EditorPropertyLoader.FileName) then
-      EditorPropertyLoader.Load;
-    DocumentTabs.ActiveDocument.Highlighter := 'LDraw';
+ //   EditorPropertyLoader.FileName := GetShellFolderPath('AppData') + '\LDDP\' + EditorPropertyLoader.FileName;
+ //   if FileExists(EditorPropertyLoader.FileName) then
+ //     EditorPropertyLoader.Load;
 
     //Set InstallDir in registry for legacy plugin support
     regT := TRegistry.Create;
@@ -1764,7 +1717,7 @@ begin
     //Set the keywordlist for the syntax highlighter
     if DirectoryExists(LDrawBasePath) then
       SetKeyWordList;
-    AutoComplete.AStrings.Text := LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords.Text;
+//    AutoComplete.AStrings.Text := LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords.Text;
 
     // Set initial directory to that of the last opened file
     // or home directory if no file is listed
@@ -1794,52 +1747,61 @@ var
   i, code: Integer;
 
 begin
-  if (editor.LDDPOptions.ColorBarList.Count < 15) and
-     DirectoryExists(LDrawBasePath) then
+  if (editor.LDDPOptions.ColorBarList.Count < 15) then
   begin
-    i := 0;
-    while i < 15 do
+    if FileExists(LDrawBasePath + PathDelim + 'ldconfig.ldr') then
     begin
-      code := CList.IndexOfColourCode(i);
-      if code >= 0 then
+      CList := MakeStandardDATColourList;
+      i := 0;
+      while i < 16 do
       begin
-        editor.LDDPOptions.ColorBarList[i] := '"' + StringReplace(CList[code].ColourName, '_', ' ', [rfReplaceAll]) + '",' +
-                           IntToStr(CList[code].Code) + ',' +
-                           IntToStr(CList[code].MainColour);
-        inc(i);
+        code := CList.IndexOfColourCode(i);
+        if code >= 0 then
+        begin
+          editor.LDDPOptions.ColorBarList.Add('"' + StringReplace(CList[code].ColourName, '_', ' ', [rfReplaceAll]) + '",' +
+                             IntToStr(CList[code].Code) + ',' +
+                             IntToStr(CList[code].MainColour));
+          inc(i);
+        end;
       end;
+      CList.Free;
+    end
+    else
+    begin
+      for i := 0 to 15 do
+        editor.LDDPOptions.ColorBarList.Add('"Black",0,0');
     end;
   end;
 
   CurrentItem := TStringList.Create;
   if editor.LDDPOptions.ColorBarList.Count >= 15 then
-  for i := 0 to 15 do
-  begin
-    CurrentItem.CommaText := editor.LDDPOptions.ColorBarList[i];
-    ImageColor := StrToInt(CurrentItem[2]);
-    ColorButtonBitmap := TBitmap.Create;
-    ColorButtonBitmap.Width := 16;
-    ColorButtonBitmap.Height := 16;
-    ColorButtonBitmap.PixelFormat := pf24bit;
-
-    with ColorButtonBitmap.Canvas do
+    for i := 0 to 15 do
     begin
-      Pen.Color := $00000000;
-      Brush.Color := clFuchsia;
-      FillRect(Rect(0,0,16,16));
-      Brush.Color := ImageColor;
-      FillRect(Rect(2,2,14,14));
-      Polygon([Point(1,1), Point(1,14), Point (14,14), Point(14,1)]);
-    end;
+      CurrentItem.CommaText := editor.LDDPOptions.ColorBarList[i];
+      ImageColor := StrToInt(CurrentItem[2]);
+      ColorButtonBitmap := TBitmap.Create;
+      ColorButtonBitmap.Width := 16;
+      ColorButtonBitmap.Height := 16;
+      ColorButtonBitmap.PixelFormat := pf24bit;
 
-    with LDDPMain.tbrColorReplace.Buttons[i] do
-    begin
-      ImageIndex := LDDPMain.ilProgramIcons.AddMasked(ColorButtonBitmap, clFuchsia);
-      Hint := CurrentItem[0] + ' ' + CurrentItem[1];
-      Caption := CurrentItem[0] + ' ' + CurrentItem[1];
-      Tag := StrToInt(CurrentItem[1]);
-    end;
-    ColorButtonBitmap.Free;
+      with ColorButtonBitmap.Canvas do
+      begin
+        Pen.Color := $00000000;
+        Brush.Color := clFuchsia;
+        FillRect(Rect(0,0,16,16));
+        Brush.Color := ImageColor;
+        FillRect(Rect(2,2,14,14));
+        Polygon([Point(1,1), Point(1,14), Point (14,14), Point(14,1)]);
+      end;
+
+      with LDDPMain.tbrColorReplace.Buttons[i] do
+      begin
+        ImageIndex := LDDPMain.ilProgramIcons.AddMasked(ColorButtonBitmap, clFuchsia);
+        Hint := CurrentItem[0] + ' ' + CurrentItem[1];
+        Caption := CurrentItem[0] + ' ' + CurrentItem[1];
+        Tag := StrToInt(CurrentItem[1]);
+      end;
+      ColorButtonBitmap.Free;
   end;
   CurrentItem.Free;
 end;
@@ -1877,7 +1839,7 @@ end;
 procedure TLDDPMain.MetaMenuClick(Sender: TObject);
 // Insert the selected meta command
 begin
-  editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos), '0 ' +
+  editor.Lines.Insert(editor.CaretXY.Line, '0 ' +
                       (Sender as TMenuItem).Hint);
 end;
 
@@ -1888,7 +1850,7 @@ var
 
 begin
   // Set official part autocomplete
-  with LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords do
+(*  with LanguageManager.LanguageList.Find('LDraw').Keywords[0].Keywords do
   begin
     Clear;
     if FindFirst(LDrawBasePath + '\parts\*.dat', faAnyFile, sc) = 0 then
@@ -1911,7 +1873,7 @@ begin
   end;
   // Set Meta command auto complete
   with LanguageManager.LanguageList.Find('LDraw').Keywords[1].Keywords do
-    CommaText := ReadUIConfigValue('MetaCommands');
+    CommaText := ReadUIConfigValue('MetaCommands'); *)
 end;
 
 procedure TLDDPMain.DocumentTabsChange(Sender: TObject);
@@ -2024,7 +1986,7 @@ begin
 
   if PluginMenu.Count = 0 then
   begin
-    PluginMenuItem := CreateMenuItem(_('None Found'), '', PluginMenu);
+    PluginMenuItem := CreateMenuItem('None Found', '', PluginMenu);
     PluginMenuItem.Enabled := false;
     PluginMenu.Insert(PluginMenu.Count, PluginMenuItem);
   end;
@@ -2057,7 +2019,10 @@ begin
       editor.Lines.Text := strChangedCompleteText;
 
     if s2 <> 0 then
-      editor.SetSel(s1, s1 + s2);
+    begin
+      editor.SelStart := s1;
+      editor.SelEnd := s2;
+    end;
   end;
 end;
 
@@ -2184,10 +2149,13 @@ begin
     acPollCustom.Execute;
   if LDDPini.ReadBool(IniSection, 'acPollOnDemand_Checked', acPollOnDemand.Checked) then
     acPollOnDemand.Execute;
-  SearchReplaceDlg.ReplaceTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
-  SearchReplaceDlg.SearchTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
+//  SearchReplaceDlg.ReplaceTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
+//  SearchReplaceDlg.SearchTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
 
   editor.LDDPOptions.Load(IniFilePath + '\LDDP.ini', 'LDDP Options');
+  if DirectoryExists(editor.LDDPOptions.LDrawPath) then
+    LDrawBasePath := editor.LDDPOptions.LDrawPath;
+
   MakeExternalPrograms;
   MakeColorBar;
 
@@ -2252,6 +2220,8 @@ var
   i: Integer;
 
 begin
+  editor.LDDPOptions.Save(IniFilePath + '\LDDP.ini', 'LDDP Options');
+
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
 
   // Save Main position, size, and toolbar visibility
@@ -2286,8 +2256,8 @@ begin
   LDDPini.WriteBool(IniSection, 'acPollCustom_Checked', acPollCustom.Checked);
   LDDPini.WriteBool(IniSection, 'acPollOnDemand_Checked', acPollOnDemand.Checked);
 
-  LDDPini.WriteString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
-  LDDPini.WriteString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
+//  LDDPini.WriteString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
+//  LDDPini.WriteString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
 
   LDDPini.UpdateFile;
   LDDPini.Free;
@@ -2308,11 +2278,11 @@ begin
   for i := DocumentTabs.Count - 1 downto 0 do
   begin
     if DocumentTabs.Document[i].Modified then
-      case MessageDlg(_('Save changes to ' + DocumentTabs.Document[i].FileName + '?'
+      case MessageDlg('Save changes to ' + DocumentTabs.Document[i].FileName + '?'
                       + #13#10 + #13#10 +
                       'Yes: Saves the changes and closes this document.' + #13#10 +
                       'No: Closes the document without saving any changes.' + #13#10 +
-                      'Cancel: Keeps the document open'),
+                      'Cancel: Keeps the document open',
                       mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
         mrYes: acFileSave.Execute;
         mrCancel:
@@ -2326,7 +2296,7 @@ begin
       DeleteFile(tempFilename);
   end;
   SaveFormValues;
-  EditorPropertyLoader.Save;
+//  EditorPropertyLoader.Save;
   PluginActionList.Free;
 end;
 
@@ -2337,7 +2307,7 @@ end;
 
 procedure TLDDPMain.acFindNextUpdate(Sender: TObject);
 begin
-  acFindNext.Enabled := SearchReplaceDlg.SearchText <> '';
+//  acFindNext.Enabled := SearchReplaceDlg.SearchText <> '';
 end;
 
 procedure TLDDPMain.tbUserDefinedClick(Sender: TObject);

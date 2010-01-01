@@ -20,7 +20,7 @@ unit dlgSubpart;
 interface
 
 uses
-  gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, ExtCtrls;
 
 type
@@ -122,7 +122,7 @@ begin
     subfilename := ExtractFilePath(LDDPMain.DocumentTabs.ActiveDocument.FileName) + edFileName.Text;
 
     if FileExists(subfilename) and
-       (MessageDlg(_('File of same name already exists.  Overwrite?'),
+       (MessageDlg('File of same name already exists.  Overwrite?',
                    mtWarning, mbOKCancel, 0) <> mrOk) then
       Exit;
 
@@ -134,7 +134,6 @@ end;
 
 procedure TLDDPSubFileDlg.FormCreate(Sender: TObject);
 begin
-  TranslateComponent (self);
   CategoryCombo.Items.CommaText := ReadUIConfigValue('LDrawCategories');
 end;
 

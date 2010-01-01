@@ -20,7 +20,7 @@ unit about;
 interface
 
 uses
-  gnugettext, Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  Types, Classes, Variants, Graphics, Controls, Forms, Dialogs, StdCtrls,
   ExtCtrls, SysUtils, Buttons, ComCtrls;
   
 type
@@ -37,7 +37,6 @@ type
     TabSheet2: TTabSheet;
     Memo2: TMemo;
     procedure FormShow(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -60,13 +59,8 @@ begin
   if GetAppVersion(Application.ExeName) <> '' then
     Version.Caption := Version.Caption + ': ' + GetAppVersion(Application.ExeName)
   else
-    Version.Caption := _('Version information not available');
+    Version.Caption := 'Version information not available';
   PageControl1.ActivePageIndex := 0;
-end;
-
-procedure TLDDPAbout.FormCreate(Sender: TObject);
-begin
-  TranslateComponent(self);
 end;
 
 end.

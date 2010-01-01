@@ -32,9 +32,10 @@ requires
 contains
   SciScintillaLDDP in 'SciScintillaLDDP.pas',
   DATBase in '..\..\DAT Tools\DATBase.pas',
-  DATUtils in '..\..\DAT Tools\DATUtils.pas',
-  DATModel in '..\..\DAT Tools\DATModel.pas',
+  DATColour in '..\..\DAT Tools\DATColour.pas',
   DATMath in '..\..\DAT Tools\DATMath.pas',
-  DATColour in '..\..\DAT Tools\DATColour.pas';
+  DATModel in '..\..\DAT Tools\DATModel.pas',
+  DATUtils in '..\..\DAT Tools\DATUtils.pas',
+  lddpoptions in '..\..\lddp\lddpoptions.pas';
 
 end.

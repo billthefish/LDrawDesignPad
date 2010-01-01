@@ -20,7 +20,7 @@ unit BMP2LDraw;
 interface
 
 uses
-  gnugettext, SysUtils, Graphics, Controls, Forms, Menus,
+  SysUtils, Graphics, Controls, Forms, Menus,
   Types, Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls,
   Classes, DATColour;
 
@@ -72,7 +72,6 @@ type
     procedure BitBtn6Click(Sender: TObject);
     procedure BitBtn4Click(Sender: TObject);
     procedure TabSheet3Show(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
 
   private
     ColourList: TDATColourList;
@@ -171,7 +170,7 @@ begin
     y4 := 0;
     if StrToFloat(edWidth.Text) = 0 then
     begin
-      MessageDlg(_('LDraw unit size cannot be 0.0 !'), mtError, [mbOK], 0);
+      MessageDlg('LDraw unit size cannot be 0.0 !', mtError, [mbOK], 0);
       Exit;
     end;
   end
@@ -180,7 +179,7 @@ begin
     try
       quad.DATString := edQuad.text;
     except
-      MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
+      MessageDlg('You entered an invalid Quadliteral line!', mtError, [mbOK], 0);
       Exit;
     end;
 
@@ -200,7 +199,7 @@ begin
       pwzx := (quad.z1 - z3) / Image1.Width;
       pwzy := (quad.z1 - z3) / Image1.Height;
     except
-      MessageDlg(_('You entered an invalid Quadliteral line!'), mtError, [mbOK], 0);
+      MessageDlg('You entered an invalid Quadliteral line!', mtError, [mbOK], 0);
       Exit;
     end;
   end;
@@ -376,7 +375,7 @@ end;
 
 procedure TLDDPBMP2LDrawDlg.BitBtn6Click(Sender: TObject);
 begin
-  Edit1.Text := _('None');
+  Edit1.Text := 'None';
   Edit1.Color := clWindow;
   Edit1.Font.Color := clBlack;
 end;
@@ -394,11 +393,6 @@ begin
   else
     btSave.Enabled := (edQuad.Text <> '');
 
-end;
-
-procedure TLDDPBMP2LDrawDlg.FormCreate(Sender: TObject);
-begin
-  TranslateComponent(Self);
 end;
 
 end.

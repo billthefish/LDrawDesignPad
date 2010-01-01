@@ -20,7 +20,7 @@ unit sorting;
 interface
 
 uses
-  gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Buttons, ExtCtrls;
 
 type
@@ -38,7 +38,6 @@ type
     Label3: TLabel;
     cbSort3: TComboBox;
     PreserveMPD: TCheckBox;
-    procedure FormCreate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
   private
@@ -102,11 +101,6 @@ begin
       rgScope.ItemIndex := 1
     else
       rgScope.ItemIndex := 0;
-end;
-
-procedure TLDDPSortDlg.FormCreate(Sender: TObject);
-begin
-  TranslateComponent (self);
 end;
 
 end.

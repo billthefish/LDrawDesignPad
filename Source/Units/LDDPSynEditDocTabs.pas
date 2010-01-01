@@ -3,7 +3,7 @@ unit LDDPSynEditDocTabs;
 interface
 
 uses
-  Windows, Classes, Controls, Contnrs, ComCtrls, Messages, LDDPSynEdit,
+  Windows, Classes, Controls, Contnrs, ComCtrls, Messages, SynEdit,
   SynEditTypes;
 
 type
@@ -16,7 +16,7 @@ type
 
   TLDDPDoc = class(TObject)
   private
-    FEditor: TLDDPSynEdit;
+    FEditor: TCustomSynEdit;
     FTabCtrl: TCustomTabControl;
     FTabName: string;
     FFileName: string;
@@ -36,14 +36,15 @@ type
     procedure AssignToEditor;
     procedure SetModified(const Value : Boolean);
     property  OnChanged : TNotifyEvent read FOnChanged write FOnChanged; // Used by TLDDPDocumentTabControl, internal
+
   public
-    constructor Create(pp : TLDDPSynEdit; ttabctrl : TLDDPDocumentTabControl; const getcurrent : Boolean=false);
-    destructor Destroy; override;
+    constructor Create(pp: TCustomSynEdit; ttabctrl: TLDDPDocumentTabControl; const getcurrent: Boolean=false);
     procedure Activate;
     function IsUntitled: Boolean;
     function IsActive: Boolean;
     procedure Close;
     property TabName: string read FTabName Write SetTabName;
+
   published
     property Text: string read FText write FText;
     property FileName: String read FFileName write SetFileName;
@@ -55,7 +56,7 @@ type
   TLDDPDocumentTabControl = class(TCustomTabControl)
     private
       FDocs: TObjectList;
-      FEditor: TLDDPSynEdit;
+      FEditor: TCustomSynEdit;
       FOnClosing: TLDDPEvent_onclosing;
       FOnOpenedAndInited: TLDDPEvent_openedandinited;
       FOnTabHint: TLDDPEvent_onhint;
@@ -66,7 +67,7 @@ type
       procedure EvtTabChanged(Sender: TObject);
       function getCount: Integer;
       function GetDocItm(const Index: Integer): TLDDPDoc;
-      procedure SetEditor(Value: TLDDPSynEdit);
+      procedure SetEditor(Value: TCustomSynEdit);
       function GetActiveDocument: TLDDPDoc;
 
       procedure SetDefaultExt(const Value: String);
@@ -82,6 +83,7 @@ type
       procedure DoTabHint(const TabIndex: Integer; var HintText: string; Doc :TLDDPDoc); virtual;
       procedure CMHintShow(var Message: TMessage); message CM_HINTSHOW;
       procedure Change; override;
+
     public
       constructor Create(AOwner: TComponent);override;
       destructor Destroy; override;
@@ -98,9 +100,9 @@ type
       property Tabs;
       property TabIndex;  // must be after Tabs
       property ActiveDocument: TLDDPDoc read GetActiveDocument;
+
     published
-      // The current editor used.
-      property Editor: TLDDPSynEdit read fEditor write SetEditor;
+      property Editor: TCustomSynEdit read fEditor write SetEditor;
       property Align;
       property Anchors;
       property BiDiMode;
@@ -140,9 +142,7 @@ type
       property OnUnDock;
       property TabStop default False;
       property DefaultExt: string read FDefaultExt write SetDefaultExt;
-      // Fired when a Tab is about to be removed etc. Good place for confirmation dialogs etc.
       property OnClosing: TLDDPEvent_onclosing read FOnClosing write FOnClosing;
-      // This event is only active when a descentant of TScintilla is used
       property OnOpenedAndInited: TLDDPEvent_openedandinited read FOnOpenedAndInited write FOnOpenedAndInited;
       property OnTabHint: TLDDPEvent_onhint read FOnTabHint write FOnTabHint;
   end;
@@ -154,7 +154,7 @@ implementation
 uses
   SysUtils;
 
-var
+const
   sUntitled: string = 'Untitled';
   sReload: string = 'Document changed, reload?';
   sConfirmation: string = 'Confirm?';
@@ -170,7 +170,7 @@ begin
   TabStop := False;
   ShowHint := True;
   FDefaultExt := '.dat';
-  FDefaultTabName:='<' + sUntitled + FDefaultExt + '>';
+  FDefaultTabName := '<' + sUntitled + FDefaultExt + '>';
   ControlStyle := ControlStyle - [csAcceptsControls];
 end;
 
@@ -178,13 +178,10 @@ destructor TLDDPDocumentTabControl.Destroy;
 var
   i: Integer;
 
-  begin
+begin
   if Assigned(FDocs) and Assigned(FEditor) then
-  begin
-    for i := FDocs.Count downto 0 do
-      TLDDPDoc(Fdocs.Items[i]).OnChanged := nil;
-    FDocs.Free;;
-  end;
+    for i := FDocs.Count - 1 downto 0 do
+      TLDDPDoc(FDocs.Items[i]).OnChanged := nil;
   inherited;
 end;
 
@@ -194,10 +191,10 @@ begin
   if (Operation = opRemove) and (AComponent = FEditor) then
   begin
     if Assigned(FDocs) then
-      FDocs.Free;;
+      FDocs.Free;
     if Assigned(Tabs) then
       Tabs.Clear;
-    FEditor:=nil;
+    FEditor := nil;
   end;
 end;
 
@@ -207,18 +204,18 @@ var
 
 begin
   if Assigned(FDocs) then
-  begin
     try
       Tabs.BeginUpdate;
       if (Assigned(Tabs)) and (Tabs.Count > 0) then
         Tabs.Clear;
-      if (FDocs.Count > 0) then FDocs.Clear;
-      if assigned(FEditor) then
+      if (FDocs.Count > 0) then
+        FDocs.Clear;
+      if Assigned(FEditor) then
       begin
-        LDoc := TLDDPDoc.Create(fEditor,Self,true);
-        LDoc.DocIndex:=0;
+        LDoc := TLDDPDoc.Create(FEditor, Self, true);
+        LDoc.DocIndex := 0;
         LDoc.TabName := FDefaultTabName;
-        LDoc.OnChanged := EvttabChanged;
+        LDoc.OnChanged := EvtTabChanged;
         FDocs.Add(LDoc);
         Tabs.Add(LDoc.TabName);
         if Assigned(FOnOpenedAndInited) then
@@ -227,7 +224,6 @@ begin
     finally
       Tabs.EndUpdate;
     end;
-  end;
 end;
 
 procedure TLDDPDocumentTabControl.DoLoadFromFile(const FileName: string);
@@ -239,7 +235,7 @@ function TLDDPDocumentTabControl.NewDocument : Integer;
 begin
   Result := Add(FDefaultTabName, sUntitled + FDefaultExt);
   if Result <> -1 then
-    TLDDPDoc(Fdocs.Items[Result]).Changed;
+    TLDDPDoc(FDocs.Items[Result]).Changed;
   if Assigned(FOnOpenedAndInited) then
     FOnOpenedAndInited(Self, Result, TLDDPDoc(FDocs.Items[Result]));
 
@@ -247,86 +243,66 @@ end;
 
 function TLDDPDocumentTabControl.Open(const filename: string): Boolean;
 var
-  LDoc, nitm : TLDDPDoc;
-  theext: string;
-  DocCount: Integer;
-  i,newitemindex : Integer;
-  efname: string;
+  LDoc : TLDDPDoc;
+  i, newitemindex : Integer;
   FName: string;
   confirmed: Integer;
   dtime: TDateTime;
 
 begin
   FName := filename;
-  if FileExists(FName) then
+
+  // Check and see if file is already open and shift focus if it is
+  for i := 0 to FDocs.Count - 1 do
   begin
-    DocCount := FDocs.Count;
-    for i := 0 to (DocCount - 1) do
+    LDoc := TLDDPDoc(FDocs.Items[i]);
+    if Assigned(LDoc) and (CompareText(LDoc.FileName, FName) = 0) then
     begin
-      LDoc := TLDDPDoc(FDocs.Items[i]);
-      if Assigned(LDoc) and (CompareText(LDoc.FileName, FName) = 0) then
+      ChgTab(i);
+      FileAge(FName, dtime);
+      if (LDoc.LastChanged <= dtime) then
       begin
-        ChgTab(i);
-        FileAge(FName, dtime);
-        if (LDoc.LastChanged <= dtime) then
+        if LDoc.Modified then
+          confirmed := MessageBox(Handle, PChar(Format(sReload,[FName])),
+                                  PChar(sConfirmation),MB_YESNO)
+        else
+          confirmed := IDYES;
+        if confirmed = IDYES then
         begin
-          if LDoc.Modified then
-            confirmed := MessageBox(Handle, PChar(Format(sReload,[FName])),
-                                    PChar(sConfirmation),MB_YESNO)
-          else
-            confirmed := IDYES;
-          if confirmed = IDYES then
-          begin
-            DoLoadFromFile(filename);
-            LDoc.LastChanged:=dtime;
-          end;
+          DoLoadFromFile(filename);
+          LDoc.LastChanged := dtime;
         end;
-        Result := True;
-        Exit;
       end;
+      Result := True;
+      Exit;
     end;
-    nitm := TLDDPDoc(FDocs.Items[0]);
-    if (DocCount > 1) or (FEditor.Modified) or
-       (StrLIComp(PChar(nitm.TabName),PChar(FDefaultTabName),Length(FDefaultTabName))<>0) then
-    begin
-      efname := ExtractFileName(filename);
-      newitemindex := Add(efname,FName);
-      LDoc := TLDDPDoc(FDocs.Items[newitemindex]);
-      Inc(DocCount);
-    end
-    else
-    begin
-      LDoc:=TLDDPDoc(FDocs.Items[0]);
-      LDoc.FileName:=FName;
-    end;
-    DoLoadFromFile(filename);
-    if DocCount = 1 then
-      ChgTab(0);
-    if Assigned(FOnOpenedAndInited) then
-      FOnOpenedAndInited(Self,LDoc.DocIndex,LDoc);
-    Result := True;
+  end;
+
+  // Add a new tab and open file if current tab is not the default tab
+  if (FDocs.Count > 1) or (FEditor.Modified) or
+     (TLDDPDoc(FDocs.Items[0]).TabName <> FDefaultTabName) then
+  begin
+    newitemindex := Add(ExtractFileName(filename), FName);
+    LDoc := TLDDPDoc(FDocs.Items[newitemindex]);
   end
   else
   begin
-    DocCount := FDocs.Count;
-    if (DocCount>1) or (FEditor.Modified) or
-       (StrLIComp(PChar(TLDDPDoc(FDocs.Items[0]).TabName), PChar(FDefaultTabName), Length(FDefaultTabName))<>0) then
-    begin
-      newitemindex := Add(ExtractFileName(filename),FName);
-      LDoc := TLDDPDoc(FDocs.Items[newitemindex]);
-      Inc(DocCount);
-    end
-    else
-    begin
-      LDoc := TLDDPDoc(FDocs.Items[0]);
-      LDoc.FileName := FName;
-    end;
-    if DocCount = 1 then
-      ChgTab(0);
-    if assigned(FOnOpenedAndInited) then
-      FOnOpenedAndInited(Self,LDoc.DocIndex,LDoc);
-    Result := True;
+    LDoc := TLDDPDoc(FDocs.Items[0]);
+    LDoc.FileName := FName;
+    ChgTab(0);
   end;
+
+  if FileExists(FName) then
+  begin
+    DoLoadFromFile(FName);
+    LDoc.Text := FEditor.Text;
+  end;
+
+  LDoc.Modified := False;
+
+  if Assigned(FOnOpenedAndInited) then
+    FOnOpenedAndInited(Self, LDoc.DocIndex, LDoc);
+  Result := True;
 end;
 
 procedure  TLDDPDocumentTabControl.Close(const Index: Integer; const AskIfNeeded: Boolean);
@@ -338,31 +314,34 @@ begin
   if Index = -1 then
     idx := TabIndex
   else
-    idx:=Index;
-  if (askifneeded) and (assigned(FOnClosing)) then
+    idx := Index;
+  if (AskIfNeeded) and (Assigned(FOnClosing)) then
   begin
-    if TLDDPDoc(FDocs[idx]).IsActive<>True then
+    if TLDDPDoc(FDocs[idx]).IsActive <> True then
     begin
       Activate(idx);
     end;
-    FOnClosing(self,idx,allowclose)
+    FOnClosing(Self, idx, AllowClose)
   end;
-  if allowclose then
+  if AllowClose then
     Remove(idx);
 end;
 
-function TLDDPDocumentTabControl.Add(const TabName : string; const FName: string): Integer;
+function TLDDPDocumentTabControl.Add(const TabName: string; const FName: string): Integer;
 var
-  LDoc, itm : TLDDPDoc;
-  Idx : Integer;
-  theext,highl : String;
+  LDoc: TLDDPDoc;
+  Idx: Integer;
+
 begin
   if Assigned(FEditor) and (Assigned(FDocs)) then
   begin
     try
       Tabs.BeginUpdate;
-      itm := ActiveDocument;
-      itm.AssignFromEditor;
+
+      // Save state of the active document
+      ActiveDocument.AssignFromEditor;
+
+      // Create a new tab
       LDoc := TLDDPDoc.Create(FEditor, Self, False);
       if TabName <> '' then
         LDoc.TabName := TabName;
@@ -372,7 +351,8 @@ begin
       LDoc.DocIndex := Idx;
       Tabs.Insert(Idx, TabName);
       LDoc.OnChanged := EvtTabChanged;
-      if FName <> '' then LDoc.Changed;
+      if FName <> '' then
+        LDoc.Changed;
       ChgTab(Idx);
       Result := Idx;
     finally
@@ -380,21 +360,15 @@ begin
     end;
   end
   else
-    result := -1;
+    Result := -1;
 end;
 
-procedure TLDDPDocumentTabControl.ChgTab(const newtab: Integer);
-begin
-  TabIndex := newtab;
-  Change;
-end;
-
-procedure TLDDPDocumentTabControl.Remove(const index : Integer);
+procedure TLDDPDocumentTabControl.Remove(const index: Integer);
 var
   LDoc: TLDDPDoc;
-  id, cur, i: Integer;
+  cur, i: Integer;
   idxtoremove: Integer;
-  highl, theext: String;
+
 begin
   if Assigned(FEditor) and Assigned(FDocs) then
   begin
@@ -405,41 +379,37 @@ begin
       if FDocs.Count = 1 then
       begin
         FEditor.ClearAll;
+        LDoc := TLDDPDoc(FDocs.Items[0]);
+        LDoc.AssignFromEditor;
+        LDoc.FileName := FDefaultTabName;
+        LDoc.Modified := false;
+        ChgTab(0);
       end
       else
       begin
         FDocs.Remove(LDoc);
-        FDocs.Pack;
-      end;
-
-      if Tabs.Count > 1 then
-      begin
         cur := idxtoremove;
         Tabs.Delete(idxtoremove);
-        id := Tabs.Count;
-        if(id > cur + 1) then
+        if(Tabs.Count > cur + 1) then
           Inc(cur)
-        else if cur = 0 then
-        begin
-        end
-        else
+        else if cur > 0 then
           Dec(cur);
         for i := idxtoremove to (FDocs.Count - 1) do
           TLDDPDoc(FDocs.Items[i]).DocIndex := i;
         ChgTab(cur);
-      end
-      else
-      begin
-        LDoc:=TLDDPDoc(FDocs.Items[0]);
-        LDoc.FileName:='<' + sUntitled + FDefaultExt + '>';
-        FEditor.ClearAll;
-        LDoc.Modified:=false;
-        ChgTab(0);
       end;
+      RefreshTabs;
     finally
       Tabs.EndUpdate;
     end;
   end;
+end;
+
+
+procedure TLDDPDocumentTabControl.ChgTab(const newtab: Integer);
+begin
+  TabIndex := newtab;
+  Change;
 end;
 
 function TLDDPDocumentTabControl.CanChange: Boolean;
@@ -510,38 +480,28 @@ end;
 
 procedure TLDDPDocumentTabControl.RefreshTabs;
 var
-  cnt: Integer;
   i: Integer;
-  ist: string;
+
 begin
   try
     Tabs.BeginUpdate;
     Tabs.Clear;
     if Assigned(FDocs) then
-    begin
-      cnt := FDocs.Count;
-      for i := 0 to cnt - 1 do
-      begin
-        ist := IntToStr(i + 1);
-        if (i + 1)< 10 then
-          Tabs.Add('&' + ist + ' ' + TLDDPDoc(FDocs.Items[i]).TabName)
-        else
-          Tabs.Add(ist + ' ' + TLDDPDoc(FDocs.Items[i]).TabName);
-      end;
-    end;
+      for i := 0 to FDocs.Count - 1 do
+        Tabs.Add(IntToStr(i + 1) + ' ' + TLDDPDoc(FDocs.Items[i]).TabName);
   finally
     Tabs.EndUpdate;
   end;
 end;
 
-procedure TLDDPDocumentTabControl.SetEditor(Value : TLDDPSynEdit);
+procedure TLDDPDocumentTabControl.SetEditor(Value: TCustomSynEdit);
 var
   tp: TPoint;
   r : TRect;
 begin
   if (Value <> FEditor) and  Assigned(Value) then
   begin
-    FEditor:=Value;
+    FEditor := Value;
     if (not (csWriting in ComponentState)) and
        (not (csDestroying in ComponentState)) then
     begin
@@ -570,7 +530,7 @@ begin
       FEditor.Left := tp.x;
       FEditor.Top := tp.y;
     end;
-    FEditor:=nil;
+    FEditor := nil;
   end;
 end;
 
@@ -600,7 +560,7 @@ var
   oldtab: string;
   i, cnt: Integer;
   itm :TLDDPDoc;
-  theext, highl: string;
+
 begin
   oldtab := FDefaultTabName;
   FDefaultExt := Value;
@@ -628,34 +588,30 @@ begin
   if tmp.DocIndex < Tabs.Count then
   begin
     ist := IntToStr(tmp.DocIndex + 1);
-    if (tmp.DocIndex + 1) < 10 then
-      Tabs.Strings[tmp.DocIndex] := '&' + ist + ' ' + tmp.TabName
-    else
-      Tabs.Strings[tmp.DocIndex] := ist + ' ' + tmp.TabName;
+
+
+Tabs.Strings[tmp.DocIndex] := ist + ' ' + tmp.TabName;
   end;
 end;
 
 {TLDDPDoc}
 
-procedure TLDDPDoc.SetFileName(const Value : string);
-var
-  anExt : string;
+procedure TLDDPDoc.SetFileName(const Value: string);
 
 begin
-  if Value<>FFileName then
+  if Value <> FFileName then
   begin
     FFileName := Value;
     if Pos('<' + sUntitled, Value) = 1 then
     begin
-      anExt := LowerCase(ExtractFileExt(Value));
-      FTabName := '<' + sUntitled + anExt + '>';
-      FFileName := sUntitled + anExt;
+      FTabName := TLDDPDocumentTabControl(fTabCtrl).FDefaultTabName;
+      FFileName := sUntitled + TLDDPDocumentTabControl(fTabCtrl).FDefaultExt;
       FLastChanged := -1;
     end
     else
     begin
       FTabName := ExtractFileName(Value);
-      FileAge(Value,FLastChanged);
+      FileAge(Value, FLastChanged);
     end;
     Changed;
   end;
@@ -663,14 +619,14 @@ end;
 
 procedure TLDDPDoc.Changed;
 begin
-  if assigned(FOnChanged) then FOnChanged(self);
+  if Assigned(FOnChanged) then FOnChanged(self);
 end;
 
 procedure TLDDPDoc.SetTabName(const Value : string);
 begin
-  if Value<>FTabName then
+  if Value <> FTabName then
   begin
-    FTabName:=Value;
+    FTabName := Value;
     Changed;
   end;
 end;
@@ -678,29 +634,21 @@ end;
 function TLDDPDoc.IsActive: Boolean;
 begin
   if (not Assigned(FEditor)) or (not Assigned(FTabCtrl)) then
-  begin
-    Result := false;
-    Exit;
-  end;
-  Result :=  TLDDPDocumentTabControl(FTabCtrl).ActiveDocument.DocIndex = DocIndex
+    Result := False
+  else
+    Result := TLDDPDocumentTabControl(FTabCtrl).ActiveDocument.DocIndex = DocIndex;
 end;
 
-constructor TLDDPDoc.Create(pp: TLDDPSynEdit; ttabctrl: TLDDPDocumentTabControl; const getcurrent : Boolean);
+constructor TLDDPDoc.Create(pp: TCustomSynEdit; ttabctrl: TLDDPDocumentTabControl; const getcurrent : Boolean);
 begin
   inherited Create;
   FTabCtrl := ttabctrl;
   FEditor := pp;
-  FTabName := '<' + sUntitled + TLDDPDocumentTabControl(fTabCtrl).DefaultExt + '>';
+  FTabName := TLDDPDocumentTabControl(fTabCtrl).FDefaultTabName;
   FModified := False;
   FLastChanged := -1;
   FFileName := sUntitled + TLDDPDocumentTabControl(fTabCtrl).DefaultExt;
   AssignFromEditor;
-end;
-
-destructor TLDDPDoc.Destroy;
-begin
-//  Release;
-  inherited;
 end;
 
 procedure TLDDPDoc.AssignFromEditor;
@@ -728,13 +676,10 @@ end;
 
 procedure TLDDPDoc.Activate;
 begin
-  if not IsActive then
-  begin
-    if (TLDDPDocumentTabControl(fTabCtrl).TabIndex <> DocIndex) and
-       (TLDDPDocumentTabControl(fTabCtrl).CanChange) then
-      TLDDPDocumentTabControl(fTabCtrl).TabIndex := DocIndex;
-    AssignToEditor;
-  end;
+  if (TLDDPDocumentTabControl(FTabCtrl).TabIndex <> DocIndex) and
+     (TLDDPDocumentTabControl(FTabCtrl).CanChange) then
+    TLDDPDocumentTabControl(FTabCtrl).TabIndex := DocIndex;
+  AssignToEditor;
 end;
 
 function TLDDPDoc.IsUntitled: Boolean;
@@ -757,7 +702,7 @@ end;
 procedure TLDDPDoc.Close;
 begin
   if Assigned(FTabCtrl) then
-  TLDDPDocumentTabControl(FTabCtrl).Close(DocIndex);
+    TLDDPDocumentTabControl(FTabCtrl).Close(DocIndex);
 end;
 
 procedure Register;

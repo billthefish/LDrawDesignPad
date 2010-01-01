@@ -9,7 +9,7 @@ type
   TLDDPOptions = class(TPersistent)
   private
     FLDrawPath: string;
-    FLDviewPath: string;
+    FLDViewPath: string;
     FMLCadPath: string;
     FL3LabPath: string;
     FLSynthPath: string;
@@ -96,37 +96,37 @@ begin
   if Source is TLDDPOptions then
     with (Source as TLDDPOptions) do
     begin
-      FLDrawPath := LDrawPath;
-      FLDviewPath := LDViewPath;
-      FMLCadPath := MLCadPath;
-      FL3LabPath := L3LabPath;
-      FLSynthPath := LSynthPath;
-      FErrorCheckNormalAngle := ErrorCheckNormalAngle;
-      FErrorCheckCollinearMaxAngle := ErrorCheckCollinearMaxAngle;
-      FErrorCheckCollinearMinAngle := ErrorCheckCollinearMinAngle;
-      FPostionDecAcc := PostionDecAcc;
-      FRotationDecAcc := RotationDecAcc;
-      FOnlyRoundDuringAutoRound := OnlyRoundDuringAutoRound;
-      FCustomPollInterval := CustomPollInterval;
-      FColorComboSortTerm := ColorComboSortTerm;
-      FUsername := Username;
-      FUserPTName := UserPTName;
-      FUserEmail := UserEmail;
-      FGridCoarseX := GridCoarseX;
-      FGridCoarseY := GridCoarseY;
-      FGridCoarseZ := GridCoarseZ;
-      FGridCoarseAngle := GridCoarseAngle;
-      FGridMedX := GridMedX;
-      FGridMedY := GridMedY;
-      FGridMedZ := GridMedZ;
-      FGridMedAngle := GridMedAngle;
-      FGridFineX := GridFineX;
-      FGridFineY := GridFineY;
-      FGridFineZ := GridFineZ;
-      FGridFineAngle := GridFineAngle;
-      FSearchPaths.Assign(SearchPaths);
-      FColorBarList.Assign(ColorBarList);
-      FExternalProgramList.Assign(ExternalProgramList);
+      Self.FLDrawPath := LDrawPath;
+      Self.FLDViewPath := LDViewPath;
+      Self.FMLCadPath := MLCadPath;
+      Self.FL3LabPath := L3LabPath;
+      Self.FLSynthPath := LSynthPath;
+      Self.FErrorCheckNormalAngle := ErrorCheckNormalAngle;
+      Self.FErrorCheckCollinearMaxAngle := ErrorCheckCollinearMaxAngle;
+      Self.FErrorCheckCollinearMinAngle := ErrorCheckCollinearMinAngle;
+      Self.FPostionDecAcc := PostionDecAcc;
+      Self.FRotationDecAcc := RotationDecAcc;
+      Self.FOnlyRoundDuringAutoRound := OnlyRoundDuringAutoRound;
+      Self.FCustomPollInterval := CustomPollInterval;
+      Self.FColorComboSortTerm := ColorComboSortTerm;
+      Self.FUsername := Username;
+      Self.FUserPTName := UserPTName;
+      Self.FUserEmail := UserEmail;
+      Self.FGridCoarseX := GridCoarseX;
+      Self.FGridCoarseY := GridCoarseY;
+      Self.FGridCoarseZ := GridCoarseZ;
+      Self.FGridCoarseAngle := GridCoarseAngle;
+      Self.FGridMedX := GridMedX;
+      Self.FGridMedY := GridMedY;
+      Self.FGridMedZ := GridMedZ;
+      Self.FGridMedAngle := GridMedAngle;
+      Self.FGridFineX := GridFineX;
+      Self.FGridFineY := GridFineY;
+      Self.FGridFineZ := GridFineZ;
+      Self.FGridFineAngle := GridFineAngle;
+      Self.FSearchPaths.Assign(SearchPaths);
+      Self.FColorBarList.Assign(ColorBarList);
+      Self.FExternalProgramList.Assign(ExternalProgramList);
     end
   else
     inherited;
@@ -144,8 +144,8 @@ begin
   if Assigned(FSearchPaths) then
     FSearchPaths.Free;
   if Assigned(FColorBarList) then
-    FSearchPaths.Free;
-  if Assigned(FSearchPaths) then
+    FColorBarList.Free;
+  if Assigned(FExternalProgramList) then
     FExternalProgramList.Free;
   inherited;
 end;
@@ -157,7 +157,7 @@ var
 
 begin
     IniFile := TIniFile.Create(IniFilePath);
-    LDrawPath := IniFile.ReadString(Section, 'LDrawPath', '');
+    FLDrawPath := IniFile.ReadString(Section, 'LDrawPath', '');
     FLDViewPath := IniFile.ReadString(Section, 'LDViewPath', '');
     FMLCadPath := IniFile.ReadString(Section, 'MLCadPath', '');
     FL3LabPath := IniFile.ReadString(Section, 'L3LabPath', '');

@@ -58,7 +58,9 @@ procedure TLDDPBaseDlg.Notification(AComponent: TComponent;
   Operation: TOperation);
 begin
   inherited;
-  if (AComponent = FEditor) and (Operation = opRemove) then FEditor := nil;
+  if (AComponent = FEditor) and
+     (Operation = opRemove) then
+    FEditor := nil;
 end;
 
 { TLDDPColorReplaceDlg }

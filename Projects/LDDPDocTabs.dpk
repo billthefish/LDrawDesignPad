@@ -28,8 +28,7 @@ package LDDPDocTabs;
 requires
   rtl,
   vcl,
-  SynEdit_R2009,
-  PLDDPSynEdit;
+  SynEdit_R2009;
 
 contains
   LDDPSynEditDocTabs in '..\Source\Units\LDDPSynEditDocTabs.pas';

@@ -2,7 +2,7 @@ object LDDPMain: TLDDPMain
   Left = 267
   Top = 61
   Width = 900
-  Height = 808
+  Height = 612
   VertScrollBar.Range = 49
   Caption = 'LDraw Design Pad'
   Color = clAppWorkSpace
@@ -138,8 +138,8 @@ object LDDPMain: TLDDPMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 733
-    Width = 884
+    Top = 539
+    Width = 892
     Height = 19
     AutoHint = True
     Panels = <
@@ -159,7 +159,7 @@ object LDDPMain: TLDDPMain
   object ControlBar1: TControlBar
     Left = 0
     Top = 0
-    Width = 884
+    Width = 892
     Height = 54
     Align = alTop
     AutoSize = True
@@ -743,16 +743,39 @@ object LDDPMain: TLDDPMain
   object DocumentTabs: TLDDPDocumentTabControl
     Left = 0
     Top = 54
-    Width = 884
-    Height = 679
+    Width = 892
+    Height = 485
+    Editor = editor
     Align = alClient
     HotTrack = False
+    PopupMenu = pmTab
     TabOrder = 2
     DefaultExt = '.dat'
-    ExplicitLeft = 424
-    ExplicitTop = 472
-    ExplicitWidth = 289
-    ExplicitHeight = 193
+    object editor: TLDDPSynEdit
+      Left = 4
+      Top = 24
+      Width = 884
+      Height = 457
+      LDDPOptions.PostionDecAcc = 0
+      LDDPOptions.RotationDecAcc = 0
+      LDDPOptions.OnlyRoundDuringAutoRound = False
+      LDDPOptions.ColorComboSortTerm = csCode
+      GridSetting = gsCoarse
+      Align = alClient
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = []
+      TabOrder = 0
+      Gutter.Font.Charset = DEFAULT_CHARSET
+      Gutter.Font.Color = clWindowText
+      Gutter.Font.Height = -11
+      Gutter.Font.Name = 'Courier New'
+      Gutter.Font.Style = []
+      Highlighter = LDrawHighlighter
+      OnStatusChange = editorStatusChange
+    end
   end
   object MainMenu1: TMainMenu
     Images = ilProgramIcons
@@ -1796,7 +1819,7 @@ object LDDPMain: TLDDPMain
     Left = 64
     Top = 184
     Bitmap = {
-      494C01013F004000040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01013F004000240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000000001000001002000000000000000
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4161,15 +4184,16 @@ object LDDPMain: TLDDPMain
     end
   end
   object ApplicationEvents1: TApplicationEvents
-    OnActivate = editorUpdateUI
     Left = 64
     Top = 240
   end
   object OptionsDlg: TLDDPOptionsDlg
+    Editor = editor
     Left = 360
     Top = 160
   end
   object ColorReplace: TLDDPColorReplaceDlg
+    Editor = editor
     Left = 432
     Top = 160
   end
@@ -4188,6 +4212,7 @@ object LDDPMain: TLDDPMain
     TitleFont.Style = [fsBold]
     Columns = <>
     ShortCut = 16416
+    Editor = editor
     Left = 432
     Top = 264
   end
@@ -4222,6 +4247,7 @@ object LDDPMain: TLDDPMain
     Font.Height = -11
     Font.Name = 'Tahoma'
     Font.Style = []
+    Highlighter = LDrawHighlighter
     TabWidth = 8
     Color = clWhite
     Left = 432
@@ -4235,26 +4261,5 @@ object LDDPMain: TLDDPMain
   object SearchDlg: TSynEditSearch
     Left = 512
     Top = 216
-  end
-  object TLDDPSynEdit
-    Left = 0
-    Top = 0
-    Width = 200
-    Height = 150
-    LDDPOptions.PostionDecAcc = 0
-    LDDPOptions.RotationDecAcc = 0
-    LDDPOptions.OnlyRoundDuringAutoRound = False
-    LDDPOptions.ColorComboSortTerm = csCode
-    GridSetting = gsCoarse
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Courier New'
-    Font.Style = []
-    Gutter.Font.Charset = DEFAULT_CHARSET
-    Gutter.Font.Color = clWindowText
-    Gutter.Font.Height = -11
-    Gutter.Font.Name = 'Courier New'
-    Gutter.Font.Style = []
   end
 end
