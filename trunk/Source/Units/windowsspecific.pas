@@ -59,7 +59,6 @@ const
 
 function DoCommand(Command: string; Flg: byte; Wait: Boolean): Boolean;
 function GetShortFileName(Const FileName : string): string;
-// function WindowsDir:string;
 function GetShellFolderPath(folder: string): string;
 function IniFilePath: string;
 function WinTempDir: string;
@@ -225,7 +224,7 @@ function PluginInfo(libname: string; nr: Byte):string;
 // Get Info from plugin DLL
 var
  libHndl: THandle;
- Plugin_Info: procedure(CaseID: Byte; buffer: PChar; maxlength: Byte); stdcall;
+ Plugin_Info: procedure(CaseID: Byte; buffer: PAnsiChar; maxlength: Byte); stdcall;
  sBuff: PAnsiChar;
 
 begin
@@ -243,7 +242,7 @@ begin
     if Assigned(Plugin_Info) then
       Plugin_info(nr, sBuff, 255);
 
-    result := StrPas(sBuff);
+    result := string(StrPas(sBuff));
     FreeLibrary(libHndl);
   end
   else

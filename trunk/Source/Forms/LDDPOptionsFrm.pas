@@ -39,26 +39,21 @@ type
     btMLCad: TBitBtn;
     btLDView: TBitBtn;
     btLDraw: TBitBtn;
-    edL3LabDir: TEdit;
-    edMLCadDir: TEdit;
-    edLDViewDir: TEdit;
-    edLdrawDir: TEdit;
-    lbL3Lab: TLabel;
+    L3LabPathEdit: TEdit;
+    MLCadPathEdit: TEdit;
+    LDViewPathEdit: TEdit;
+    LDrawPathEdit: TEdit;
     Label17: TLabel;
     Label5: TLabel;
-    lbMLCAD: TLabel;
     Label2: TLabel;
-    lbLDVIew: TLabel;
     Label4: TLabel;
-    lbLdraw: TLabel;
     TabSheet1: TTabSheet;
     rgStyle: TRadioGroup;
     ColorDialog1: TColorDialog;
     GroupBox7: TGroupBox;
     Label12: TLabel;
-    edLSynthDir: TEdit;
+    LSynthPathEdit: TEdit;
     btLSynth: TBitBtn;
-    lbLSynth: TLabel;
     ColorBarSheet: TTabSheet;
     GroupBox9: TGroupBox;
     lbxColors: TListBox;
@@ -80,7 +75,6 @@ type
     edParameters: TEdit;
     Label10: TLabel;
     btExternal: TBitBtn;
-    lbExternal: TLabel;
     cboWaitForFinish: TCheckBox;
     cboShowCommand: TCheckBox;
     Panel4: TPanel;
@@ -157,6 +151,12 @@ type
     Label29: TLabel;
     Label30: TLabel;
     ColorSortOption: TComboBox;
+    LDrawPathEditIcon: TImage;
+    LDViewPathEditIcon: TImage;
+    MLCadPAthEditIcon: TImage;
+    L3LabPathEditIcon: TImage;
+    LSynthPathEditIcon: TImage;
+    ExternalPathEditIcon: TImage;
     procedure MainPagesChange(Sender: TObject);
     procedure btLDrawClick(Sender: TObject);
     procedure btLDViewClick(Sender: TObject);
@@ -186,8 +186,14 @@ type
     procedure btnDeleteInvalidPathsClick(Sender: TObject);
     procedure btnPathDownClick(Sender: TObject);
     procedure btnPathUpClick(Sender: TObject);
-    procedure edLdrawDirChange(Sender: TObject);
+    procedure LDrawPathEditChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure LDViewPathEditChange(Sender: TObject);
+    procedure MLCadPathEditChange(Sender: TObject);
+    procedure L3LabPathEditChange(Sender: TObject);
+    procedure LSynthPathEditChange(Sender: TObject);
 
   private
     FLDDPOptions: TLDDPOptions;
@@ -197,7 +203,9 @@ type
     procedure SetDirectory(DCaption: string; EditControl: TEdit);
     procedure UpdateSearchPathList;
     procedure SetOptions(const Value: TLDDPOptions);
-
+    procedure UpdateOptions;
+    procedure UpdatePathIcon(FileName: string; Icon: TImage);
+    
   public
     property LDDPOptions: TLDDPOptions read FLDDPOptions write SetOptions;
 
@@ -216,78 +224,71 @@ uses
 procedure TLDDPOptionsForm.UpdateControls;
 
 var
-  strFound, strNotFound: string;
   i: Integer;
 
 begin
-  strFound := 'Found!';
-  strNotFound := 'Not found!';
-
-  lbLDraw.font.Color := clRed;
-  lbldraw.Caption := strNotFound;
-  lbLDView.font.Color := clRed;
-  lbLDView.Caption := strNotFound;
-  lbMLCAD.font.Color := clRed;
-  lbMLCAD.Caption := strNotFound;
-  lbL3Lab.font.Color := clRed;
-  lbL3Lab.Caption := strNotFound;
-  lbLSynth.font.Color := clRed;
-  lbLSynth.Caption := strNotFound;
-
-  if FileExists(edLDrawDir.text + '\ldconfig.ldr') then
-  begin
-    lbLDraw.font.Color := clGreen;
-    lbldraw.Caption := strFound;
-  end;
-
-  if FileExists(edLDViewDir.text + '\LDView.exe') then
-  begin
-    lbLDView.font.Color := clGreen;
-    lbLDView.Caption := strFound;
-  end;
-
-  if FileExists(edMLCADDir.text + '\MLCAD.exe') then
-  begin
-    lbMLCAD.font.Color := clGreen;
-    lbMLCAD.Caption := strFound;
-  end;
-
-  if FileExists(edL3LabDir.text + '\L3Lab.exe') then
-  begin
-    lbL3Lab.font.Color := clGreen;
-    lbL3Lab.Caption := strFound;
-  end;
-
-  if FileExists(edLSynthDir.text + '\lsynthcp.exe') then
-  begin
-    lbLSynth.font.Color := clGreen;
-    lbLSynth.Caption := strFound;
-  end;
-
-  if Trim(edExternal.Text) = '' then
-    lbExternal.Caption := ''
-  else
-    if FileExists(edExternal.Text) then begin
-      lbExternal.Font.Color := clGreen;
-      lbExternal.Caption := strFound;
-    end
-    else
-    begin
-      lbExternal.Font.Color := clRed;
-      lbExternal.Caption := strNotFound;
-    end;
-
   for i := 0 to SearchPathsList.Items.Count - 1 do
     if DirectoryExists(SearchPathsList.Items[i].Caption) then
       SearchPathsList.Items[i].StateIndex := 0
     else
       SearchPathsList.Items[i].StateIndex := 1;
 
+  UpdateOptions;
+end;
+
+procedure TLDDPOptionsForm.UpdateOptions;
+begin
+  LDDPOptions.LDrawPath := LDrawPathEdit.Text;
+  LDDPOptions.LDViewPath := LDViewPathEdit.Text;
+  LDDPOptions.L3LabPath := L3LabPathEdit.Text;
+  LDDPOptions.LSynthPath := LSynthPathEdit.Text;
+  LDDPOptions.MLCadPath := MLCadPathEdit.Text;
+  LDDPOptions.ErrorCheckNormalAngle := NormalAngleEdit.Value;
+  LDDPOptions.ErrorCheckCollinearMaxAngle := CollinearMaxAngleEdit.Value;
+  LDDPOptions.ErrorCheckCollinearMinAngle := CollinearMinAngleEdit.Value;
+  LDDPOptions.PostionDecAcc := sePntAcc.Value;
+  LDDPOptions.RotationDecAcc := seRotAcc.Value;
+  LDDPOptions.OnlyRoundDuringAutoRound := cboAutoRoundOnly.Checked;
+  LDDPOptions.CustomPollInterval := seCustomPollInterval.Value;
+  case ColorSortOption.ItemIndex of
+    0: LDDPOptions.ColorComboSortTerm := csCode;
+    1: LDDPOptions.ColorComboSortTerm := csColourName;
+    2: LDDPOptions.ColorComboSortTerm := csMainColour;
+    else LDDPOptions.ColorComboSortTerm := csCode;
+  end;
+  LDDPOptions.GridCoarseX := seGridCoarseX.Value;
+  LDDPOptions.GridCoarseY := seGridCoarseY.Value;
+  LDDPOptions.GridCoarseZ := seGridCoarseZ.Value;
+  LDDPOptions.GridCoarseAngle := seGridCoarseAngle.Value;
+  LDDPOptions.GridMedX := seGridMediumX.Value;
+  LDDPOptions.GridMedY := seGridMediumY.Value;
+  LDDPOptions.GridMedZ := seGridMediumZ.Value;
+  LDDPOptions.GridMedAngle := seGridMediumAngle.Value;
+  LDDPOptions.GridFineX := seGridFineX.Value;
+  LDDPOptions.GridFineY := seGridFineY.Value;
+  LDDPOptions.GridFineZ := seGridFineZ.Value;
+  LDDPOptions.GridFineAngle := seGridFineAngle.Value;
+  LDDPOptions.Username := edName.Text;
+  LDDPOptions.UserPTName := edUsername.Text;
+  LDDPOptions.UserEmail := edEmail.Text;
+end;
+
+procedure TLDDPOptionsForm.UpdatePathIcon(FileName: string; Icon: TImage);
+begin
+  if FileExists(FileName) then
+    OptionImages.GetBitmap(0,Icon.Picture.Bitmap)
+  else  
+    OptionImages.GetBitmap(1,Icon.Picture.Bitmap);
 end;
 
 procedure TLDDPOptionsForm.MainPagesChange(Sender: TObject);
 begin
   UpdateControls;
+end;
+
+procedure TLDDPOptionsForm.MLCadPathEditChange(Sender: TObject);
+begin
+  UpdatePathIcon(MLCadPathEdit.Text + PathDelim + 'MLCad.exe', MLCadPathEditIcon);
 end;
 
 procedure TLDDPOptionsForm.btnReplacePathClick(Sender: TObject);
@@ -299,31 +300,31 @@ end;
 
 procedure TLDDPOptionsForm.btLDrawClick(Sender: TObject);
 begin
-  SetDirectory('Choose LDraw Library Location', edLdrawDir);
+  SetDirectory('Choose LDraw Library Location', LDrawPathEdit);
   UpdateControls;
 end;
 
 procedure TLDDPOptionsForm.btLDViewClick(Sender: TObject);
 begin
-  SetDirectory('Choose LDView Location', edLDViewDir);
+  SetDirectory('Choose LDView Location', LDViewPathEdit);
   UpdateControls;
 end;
 
 procedure TLDDPOptionsForm.btMLCadClick(Sender: TObject);
 begin
-  SetDirectory('Choose MLCad Location', edMLCadDir);
+  SetDirectory('Choose MLCad Location', MLCadPathEdit);
   UpdateControls;
 end;
 
 procedure TLDDPOptionsForm.cClick(Sender: TObject);
 begin
-  SetDirectory('Choose L3Lab Location', edL3LabDir);
+  SetDirectory('Choose L3Lab Location', L3LabPathEdit);
   UpdateControls;
 end;
 
 procedure TLDDPOptionsForm.btLSynthClick(Sender: TObject);
 begin
-  SetDirectory('Choose lynthcp Location',edLSynthDir);
+  SetDirectory('Choose lynthcp Location',LSynthPathEdit);
   UpdateControls;
 end;
 
@@ -356,11 +357,43 @@ procedure TLDDPOptionsForm.LoadFormValues;
 var
   i: Integer;
   CurrentItem: TStringList;
-  LDDPini: TMemIniFile;
-  IniSection: string;
   SearchPath: TListItem;
 
 begin
+  LDrawPathEdit.Text := LDDPOptions.LDrawPath;
+  LDViewPathEdit.Text := LDDPOptions.LDViewPath;
+  L3LabPathEdit.Text := LDDPOptions.L3LabPath;
+  LSynthPathEdit.Text := LDDPOptions.LSynthPath;
+  MLCadPathEdit.Text := LDDPOptions.MLCadPath;
+  NormalAngleEdit.Value := LDDPOptions.ErrorCheckNormalAngle;
+  CollinearMaxAngleEdit.Value := LDDPOptions.ErrorCheckCollinearMaxAngle;
+  CollinearMinAngleEdit.Value := LDDPOptions.ErrorCheckCollinearMinAngle;
+  sePntAcc.Value := LDDPOptions.PostionDecAcc;
+  seRotAcc.Value := LDDPOptions.RotationDecAcc;
+  cboAutoRoundOnly.Checked := LDDPOptions.OnlyRoundDuringAutoRound;
+  seCustomPollInterval.Value := LDDPOptions.CustomPollInterval;
+  case LDDPOptions.ColorComboSortTerm of
+    csCode: ColorSortOption.ItemIndex := 0;
+    csColourName: ColorSortOption.ItemIndex := 1;
+    csMainColour: ColorSortOption.ItemIndex := 2;
+    else ColorSortOption.ItemIndex := 0;
+  end;
+  seGridCoarseX.Value := LDDPOptions.GridCoarseX;
+  seGridCoarseY.Value := LDDPOptions.GridCoarseY;
+  seGridCoarseZ.Value := LDDPOptions.GridCoarseZ;
+  seGridCoarseAngle.Value := LDDPOptions.GridCoarseAngle;
+  seGridMediumX.Value := LDDPOptions.GridMedX;
+  seGridMediumY.Value := LDDPOptions.GridMedY;
+  seGridMediumZ.Value := LDDPOptions.GridMedZ;
+  seGridMediumAngle.Value := LDDPOptions.GridMedAngle;
+  seGridFineX.Value := LDDPOptions.GridFineX;
+  seGridFineY.Value := LDDPOptions.GridFineY;
+  seGridFineZ.Value := LDDPOptions.GridFineZ;
+  seGridFineAngle.Value := LDDPOptions.GridFineAngle;
+  edName.Text := LDDPOptions.Username;
+  edUsername.Text := LDDPOptions.UserPTName;
+  edEmail.Text := LDDPOptions.UserEmail;
+
   if LDDPOptions.ColorBarList.Count < 15 then
     SetColorListToDefault;
 
@@ -372,7 +405,7 @@ begin
   end;
 
   //Read and setup external program list
-  for i := 0 to LDDPOptions.ExternalProgramList.Count do
+  for i := 0 to LDDPOptions.ExternalProgramList.Count - 1 do
   begin
     CurrentItem.CommaText := LDDPOptions.ExternalProgramList[LDDPOptions.ExternalProgramList.Count - 1];
     lbxExternal.Items.Add(CurrentItem[0]);
@@ -380,14 +413,18 @@ begin
 
   //Read and setup seach paths list
   SearchPathsList.Clear;
-  for i := 0 to LDDPOptions.SearchPaths.Count do
+  for i := 0 to LDDPOptions.SearchPaths.Count - 1 do
   begin
     SearchPath := SearchPathsList.Items.Add;
-    SearchPath.Caption := LDDPini.ReadString(IniSection, 'SearchPathsList_Item' + IntToStr(i), '');
+    SearchPath.Caption := LDDPOptions.SearchPaths[i];
   end;
 
   CurrentItem.Free;
-  LDDPini.Free;
+end;
+
+procedure TLDDPOptionsForm.LSynthPathEditChange(Sender: TObject);
+begin
+  UpdatePathIcon(LSynthPathEdit.Text + PathDelim + 'lsynthcp.exe', LSynthPathEditIcon);
 end;
 
 procedure TLDDPOptionsForm.btnColorSelectClick(Sender: TObject);
@@ -562,31 +599,40 @@ begin
         lbxExternal.Items[lbxExternal.ItemIndex] := edExternalName.Text;
     end;
   end;
+  UpdatePathIcon(edExternal.Text, ExternalPathEditIcon);
 end;
 
-procedure TLDDPOptionsForm.edLdrawDirChange(Sender: TObject);
+procedure TLDDPOptionsForm.LDrawPathEditChange(Sender: TObject);
 
 var
   SearchPath: TListItem;
   
 begin
-  SearchPath := SearchPathsList.FindCaption(0, edLDrawDir.Text + '\p', False, True, True);
+  SearchPath := SearchPathsList.FindCaption(0, LDrawPathEdit.Text + '\p', False, True, True);
   if not Assigned(SearchPath) and
-     DirectoryExists(edLDrawDir.Text + '\p') then
+     DirectoryExists(LDrawPathEdit.Text + PathDelim + 'p') then
   begin
     SearchPath := TListItem.Create(SearchPathsList.Items);
     SearchPathsList.Items.AddItem(SearchPath, 0);
-    SearchPath.Caption := edLDrawDir.Text + '\p';
+    SearchPath.Caption := LDrawPathEdit.Text +  PathDelim + 'p';
   end;
-  SearchPath := SearchPathsList.FindCaption(0, edLDrawDir.Text + '\parts', False, True, True);
+  SearchPath := SearchPathsList.FindCaption(0, LDrawPathEdit.Text + PathDelim + 'parts', False, True, True);
   if not Assigned(SearchPath) and
-     DirectoryExists(edLDrawDir.Text + '\parts') then
+     DirectoryExists(LDrawPathEdit.Text + PathDelim + 'parts') then
   begin
     SearchPath := TListItem.Create(SearchPathsList.Items);
     SearchPathsList.Items.AddItem(SearchPath, 0);
-    SearchPath.Caption := edLDrawDir.Text + '\parts';
+    SearchPath.Caption := LDrawPathEdit.Text + PathDelim + 'parts';
   end;
-  UpdateControls;
+  if DirectoryExists(LDrawPathEdit.Text) then
+    LDrawBasePath := LDrawPathEdit.Text;
+
+  UpdatePathIcon(LDrawPathEdit.Text + PathDelim + 'ldconfig.ldr', LDrawPathEditIcon);
+end;
+
+procedure TLDDPOptionsForm.LDViewPathEditChange(Sender: TObject);
+begin
+  UpdatePathIcon(LDViewPathEdit.Text + PathDelim + 'LDView.exe', LDViewPathEditIcon);
 end;
 
 procedure TLDDPOptionsForm.edSearchPathChange(Sender: TObject);
@@ -671,14 +717,14 @@ var
   SearchPath: TListItem;
 
 begin
-  if FileExists(edMLCadDir.Text + '\MLCad.ini') then
+  if FileExists(MLCadPathEdit.Text + PathDelim + 'MLCad.ini') then
   begin
     ScanPathSection := TStringList.Create;
     ScanPathSection.Duplicates := dupIgnore;
     ScanPathSection.Sorted := True;
     ScanPathSection.CaseSensitive := False;
 
-    MLCadIni := TIniFile.Create(edMLCadDir.Text + '\MLCad.ini');
+    MLCadIni := TIniFile.Create(MLCadPathEdit.Text + PathDelim + 'MLCad.ini');
 
     MLCadIni.ReadSection('SCAN_ORDER', ScanPathSection);
 
@@ -690,10 +736,10 @@ begin
       SearchPath := SearchPathsList.FindCaption(0, scanpath, False, True, True);
       if not Assigned(SearchPath) and
          (Pos('<LDRAWDIR>', scanpath) = 0) and
-         (scanpath <> LDrawBasePath + '\parts') and
-         (scanpath <> LDrawBasePath + '\parts\s') and
-         (scanpath <> LDrawBasePath + '\p') and
-         (scanpath <> LDrawBasePath + '\p\48') and
+         (scanpath <> LDrawBasePath + PathDelim + 'parts') and
+         (scanpath <> LDrawBasePath + PathDelim + 'parts' + PathDelim + 's') and
+         (scanpath <> LDrawBasePath + PathDelim + 'p') and
+         (scanpath <> LDrawBasePath + PathDelim + 'p' + PathDelim + '48') and
          DirectoryExists(scanpath) then
       begin
         SearchPath := SearchPathsList.Items.Add;
@@ -745,21 +791,35 @@ begin
   UpdateControls;
 end;
 
+procedure TLDDPOptionsForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  UpdateOptions;
+end;
+
 procedure TLDDPOptionsForm.FormCreate(Sender: TObject);
 begin
   FLDDPOptions := TLDDPOptions.Create;
+end;
+
+procedure TLDDPOptionsForm.FormDestroy(Sender: TObject);
+begin
+  LDDPOptions.Free;
+end;
+
+procedure TLDDPOptionsForm.FormShow(Sender: TObject);
+begin
   LoadFormValues;
   OpenDialog.Filter := 'Executibles (*.exe)|*.exe';
   if SearchPathsList.Items.Count > 0 then
     SearchPathsList.Selected := SearchPathsList.Items[0];
   UpdateControls;
   UpdateSearchPathList;
-  MainPages.ActivePage:=tsExternal;
+  MainPages.ActivePage := tsExternal;
 end;
 
-procedure TLDDPOptionsForm.FormDestroy(Sender: TObject);
+procedure TLDDPOptionsForm.L3LabPathEditChange(Sender: TObject);
 begin
-  LDDPOptions.Free;
+  UpdatePathIcon(L3LabPathEdit.Text + PathDelim + 'L3Lab.exe', L3LabPathEditIcon);
 end;
 
 procedure TLDDPOptionsForm.SearchPathsListSelectItem(Sender: TObject; Item: TListItem;
@@ -774,27 +834,34 @@ var
   ColorList: TDATColourList;
 
 begin
-  ColorList := MakeStandardDATColourList;
-  case ColorSortOption.ItemIndex of
-    0: ColorList.SortTerm := csCode;
-    1: ColorList.SortTerm := csColourName;
-    2: ColorList.SortTerm := csMainColour;
-  end;
-  ColorList.Sort;
-
-  cnt := 0;
-  while cnt < 15 do
+  if FileExists(LDrawPathEdit.Text + PathDelim + 'ldconfig.ldr') then
   begin
-    code := ColorList.IndexOfColourCode(cnt);
-    if code >= 0 then
-    begin
-      LDDPOptions.ColorBarList[cnt] := '"' + StringReplace(ColorList[code].ColourName, '_', ' ', [rfReplaceAll]) + '",' +
-                         IntToStr(ColorList[code].Code) + ',' +
-                         IntToStr(ColorList[code].MainColour);
-      inc(cnt);
+    ColorList := MakeStandardDATColourList;
+    case ColorSortOption.ItemIndex of
+      0: ColorList.SortTerm := csCode;
+      1: ColorList.SortTerm := csColourName;
+      2: ColorList.SortTerm := csMainColour;
     end;
+    ColorList.Sort;
+    cnt := 0;
+    while cnt < 16 do
+    begin
+      code := ColorList.IndexOfColourCode(cnt);
+      if code >= 0 then
+      begin
+        LDDPOptions.ColorBarList.Add('"' + StringReplace(ColorList[code].ColourName, '_', ' ', [rfReplaceAll]) + '",' +
+                           IntToStr(ColorList[code].Code) + ',' +
+                           IntToStr(ColorList[code].MainColour));
+        inc(cnt);
+      end;
+    end;
+    ColorList.Free;
+  end
+  else
+  begin
+    for cnt := 0 to 15 do
+      LDDPOptions.ColorBarList.Add('"Black",0,0');
   end;
-  ColorList.Free;
 end;
 
 procedure TLDDPOptionsForm.UpdateSearchPathList;

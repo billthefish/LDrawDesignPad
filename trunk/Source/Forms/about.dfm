@@ -15,7 +15,6 @@ object LDDPAbout: TLDDPAbout
   Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -187,6 +186,10 @@ object LDDPAbout: TLDDPAbout
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Credits'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -506,8 +509,7 @@ object LDDPAbout: TLDDPAbout
       Align = alRight
       Caption = 'OK'
       Default = True
-      ModalResult = 1
-      TabOrder = 0
+      DoubleBuffered = True
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         08000000000000010000120B0000120B00000001000000010000000000000000
@@ -551,6 +553,9 @@ object LDDPAbout: TLDDPAbout
         FDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFD
         FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
+      ModalResult = 1
+      ParentDoubleBuffered = False
+      TabOrder = 0
     end
   end
 end

@@ -20,13 +20,12 @@ unit splash;
 interface
 
 uses
-  gnugettext, Forms,Controls, StdCtrls, Graphics, Classes, ExtCtrls;
+  Forms, Controls, StdCtrls, Graphics, Classes, ExtCtrls;
 
 type
   TLDDPSplash = class(TForm)
     Image1: TImage;
     lbState: TLabel;
-    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -39,10 +38,5 @@ var
 implementation
 
 {$R *.dfm}
-
-procedure TLDDPSplash.FormCreate(Sender: TObject);
-begin
-  TranslateComponent (self);
-end;
 
 end.

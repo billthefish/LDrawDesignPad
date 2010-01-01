@@ -20,7 +20,7 @@ unit errorbar;
 interface
 
 uses
-  gnugettext, Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, ComCtrls, Menus, JvDockTree, JvDockControlForm,
   JvDockDelphiStyle, JvComponentBase, ActnList, DATCheck;
 
@@ -69,7 +69,6 @@ type
     procedure acECMarkAllTypedExecute(Sender: TObject);
     procedure acECUnMarkAllTypedExecute(Sender: TObject);
     procedure acECCopyExecute(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -92,7 +91,7 @@ implementation
 
 uses
   IniFiles, DATBase, DATModel, DATErrorFix, DATUtils, main,
-  commonprocs, windowsspecific, Contnrs;
+  commonprocs, windowsspecific, Contnrs, SynEditTypes;
 
 procedure TfrErrorWindow.AddError(LineNumber: string; const ErrorRec: TDATError);
 
@@ -118,7 +117,8 @@ begin
     L3PErrorLine := StrToInt(ErrorListView.Items[ErrorListView.Itemindex].SubItems[0]) - 1;
 
     // Highlight errorline.
-    LDDPMain.editor.GotoLineEnsureVisible(L3PErrorLine);
+    LDDPMain.editor.CaretXY := BufferCoord(0,L3PErrorLine);
+    LDDPMain.editor.EnsureCursorPosVisible;
     LDDPMain.editor.SelectLine(L3PErrorline);
 
     // Change focus from L3P error pane to editor pane
@@ -148,12 +148,6 @@ procedure TfrErrorWindow.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveFormValues;
   LDDPMain.acErrorList.Checked := False;
-end;
-
-procedure TfrErrorWindow.FormCreate(Sender: TObject);
-
-begin
-  TranslateComponent(self);
 end;
 
 procedure TfrErrorWindow.FormDestroy(Sender: TObject);
@@ -261,7 +255,7 @@ begin
       acECMarkAllTyped.Enabled := False;
       acECUnMarkAllTyped.Enabled := False;
       acECCopy.Enabled := False;
-      LDDPMain.StatusBar.Panels[0].Text := _('No Errors Found!');
+      LDDPMain.StatusBar.Panels[0].Text := 'No Errors Found!';
     end;
   Screen.Cursor := crDefault;
 end;
@@ -458,7 +452,7 @@ begin
     errorlist := errorlist + 'Line ' + ErrorListView.Items[i].SubItems[0] +
                  ': ' + ErrorListView.Items[i].SubItems[1] +
                  ': ' + LDDPMain.editor.Lines[StrToInt(ErrorListView.Items[i].SubItems[0]) - 1] + #13#10;
-  LDDPMain.editor.CopyText(Length(errorlist), PAnsiChar(errorlist));
+  LDDPMain.editor.DoCopyToClipboard(errorlist);
 end;
 
 procedure TfrErrorWindow.LoadFormValues;

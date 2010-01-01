@@ -14,7 +14,6 @@ object LDDPSortDlg: TLDDPSortDlg
   OldCreateOrder = False
   Position = poOwnerFormCenter
   OnActivate = FormActivate
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -36,8 +35,7 @@ object LDDPSortDlg: TLDDPSortDlg
       Anchors = [akLeft, akTop, akRight, akBottom]
       Cancel = True
       Caption = 'Cancel'
-      ModalResult = 2
-      TabOrder = 0
+      DoubleBuffered = True
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
@@ -81,6 +79,9 @@ object LDDPSortDlg: TLDDPSortDlg
         4F57575757570E00FDFDFDFDFD0057574E4F57575757570E00FDFDFD005F570E
         5757004F5757570E00FDFDFD00575757575700004E57574F00FDFDFDFD005757
         5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
+      ModalResult = 2
+      ParentDoubleBuffered = False
+      TabOrder = 0
     end
     object btnOK: TBitBtn
       Left = 9
@@ -89,9 +90,7 @@ object LDDPSortDlg: TLDDPSortDlg
       Height = 25
       Caption = 'OK'
       Default = True
-      ModalResult = 1
-      TabOrder = 1
-      OnClick = btnOKClick
+      DoubleBuffered = True
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
@@ -135,6 +134,10 @@ object LDDPSortDlg: TLDDPSortDlg
         FDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFD
         FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
+      ModalResult = 1
+      ParentDoubleBuffered = False
+      TabOrder = 1
+      OnClick = btnOKClick
     end
   end
   object SortPanel: TPanel
@@ -195,7 +198,6 @@ object LDDPSortDlg: TLDDPSortDlg
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 0
       TabOrder = 2
       Text = 'None'
@@ -220,7 +222,6 @@ object LDDPSortDlg: TLDDPSortDlg
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 0
       TabOrder = 3
       Text = 'None'
@@ -245,7 +246,6 @@ object LDDPSortDlg: TLDDPSortDlg
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 0
       TabOrder = 4
       Text = 'None'

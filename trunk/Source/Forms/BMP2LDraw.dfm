@@ -11,7 +11,6 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = True
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -120,8 +119,7 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Width = 103
         Height = 25
         Caption = '&Open Bitmap'
-        TabOrder = 0
-        OnClick = BitBtn1Click
+        DoubleBuffered = True
         Glyph.Data = {
           36050000424D3605000000000000360400002800000010000000100000000100
           08000000000000010000120B0000120B00000001000000010000000000000000
@@ -165,6 +163,9 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
           F649FDFDFDFDFDFDFDFDFDFD4949494949FDFD0000FDFD0000FDFDFDFDFDFDFD
           FDFD0009D80000E8D800FDFDFDFDFDFDFDFDFD0009E9E9E800FDFDFDFDFDFDFD
           FDFDFDFD0009D800FDFDFDFDFDFDFDFDFDFDFDFDFD0000FDFDFD}
+        ParentDoubleBuffered = False
+        TabOrder = 0
+        OnClick = BitBtn1Click
       end
       object btNext1: TBitBtn
         Left = 224
@@ -173,7 +174,9 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Height = 25
         Caption = '>> Next'
         Default = True
+        DoubleBuffered = True
         Enabled = False
+        ParentDoubleBuffered = False
         TabOrder = 1
         OnClick = btNext1Click
       end
@@ -210,8 +213,7 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Width = 90
         Height = 25
         Caption = 'C&lear color'
-        TabOrder = 6
-        OnClick = BitBtn6Click
+        DoubleBuffered = True
         Glyph.Data = {
           36050000424D3605000000000000360400002800000010000000100000000100
           08000000000000010000120B0000120B00000001000000010000000000000000
@@ -255,6 +257,9 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
           4F57575757570E00FDFDFDFDFD0057574E4F57575757570E00FDFDFD005F570E
           5757004F5757570E00FDFDFD00575757575700004E57574F00FDFDFDFD005757
           5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
+        ParentDoubleBuffered = False
+        TabOrder = 6
+        OnClick = BitBtn6Click
       end
       object Button1: TBitBtn
         Left = 235
@@ -262,8 +267,7 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Width = 90
         Height = 25
         Caption = '&Pick color'
-        TabOrder = 5
-        OnClick = Button1Click
+        DoubleBuffered = True
         Glyph.Data = {
           F6000000424DF600000000000000760000002800000010000000100000000100
           0400000000008000000000000000000000001000000010000000000000000000
@@ -273,6 +277,9 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
           DDDDDDDD07770DDDDDDDDDDDD07770DDDDDDDDDDDD07770D0DDDD0DDDDD07770
           0DDDD00DDDDD07000DDDDD00D0DDD00000DDDDD000DD0000000DDDD000DDDDD0
           000DDD0000DDDDDD000DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD}
+        ParentDoubleBuffered = False
+        TabOrder = 5
+        OnClick = Button1Click
       end
       object BitBtn4: TBitBtn
         Left = 118
@@ -280,6 +287,8 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Width = 103
         Height = 25
         Caption = '<< Previous'
+        DoubleBuffered = True
+        ParentDoubleBuffered = False
         TabOrder = 2
         OnClick = BitBtn4Click
       end
@@ -290,6 +299,8 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Height = 25
         Caption = '>> Next'
         Default = True
+        DoubleBuffered = True
+        ParentDoubleBuffered = False
         TabOrder = 3
         OnClick = BitBtn5Click
       end
@@ -362,6 +373,8 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Width = 103
         Height = 25
         Caption = '<< Previous'
+        DoubleBuffered = True
+        ParentDoubleBuffered = False
         TabOrder = 4
         OnClick = btNext1Click
       end
@@ -372,9 +385,8 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
         Height = 25
         Caption = 'Done'
         Default = True
+        DoubleBuffered = True
         Enabled = False
-        TabOrder = 5
-        OnClick = btSaveClick
         Glyph.Data = {
           36050000424D3605000000000000360400002800000010000000100000000100
           08000000000000010000120B0000120B00000001000000010000000000000000
@@ -418,6 +430,9 @@ object LDDPBMP2LDrawDlg: TLDDPBMP2LDrawDlg
           FDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B8B000FDFDFDFDFDFDFD
           FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
           FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
+        ParentDoubleBuffered = False
+        TabOrder = 5
+        OnClick = btSaveClick
       end
       object edWidth: TEdit
         Left = 79

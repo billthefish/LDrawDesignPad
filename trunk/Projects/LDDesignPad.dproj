@@ -1,7 +1,7 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{6BE5F755-203C-4F0C-8942-9EA9D896BC70}</ProjectGuid>
-			<MainSource>LDDesignPad.dpr</MainSource>
+			<ProjectGuid>{52D6FC4D-10C7-4891-A4D5-913176CF4C9D}</ProjectGuid>
+			<MainSource>LDDesignPad.DPR</MainSource>
 			<Config Condition="'$(Config)'==''">Debug</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
 			<ProjectVersion>12.0</ProjectVersion>
@@ -20,23 +20,20 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
-			<DCC_DependencyCheckOutputName>..\Current Build\LDDesignPad.exe</DCC_DependencyCheckOutputName>
-			<DCC_UnitSearchPath>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Custom Controls\ScintillaLDDP;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<DCC_UsePackage>vclx;vcl;rtl;dbrtl;vcldb;adortl;dbxcds;dbexpress;vclib;ibxpress;vclactnband;xmlrtl;inet;IntrawebDB_80_100;Intraweb_80_100;vclie;inetdbbde;inetdbxpress;IndyCore;IndySystem;dclOfficeXP;VclSmp;soaprtl;dsnap;IndyProtocols;bdertl;teeui;teedb;tee;vcldbx;Jcl;JvCoreD10R;JvBandsD10R;JclVcl;JvDBD10R;JvStdCtrlsD10R;JvDlgsD10R;JvSystemD10R;JvBDED10R;JvCmpD10R;JvCryptD10R;JvCtrlsD10R;JvCustomD10R;JvDockingD10R;JvDotNetCtrlsD10R;JvEDID10R;JvGlobusD10R;JvHMID10R;JvInterpreterD10R;JvJansD10R;JvManagedThreadsD10R;JvMMD10R;JvNetD10R;JvPageCompsD10R;JvPluginD10R;JvPrintPreviewD10R;JvRuntimeDesignD10R;JvTimeFrameworkD10R;JvUIBD10R;JvValidatorsD10R;JvWizardD10R;JvXPCtrlsD10R;JvAppFrmD10R</DCC_UsePackage>
+			<DCC_DcuOutput>..\Current Build\DCU\</DCC_DcuOutput>
+			<DCC_ExeOutput>..\Current Build\</DCC_ExeOutput>
+			<DCC_BplOutput>..\Current Build\DCU\</DCC_BplOutput>
+			<DCC_DcpOutput>..\Current Build\DCU\</DCC_DcpOutput>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
-			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
-			<DCC_BplOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</DCC_BplOutput>
-			<DCC_ExeOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build</DCC_ExeOutput>
-			<DCC_Platform>x86</DCC_Platform>
 			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+			<DCC_DependencyCheckOutputName>..\Current Build\LDDesignPad.exe</DCC_DependencyCheckOutputName>
+			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<DCC_Platform>x86</DCC_Platform>
 			<DCC_N>true</DCC_N>
-			<DCC_K>false</DCC_K>
-			<DCC_DcpOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</DCC_DcpOutput>
 			<DCC_S>false</DCC_S>
-			<DCC_DcuOutput>C:\Users\Orion Pobursky\Documents\Lego\LDDP\Current Build\DCU</DCC_DcuOutput>
-			<DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-			<DCC_F>false</DCC_F>
+			<DCC_K>false</DCC_K>
 			<DCC_E>false</DCC_E>
+			<DCC_F>false</DCC_F>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
 			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -48,17 +45,17 @@
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 		</PropertyGroup>
 		<ItemGroup>
-			<DelphiCompile Include="LDDesignPad.dpr">
+			<DelphiCompile Include="LDDesignPad.DPR">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="..\DAT Tools\DATUtils.pas"/>
 			<DCCReference Include="..\DAT Tools\DATBase.pas"/>
 			<DCCReference Include="..\DAT Tools\DATCheck.pas"/>
+			<DCCReference Include="..\DAT Tools\DATColour.pas"/>
 			<DCCReference Include="..\DAT Tools\DATErrorFix.pas"/>
+			<DCCReference Include="..\DAT Tools\DATFlexObject.pas"/>
 			<DCCReference Include="..\DAT Tools\DATMath.pas"/>
 			<DCCReference Include="..\DAT Tools\DATModel.pas"/>
-			<DCCReference Include="..\DAT Tools\DATFlexObject.pas"/>
-			<DCCReference Include="..\DAT Tools\DATColour.pas"/>
+			<DCCReference Include="..\DAT Tools\DATUtils.pas"/>
 			<DCCReference Include="..\Source\Forms\about.pas">
 				<Form>LDDPAbout</Form>
 			</DCCReference>
@@ -101,11 +98,11 @@
 		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
 		<ProjectExtensions>
 			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
-			<Borland.ProjectType>VCLApplication</Borland.ProjectType>
+			<Borland.ProjectType/>
 			<BorlandProject>
 				<Delphi.Personality>
 					<Source>
-						<Source Name="MainSource">LDDesignPad.dpr</Source>
+						<Source Name="MainSource">LDDesignPad.DPR</Source>
 					</Source>
 					<Parameters>
 						<Parameters Name="UseLauncher">False</Parameters>
@@ -116,8 +113,8 @@
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
 						<VersionInfo Name="MajorVer">2</VersionInfo>
-						<VersionInfo Name="MinorVer">0</VersionInfo>
-						<VersionInfo Name="Release">4</VersionInfo>
+						<VersionInfo Name="MinorVer">1</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
 						<VersionInfo Name="Build">0</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
@@ -130,9 +127,9 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName"/>
 						<VersionInfoKeys Name="FileDescription"/>
-						<VersionInfoKeys Name="FileVersion">2.0.4.0</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">2.1.0.0</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName"/>
-						<VersionInfoKeys Name="LegalCopyright">(c) the LDDP project contributors</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalCopyright"/>
 						<VersionInfoKeys Name="LegalTrademarks"/>
 						<VersionInfoKeys Name="OriginalFilename"/>
 						<VersionInfoKeys Name="ProductName"/>

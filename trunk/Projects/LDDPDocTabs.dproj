@@ -26,7 +26,7 @@
 			<GenPackage>true</GenPackage>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_Platform>x86</DCC_Platform>
-			<DCC_DependencyCheckOutputName>..\..\..\..\..\Public\Documents\RAD Studio\7.0\Bpl\LDDPDocTabs.bpl</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>..\..\..\..\..\All Users\Documents\RAD Studio\7.0\Bpl\LDDPDocTabs.bpl</DCC_DependencyCheckOutputName>
 			<DCC_N>false</DCC_N>
 			<DCC_S>false</DCC_S>
 			<GenDll>true</GenDll>
@@ -40,9 +40,7 @@
 			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
 			<DCC_DebugInformation>false</DCC_DebugInformation>
 		</PropertyGroup>
-		<PropertyGroup Condition="'$(Cfg_2)'!=''">
-			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
-		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''"/>
 		<ItemGroup>
 			<DelphiCompile Include="LDDPDocTabs.dpk">
 				<MainSource>MainSource</MainSource>
@@ -50,7 +48,6 @@
 			<DCCReference Include="rtl.dcp"/>
 			<DCCReference Include="vcl.dcp"/>
 			<DCCReference Include="SynEdit_R2009.dcp"/>
-			<DCCReference Include="PLDDPSynEdit.dcp"/>
 			<DCCReference Include="..\Source\Units\LDDPSynEditDocTabs.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

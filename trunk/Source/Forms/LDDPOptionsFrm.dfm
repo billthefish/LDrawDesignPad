@@ -1,6 +1,6 @@
 object LDDPOptionsForm: TLDDPOptionsForm
-  Left = 360
-  Top = 236
+  Left = 8
+  Top = 8
   Width = 600
   Height = 404
   VertScrollBar.Range = 37
@@ -13,15 +13,17 @@ object LDDPOptionsForm: TLDDPOptionsForm
   Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object MainPages: TPageControl
     Left = 0
     Top = 0
-    Width = 584
-    Height = 331
+    Width = 592
+    Height = 333
     ActivePage = ColorBarSheet
     Align = alClient
     MultiLine = True
@@ -30,31 +32,14 @@ object LDDPOptionsForm: TLDDPOptionsForm
     object tsExternal: TTabSheet
       Caption = '&Program Paths'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
-        Width = 576
-        Height = 303
+        Width = 584
+        Height = 305
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
-        object lbL3Lab: TLabel
-          Left = 404
-          Top = 141
-          Width = 38
-          Height = 13
-          Caption = 'lbL3Lab'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
         object Label17: TLabel
           Left = 8
           Top = 141
@@ -69,38 +54,12 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Height = 13
           Caption = 'LDraw (ldconfig.ldr)'
         end
-        object lbMLCAD: TLabel
-          Left = 404
-          Top = 101
-          Width = 45
-          Height = 13
-          Caption = 'lbMLCAD'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
         object Label2: TLabel
           Left = 8
           Top = 101
           Width = 97
           Height = 13
           Caption = 'MLCad (MLCad.exe)'
-        end
-        object lbLDVIew: TLabel
-          Left = 404
-          Top = 62
-          Width = 45
-          Height = 13
-          Caption = 'lbLDView'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
         end
         object Label4: TLabel
           Left = 8
@@ -109,32 +68,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Height = 13
           Caption = 'LDView (LDView.exe)'
         end
-        object lbLdraw: TLabel
-          Left = 404
-          Top = 23
-          Width = 37
-          Height = 13
-          Caption = 'lbLdraw'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object lbLSynth: TLabel
-          Left = 404
-          Top = 178
-          Width = 41
-          Height = 13
-          Caption = 'lbLSynth'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
         object Label12: TLabel
           Left = 8
           Top = 178
@@ -142,9 +75,39 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Height = 13
           Caption = 'LSynth (lsynthcp.exe)'
         end
-        object c: TBitBtn
-          Left = 376
+        object LDrawPathEditIcon: TImage
+          Left = 503
+          Top = 18
+          Width = 21
+          Height = 21
+        end
+        object LDViewPathEditIcon: TImage
+          Left = 503
+          Top = 58
+          Width = 21
+          Height = 21
+        end
+        object MLCadPAthEditIcon: TImage
+          Left = 503
+          Top = 97
+          Width = 21
+          Height = 21
+        end
+        object L3LabPathEditIcon: TImage
+          Left = 503
           Top = 137
+          Width = 21
+          Height = 21
+        end
+        object LSynthPathEditIcon: TImage
+          Left = 503
+          Top = 174
+          Width = 21
+          Height = 21
+        end
+        object c: TBitBtn
+          Left = 472
+          Top = 138
           Width = 25
           Height = 22
           DoubleBuffered = True
@@ -196,7 +159,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           OnClick = cClick
         end
         object btMLCad: TBitBtn
-          Left = 376
+          Left = 472
           Top = 97
           Width = 25
           Height = 22
@@ -249,8 +212,8 @@ object LDDPOptionsForm: TLDDPOptionsForm
           OnClick = btMLCadClick
         end
         object btLDView: TBitBtn
-          Left = 376
-          Top = 57
+          Left = 472
+          Top = 58
           Width = 25
           Height = 22
           DoubleBuffered = True
@@ -302,7 +265,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           OnClick = btLDViewClick
         end
         object btLDraw: TBitBtn
-          Left = 376
+          Left = 472
           Top = 18
           Width = 25
           Height = 22
@@ -354,45 +317,49 @@ object LDDPOptionsForm: TLDDPOptionsForm
           TabOrder = 1
           OnClick = btLDrawClick
         end
-        object edL3LabDir: TEdit
+        object L3LabPathEdit: TEdit
           Left = 116
-          Top = 137
-          Width = 260
+          Top = 138
+          Width = 350
           Height = 21
           TabOrder = 6
+          OnChange = L3LabPathEditChange
         end
-        object edMLCadDir: TEdit
+        object MLCadPathEdit: TEdit
           Left = 116
           Top = 97
-          Width = 260
+          Width = 350
           Height = 21
           TabOrder = 4
+          OnChange = MLCadPathEditChange
         end
-        object edLDViewDir: TEdit
-          Left = 116
+        object LDViewPathEdit: TEdit
+          Left = 117
           Top = 58
-          Width = 260
+          Width = 349
           Height = 21
           TabOrder = 2
+          OnChange = LDViewPathEditChange
         end
-        object edLdrawDir: TEdit
+        object LDrawPathEdit: TEdit
           Left = 116
           Top = 18
-          Width = 260
+          Width = 350
           Height = 21
           TabOrder = 0
-          OnChange = edLdrawDirChange
+          OnChange = LDrawPathEditChange
         end
-        object edLSynthDir: TEdit
+        object LSynthPathEdit: TEdit
           Left = 116
           Top = 174
-          Width = 260
+          Width = 350
           Height = 21
           TabOrder = 8
+          OnChange = LSynthPathEditChange
         end
         object btLSynth: TBitBtn
-          Left = 376
-          Top = 173
+          Left = 472
+          Top = 174
           Width = 25
           Height = 22
           DoubleBuffered = True
@@ -448,24 +415,16 @@ object LDDPOptionsForm: TLDDPOptionsForm
     object TabSheet4: TTabSheet
       Caption = 'Configuration &Values'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConfigPages: TPageControl
         Left = 0
         Top = 0
-        Width = 576
-        Height = 303
-        ActivePage = TabSheet2
+        Width = 584
+        Height = 305
+        ActivePage = TabSheet7
         Align = alClient
         TabOrder = 0
         object TabSheet6: TTabSheet
           Caption = 'Error Check Values'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object Label6: TLabel
             Left = 3
             Top = 36
@@ -583,10 +542,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
         object TabSheet7: TTabSheet
           Caption = 'Editor Behavior'
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object lbPntAcc: TLabel
             Left = 3
             Top = 3
@@ -677,10 +632,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
         object TabSheet8: TTabSheet
           Caption = 'User Information'
           ImageIndex = 2
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object Label3: TLabel
             Left = 3
             Top = 3
@@ -730,7 +681,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           object GroupBox2: TGroupBox
             Left = 0
             Top = 146
-            Width = 568
+            Width = 576
             Height = 73
             Align = alTop
             Caption = 'Fine Grid Settings'
@@ -823,7 +774,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           object GroupBox3: TGroupBox
             Left = 0
             Top = 73
-            Width = 568
+            Width = 576
             Height = 73
             Align = alTop
             Caption = 'Medium Grid Settings'
@@ -916,7 +867,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           object GroupBox5: TGroupBox
             Left = 0
             Top = 0
-            Width = 568
+            Width = 576
             Height = 73
             Align = alTop
             Caption = 'Coarse Grid Settings'
@@ -1012,14 +963,10 @@ object LDDPOptionsForm: TLDDPOptionsForm
     object TabSheet5: TTabSheet
       Caption = '&Search Paths'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SearchPathsList: TListView
         Left = 0
         Top = 0
-        Width = 576
+        Width = 584
         Height = 201
         Align = alTop
         Columns = <
@@ -1039,8 +986,8 @@ object LDDPOptionsForm: TLDDPOptionsForm
       object Panel5: TPanel
         Left = 0
         Top = 201
-        Width = 576
-        Height = 102
+        Width = 584
+        Height = 104
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
@@ -1129,7 +1076,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           OnClick = btnMLCadPathImportClick
         end
         object btnDeleteInvalidPaths: TButton
-          Left = 496
+          Left = 484
           Top = 6
           Width = 83
           Height = 33
@@ -1139,7 +1086,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           OnClick = btnDeleteInvalidPathsClick
         end
         object btnDeletePath: TButton
-          Left = 389
+          Left = 492
           Top = 73
           Width = 75
           Height = 25
@@ -1171,13 +1118,13 @@ object LDDPOptionsForm: TLDDPOptionsForm
         object edSearchPath: TEdit
           Left = 6
           Top = 45
-          Width = 427
+          Width = 530
           Height = 21
           TabOrder = 7
           OnChange = edSearchPathChange
         end
         object btnPathOpen: TBitBtn
-          Left = 439
+          Left = 542
           Top = 45
           Width = 25
           Height = 22
@@ -1235,15 +1182,11 @@ object LDDPOptionsForm: TLDDPOptionsForm
       Caption = '&Color Bar'
       ImageIndex = -1
       OnShow = ColorBarSheetShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox9: TGroupBox
         Left = 0
         Top = 0
-        Width = 576
-        Height = 303
+        Width = 584
+        Height = 305
         Align = alClient
         Caption = 'Color Bar Colors'
         TabOrder = 0
@@ -1273,7 +1216,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Left = 2
           Top = 15
           Width = 137
-          Height = 286
+          Height = 288
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
@@ -1385,21 +1328,17 @@ object LDDPOptionsForm: TLDDPOptionsForm
     object TabSheet1: TTabSheet
       Caption = '&External Progams'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GroupBox7: TGroupBox
-        Left = 215
+        Left = 223
         Top = 0
         Width = 361
-        Height = 303
+        Height = 305
         Align = alRight
         Caption = 'User Defined Program Configuration'
         TabOrder = 0
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 240
+          Top = 242
           Width = 357
           Height = 61
           Align = alBottom
@@ -1417,7 +1356,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Left = 2
           Top = 145
           Width = 207
-          Height = 95
+          Height = 97
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -1425,7 +1364,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
             Left = 0
             Top = 0
             Width = 207
-            Height = 95
+            Height = 97
             Align = alClient
             BevelEdges = []
             BevelInner = bvNone
@@ -1473,23 +1412,16 @@ object LDDPOptionsForm: TLDDPOptionsForm
             Height = 13
             Caption = 'Parameters:'
           end
-          object lbExternal: TLabel
-            Left = 224
-            Top = 81
-            Width = 46
-            Height = 13
-            Caption = 'lbExternal'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
+          object ExternalPathEditIcon: TImage
+            Left = 332
+            Top = 27
+            Width = 21
+            Height = 21
           end
           object edExternalName: TEdit
             Left = 88
             Top = 0
-            Width = 237
+            Width = 265
             Height = 21
             TabOrder = 0
             OnChange = edExternalNameChange
@@ -1497,7 +1429,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           object edExternal: TEdit
             Left = 88
             Top = 27
-            Width = 237
+            Width = 207
             Height = 21
             TabOrder = 1
             OnChange = edExternalNameChange
@@ -1505,13 +1437,13 @@ object LDDPOptionsForm: TLDDPOptionsForm
           object edParameters: TEdit
             Left = 88
             Top = 54
-            Width = 237
+            Width = 265
             Height = 21
             TabOrder = 2
             OnChange = edExternalNameChange
           end
           object btExternal: TBitBtn
-            Left = 331
+            Left = 301
             Top = 27
             Width = 25
             Height = 21
@@ -1586,7 +1518,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Left = 209
           Top = 145
           Width = 150
-          Height = 95
+          Height = 97
           Align = alClient
           BevelEdges = []
           BevelOuter = bvNone
@@ -1594,7 +1526,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           TabOrder = 3
           object btnAddExternal: TButton
             Left = 0
-            Top = 29
+            Top = 31
             Width = 150
             Height = 33
             Align = alBottom
@@ -1604,7 +1536,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           end
           object btnDelExternal: TButton
             Left = 0
-            Top = 62
+            Top = 64
             Width = 150
             Height = 33
             Align = alBottom
@@ -1617,8 +1549,8 @@ object LDDPOptionsForm: TLDDPOptionsForm
       object lbxExternal: TListBox
         Left = 0
         Top = 0
-        Width = 215
-        Height = 303
+        Width = 223
+        Height = 305
         Align = alClient
         ItemHeight = 13
         TabOrder = 1
@@ -1629,14 +1561,14 @@ object LDDPOptionsForm: TLDDPOptionsForm
   end
   object Panel1: TPanel
     Left = 0
-    Top = 331
-    Width = 584
+    Top = 333
+    Width = 592
     Height = 37
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      584
+      592
       37)
     object BitBtn1: TBitBtn
       Left = 387
@@ -1766,7 +1698,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
     Left = 40
     Top = 336
     Bitmap = {
-      494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000400100010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

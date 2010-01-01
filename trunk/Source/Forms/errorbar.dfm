@@ -19,7 +19,6 @@ object frErrorWindow: TfrErrorWindow
   FormStyle = fsStayOnTop
   OldCreateOrder = False
   OnClose = FormClose
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
