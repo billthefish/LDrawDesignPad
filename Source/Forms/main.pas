@@ -565,36 +565,27 @@ end;
 procedure TLDDPMain.acIncIndentExecute(Sender: TObject);
 // Indent line/selection based on tabWidth
 var
-  currentindent, lineindent, startline, endline, i: Integer;
+  lineindent, startline, endline, i: Integer;
 
 begin
-(*  editor.ExpandSelection(startline, endline);
-  currentindent:= editor.;
-  if currentindent = 0 then
-    currentindent := editor.GetTabWidth;
+  editor.ExpandSelection(startline, endline);
+  editor.BeginUndoBlock;
   for i := startline to endline do
-  begin
-    lineindent := editor.GetLineIndentation(i);
-    editor.SetLineIndentation(i, lineindent + currentindent);
-  end; *)
+    editor.SetLineIndent(i, editor.GetLineIndent(i) + 1);
+  editor.EndUndoBlock;
 end;
 
 procedure TLDDPMain.acDecIndentExecute(Sender: TObject);
 // Un-indent line/selection based on tabWidth
 var
-  currentindent, startline, endline, i: Integer;
-  newindent : Cardinal;
-begin
-(*  editor.ExpandSelection(startline, endline);
-  currentindent:= editor.GetIndent;
-  if currentindent = 0 then
-    currentindent := editor.GetTabWidth;
+  lineindent, startline, endline, i: Integer;
 
+begin
+  editor.ExpandSelection(startline, endline);
+  editor.BeginUndoBlock;
   for i := startline to endline do
-  begin
-    newindent := editor.GetLineIndentation(i) - currentindent;
-    editor.SetLineIndentation(i, newindent);
-  end; *)
+    editor.SetLineIndent(i, editor.GetLineIndent(i) - 1);
+  editor.EndUndoBlock;
 end;
 
 procedure TLDDPMain.acInsertPartHeaderExecute(Sender: TObject);
@@ -1139,9 +1130,9 @@ begin
     InputFile := GetShortFileName(ExtractFilePath(tempFileName)) + ExtractFileName(tempFileName);
     editor.lines.SaveToFile(InputFile);
     TempFile.Add(CommandLine + ' ' + InputFile + ' ' + OutputFile);
-    CommandFile := GetShortFileName(WinTempDir) + GetTmpFIleName + '.bat';
+    CommandFile := GetShortFileName(WinTempDir) + GetTmpFileName + '.bat';
     TempFile.SaveToFile(CommandFile);
-    DOCommand(GetDOSVar('COMSPEC') + ' /C ' + CommandFile,SW_HIDE,true);
+    DoCommand(GetEnvironmentVariable('COMSPEC') + ' /C ' + CommandFile,SW_HIDE,true);
     DeleteFile(CommandFile);
     TempFile.LoadFromFile(OutputFile);
     editor.SelectAll;
