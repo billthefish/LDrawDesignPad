@@ -19,7 +19,7 @@ unit windowsspecific;
 
 interface
 
-uses Windows, ShellAPI, Messages, Sysutils, Classes, Forms, Registry;
+uses Windows, ShellAPI, Messages, SysUtils, Classes, Forms, Registry;
 
 type
   TLDDPCallBack = procedure(strCBText: PChar);
@@ -67,7 +67,6 @@ procedure CallPlugin(libname, FullText, SelectedText: string; var s1, s2, s3, s4
 procedure LDDPCallBack(strCBCompleteText, strCBSelText: PChar); stdcall;
 procedure OpenInBrowser(url: string);
 function GetAppVersion(const FileName: TFileName): string;
-function GetDOSVar(VarName: string): string;
 function ReadUIConfigValue(const ConfigValue: string): string;
 
 implementation
@@ -164,6 +163,7 @@ Return value: None
 ----------------------------------------------------------------------}
 var
   aTmp: array[0..255] of char;
+
 begin
   if GetShortPathName(PChar(FileName), aTmp, Sizeof(aTmp) - 1) = 0 then
      Result := FileName
@@ -175,9 +175,9 @@ function WindowsDir: string;
 var
   WDir: PChar;
 begin
-  GetMem(WDir, 144);
-  GetWindowsDirectory(WDir, 144);
-  Result:= StrPas(WDir);
+  GetMem(WDir, StrToInt(GetEnvironmentVariable('MAX_PATH')));
+  GetWindowsDirectory(WDir, StrToInt(GetEnvironmentVariable('MAX_PATH')));
+  Result := StrPas(WDir);
 end;
 
 function GetShellFolderPath(folder: string): string;
@@ -217,7 +217,7 @@ begin
   end;
   if copy(tempdir,length(tempdir),1) <> '\' then
     tempdir := tempdir + '\';
-  Result:=tempDir;
+  Result := tempDir;
 end;
 
 function PluginInfo(libname: string; nr: Byte):string;
@@ -282,22 +282,6 @@ end;
 procedure OpenInBrowser(url: string);
 begin
   ShellExecute(Application.Handle, 'open', PChar(url), nil, nil, SW_NORMAL );
-end;
-
-function GetDOSVar(VarName: string): string;
-// Find out DOS var settings (path etc.)
-var
-  PName, PBuff: PChar;
-  DataSize: byte;
-
-begin
-  GetMem(PName, 250);
-  GetMem(PBuff, 250);
-  StrCopy(PName, PChar(VarName));
-  Datasize := GetEnvironmentVariable(PName, PBuff, 250);
-  Result := Copy(string(PBuff), 1, DataSize);
-  FreeMem(PName);
-  FreeMem(PBuff);
 end;
 
 function ReadUIConfigValue(const ConfigValue: string): string;

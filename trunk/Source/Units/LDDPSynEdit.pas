@@ -43,7 +43,7 @@ type
     procedure GridMoveZ(Negative: Boolean = False);
     procedure SnapToGrid;
     function GetLineIndent(line: Integer): Integer;
-    procedure SetLineIndent(line: Integer);
+    procedure SetLineIndent(line: Integer; indent: Integer);
 
   published
     property LDDPOptions: TLDDPOptions read FLDDPOptions write SetLDDPOptions;
@@ -169,8 +169,8 @@ end;
 
 procedure TLDDPSynEdit.SelectLines(StartLine, EndLine: Integer);
 begin
-  SelStart := RowColToCharIndex(BufferCoord(0, StartLine));
-  SelEnd := RowColToCharIndex(BufferCoord(0, EndLine))
+  SelStart := RowColToCharIndex(BufferCoord(0, StartLine + 1));
+  SelEnd := RowColToCharIndex(BufferCoord(Length(Lines[EndLine]), EndLine + 1))
 end;
 
 procedure TLDDPSynEdit.ExpandSelection(out startln, endln: Integer);
@@ -183,10 +183,13 @@ var
   startline, endline: Integer;
 
 begin
-  startline := CharIndexToRowCol(SelStart).Line;
+  startline := CharIndexToRowCol(SelStart).Line - 1;
 
   if SelLength > 0 then
-    endline := CharIndexToRowCol(SelEnd).Line
+    if CharIndexToRowCol(SelEnd).Char = 1 then
+      endline := CharIndexToRowCol(SelEnd).Line - 2
+    else
+      endline := CharIndexToRowCol(SelEnd).Line - 1
   else
     endline := startline;
 
@@ -330,9 +333,21 @@ begin
   end;
 end;
 
-procedure TLDDPSynEdit.SetLineIndent(line: Integer);
-begin
+procedure TLDDPSynEdit.SetLineIndent(line: Integer; indent: Integer);
 
+var
+  CurrentLine: string;
+
+begin
+  if indent < 0 then
+    indent := 0;
+
+  CurrentLine := TrimLeft(Lines[line]);
+
+  if eoTabsToSpaces in Options then
+    Lines[line] := StringOfChar(#32, indent * TabWidth) + CurrentLine
+  else
+    Lines[line] := StringOfChar(#8, indent) + CurrentLine;
 end;
 
 procedure TLDDPSynEdit.SnapToGrid;
@@ -425,8 +440,29 @@ begin
 end;
 
 function TLDDPSynEdit.GetLineIndent(line: Integer): Integer;
-begin
+var
+  i, LeadingSpaces, LeadingTabs: Integer;
+  CurrentLine: string;
 
+begin
+  CurrentLine := Lines[line];
+  LeadingSpaces := 0;
+  LeadingTabs := 0;
+
+  if Length(CurrentLine) > 0 then
+  begin
+    i := 1;
+    while (CurrentLine[i] = #8) or (CurrentLine[i] = #32) do
+    begin
+      if CurrentLine[i] = #8 then
+        Inc(LeadingTabs)
+      else if CurrentLine[i] = #32 then
+        Inc(LeadingSpaces);
+      Inc(i);
+    end;
+  end;
+
+  Result := LeadingTabs + (LeadingSpaces div TabWidth);
 end;
 
 function TLDDPSynEdit.GridAngle: Double;

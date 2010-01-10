@@ -60,9 +60,9 @@ type
       FOnClosing: TLDDPEvent_onclosing;
       FOnOpenedAndInited: TLDDPEvent_openedandinited;
       FOnTabHint: TLDDPEvent_onhint;
-      FDefaultExt: String;
+      FDefaultExt: string;
       FInactivate: Boolean;
-      FDefaultTabName: String;
+      FDefaultTabName: string;
 
       procedure EvtTabChanged(Sender: TObject);
       function getCount: Integer;
@@ -588,9 +588,7 @@ begin
   if tmp.DocIndex < Tabs.Count then
   begin
     ist := IntToStr(tmp.DocIndex + 1);
-
-
-Tabs.Strings[tmp.DocIndex] := ist + ' ' + tmp.TabName;
+    Tabs.Strings[tmp.DocIndex] := ist + ' ' + tmp.TabName;
   end;
 end;
 
