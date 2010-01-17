@@ -26,8 +26,7 @@ uses
   Forms, Messages, SysUtils, Types, StdCtrls, ShellAPI, DATBase, AppEvnts,
   commonprocs, LDDPDlgs, LDDPSynEdit, SynEdit, SynEditMiscClasses,
   SynEditSearch, SynEditOptionsDialog, SynEditPrint, SynEditHighlighter,
-  SynHighlighterLDraw, SynCompletionProposal, LDDPSynEditDocTabs;
-
+  SynHighlighterLDraw, SynCompletionProposal, LDDPSynEditDocTabs, SynEditTypes;
 type
   TLDDPMain = class(TForm)
     acCommentBlock: TAction;
@@ -379,7 +378,7 @@ type
     PluginMenu: TMenuItem;
     OptionsDlg: TLDDPOptionsDlg;
     ColorReplace: TLDDPColorReplaceDlg;
-    SynCompletionProposal1: TSynCompletionProposal;
+    CodeComp: TSynCompletionProposal;
     LDrawHighlighter: TSynLDRSyn;
     printer: TSynEditPrint;
     EditorOptions: TSynEditOptionsDialog;
@@ -490,9 +489,13 @@ type
 //      foldLevelNow, foldLevelPrev: Integer);
     procedure acMoveSnapToGridExecute(Sender: TObject);
     procedure editorStatusChange(Sender: TObject; Changes: TSynStatusChanges);
+    procedure editorMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure editorDblClick(Sender: TObject);
 
   private
     TabRightClickIndex: Integer;
+    EditorMousePos: TBufferCoord;
     Initialized: Boolean;
 
   protected
@@ -565,7 +568,7 @@ end;
 procedure TLDDPMain.acIncIndentExecute(Sender: TObject);
 // Indent line/selection based on tabWidth
 var
-  lineindent, startline, endline, i: Integer;
+  startline, endline, i: Integer;
 
 begin
   editor.ExpandSelection(startline, endline);
@@ -578,7 +581,7 @@ end;
 procedure TLDDPMain.acDecIndentExecute(Sender: TObject);
 // Un-indent line/selection based on tabWidth
 var
-  lineindent, startline, endline, i: Integer;
+  startline, endline, i: Integer;
 
 begin
   editor.ExpandSelection(startline, endline);
@@ -1535,6 +1538,33 @@ begin
 end;
 
 *)
+procedure TLDDPMain.editorDblClick(Sender: TObject);
+
+var
+  line: string;
+
+begin
+  line := editor.Lines[EditorMousePos.Line - 1];
+
+  while (line[EditorMousePos.Char] <> #32) and
+        (line[EditorMousePos.Char] <> #8) and
+        (EditorMousePos.Char > 0) do
+    Dec(EditorMousePos.Char);
+  Inc(EditorMousePos.Char);
+  editor.SelStart := editor.RowColToCharIndex(EditorMousePos);
+  while (line[EditorMousePos.Char] <> #32) and
+        (line[EditorMousePos.Char] <> #8) and
+        (EditorMousePos.Char <= Length(line)) do
+    Inc(EditorMousePos.Char);
+  editor.SelEnd := editor.RowColToCharIndex(EditorMousePos);
+end;
+
+procedure TLDDPMain.editorMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  editor.GetPositionOfMouse(EditorMousePos);
+end;
+
 procedure TLDDPMain.editorStatusChange(Sender: TObject;
   Changes: TSynStatusChanges);
 var
@@ -2143,7 +2173,7 @@ begin
 //  SearchReplaceDlg.ReplaceTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', SearchReplaceDlg.ReplaceTextHistory);
 //  SearchReplaceDlg.SearchTextHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_SearchTextHistory', SearchReplaceDlg.SearchTextHistory);
 
-  editor.LDDPOptions.Load(IniFilePath + '\LDDP.ini', 'LDDP Options');
+  editor.LDDPOptions.Load(IniFilePath + '\LDDP.ini', 'LDDP Options' + GetAppVersion(Application.ExeName));
   if DirectoryExists(editor.LDDPOptions.LDrawPath) then
     LDrawBasePath := editor.LDDPOptions.LDrawPath;
 
@@ -2211,7 +2241,7 @@ var
   i: Integer;
 
 begin
-  editor.LDDPOptions.Save(IniFilePath + '\LDDP.ini', 'LDDP Options');
+  editor.LDDPOptions.Save(IniFilePath + '\LDDP.ini', 'LDDP Options' + GetAppVersion(Application.ExeName));
 
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
 

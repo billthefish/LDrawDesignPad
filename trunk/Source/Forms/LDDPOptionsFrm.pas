@@ -274,11 +274,17 @@ begin
 end;
 
 procedure TLDDPOptionsForm.UpdatePathIcon(FileName: string; Icon: TImage);
+
+var
+  Bmp: TPicture;
+
 begin
+  Bmp := TPicture.Create;
   if FileExists(FileName) then
-    OptionImages.GetBitmap(0,Icon.Picture.Bitmap)
+    OptionImages.GetBitmap(0,Bmp.Bitmap)
   else  
-    OptionImages.GetBitmap(1,Icon.Picture.Bitmap);
+    OptionImages.GetBitmap(1,Bmp.Bitmap);
+  Icon.Picture.Assign(Bmp);
 end;
 
 procedure TLDDPOptionsForm.MainPagesChange(Sender: TObject);
@@ -834,6 +840,7 @@ var
   ColorList: TDATColourList;
 
 begin
+  LDDPOptions.ColorBarList.Clear;
   if FileExists(LDrawPathEdit.Text + PathDelim + 'ldconfig.ldr') then
   begin
     ColorList := MakeStandardDATColourList;

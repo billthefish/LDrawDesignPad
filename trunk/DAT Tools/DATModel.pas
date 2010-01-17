@@ -66,7 +66,7 @@ type
       procedure Clear; virtual;
 
     public
-      constructor Create(RotAcc: Integer = 15; PntAcc: Integer = 15); virtual;
+      constructor Create(RotAcc: Integer = 14; PntAcc: Integer = 14); virtual;
       destructor Destroy; override;
       property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc;
       property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc;
@@ -521,7 +521,7 @@ begin
     Result := -1;
 end;
 
-constructor TDATCustomModel.Create(RotAcc: Integer = 15; PntAcc: Integer = 15);
+constructor TDATCustomModel.Create(RotAcc: Integer = 14; PntAcc: Integer = 14);
 
 begin
   inherited Create;

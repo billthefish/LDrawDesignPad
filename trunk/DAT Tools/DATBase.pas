@@ -385,8 +385,8 @@ constructor TDATElement.Create;
 begin
   inherited Create;
   FColor := 0;
-  FPntAcc := 15;
-  FRotAcc := 15;
+  FPntAcc := 14;
+  FRotAcc := 14;
   FDATMatrix[4,4] := 1;
 end;
 

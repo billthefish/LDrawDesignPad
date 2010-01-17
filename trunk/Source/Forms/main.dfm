@@ -750,7 +750,10 @@ object LDDPMain: TLDDPMain
     HotTrack = False
     PopupMenu = pmTab
     TabOrder = 2
+    OnChange = DocumentTabsChange
+    OnMouseDown = DocumentTabsMouseDown
     DefaultExt = '.dat'
+    OnClosing = DocumentTabsClosing
     object editor: TLDDPSynEdit
       Left = 4
       Top = 24
@@ -767,7 +770,10 @@ object LDDPMain: TLDDPMain
       Font.Height = -13
       Font.Name = 'Courier New'
       Font.Style = []
+      PopupMenu = pmMemo
       TabOrder = 0
+      OnDblClick = editorDblClick
+      OnMouseDown = editorMouseDown
       Gutter.Font.Charset = DEFAULT_CHARSET
       Gutter.Font.Color = clWindowText
       Gutter.Font.Height = -11
@@ -4197,7 +4203,7 @@ object LDDPMain: TLDDPMain
     Left = 432
     Top = 160
   end
-  object SynCompletionProposal1: TSynCompletionProposal
+  object CodeComp: TSynCompletionProposal
     EndOfTokenChr = '()[]. '
     TriggerChars = '.'
     Font.Charset = DEFAULT_CHARSET
