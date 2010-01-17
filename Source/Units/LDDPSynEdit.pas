@@ -169,8 +169,8 @@ end;
 
 procedure TLDDPSynEdit.SelectLines(StartLine, EndLine: Integer);
 begin
-  SelStart := RowColToCharIndex(BufferCoord(0, StartLine + 1));
-  SelEnd := RowColToCharIndex(BufferCoord(Length(Lines[EndLine]), EndLine + 1))
+  SelStart := RowColToCharIndex(BufferCoord(1, StartLine + 1));
+  SelEnd := RowColToCharIndex(BufferCoord(Length(Lines[EndLine]) + 1, EndLine + 1))
 end;
 
 procedure TLDDPSynEdit.ExpandSelection(out startln, endln: Integer);
@@ -324,10 +324,16 @@ begin
     DLine := StrToDAT(Lines[line]);
     if DLine is TDATElement then
     begin
-      (DLine as TDATElement).Color := color;
-      (DLine as TDATElement).PositionDecimalPlaces := FLDDPOptions.PostionDecAcc;
-      (DLine as TDATElement).RotationDecimalPlaces := FLDDPOptions.RotationDecAcc;
-      Lines[line] := (DLine as TDATElement).DATString;
+      TDATElement(DLine).Color := color;
+
+      if not LDDPOptions.OnlyRoundDuringAutoRound then
+      begin
+        TDATElement(DLine).PositionDecimalPlaces := FLDDPOptions.PostionDecAcc;
+        TDATElement(DLine).RotationDecimalPlaces := FLDDPOptions.RotationDecAcc;
+      end;
+
+      SelectLine(line);
+      SelText := TDATElement(DLine).DATString;
     end;
     DLine.Free;
   end;
@@ -343,11 +349,11 @@ begin
     indent := 0;
 
   CurrentLine := TrimLeft(Lines[line]);
-
+  SelectLine(line);
   if eoTabsToSpaces in Options then
-    Lines[line] := StringOfChar(#32, indent * TabWidth) + CurrentLine
+    SelText := StringOfChar(#32, indent * TabWidth) + CurrentLine
   else
-    Lines[line] := StringOfChar(#8, indent) + CurrentLine;
+    SelText := StringOfChar(#8, indent) + CurrentLine;
 end;
 
 procedure TLDDPSynEdit.SnapToGrid;

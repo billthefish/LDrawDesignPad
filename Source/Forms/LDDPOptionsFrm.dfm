@@ -24,7 +24,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
     Top = 0
     Width = 592
     Height = 333
-    ActivePage = ColorBarSheet
+    ActivePage = tsExternal
     Align = alClient
     MultiLine = True
     TabOrder = 0
