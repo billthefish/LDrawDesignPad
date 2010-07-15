@@ -1,4 +1,4 @@
-LDDesignPad for LDraw
+LDraw Design Pad for LDraw
 ----------------------------
 
 Contents
@@ -19,7 +19,7 @@ Unzip the contents into the directory that you want to install LDDP.
 2. Introduction
 ----------------
 
-LDDesignPad (LDDP) is a tool for editing and handling LDraw files
+LDraw Design Pad (LDDP) is a tool for editing and handling LDraw files
 in a very comfortable way.
 
 Features are:
@@ -67,9 +67,9 @@ All Plugin dll's are required be in the \Plugins directory.
 5. Comments and Bugs
 ---------------------
 
-LDDesignPad is distributed under the GPL.
+LDraw Design Pad is distributed under the GPL.
 
-We invite you to contribute to this project.
+I invite you to contribute to this project.
 
 Source code and the newest version can be found at 
  http://www.sourceforge.net/projects/lddp
@@ -88,6 +88,9 @@ Thank you too to the other Code- and LDraw-Gurus for suggestions
 and the great programs they wrote to make LDRAWing a lot easier:
 
 Special thanks to:
+
+Carsten Schmitz
+ Former project contributer and LDDP creator.
 
 Lars C. Hassing
   Error Check feature derived from L3Check.cpp, L3Math.cpp
@@ -111,23 +114,26 @@ Anders Isaksson (testing)
 Kevin Clague (inspiration)
 Stephan Schonberg (former project contributor)
 
-We especially thank you, the user, for downloading our program
+I especially thank you, the user, for downloading this program
 
-   -The LDDP Development Team:
-      Orion Pobursky
-      Carsten Schmitz
-
+   -Orion Pobursky
 
 7. Version History
 ------------------
 
 + = New feature  * = Bugfix   - = Removed feature
 
+v2.1.0
++ Another major update with too many changes to list.  I am attempting to get the
+  code ready for a cross platform compile with Lazarus and Freepascal.
+- Removed L3Lab and BMP2DAT support.  BMP2DAT will reappear as an official plugin
+  at a later date.
+
 v2.0.4
 * Fixed several bugs with the color replace dialog
 
 v2.0.3
-+ Updated error check to use the new standard for collinear liness
++ Updated error check to use the new standard for collinear lines
 * Fixed LDConfig parsing bug
 
 v2.0.2

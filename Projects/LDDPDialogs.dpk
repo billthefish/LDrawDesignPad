@@ -36,12 +36,12 @@ requires
   JvCoreD14R,
   JvStdCtrlsD14R,
   JvCustomD14R,
-  SynEdit_R2009,
+  SynEdit_R2010,
   PLDDPSynEdit;
 
 contains
-  LDDPColorReplaceFrm in '..\Source\Forms\LDDPColorReplaceFrm.pas' {LDDPColorReplaceForm},
-  LDDPOptionsFrm in '..\Source\Forms\LDDPOptionsFrm.pas' {LDDPOptionsForm},
+  ColorReplaceFrm in '..\Source\Forms\ColorReplaceFrm.pas' {LDDPColorReplaceForm},
+  OptionsFrm in '..\Source\Forms\OptionsFrm.pas' {LDDPOptionsForm},
   LDDPDialogsReg in '..\Source\Units\LDDPDialogsReg.pas',
   LDDPDlgs in '..\Source\Units\LDDPDlgs.pas';
 

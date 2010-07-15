@@ -20,12 +20,13 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<GenPackage>true</GenPackage>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_Platform>x86</DCC_Platform>
-			<DCC_DependencyCheckOutputName>..\..\..\..\..\All Users\Documents\RAD Studio\7.0\Bpl\LDDPDialogs.bpl</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>..\..\..\..\..\Public\Documents\RAD Studio\7.0\Bpl\LDDPDialogs.bpl</DCC_DependencyCheckOutputName>
 			<DCC_E>false</DCC_E>
 			<DCC_S>false</DCC_S>
 			<GenDll>true</GenDll>
@@ -54,12 +55,12 @@
 			<DCCReference Include="JvCoreD14R.dcp"/>
 			<DCCReference Include="JvStdCtrlsD14R.dcp"/>
 			<DCCReference Include="JvCustomD14R.dcp"/>
-			<DCCReference Include="SynEdit_R2009.dcp"/>
+			<DCCReference Include="SynEdit_R2010.dcp"/>
 			<DCCReference Include="PLDDPSynEdit.dcp"/>
-			<DCCReference Include="..\Source\Forms\LDDPColorReplaceFrm.pas">
+			<DCCReference Include="..\Source\Forms\ColorReplaceFrm.pas">
 				<Form>LDDPColorReplaceForm</Form>
 			</DCCReference>
-			<DCCReference Include="..\Source\Forms\LDDPOptionsFrm.pas">
+			<DCCReference Include="..\Source\Forms\OptionsFrm.pas">
 				<Form>LDDPOptionsForm</Form>
 			</DCCReference>
 			<DCCReference Include="..\Source\Units\LDDPDialogsReg.pas"/>

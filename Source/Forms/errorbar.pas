@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2009 the LDDP project contributors.
+{These sources are copyright (C) 2003-2010 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -90,7 +90,7 @@ implementation
 {$R *.dfm}
 
 uses
-  IniFiles, DATBase, DATModel, DATErrorFix, DATUtils, main,
+  IniFiles, DATBase, DATModel, DATErrorFix, DATUtils, MainFrm,
   commonprocs, windowsspecific, Contnrs, SynEditTypes;
 
 procedure TfrErrorWindow.AddError(LineNumber: string; const ErrorRec: TDATError);

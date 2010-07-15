@@ -3,13 +3,7 @@
 			<ProjectGuid>{2B6E56A7-AB1E-4488-81EC-CF3D06D15A4F}</ProjectGuid>
 		</PropertyGroup>
 		<ItemGroup>
-			<Projects Include="LDDPDialogs.dproj">
-				<Dependencies/>
-			</Projects>
 			<Projects Include="PLDDPSynEdit.dproj">
-				<Dependencies/>
-			</Projects>
-			<Projects Include="LDDPDocTabs.dproj">
 				<Dependencies/>
 			</Projects>
 			<Projects Include="LDDesignPad.dproj">
@@ -23,15 +17,6 @@
 				<Default.Personality/>
 			</BorlandProject>
 		</ProjectExtensions>
-		<Target Name="LDDPDialogs">
-			<MSBuild Projects="LDDPDialogs.dproj"/>
-		</Target>
-		<Target Name="LDDPDialogs:Clean">
-			<MSBuild Targets="Clean" Projects="LDDPDialogs.dproj"/>
-		</Target>
-		<Target Name="LDDPDialogs:Make">
-			<MSBuild Targets="Make" Projects="LDDPDialogs.dproj"/>
-		</Target>
 		<Target Name="PLDDPSynEdit">
 			<MSBuild Projects="PLDDPSynEdit.dproj"/>
 		</Target>
@@ -40,15 +25,6 @@
 		</Target>
 		<Target Name="PLDDPSynEdit:Make">
 			<MSBuild Targets="Make" Projects="PLDDPSynEdit.dproj"/>
-		</Target>
-		<Target Name="LDDPDocTabs">
-			<MSBuild Projects="LDDPDocTabs.dproj"/>
-		</Target>
-		<Target Name="LDDPDocTabs:Clean">
-			<MSBuild Targets="Clean" Projects="LDDPDocTabs.dproj"/>
-		</Target>
-		<Target Name="LDDPDocTabs:Make">
-			<MSBuild Targets="Make" Projects="LDDPDocTabs.dproj"/>
 		</Target>
 		<Target Name="LDDesignPad">
 			<MSBuild Projects="LDDesignPad.dproj"/>
@@ -60,13 +36,13 @@
 			<MSBuild Targets="Make" Projects="LDDesignPad.dproj"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="LDDPDialogs;PLDDPSynEdit;LDDPDocTabs;LDDesignPad"/>
+			<CallTarget Targets="PLDDPSynEdit;LDDesignPad"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="LDDPDialogs:Clean;PLDDPSynEdit:Clean;LDDPDocTabs:Clean;LDDesignPad:Clean"/>
+			<CallTarget Targets="PLDDPSynEdit:Clean;LDDesignPad:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="LDDPDialogs:Make;PLDDPSynEdit:Make;LDDPDocTabs:Make;LDDesignPad:Make"/>
+			<CallTarget Targets="PLDDPSynEdit:Make;LDDesignPad:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>

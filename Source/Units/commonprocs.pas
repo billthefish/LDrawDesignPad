@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2009 the LDDP project contributors.
+{These sources are copyright (C) 2003-2010 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ function LDDPCreateDATModel: TDATModel;
 implementation
 
 uses
-  main, SysUtils, DATUtils;
+  MainFrm, SysUtils, DATUtils;
 
 function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
 

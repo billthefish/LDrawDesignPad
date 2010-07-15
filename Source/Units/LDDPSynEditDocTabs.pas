@@ -513,18 +513,18 @@ begin
 end;
 
 procedure TLDDPDocumentTabControl.SetEditor(Value: TCustomSynEdit);
-var
-  tp: TPoint;
-  r : TRect;
+//var
+//  tp: TPoint;
+//  r : TRect;
 begin
-  if (Value <> FEditor) and  Assigned(Value) then
+  if (Value <> FEditor) and Assigned(Value) then
   begin
     FEditor := Value;
     if (not (csWriting in ComponentState)) and
        (not (csDestroying in ComponentState)) then
     begin
-      FEditor.Parent := self;
-      FEditor.Visible := true;
+      FEditor.Parent := Self;
+      FEditor.Visible := True;
       FEditor.Align := alClient;
       FDocs := TObjectList.Create(True);
       Attach;
@@ -539,14 +539,14 @@ begin
       Tabs.Clear;
     if FEditor.HandleAllocated and Assigned(Parent) then
     begin
-      FEditor.Align := alNone;
-      r := ClientRect;
-      tp.x := r.Left;
-      tp.y := r.Top;
-      tp := FEditor.ClientToParent(tp);
-      FEditor.Parent := Parent;
-      FEditor.Left := tp.x;
-      FEditor.Top := tp.y;
+      FEditor.Align := alClient;
+//      r := ClientRect;
+//      tp.x := r.Left;
+//      tp.y := r.Top;
+//      tp := FEditor.ClientToParent(tp);
+//      FEditor.Parent := Parent;
+//      FEditor.Left := tp.x;
+//      FEditor.Top := tp.y;
     end;
     FEditor := nil;
   end;
