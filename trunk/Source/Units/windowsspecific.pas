@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2009 the LDDP project contributors.
+{These sources are copyright (C) 2003-2010 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,47 +19,15 @@ unit windowsspecific;
 
 interface
 
-uses Windows, ShellAPI, Messages, SysUtils, Classes, Forms, Registry;
+uses Windows, ShellAPI, SHFolder, Messages, SysUtils, Classes, Forms, Registry;
 
 type
   TLDDPCallBack = procedure(strCBText: PChar);
 
-
-
-const
-
-  {$EXTERNALSYM SW_HIDE}
-  SW_HIDE = 0;
-  {$EXTERNALSYM SW_SHOWNORMAL}
-  SW_SHOWNORMAL = 1;
-  {$EXTERNALSYM SW_NORMAL}
-  SW_NORMAL = 1;
-  {$EXTERNALSYM SW_SHOWMINIMIZED}
-  SW_SHOWMINIMIZED = 2;
-  {$EXTERNALSYM SW_SHOWMAXIMIZED}
-  SW_SHOWMAXIMIZED = 3;
-  {$EXTERNALSYM SW_MAXIMIZE}
-  SW_MAXIMIZE = 3;
-  {$EXTERNALSYM SW_SHOWNOACTIVATE}
-  SW_SHOWNOACTIVATE = 4;
-  {$EXTERNALSYM SW_SHOW}
-  SW_SHOW = 5;
-  {$EXTERNALSYM SW_MINIMIZE}
-  SW_MINIMIZE = 6;
-  {$EXTERNALSYM SW_SHOWMINNOACTIVE}
-  SW_SHOWMINNOACTIVE = 7;
-  {$EXTERNALSYM SW_SHOWNA}
-  SW_SHOWNA = 8;
-  {$EXTERNALSYM SW_RESTORE}
-  SW_RESTORE = 9;
-  {$EXTERNALSYM SW_SHOWDEFAULT}
-  SW_SHOWDEFAULT = 10;
-  {$EXTERNALSYM SW_MAX}
-  SW_MAX = 10;
-
 function DoCommand(Command: string; Flg: byte; Wait: Boolean): Boolean;
 function GetShortFileName(Const FileName : string): string;
-function GetShellFolderPath(folder: string): string;
+function AppDataPath: string;
+function PersonalFolderPath: string;
 function IniFilePath: string;
 function WinTempDir: string;
 function PluginInfo(libname: string; nr: Byte):string;
@@ -72,7 +40,7 @@ function ReadUIConfigValue(const ConfigValue: string): string;
 implementation
 
 uses
-  main, IniFiles;
+  MainFrm, IniFiles;
 
 function GetAppVersion(const FileName: TFileName): string;
 var
@@ -168,38 +136,32 @@ begin
   if GetShortPathName(PChar(FileName), aTmp, Sizeof(aTmp) - 1) = 0 then
      Result := FileName
   else
-     Result := StrPas(aTmp);
+     Result := string(aTmp);
 end;
 
-function WindowsDir: string;
+function ShellFolderPath(folderid: Integer): string;
 var
-  WDir: PChar;
+  SHFolder: PChar;
+
 begin
-  GetMem(WDir, StrToInt(GetEnvironmentVariable('MAX_PATH')));
-  GetWindowsDirectory(WDir, StrToInt(GetEnvironmentVariable('MAX_PATH')));
-  Result := StrPas(WDir);
+  GetMem(SHFolder, MAX_PATH);
+  SHGetFolderPath(0, folderid, 0, 0, SHFolder);
+  Result := string(SHFolder);
 end;
 
-function GetShellFolderPath(folder: string): string;
-var
-   Reg: TRegistry;
-   tempstr: String;
+function PersonalFolderPath: string;
 begin
-  Reg := TRegistry.Create;
-  try
-    Reg.RootKey := HKey_Current_User;
-    if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion'
-      + '\Explorer\Shell Folders', FALSE) then
-      tempstr := Reg.ReadString(folder);
-  finally
-    Reg.Free;
-  end;
-  Result := tempstr;
+  Result := ShellFolderPath(CSIDL_PERSONAL);
+end;
+
+function AppDataPath: string;
+begin
+  Result := ShellFolderPath(CSIDL_APPDATA);
 end;
 
 function IniFilePath: string;
 begin
-  Result := GetShellFolderPath('AppData') + '\LDDP';
+  Result := AppDataPath + '\LDDP';
 end;
 
 function WinTempDir: string;
@@ -242,7 +204,7 @@ begin
     if Assigned(Plugin_Info) then
       Plugin_info(nr, sBuff, 255);
 
-    result := string(StrPas(sBuff));
+    result := string(sBuff);
     FreeLibrary(libHndl);
   end
   else

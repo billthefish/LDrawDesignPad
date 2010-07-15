@@ -17,7 +17,7 @@ object LDDPSplash: TLDDPSplash
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = True
-  Position = poMainFormCenter
+  Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 13
   object Image1: TImage

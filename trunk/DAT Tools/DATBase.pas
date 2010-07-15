@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2009 Orion Pobursky.
+{These sources are copyright (C) 2003-2010 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -100,8 +100,6 @@ type
     public
       constructor Create; overload; override;
       constructor Create(comment: string); reintroduce; overload;
-
-    published
       (* Get or Set the Comment portion of the DAT text*)
       property Comment: string read FComment write FComment;
   end;
@@ -215,8 +213,6 @@ type
 
     public
       constructor Create; override;
-
-    published
       property x1: Double index 1 read GetCoordinate write SetCoordinate;
       property y1: Double index 2 read GetCoordinate write SetCoordinate;
       property z1: Double index 3 read GetCoordinate write SetCoordinate;
@@ -232,8 +228,6 @@ type
 
     public
       constructor Create; override;
-
-    published
       property x1: Double index 1 read GetCoordinate write SetCoordinate;
       property y1: Double index 2 read GetCoordinate write SetCoordinate;
       property z1: Double index 3 read GetCoordinate write SetCoordinate;
@@ -260,8 +254,6 @@ type
 
     public
       constructor Create; override;
-
-    published
       property x1: Double index 1 read GetCoordinate write SetCoordinate;
       property y1: Double index 2 read GetCoordinate write SetCoordinate;
       property z1: Double index 3 read GetCoordinate write SetCoordinate;
@@ -281,8 +273,6 @@ type
 
     public
       constructor Create; override;
-
-    published
       property x1: Double index 1 read GetCoordinate write SetCoordinate;
       property y1: Double index 2 read GetCoordinate write SetCoordinate;
       property z1: Double index 3 read GetCoordinate write SetCoordinate;

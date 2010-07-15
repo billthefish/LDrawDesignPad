@@ -28,7 +28,7 @@ package PLDDPSynEdit;
 requires
   rtl,
   vcl,
-  SynEdit_R2009,
+  SynEdit_R2010,
   vclx,
   vcldb,
   dbrtl;

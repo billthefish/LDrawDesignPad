@@ -47,7 +47,7 @@
 			</DelphiCompile>
 			<DCCReference Include="rtl.dcp"/>
 			<DCCReference Include="vcl.dcp"/>
-			<DCCReference Include="SynEdit_R2009.dcp"/>
+			<DCCReference Include="SynEdit_R2010.dcp"/>
 			<DCCReference Include="vclx.dcp"/>
 			<DCCReference Include="vcldb.dcp"/>
 			<DCCReference Include="dbrtl.dcp"/>

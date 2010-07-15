@@ -1,6 +1,6 @@
 unit DATCheck;
 (*
-  Copyright (C) 2003-2009 Orion Pobursky
+  Copyright (C) 2003-2010 Orion Pobursky
 
   This file is derived from:
     L3Input.cpp and L3Math.cpp
@@ -76,7 +76,7 @@ function GetErrorString(error: TDATError): string;
 implementation
 
 uses
-  DATModel, DATBase, DATMath, DATUtils, SysUtils, Math;
+  DATModel, DATBase, DATMath, DATUtils, SysUtils, Math, Classes;
 
 {TDATError}
 procedure TDATError.Assign(AError: TDATError);

@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2009 Orion Pobursky.
+{These sources are copyright (C) 2003-2010 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

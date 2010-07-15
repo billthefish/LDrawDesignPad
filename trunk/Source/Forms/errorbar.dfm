@@ -57,14 +57,13 @@ object frErrorWindow: TfrErrorWindow
   end
   object JvDockClient1: TJvDockClient
     DirectDrag = True
-    DockStyle = LDDPMain.JvDockDelphiStyle1
     CustomDock = False
-    Left = 8
-    Top = 16
+    Left = 64
+    Top = 40
   end
   object pmL3P: TPopupMenu
-    Left = 40
-    Top = 16
+    Left = 120
+    Top = 40
     object MarkAllForFixing1: TMenuItem
       Action = acECMarkAll
     end
@@ -109,8 +108,8 @@ object frErrorWindow: TfrErrorWindow
     end
   end
   object ActionList1: TActionList
-    Left = 72
-    Top = 16
+    Left = 176
+    Top = 40
     object acErrorCheck: TAction
       Category = 'Error Check'
       Caption = 'Run Error Check'
