@@ -4,8 +4,7 @@ HOW TO COMPILE LDDP
 You'll need:
 
 * Embarcadero Delphi. 
-	Delphi XE2 is used for development but it may build in
-	earlier versions down to Delphi 6 (this has not been tested)
+	Delphi XE2 is used for development
 
 To compile this source successfully, you'll also need to download 
 and install the following component suites:
@@ -14,8 +13,9 @@ and install the following component suites:
 	http://jvcl.sourceforge.net
 	Note: The LDDP code is incompatible with JVCL 2.x or lower
 
-* SynEdit
-	http://synedit.sourceforge.net
-	Note: Since the Synedit developers don't seem to like to
-	release packages very often, LDDP uses the current SVN 
-	snapshot for development
+* DScntilla
+	http://code.google.com/p/dscintilla/
+
+* Scintilla
+	http://www.scintilla.org/
+	Use the SciLexer.dll included in the Current Build directory
