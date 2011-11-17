@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ unit LDDPSynEdit;
 interface
 
 uses
-  SysUtils, Classes, Controls, SynEdit, lddpoptions, DATBase;
+  SysUtils, Classes, Controls, SynEdit, lddpoptions, DATBase, DATModel;
 
 type
   TLDDPGridSetting = (gsCoarse, gsMedium, gsFine);
@@ -29,8 +29,11 @@ type
   private
     FLDDPOptions: TLDDPOptions;
     FGridSetting: TLDDPGridSetting;
+    FDATModel: TDATModel;
     procedure SetLDDPOptions(const Value: TLDDPOptions);
     procedure SetGridSetting(const Value: TLDDPGridSetting);
+    function GetGridSetting: TLDDPGridSetting;
+    function GetLDDPOptions: TLDDPOptions;
 
   protected
     { Protected declarations }
@@ -61,10 +64,14 @@ type
     procedure SnapToGrid;
     function GetLineIndent(line: Integer): Integer;
     procedure SetLineIndent(line: Integer; indent: Integer);
+    procedure IndentSelection;
+    procedure UnindentSelection;
+    procedure CommentSelection;
+    procedure UncommentSelection;
 
   published
-    property LDDPOptions: TLDDPOptions read FLDDPOptions write SetLDDPOptions;
-    property GridSetting: TLDDPGridSetting read FGridSetting write SetGridSetting;
+    property LDDPOptions: TLDDPOptions read GetLDDPOptions write SetLDDPOptions;
+    property GridSetting: TLDDPGridSetting read GetGridSetting write SetGridSetting;
 
     // inherited properties
   published
@@ -177,7 +184,7 @@ procedure Register;
 implementation
 
 uses
-  DATModel, DATUtils, SynEditTypes;
+  DATUtils, SynEditTypes;
 
 procedure TLDDPSynEdit.SelectLine(Line: Integer);
 begin
@@ -216,10 +223,28 @@ begin
   endln := endline;
 end;
 
+procedure TLDDPSynEdit.CommentSelection;
+var
+  i, startline, endline: integer;
+
+begin
+  //Expand Selection block
+  ExpandSelection(startline, endline);
+
+  FDATModel.ModelText := SelText;
+
+  for i := 0 to FDATModel.Count - 1 do
+    FDATModel.CommentLine(i);
+
+  SelText := FDATModel.ModelText;
+  SelectLines(startline, endline);
+end;
+
 constructor TLDDPSynEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FLDDPOptions := TLDDPOptions.Create;
+  FDATModel := TDATModel.Create;
 end;
 
 destructor TLDDPSynEdit.Destroy;
@@ -227,83 +252,62 @@ begin
   inherited;
   if Assigned(FLDDPOptions) then
     FLDDPOptions.Free;
+  if Assigned(FDATModel) then
+    FDATModel.Free;
 end;
 
 procedure TLDDPSynEdit.MirrorSelection(axis: TDATAxis);
-
 var
-  DModel: TDATModel;
   i, startline, endline: integer;
 
 begin
-    ExpandSelection(startline, endline);
+  ExpandSelection(startline, endline);
 
-    if LDDPOptions.OnlyRoundDuringAutoRound then
-      DModel := TDATModel.Create
-    else
-      DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+  FDATModel.ModelText := SelText;
 
-    DModel.ModelText := SelText;
-
-    for i := 0 to DModel.Count - 1 do
-      if DModel[i] is TDATElement then
-      begin
-        (DModel[i] as TDATElement).Mirror(axis);
-      end;
-    SelText := DModel.ModelText;
-    SelectLines(startline, endline);
-    DModel.Free;
+  for i := 0 to FDATModel.Count - 1 do
+    if FDATModel[i] is TDATElement then
+    begin
+      (FDATModel[i] as TDATElement).Mirror(axis);
+    end;
+  SelText := FDATModel.ModelText;
+  SelectLines(startline, endline);
 end;
 
 procedure TLDDPSynEdit.ReverseWinding;
 var
   startline, endline, i : Integer;
-  DModel: TDATModel;
 
 begin
-    if LDDPOptions.OnlyRoundDuringAutoRound then
-      DModel := TDATModel.Create
-    else
-      DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+  ExpandSelection(startline, endline);
 
-    ExpandSelection(startline, endline);
+  if SelLength <> 0 then
+  begin
+    FDATModel.ModelText := SelText;
 
-    if SelLength <> 0 then
-    begin
-      DModel.ModelText := SelText;
+    for i := 0 to FDATModel.Count-1 do
+      if FDATModel[i] is TDATPolygon then
+        (FDATModel[i] as TDATPolygon).ReverseWinding;
 
-      for i := 0 to DModel.Count-1 do
-        if DModel[i] is TDATPolygon then
-          (DModel[i] as TDATPolygon).ReverseWinding;
+    SelText := FDATModel.ModelText;
 
-      SelText := DModel.ModelText;
-
-      SelectLines(startline, endline);
-
-      DModel.Free;
-    end;
+    SelectLines(startline, endline);
+  end;
 end;
 
 procedure TLDDPSynEdit.RotateSelection(w, x, y, z: Extended);
 var
-  DModel: TDATModel;
   startline,endline: Integer;
 
 begin
   ExpandSelection(startline, endline);
 
-  if LDDPOptions.OnlyRoundDuringAutoRound then
-    DModel := TDATModel.Create
-  else
-    DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+  FDATModel.ModelText := SelText;
 
-  DModel.ModelText := SelText;
+  FDATModel.Rotate(w, x, y, z);
 
-  DModel.Rotate(w, x, y, z);
-
-  SelText := DModel.ModelText;
+  SelText := FDATModel.ModelText;
   SelectLines(startline, endline);
-  DModel.Free;
 end;
 
 procedure TLDDPSynEdit.AutoRound;
@@ -327,7 +331,19 @@ end;
 procedure TLDDPSynEdit.SetLDDPOptions(const Value: TLDDPOptions);
 begin
   if Assigned(Value) then
+  begin
     FLDDPOptions.Assign(Value);
+    if LDDPOptions.OnlyRoundDuringAutoRound then
+    begin
+      FDATModel.PositionDecimalPlaces := 13;
+      FDATModel.RotationDecimalPlaces := 13;
+    end
+    else
+    begin
+      FDATModel.PositionDecimalPlaces := FLDDPOptions.PostionDecAcc;
+      FDATModel.RotationDecimalPlaces := FLDDPOptions.RotationDecAcc;
+    end;
+  end;
 end;
 
 procedure TLDDPSynEdit.SetLineColor(line, color: Integer);
@@ -376,31 +392,29 @@ end;
 procedure TLDDPSynEdit.SnapToGrid;
 
 var
-  DModel: TDATModel;
   i, startline, endline: integer;
   diffx, diffy, diffz: Double;
 
 begin
   ExpandSelection(startline, endline);
 
-  DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
-  DModel.ModelText := SelText;
+  FDATModel.ModelText := SelText;
 
-  for i := 0 to DModel.Count - 1 do
-    if DModel[i] is TDATElement then
+  for i := 0 to FDATModel.Count - 1 do
+    if FDATModel[i] is TDATElement then
     begin
       diffx := 0;
       diffy := 0;
       diffz := 0;
-      if DModel[i] is TDATGeometric then
-        with DModel[i] as TDATGeometric do
+      if FDATModel[i] is TDATGeometric then
+        with FDATModel[i] as TDATGeometric do
         begin
           diffx := MaxX  - Trunc(MaxX / GridX) * GridX;
           diffy := MaxY  - Trunc(MaxY / GridY) * GridY;
           diffz := MaxZ  - Trunc(MaxZ / GridZ) * GridY;
         end
-      else if DModel[i] is TDATSubPart then
-        with DModel[i] as TDATSubPart do
+      else if FDATModel[i] is TDATSubPart then
+        with FDATModel[i] as TDATSubPart do
         begin
           diffx := X  - Trunc(X / GridX) * GridX;
           diffy := Y  - Trunc(Y / GridY) * GridY;
@@ -418,34 +432,66 @@ begin
         diffz := GridZ - diffz
       else
         diffz := -diffz;
-      (DModel[i] as TDATElement).Translate(diffx, diffy, diffz);
+      (FDATModel[i] as TDATElement).Translate(diffx, diffy, diffz);
     end;
 
-  SelText := DModel.ModelText;
+  SelText := FDATModel.ModelText;
   SelectLines(startline, endline);
-  DModel.Free;
 end;
 
 procedure TLDDPSynEdit.TranslateSelection(x, y, z: Extended);
 var
-  DModel: TDATModel;
   startline,endline: Integer;
 
 begin
   ExpandSelection(startline, endline);
 
-  if LDDPOptions.OnlyRoundDuringAutoRound then
-    DModel := TDATModel.Create
-  else
-    DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+  FDATModel.ModelText := SelText;
 
-  DModel.ModelText := SelText;
+  FDATModel.Translate(x, y, z);
 
-  DModel.Translate(x, y, z);
-
-  SelText := DModel.ModelText;
+  SelText := FDATModel.ModelText;
   SelectLines(startline, endline);
-  DModel.Free;
+end;
+
+procedure TLDDPSynEdit.UncommentSelection;
+var
+  i, startline, endline: integer;
+
+begin
+  //Expand Selection block
+  ExpandSelection(startline, endline);
+
+  FDATModel.ModelText := SelText;
+
+  for i := 0 to FDATModel.Count - 1 do
+    FDATModel.UncommentLine(i);
+
+  SelText := FDATModel.ModelText;
+  SelectLines(startline, endline);
+end;
+
+procedure TLDDPSynEdit.UnindentSelection;
+var
+  startline, endline, i: Integer;
+
+begin
+  ExpandSelection(startline, endline);
+  BeginUndoBlock;
+  for i := startline to endline do
+    SetLineIndent(i, GetLineIndent(i) - 1);
+  EndUndoBlock;
+end;
+
+function TLDDPSynEdit.GetGridSetting: TLDDPGridSetting;
+begin
+  Result := FGridSetting;
+end;
+
+function TLDDPSynEdit.GetLDDPOptions: TLDDPOptions;
+begin
+  Result := TLDDPOptions.Create;
+  Result.Assign(FLDDPOptions);
 end;
 
 function TLDDPSynEdit.GetLineColor(line: Integer): Integer;
@@ -574,6 +620,18 @@ begin
     gsFine: Result := LDDPOptions.GridFineZ;
     else Result := 10;
   end;
+end;
+
+procedure TLDDPSynEdit.IndentSelection;
+var
+  i,startline,endline: Integer;
+
+begin
+  ExpandSelection(startline, endline);
+  BeginUndoBlock;
+  for i := startline to endline do
+    SetLineIndent(i, GetLineIndent(i) + 1);
+  EndUndoBlock;
 end;
 
 procedure Register;

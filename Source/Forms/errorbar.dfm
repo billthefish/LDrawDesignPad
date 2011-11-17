@@ -8,9 +8,6 @@ object frErrorWindow: TfrErrorWindow
   Color = clBtnFace
   Constraints.MinHeight = 100
   Constraints.MinWidth = 300
-  DockSite = True
-  DragKind = dkDock
-  DragMode = dmAutomatic
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -54,12 +51,6 @@ object frErrorWindow: TfrErrorWindow
     ViewStyle = vsReport
     OnDblClick = ErrorListViewDblClick
     OnSelectItem = ErrorListViewSelectItem
-  end
-  object JvDockClient1: TJvDockClient
-    DirectDrag = True
-    CustomDock = False
-    Left = 64
-    Top = 40
   end
   object pmL3P: TPopupMenu
     Left = 120

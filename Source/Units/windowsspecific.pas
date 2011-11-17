@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,7 +19,8 @@ unit windowsspecific;
 
 interface
 
-uses Windows, ShellAPI, SHFolder, Messages, SysUtils, Classes, Forms, Registry;
+uses
+  SysUtils;
 
 type
   TLDDPCallBack = procedure(strCBText: PChar);
@@ -40,19 +41,20 @@ function ReadUIConfigValue(const ConfigValue: string): string;
 implementation
 
 uses
-  MainFrm, IniFiles;
+  Windows, ShellAPI, SHFolder, Messages, Classes, Forms, Registry, MainFrm,
+  IniFiles;
 
 function GetAppVersion(const FileName: TFileName): string;
 var
   size, len: LongWord;
-  handle: THandle;
+  handle: Cardinal;
   buffer: PChar;
   pinfo: ^VS_FIXEDFILEINFO;
   Major, Minor, Release, Build: Word;
 
 begin
   Result := '';
-  size := GetFileVersionInfoSize(Pointer(FileName), handle);
+  size := GetFileVersionInfoSize(PWideChar(FileName), handle);
 
   if size > 0 then begin
     GetMem(buffer, size);

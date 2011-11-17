@@ -193,7 +193,7 @@ object LDDPAbout: TLDDPAbout
         Height = 193
         Align = alClient
         Lines.Strings = (
-          'Copyright (C) 2002-2010 Orion Pobursky'
+          'Copyright (C) 2002-2011 Orion Pobursky'
           ''
           'Special thanks to:'
           ''
@@ -234,8 +234,6 @@ object LDDPAbout: TLDDPAbout
           'SynEdit (http://synedit.sourceforge.net)')
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitLeft = 4
-        ExplicitTop = 32
       end
     end
     object TabSheet2: TTabSheet
@@ -509,6 +507,8 @@ object LDDPAbout: TLDDPAbout
           'Boston, MA  02111-1307, USA.')
         ScrollBars = ssVertical
         TabOrder = 0
+        ExplicitLeft = 3
+        ExplicitTop = 16
       end
     end
   end

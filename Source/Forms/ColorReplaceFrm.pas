@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@ interface
 uses
   Forms, StdCtrls, Buttons, ExtCtrls,Controls, ComCtrls, Classes,
   ActnList, Dialogs, Graphics, SysUtils, Math, JvExStdCtrls, JvCombobox,
-  JvColorCombo, DATColour, LDDPSynEdit;
+  JvColorCombo, DATColour, ScintillaLDDP;
 
 type
   TLDDPColorReplaceForm = class(TForm)
@@ -43,12 +43,12 @@ type
 
   private
     ColourList: TDATColourList;
-    FEditor: TLDDPSynEdit;
-    procedure SetEditor(const Value: TLDDPSynEdit);
+    FEditor: TScintillaLDDP;
+    procedure SetEditor(const Value: TScintillaLDDP);
 
   public
     procedure UpdateColorCombos;
-    property Editor: TLDDPSynEdit read FEditor write SetEditor;
+    property Editor: TScintillaLDDP read FEditor write SetEditor;
   end;
 
 var
@@ -80,12 +80,10 @@ begin
         endline := FEditor.Lines.Count - 1;
       end;
 
-      FEditor.BeginUndoBlock;
       for i := startline to endline do
         if (cbxReplaceEverything.Checked) or
            (FEditor.GetLineColor(i) = oldcolor) then
           FEditor.SetLineColor(i, newcolor);
-      FEditor.EndUndoBlock;
     end;
   ColourList.Free; 
 end;
@@ -127,7 +125,7 @@ begin
   end;
 end;
 
-procedure TLDDPColorReplaceForm.SetEditor(const Value: TLDDPSynEdit);
+procedure TLDDPColorReplaceForm.SetEditor(const Value: TScintillaLDDP);
 begin
   FEditor := Value;
 end;

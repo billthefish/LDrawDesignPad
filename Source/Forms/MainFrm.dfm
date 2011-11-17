@@ -2,7 +2,7 @@ object LDDPMain: TLDDPMain
   Left = 267
   Top = 61
   Width = 900
-  Height = 612
+  Height = 672
   VertScrollBar.Range = 49
   Caption = 'LDraw Design Pad'
   Color = clAppWorkSpace
@@ -130,6 +130,7 @@ object LDDPMain: TLDDPMain
   Menu = MainMenu1
   OldCreateOrder = True
   Position = poDesigned
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
@@ -137,7 +138,7 @@ object LDDPMain: TLDDPMain
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 535
+    Top = 595
     Width = 884
     Height = 19
     AutoHint = True
@@ -166,8 +167,9 @@ object LDDPMain: TLDDPMain
     BevelInner = bvNone
     BevelOuter = bvNone
     Color = clBtnFace
+    ParentBackground = False
     ParentColor = False
-    PopupMenu = pmToolbars
+    PopupMenu = ToolbarPopupMenu
     RowSize = 27
     TabOrder = 0
     object tbrExternalPrograms: TToolBar
@@ -183,7 +185,7 @@ object LDDPMain: TLDDPMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilProgramIcons
+      Images = ProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -203,9 +205,9 @@ object LDDPMain: TLDDPMain
       object tbUserDefined: TToolButton
         Left = 51
         Top = 0
-        DropdownMenu = pmExternal
+        DropdownMenu = ExternalMenuList
         ImageIndex = 35
-        PopupMenu = pmExternal
+        PopupMenu = ExternalMenuList
         OnClick = tbUserDefinedClick
       end
       object ToolButton32: TToolButton
@@ -220,9 +222,9 @@ object LDDPMain: TLDDPMain
         Left = 82
         Top = 0
         Caption = 'acPolling'
-        DropdownMenu = pmPolling
+        DropdownMenu = PollingMenuList
         ImageIndex = 38
-        PopupMenu = pmPolling
+        PopupMenu = PollingMenuList
         OnClick = btPollingClick
       end
     end
@@ -239,7 +241,7 @@ object LDDPMain: TLDDPMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilProgramIcons
+      Images = ProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -290,7 +292,7 @@ object LDDPMain: TLDDPMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilProgramIcons
+      Images = ProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -381,7 +383,7 @@ object LDDPMain: TLDDPMain
       end
     end
     object tbrColorReplace: TToolBar
-      Left = 424
+      Left = 447
       Top = 29
       Width = 405
       Height = 23
@@ -394,7 +396,7 @@ object LDDPMain: TLDDPMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilProgramIcons
+      Images = ProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -511,7 +513,7 @@ object LDDPMain: TLDDPMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilProgramIcons
+      Images = ProgramIcons
       Indent = 5
       TabOrder = 4
       Wrapable = False
@@ -529,9 +531,9 @@ object LDDPMain: TLDDPMain
         Left = 51
         Top = 0
         Caption = 'ToolButton2'
-        DropdownMenu = pmMirror
+        DropdownMenu = MirrorMenuList
         ImageIndex = 42
-        PopupMenu = pmMirror
+        PopupMenu = MirrorMenuList
       end
       object ToolButton36: TToolButton
         Left = 74
@@ -556,7 +558,6 @@ object LDDPMain: TLDDPMain
       object ToolButton9: TToolButton
         Left = 166
         Top = 0
-        Action = frErrorWindow.acErrorCheck
       end
     end
     object tbrMovement: TToolBar
@@ -573,7 +574,7 @@ object LDDPMain: TLDDPMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilProgramIcons
+      Images = ProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -652,7 +653,7 @@ object LDDPMain: TLDDPMain
     object tbrGrid: TToolBar
       Left = 337
       Top = 29
-      Width = 74
+      Width = 97
       Height = 23
       Align = alNone
       AutoSize = True
@@ -662,7 +663,7 @@ object LDDPMain: TLDDPMain
       DragMode = dmAutomatic
       EdgeInner = esNone
       EdgeOuter = esNone
-      Images = ilProgramIcons
+      Images = ProgramIcons
       Indent = 5
       ParentColor = False
       ParentShowHint = False
@@ -673,23 +674,35 @@ object LDDPMain: TLDDPMain
         Left = 5
         Top = 0
         Action = acMoveGridCoarse
+        Grouped = True
+        Style = tbsCheck
       end
       object ToolButton24: TToolButton
         Left = 28
         Top = 0
         Action = acMoveGridMedium
+        Grouped = True
+        Style = tbsCheck
       end
       object ToolButton33: TToolButton
         Left = 51
         Top = 0
         Action = acMoveGridFine
-        PopupMenu = pmMemo
+        Grouped = True
+        Style = tbsCheck
+      end
+      object ToolButton40: TToolButton
+        Left = 74
+        Top = 0
+        Action = acMoveGridCustom
+        Grouped = True
+        Style = tbsCheck
       end
     end
   end
   object ControlBar2: TControlBar
     Left = 0
-    Top = 505
+    Top = 565
     Width = 884
     Height = 30
     Align = alBottom
@@ -711,7 +724,7 @@ object LDDPMain: TLDDPMain
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = []
-      Images = ilProgramIcons
+      Images = ProgramIcons
       ParentColor = False
       ParentFont = False
       TabOrder = 0
@@ -752,64 +765,35 @@ object LDDPMain: TLDDPMain
       end
     end
   end
-  object editor: TLDDPSynEdit
-    Left = 0
-    Top = 77
-    Width = 884
-    Height = 428
-    LDDPOptions.PostionDecAcc = 0
-    LDDPOptions.RotationDecAcc = 0
-    LDDPOptions.OnlyRoundDuringAutoRound = False
-    LDDPOptions.ColorComboSortTerm = csCode
-    LDDPOptions.GridCoarseX = 10.000000000000000000
-    LDDPOptions.GridCoarseY = 10.000000000000000000
-    LDDPOptions.GridCoarseZ = 10.000000000000000000
-    LDDPOptions.GridCoarseAngle = 90.000000000000000000
-    LDDPOptions.GridMedX = 5.000000000000000000
-    LDDPOptions.GridMedY = 5.000000000000000000
-    LDDPOptions.GridMedZ = 5.000000000000000000
-    LDDPOptions.GridMedAngle = 45.000000000000000000
-    LDDPOptions.GridFineX = 1.000000000000000000
-    LDDPOptions.GridFineY = 1.000000000000000000
-    LDDPOptions.GridFineZ = 1.000000000000000000
-    LDDPOptions.GridFineAngle = 15.000000000000000000
-    GridSetting = gsCoarse
-    Align = alClient
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'Courier New'
-    Font.Style = []
-    PopupMenu = pmMemo
-    TabOrder = 3
-    OnDblClick = editorDblClick
-    OnMouseDown = editorMouseDown
-    Gutter.Font.Charset = DEFAULT_CHARSET
-    Gutter.Font.Color = clWindowText
-    Gutter.Font.Height = -11
-    Gutter.Font.Name = 'Courier New'
-    Gutter.Font.Style = []
-    Highlighter = Highlighter
-    SearchEngine = SearchEngine
-    OnReplaceText = editorReplaceText
-    OnStatusChange = editorStatusChange
-  end
-  object DocTabBar: TJvTabBar
+  object DocTabBar: TTabControl
     Left = 0
     Top = 54
     Width = 884
-    AllowTabMoving = True
-    Tabs = <>
-    OnTabCloseQuery = DocTabBarTabCloseQuery
-    OnTabClosed = DocTabBarTabClosed
-    OnTabSelecting = DocTabBarTabSelecting
-    OnTabSelected = DocTabBarTabSelected
+    Height = 511
+    Align = alClient
+    TabOrder = 3
     OnChange = DocTabBarChange
+    object editor: TScintillaLDDP
+      Left = 4
+      Top = 6
+      Width = 876
+      Height = 501
+      DllModule = 'SciLexer.dll'
+      PopupMenu = EditorPopupMenu
+      Align = alClient
+      OnUpdateUI = editorUpdateUI
+      LDDPOptions.PositionDecAcc = 0
+      LDDPOptions.RotationDecAcc = 0
+      LDDPOptions.OnlyRoundDuringAutoRound = False
+      LDDPOptions.ColorComboSortTerm = csCode
+      GridSetting = gsCoarse
+      MultipleSelection = False
+    end
   end
   object MainMenu1: TMainMenu
-    Images = ilProgramIcons
+    Images = ProgramIcons
     Left = 63
-    Top = 320
+    Top = 272
     object File1: TMenuItem
       Caption = '&File'
       Hint = 'File Commands'
@@ -1220,9 +1204,6 @@ object LDDPMain: TLDDPMain
       object EditorOptions1: TMenuItem
         Action = acEditorOptions
       end
-      object HighlighterOptions1: TMenuItem
-        Action = acHighlighterOptions
-      end
     end
     object PluginMenu: TMenuItem
       Caption = '&Plugins'
@@ -1239,9 +1220,9 @@ object LDDPMain: TLDDPMain
     end
   end
   object MainFormActions: TActionList
-    Images = ilProgramIcons
+    Images = ProgramIcons
     Left = 64
-    Top = 272
+    Top = 224
     object acFileNew: TAction
       Category = 'File'
       Caption = '&New'
@@ -1566,7 +1547,6 @@ object LDDPMain: TLDDPMain
     object acEditorOptions: TAction
       Category = 'Misc'
       Caption = 'Editor Options...'
-      OnExecute = acEditorOptionsExecute
     end
     object acErrorList: TAction
       Category = 'View Menu'
@@ -1840,17 +1820,19 @@ object LDDPMain: TLDDPMain
       ImageIndex = 64
       OnExecute = acFindCloseExecute
     end
-    object acHighlighterOptions: TAction
-      Category = 'Misc'
-      Caption = 'Highlighter Options...'
-      OnExecute = acHighlighterOptionsExecute
+    object acMoveGridCustom: TAction
+      Category = 'Movement'
+      AutoCheck = True
+      Caption = 'Custom Grid'
+      GroupIndex = 5
+      OnExecute = acMoveGridCustomExecute
     end
   end
-  object ilProgramIcons: TImageList
+  object ProgramIcons: TImageList
     Left = 64
     Top = 176
     Bitmap = {
-      494C01014200C0008C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01014200C000100110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001001000001002000000000000010
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4101,11 +4083,11 @@ object LDDPMain: TLDDPMain
       CFFF81FFF87FFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
       000000000000}
   end
-  object pmMemo: TPopupMenu
+  object EditorPopupMenu: TPopupMenu
     AutoHotkeys = maManual
-    Images = ilProgramIcons
-    Left = 192
-    Top = 128
+    Images = ProgramIcons
+    Left = 152
+    Top = 272
     object Cut1: TMenuItem
       Action = acEditCut
     end
@@ -4186,9 +4168,9 @@ object LDDPMain: TLDDPMain
       Action = acSortSelection
     end
   end
-  object pmPolling: TPopupMenu
-    Left = 192
-    Top = 80
+  object PollingMenuList: TPopupMenu
+    Left = 152
+    Top = 224
     object mnuEnablePolling: TMenuItem
       Action = acPollEnablePolling
       AutoCheck = True
@@ -4234,15 +4216,15 @@ object LDDPMain: TLDDPMain
       RadioItem = True
     end
   end
-  object tmPoll: TTimer
+  object PollTimer: TTimer
     Enabled = False
     Interval = 3000
-    OnTimer = tmPollTimer
-    Left = 592
+    OnTimer = PollTimerTimer
+    Left = 240
     Top = 80
   end
-  object pmToolbars: TPopupMenu
-    Left = 136
+  object ToolbarPopupMenu: TPopupMenu
+    Left = 152
     Top = 80
     object pmuFile: TMenuItem
       Action = acViewFileToolbar
@@ -4269,7 +4251,7 @@ object LDDPMain: TLDDPMain
       AutoCheck = True
     end
   end
-  object OpenDialog1: TOpenDialog
+  object OpenFileDialog: TOpenDialog
     DefaultExt = 'dat'
     Filter = 
       'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
@@ -4280,7 +4262,7 @@ object LDDPMain: TLDDPMain
     Left = 64
     Top = 128
   end
-  object SaveDialog1: TSaveDialog
+  object SaveFileDialog: TSaveDialog
     DefaultExt = 'dat'
     Filter = 
       'LDraw-Files (*.ldr ,*.dat ,*.mpd)|*.dat;*.mpd;*.ldr|All Files (*' +
@@ -4291,36 +4273,12 @@ object LDDPMain: TLDDPMain
     Left = 64
     Top = 80
   end
-  object pmExternal: TPopupMenu
-    Left = 136
+  object ExternalMenuList: TPopupMenu
+    Left = 152
     Top = 128
   end
-  object JvDockServer1: TJvDockServer
-    LeftSplitterStyle.Cursor = crHSplit
-    LeftSplitterStyle.ParentColor = False
-    RightSplitterStyle.Cursor = crHSplit
-    RightSplitterStyle.ParentColor = False
-    TopSplitterStyle.Cursor = crVSplit
-    TopSplitterStyle.ParentColor = False
-    BottomSplitterStyle.Cursor = crVSplit
-    BottomSplitterStyle.ParentColor = False
-    TopDock = False
-    DockStyle = JvDockDelphiStyle1
-    CustomDock = False
-    Left = 360
-    Top = 80
-  end
-  object JvDockDelphiStyle1: TJvDockDelphiStyle
-    Left = 504
-    Top = 80
-  end
-  object AppInst: TJvAppInstances
-    OnCmdLineReceived = AppInstCmdLineReceived
-    Left = 424
-    Top = 80
-  end
-  object pmMirror: TPopupMenu
-    Left = 136
+  object MirrorMenuList: TPopupMenu
+    Left = 152
     Top = 176
     object XAxis3: TMenuItem
       Action = acMirrorX
@@ -4332,73 +4290,8 @@ object LDDPMain: TLDDPMain
       Action = acMirrorZ
     end
   end
-  object ApplicationEvents1: TApplicationEvents
-    Left = 64
-    Top = 224
-  end
-  object CodeComp: TSynCompletionProposal
-    EndOfTokenChr = '()[]. '
-    TriggerChars = '.'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = []
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clBtnText
-    TitleFont.Height = -11
-    TitleFont.Name = 'MS Sans Serif'
-    TitleFont.Style = [fsBold]
-    Columns = <>
-    ShortCut = 16416
-    Editor = editor
-    Left = 512
-    Top = 256
-  end
-  object printer: TSynEditPrint
-    Copies = 1
-    Header.DefaultFont.Charset = DEFAULT_CHARSET
-    Header.DefaultFont.Color = clBlack
-    Header.DefaultFont.Height = -13
-    Header.DefaultFont.Name = 'Arial'
-    Header.DefaultFont.Style = []
-    Footer.DefaultFont.Charset = DEFAULT_CHARSET
-    Footer.DefaultFont.Color = clBlack
-    Footer.DefaultFont.Height = -13
-    Footer.DefaultFont.Name = 'Arial'
-    Footer.DefaultFont.Style = []
-    Margins.Left = 25.000000000000000000
-    Margins.Right = 15.000000000000000000
-    Margins.Top = 25.000000000000000000
-    Margins.Bottom = 25.000000000000000000
-    Margins.Header = 15.000000000000000000
-    Margins.Footer = 15.000000000000000000
-    Margins.LeftHFTextIndent = 2.000000000000000000
-    Margins.RightHFTextIndent = 2.000000000000000000
-    Margins.HFInternalMargin = 0.500000000000000000
-    Margins.MirrorMargins = False
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    Highlighter = Highlighter
-    TabWidth = 8
-    Color = clWhite
-    Left = 440
-    Top = 160
-  end
-  object EditorOptions: TSynEditOptionsDialog
-    UseExtendedStrings = False
-    Left = 512
-    Top = 160
-  end
-  object SearchEngine: TSynEditSearch
-    Left = 512
-    Top = 208
-  end
-  object Highlighter: TSynLDRSyn
-    Left = 440
-    Top = 208
+  object TabImages: TImageList
+    Left = 240
+    Top = 128
   end
 end

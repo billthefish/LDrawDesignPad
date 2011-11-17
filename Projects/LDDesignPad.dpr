@@ -30,7 +30,6 @@ uses
   AboutDlg in '..\Source\Forms\AboutDlg.pas' {LDDPAbout},
   BezWindow in '..\Source\Forms\BezWindow.pas' {FlexObjectDlg},
   SubpartForm in '..\Source\Forms\SubpartForm.pas' {LDDPSubFileDlg},
-  errorbar in '..\Source\Forms\errorbar.pas' {frErrorWindow},
   MainFrm in '..\Source\Forms\MainFrm.pas' {LDDPMain},
   SortDlg in '..\Source\Forms\SortDlg.pas' {LDDPSortDlg},
   splash in '..\Source\Forms\splash.pas' {LDDPSplash},
@@ -40,8 +39,8 @@ uses
   ReplaceDlg in '..\Source\Forms\ReplaceDlg.pas' {LDDPReplaceDlg},
   OptionsFrm in '..\Source\Forms\OptionsFrm.pas' {LDDPOptionsForm},
   ColorReplaceFrm in '..\Source\Forms\ColorReplaceFrm.pas' {LDDPColorReplaceForm},
-  EditorDoc in '..\Source\Units\EditorDoc.pas',
-  HighlighterPropDlg in '..\Source\Forms\HighlighterPropDlg.pas' {LDDPHighterEditorPropertiesDlg};
+  ScintillaLDDP in '..\Source\Units\ScintillaLDDP.pas',
+  LDDPHelperTypes in '..\Source\Units\LDDPHelperTypes.pas';
 
 {$R *.RES}
 
@@ -49,7 +48,6 @@ begin
   Application.Initialize;
   Application.Title := 'LDraw Design Pad';
   Application.CreateForm(TLDDPMain, LDDPMain);
-  Application.CreateForm(TfrErrorWindow, frErrorWindow);
   Application.CreateForm(TLDDPReplaceDlg, LDDPReplaceDlg);
   Application.Run;
 end.

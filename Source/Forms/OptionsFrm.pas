@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ uses
   ImgList, Controls, Mask, Inifiles, StdCtrls,
   ExtCtrls, CheckLst, ComCtrls, Buttons, Classes,
   Menus, JvExMask, JvSpin, JvExStdCtrls, JvEdit, JvValidateEdit, JvCombobox,
-  JvColorCombo, lddpoptions, LDDPSynEdit, JvToolEdit;
+  JvColorCombo, lddpoptions, JvToolEdit;
 
 type
   TLDDPOptionsForm = class(TForm)
@@ -45,7 +45,6 @@ type
     ColorBarSheet: TTabSheet;
     GroupBox9: TGroupBox;
     lbxColors: TListBox;
-    shpColor: TShape;
     Label15: TLabel;
     btnColorSelect: TButton;
     edColorName: TLabeledEdit;
@@ -89,8 +88,6 @@ type
     Memo3: TMemo;
     Memo4: TMemo;
     lbPntAcc: TLabel;
-    sePntAcc: TJvValidateEdit;
-    seRotAcc: TJvValidateEdit;
     lbRotAcc: TLabel;
     cboAutoRoundOnly: TCheckBox;
     edName: TEdit;
@@ -146,6 +143,33 @@ type
     LSynthPathEdit: TJvDirectoryEdit;
     edSearchPath: TJvDirectoryEdit;
     edExternal: TJvFilenameEdit;
+    TabSheet3: TTabSheet;
+    Label9: TLabel;
+    Label17: TLabel;
+    AttrList: TListBox;
+    BackColor: TColorBox;
+    GroupBox4: TGroupBox;
+    cbItalic: TCheckBox;
+    cbUnderline: TCheckBox;
+    cbBold: TCheckBox;
+    ForeColor: TColorBox;
+    PositionAcc: TComboBox;
+    RotationAcc: TComboBox;
+    GroupBox6: TGroupBox;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label34: TLabel;
+    seGridCustomX: TJvValidateEdit;
+    seGridCustomY: TJvValidateEdit;
+    seGridCustomZ: TJvValidateEdit;
+    seGridCustomAngle: TJvValidateEdit;
+    shpColor: TShape;
+    GroupBox8: TGroupBox;
+    FontDialog1: TFontDialog;
+    FontBox: TJvFontComboBox;
+    FontSize: TComboBox;
+    Label35: TLabel;
     procedure MainPagesChange(Sender: TObject);
     procedure btnColorSelectClick(Sender: TObject);
     procedure lbxColorsClick(Sender: TObject);
@@ -177,19 +201,21 @@ type
     procedure LSynthPathEditChange(Sender: TObject);
     procedure edExternalBeforeDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
+    procedure AttrListClick(Sender: TObject);
+    procedure ValueChange(Sender: TObject);
 
   private
     FLDDPOptions: TLDDPOptions;
     procedure UpdateControls;
     procedure LoadFormValues;
-    procedure SetColorListToDefault;
     procedure UpdateSearchPathList;
-    procedure SetOptions(const Value: TLDDPOptions);
     procedure UpdateOptions;
     procedure UpdatePathIcon(FileName: string; Icon: TImage);
-    
+    procedure AssignValuesFromHighligher(index: Integer);
+    procedure AssignValuesToHighligher(index: Integer);
+
   public
-    property LDDPOptions: TLDDPOptions read FLDDPOptions write SetOptions;
+    property LDDPOptions: TLDDPOptions read FLDDPOptions write FLDDPOptions;
 
   end;
 
@@ -224,8 +250,8 @@ begin
   LDDPOptions.ErrorCheckNormalAngle := NormalAngleEdit.Value;
   LDDPOptions.ErrorCheckCollinearMaxAngle := CollinearMaxAngleEdit.Value;
   LDDPOptions.ErrorCheckCollinearMinAngle := CollinearMinAngleEdit.Value;
-  LDDPOptions.PostionDecAcc := sePntAcc.Value;
-  LDDPOptions.RotationDecAcc := seRotAcc.Value;
+  LDDPOptions.PositionDecAcc := PositionAcc.ItemIndex + 1;
+  LDDPOptions.RotationDecAcc := RotationAcc.ItemIndex + 1;
   LDDPOptions.OnlyRoundDuringAutoRound := cboAutoRoundOnly.Checked;
   LDDPOptions.CustomPollInterval := seCustomPollInterval.Value;
   case ColorSortOption.ItemIndex of
@@ -246,6 +272,10 @@ begin
   LDDPOptions.GridFineY := seGridFineY.Value;
   LDDPOptions.GridFineZ := seGridFineZ.Value;
   LDDPOptions.GridFineAngle := seGridFineAngle.Value;
+  LDDPOptions.GridCustomX := seGridCustomX.Value;
+  LDDPOptions.GridCustomY := seGridCustomY.Value;
+  LDDPOptions.GridCustomZ := seGridCustomZ.Value;
+  LDDPOptions.GridCustomAngle := seGridCustomAngle.Value;
   LDDPOptions.Username := edName.Text;
   LDDPOptions.UserPTName := edUsername.Text;
   LDDPOptions.UserEmail := edEmail.Text;
@@ -282,11 +312,6 @@ begin
   UpdateControls;
 end;
 
-procedure TLDDPOptionsForm.SetOptions(const Value: TLDDPOptions);
-begin
-  FLDDPOptions.Assign(Value);
-end;
-
 procedure TLDDPOptionsForm.LoadFormValues;
 
 var
@@ -302,8 +327,8 @@ begin
   NormalAngleEdit.Value := LDDPOptions.ErrorCheckNormalAngle;
   CollinearMaxAngleEdit.Value := LDDPOptions.ErrorCheckCollinearMaxAngle;
   CollinearMinAngleEdit.Value := LDDPOptions.ErrorCheckCollinearMinAngle;
-  sePntAcc.Value := LDDPOptions.PostionDecAcc;
-  seRotAcc.Value := LDDPOptions.RotationDecAcc;
+  PositionAcc.ItemIndex := LDDPOptions.PositionDecAcc - 1;
+  RotationAcc.ItemIndex := LDDPOptions.RotationDecAcc - 1;
   cboAutoRoundOnly.Checked := LDDPOptions.OnlyRoundDuringAutoRound;
   seCustomPollInterval.Value := LDDPOptions.CustomPollInterval;
   case LDDPOptions.ColorComboSortTerm of
@@ -324,12 +349,16 @@ begin
   seGridFineY.Value := LDDPOptions.GridFineY;
   seGridFineZ.Value := LDDPOptions.GridFineZ;
   seGridFineAngle.Value := LDDPOptions.GridFineAngle;
+  seGridCustomX.Value := LDDPOptions.GridCustomX;
+  seGridCustomY.Value := LDDPOptions.GridCustomY;
+  seGridCustomZ.Value := LDDPOptions.GridCustomZ;
+  seGridCustomAngle.Value := LDDPOptions.GridCustomAngle;
   edName.Text := LDDPOptions.Username;
   edUsername.Text := LDDPOptions.UserPTName;
   edEmail.Text := LDDPOptions.UserEmail;
 
-  if LDDPOptions.ColorBarList.Count < 15 then
-    SetColorListToDefault;
+  if LDDPOptions.ColorBarList.Count <> 15 then
+    LDDPOptions.SetColorListToDefault;
 
   CurrentItem := TStringList.Create;
   for i := 0 to 15 do
@@ -430,6 +459,54 @@ begin
   ColourList.Free;
 end;
 
+procedure TLDDPOptionsForm.AssignValuesFromHighligher(index: Integer);
+
+var
+  Styles: TStringList;
+
+begin
+  Styles := TStringList.Create;
+  try
+    Styles.CommaText := LDDPOptions.EditorStyles[index];
+    FontBox.Font.Name := Styles[0];
+    if FontSize.Items.IndexOf(Styles[1]) >= 0 then
+      FontSize.ItemIndex := FontSize.Items.IndexOf(Styles[1])
+    else
+      FontSize.Text := Styles[1];
+    ForeColor.Selected := StrToInt(Styles[2]);
+    BackColor.Selected := StrToInt(Styles[3]);
+    cbBold.Checked := StrToBool(Styles[4]);
+    cbItalic.Checked := StrToBool(Styles[5]);
+    cbUnderline.Checked := StrToBool(Styles[6]);
+  finally
+    Styles.Free;
+  end;
+end;
+
+procedure TLDDPOptionsForm.AssignValuesToHighligher(index: Integer);
+
+var
+  StoreValue: string;
+
+begin
+  StoreValue := '"' + FontBox.Font.Name;
+  if FontSize.ItemIndex > 0 then
+    StoreValue := StoreValue + '",' + FontSize.Items[FontSize.ItemIndex]
+  else
+    StoreValue := StoreValue + '",' + FontSize.Text;
+  StoreValue := StoreValue + ',' + IntToStr(ForeColor.Selected);
+  StoreValue := StoreValue + ',' + IntToStr(BackColor.Selected);
+  StoreValue := StoreValue + ',' + BoolToStr(cbBold.Checked);
+  StoreValue := StoreValue + ',' + BoolToStr(cbItalic.Checked);
+  StoreValue := StoreValue + ',' + BoolToStr(cbUnderline.Checked);
+  LDDPOptions.EditorStyles[index] := StoreValue;
+end;
+
+procedure TLDDPOptionsForm.AttrListClick(Sender: TObject);
+begin
+  AssignValuesFromHighligher(AttrList.ItemIndex);
+end;
+
 procedure TLDDPOptionsForm.btnAddPathClick(Sender: TObject);
 
 var
@@ -449,7 +526,7 @@ var
   SelectedColor: TStringList;
 
 begin
-  SetColorListToDefault;
+  LDDPOptions.SetColorListToDefault;
   SelectedColor := TStringList.Create;
   for i := 0 to 15 do
   begin
@@ -756,43 +833,6 @@ begin
   edSearchPath.Text := Item.Caption;
 end;
 
-procedure TLDDPOptionsForm.SetColorListToDefault;
-var
-  cnt, code: Integer;
-  ColorList: TDATColourList;
-
-begin
-  LDDPOptions.ColorBarList.Clear;
-  if FileExists(LDrawPathEdit.Text + PathDelim + 'ldconfig.ldr') then
-  begin
-    ColorList := MakeStandardDATColourList;
-    case ColorSortOption.ItemIndex of
-      0: ColorList.SortTerm := csCode;
-      1: ColorList.SortTerm := csColourName;
-      2: ColorList.SortTerm := csMainColour;
-    end;
-    ColorList.Sort;
-    cnt := 0;
-    while cnt < 16 do
-    begin
-      code := ColorList.IndexOfColourCode(cnt);
-      if code >= 0 then
-      begin
-        LDDPOptions.ColorBarList.Add('"' + StringReplace(ColorList[code].ColourName, '_', ' ', [rfReplaceAll]) + '",' +
-                           IntToStr(ColorList[code].Code) + ',' +
-                           IntToStr(ColorList[code].MainColour));
-        inc(cnt);
-      end;
-    end;
-    ColorList.Free;
-  end
-  else
-  begin
-    for cnt := 0 to 15 do
-      LDDPOptions.ColorBarList.Add('"Black",0,0');
-  end;
-end;
-
 procedure TLDDPOptionsForm.UpdateSearchPathList;
 
 var
@@ -803,6 +843,11 @@ begin
       
   for i := 0 to SearchPathsList.Items.Count - 1 do
     LDDPOptions.SearchPaths.Add(SearchPathsList.Items[i].Caption);
+end;
+
+procedure TLDDPOptionsForm.ValueChange(Sender: TObject);
+begin
+  AssignValuesToHighligher(AttrList.ItemIndex)
 end;
 
 end.

@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -62,7 +62,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainFrm, windowsspecific, EditorDoc;
+  MainFrm, windowsspecific, LDDPHelperTypes;
 
 procedure TLDDPSubFileDlg.FormClose(Sender: TObject; var Action: TCloseAction);
 var
@@ -117,7 +117,7 @@ begin
     SubFile.Add('');
     SubFile.Add(LDDPMain.editor.SelText);
 
-    subfilename := ExtractFilePath(TLDDPEditorDoc(LDDPMain.DocTabBar.SelectedTab.Data).FileName) + edFileName.Text;
+    subfilename := ExtractFilePath(LDDPMain.DocPointerList[LDDPMain.DocTabBar.TabIndex]^.FileName) + edFileName.Text;
 
     if FileExists(subfilename) and
        (MessageDlg('File of same name already exists.  Overwrite?',
@@ -137,7 +137,7 @@ end;
 
 procedure TLDDPSubFileDlg.FormShow(Sender: TObject);
 begin
-  edFilename.Text := ExtractFileName(TLDDPEditorDoc(LDDPMain.DocTabBar.SelectedTab.Data).Filename);
+  edFilename.Text := ExtractFileName(LDDPMain.DocPointerList[LDDPMain.DocTabBar.TabIndex]^.FileName);
   edAuthor.Text := LDDPMain.editor.LDDPOptions.Username;
   edUsername.Text := LDDPMain.editor.LDDPOptions.UserPTName;
   edTitle.Text := '';

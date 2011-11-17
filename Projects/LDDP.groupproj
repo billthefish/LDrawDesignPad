@@ -3,10 +3,10 @@
 			<ProjectGuid>{2B6E56A7-AB1E-4488-81EC-CF3D06D15A4F}</ProjectGuid>
 		</PropertyGroup>
 		<ItemGroup>
-			<Projects Include="PLDDPSynEdit.dproj">
+			<Projects Include="LDDesignPad.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="LDDesignPad.dproj">
+			<Projects Include="ScintillaLDDP.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -17,32 +17,32 @@
 				<Default.Personality/>
 			</BorlandProject>
 		</ProjectExtensions>
-		<Target Name="PLDDPSynEdit">
-			<MSBuild Projects="PLDDPSynEdit.dproj"/>
-		</Target>
-		<Target Name="PLDDPSynEdit:Clean">
-			<MSBuild Targets="Clean" Projects="PLDDPSynEdit.dproj"/>
-		</Target>
-		<Target Name="PLDDPSynEdit:Make">
-			<MSBuild Targets="Make" Projects="PLDDPSynEdit.dproj"/>
-		</Target>
 		<Target Name="LDDesignPad">
 			<MSBuild Projects="LDDesignPad.dproj"/>
 		</Target>
 		<Target Name="LDDesignPad:Clean">
-			<MSBuild Targets="Clean" Projects="LDDesignPad.dproj"/>
+			<MSBuild Projects="LDDesignPad.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="LDDesignPad:Make">
-			<MSBuild Targets="Make" Projects="LDDesignPad.dproj"/>
+			<MSBuild Projects="LDDesignPad.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="ScintillaLDDP">
+			<MSBuild Projects="ScintillaLDDP.dproj"/>
+		</Target>
+		<Target Name="ScintillaLDDP:Clean">
+			<MSBuild Projects="ScintillaLDDP.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="ScintillaLDDP:Make">
+			<MSBuild Projects="ScintillaLDDP.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="PLDDPSynEdit;LDDesignPad"/>
+			<CallTarget Targets="LDDesignPad;ScintillaLDDP"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="PLDDPSynEdit:Clean;LDDesignPad:Clean"/>
+			<CallTarget Targets="LDDesignPad:Clean;ScintillaLDDP:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="PLDDPSynEdit:Make;LDDesignPad:Make"/>
+			<CallTarget Targets="LDDesignPad:Make;ScintillaLDDP:Make"/>
 		</Target>
-		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
 	</Project>

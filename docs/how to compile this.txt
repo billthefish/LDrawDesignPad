@@ -3,16 +3,16 @@ HOW TO COMPILE LDDP
 
 You'll need:
 
-* Borland Delphi. 
-	Delphi 2010 is used for development but it may build in
+* Embarcadero Delphi. 
+	Delphi XE2 is used for development but it may build in
 	earlier versions down to Delphi 6 (this has not been tested)
 
 To compile this source successfully, you'll also need to download 
 and install the following component suites:
 
-* JVCL and JCL (currently using JVCL 3.39 and JCL 2.1)
+* JVCL and JCL (currently using JVCL 3.45 and JCL 2.4.0)
 	http://jvcl.sourceforge.net
-	Note: The LDDP code is incompatible with JVCL 2.x
+	Note: The LDDP code is incompatible with JVCL 2.x or lower
 
 * SynEdit
 	http://synedit.sourceforge.net

@@ -103,7 +103,6 @@ object LDDPColorReplaceForm: TLDDPColorReplaceForm
       Anchors = [akRight, akBottom]
       Caption = 'OK'
       Default = True
-      DoubleBuffered = True
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
@@ -148,7 +147,6 @@ object LDDPColorReplaceForm: TLDDPColorReplaceForm
         FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
       ModalResult = 1
-      ParentDoubleBuffered = False
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
@@ -159,7 +157,6 @@ object LDDPColorReplaceForm: TLDDPColorReplaceForm
       Anchors = [akRight, akBottom]
       Cancel = True
       Caption = 'Cancel'
-      DoubleBuffered = True
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
@@ -204,7 +201,6 @@ object LDDPColorReplaceForm: TLDDPColorReplaceForm
         5757004F5757570E00FDFDFD00575757575700004E57574F00FDFDFDFD005757
         5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
       ModalResult = 2
-      ParentDoubleBuffered = False
       TabOrder = 1
     end
   end

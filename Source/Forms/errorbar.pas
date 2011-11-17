@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,13 +21,11 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, ComCtrls, Menus, JvDockTree, JvDockControlForm,
-  JvDockDelphiStyle, JvComponentBase, ActnList, DATCheck;
+  Controls, Forms, Dialogs, ComCtrls, Menus, ActnList, DATCheck;
 
 type
   TfrErrorWindow = class(TForm)
     ErrorListView: TListView;
-    JvDockClient1: TJvDockClient;
     pmL3P: TPopupMenu;
     MarkAllForFixing1: TMenuItem;
     MarkAllofSelectedErrorType1: TMenuItem;
@@ -231,7 +229,7 @@ begin
       if not Visible then
       begin
         Visible := true;
-        ManualDock(LDDPMain.JvDockServer1.BottomDockPanel, nil, alBottom);
+//        ManualDock(LDDPMain.JvDockServer1.BottomDockPanel, nil, alBottom);
       end;
       acECFixAllErrors.Enabled := True;
       acECFixAllMarkedErrors.Enabled := True;
@@ -512,7 +510,7 @@ begin
   floating := LDDPini.ReadBool(IniSection, 'frErrorWindow_Floating', False);
 
   if Visible and not floating then
-    ManualDock(LDDPMain.JvDockServer1.BottomDockPanel, nil, alBottom);
+//    ManualDock(LDDPMain.JvDockServer1.BottomDockPanel, nil, alBottom);
 
   LDDPini.Free;
 end;

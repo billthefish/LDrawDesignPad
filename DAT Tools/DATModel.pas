@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ unit DATModel;
 interface
 
 uses
-  DATBase, Contnrs, Classes;
+  DATBase, Generics.Collections, Classes;
 
 type
 
@@ -33,69 +33,48 @@ type
 
   TDATSortArray = array[1..3] of TDATSortTerm;
 
-{ Base class for all DAT Model type Objects
-  Essentially this is a specialized Object list for
-  DAT Components }
-  TDATCustomModel=class(TObject)
+{ An Object for holding and manipulating an LDraw model }
+
+  TDATModel=class(TObject)
     private
-      FModelCollection: TObjectList;
-      FPntAcc, FRotAcc: Byte;
+      strFilePath: string;
+      strFileName: string;
+      FDuplicates: Boolean;
+      FModelCollection: TObjectList<TDATType>;
+      FPntAcc: TDATPositionAccuracy;
+      FRotAcc: TDATRotationAccuracy;
       FSortTerms: TDATSortArray;
       procedure DoSort(Start, Finish: Integer; Reverse: Boolean = False);
       function Compare(Line1, Line2: TDATType; Reverse: Boolean = False): Integer;
       function GetSortTerm(Idx: Byte): TDATSortTerm;
       procedure SetSortTerm(Idx: Byte; Val: TDATSortTerm);
-
-    protected
+      procedure SetFilePath(fPath: string);
+      procedure SetFileName(fName: string);
+      procedure SetIdentLines(fILines: Boolean);
       procedure SetModelFromStringlist(sList: TStringList);
       procedure SetLine(Idx: Integer; Value: TDATType);
       function GetLine(Idx: Integer): TDATType;
       function GetCount: Integer;
-      property Lines[Idx:Integer]: TDATType read GetLine write SetLine;
-      property Count:Integer read GetCount;
-      function GetModelText: string; virtual;
-      procedure SetModelText(mText: string); virtual;
-      procedure Add(strLine: string); overload; virtual;
-      procedure Add(objLine: TDATType); overload; virtual;
-      procedure Insert(Index: Integer; strLine: string); overload; virtual;
-      procedure Insert(Index: Integer; objLine: TDATType); overload; virtual;
-      procedure Exchange(Index1, Index2: Integer); virtual;
-      procedure Rotate(w,x,y,z: Double); virtual;
-      procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; virtual;
-      procedure Translate(x,y,z: Double); virtual;
-      procedure Clear; virtual;
+      function GetModelText: string;
+      procedure SetModelText(mText: string);
 
     public
-      constructor Create(RotAcc: Integer = 14; PntAcc: Integer = 14); virtual;
+      constructor Create(RotAcc: Integer = 13; PntAcc: Integer = 13); virtual;
       destructor Destroy; override;
-      property PositionDecimalPlaces: Byte read FPntAcc write FPntAcc;
-      property RotationDecimalPlaces: Byte read FRotAcc write FRotAcc;
-      property SortTerms: TDATSortArray read FSortTerms write FSortTerms;
-      property SortTerm[Idx: Byte]: TDATSortTerm read GetSortTerm write SetSortTerm;
-      procedure Sort(Reverse: Boolean = False);
 
-  end;
-
-{ An Object for holding and manipulating an LDraw model }
-
-  TDATModel=class(TDATCustomModel)
-    private
-      strFilePath: string;
-      strFileName: string;
-      FDuplicates: Boolean;
-      procedure SetFilePath(fPath: string);
-      procedure SetFileName(fName: string);
-      procedure SetIdentLines(fILines: Boolean);
-
-    public
       property FilePath: string read strFilePath write SetFilePath;
       property FileName: string read strFileName write SetFileName;
       property ModelText: string read GetModelText write SetModelText;
 
-      property Lines; default;{Public redeclare of the inherited Lines property}
-      property Count; {Public redeclare of the inherited Count property}
+      property Lines[Idx:Integer]: TDATType read GetLine write SetLine; default;
+      property Count:Integer read GetCount;
 
       property Duplicates: Boolean read FDuplicates write SetIdentLines;
+
+      property PositionDecimalPlaces: TDATPositionAccuracy read FPntAcc write FPntAcc;
+      property RotationDecimalPlaces: TDATRotationAccuracy read FRotAcc write FRotAcc;
+      property SortTerms: TDATSortArray read FSortTerms write FSortTerms;
+      property SortTerm[Idx: Byte]: TDATSortTerm read GetSortTerm write SetSortTerm;
 
       function RemoveDuplicateLines: Boolean;
 
@@ -124,23 +103,24 @@ type
       procedure CommentLine(Index: Integer);
       procedure UnCommentLine(Index: Integer);
 
-//    Inherited from TDATCustomModel
-      procedure Add(strLine: string); overload; override;
-      procedure Add(objLine: TDATType); overload; override;
-      procedure Insert(Index: Integer; strLine: string); overload; override;
-      procedure Insert(Index: Integer; objLine: TDATType); overload; override;
-      procedure Exchange(Index1, Index2: Integer); override;
-      procedure Rotate(w,x,y,z: Double); override;
-      procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload; override;
-      procedure Translate(x,y,z: Double); override;
-      procedure Clear; override;
+      procedure Add(strLine: string); overload;
+      procedure Add(objLine: TDATType); overload;
+      procedure Insert(Index: Integer; strLine: string); overload;
+      procedure Insert(Index: Integer; objLine: TDATType); overload;
+      procedure Exchange(Index1, Index2: Integer);
+      procedure Rotate(w,x,y,z: Double);
+      procedure Transform(M: TDATMatrix; Reverse: Boolean = false); overload;
+      procedure Translate(x,y,z: Double);
+      procedure Clear;
+
+      procedure Sort(Reverse: Boolean = False);
   end;
 
   // An MPD model is essentially a collection of TDATModels
   // Many of the class procedures work in a similar manner to TDATModel
   TDATMPDModel = class(TPersistent)
     private
-      FModelCollection: TObjectList;
+      FModelCollection: TObjectList<TDATModel>;
       FDuplicates: Boolean;
 
     protected
@@ -521,32 +501,32 @@ begin
     Result := -1;
 end;
 
-constructor TDATCustomModel.Create(RotAcc: Integer = 14; PntAcc: Integer = 14);
+constructor TDATModel.Create(RotAcc: Integer = 13; PntAcc: Integer = 13);
 
 begin
   inherited Create;
-  FModelCollection := TObjectList.Create;
+  FModelCollection := TObjectList<TDATType>.Create;
   FPntAcc := PntAcc;
   FRotAcc := RotAcc;
 end;
 
-destructor TDATCustomModel.Destroy;
+destructor TDATModel.Destroy;
 begin
   FModelCollection.Free;
   inherited Destroy;
 end;
 
-function TDATCustomModel.GetSortTerm(Idx: Byte): TDATSortTerm;
+function TDATModel.GetSortTerm(Idx: Byte): TDATSortTerm;
 begin
   Result := FSortTerms[Idx];
 end;
 
-procedure TDATCustomModel.SetSortTerm(Idx: Byte; Val: TDATSortTerm);
+procedure TDATModel.SetSortTerm(Idx: Byte; Val: TDATSortTerm);
 begin
   FSortTerms[Idx] := Val;
 end;
 
-function TDATCustomModel.GetLine(Idx:Integer): TDATType;
+function TDATModel.GetLine(Idx:Integer): TDATType;
 begin
   if (Idx >= 0) and (Idx < Count) then
   begin
@@ -561,7 +541,7 @@ begin
     Result := nil;
 end;
 
-procedure TDATCustomModel.SetLine(Idx:Integer; Value: TDATType);
+procedure TDATModel.SetLine(Idx:Integer; Value: TDATType);
 var
   TempDAT: TObject;
 
@@ -575,7 +555,7 @@ begin
   end;
 end;
 
-function TDATCustomModel.GetModelText: string;
+function TDATModel.GetModelText: string;
 
 var
   i: Integer;
@@ -590,7 +570,7 @@ begin
   end;
 end;
 
-procedure TDATCustomModel.SetModelText(mText: string);
+procedure TDATModel.SetModelText(mText: string);
 
 var
   ModelFile: TStringList;
@@ -605,7 +585,7 @@ begin
   ModelFile.Free;
 end;
 
-procedure TDATCustomModel.SetModelFromStringList(sList: TStringList);
+procedure TDATModel.SetModelFromStringList(sList: TStringList);
 
 var
   i: Integer;
@@ -615,39 +595,35 @@ begin
     Add(sList[i]);
 end;
 
-procedure TDATCustomModel.Add(objLine: TDATType);
+procedure TDATModel.Add(objLine: TDATType);
 begin
   Insert(GetCount, objLine);
 end;
 
-procedure TDATCustomModel.Add(strLine: string);
+procedure TDATModel.Add(strLine: string);
 begin
   Insert(Count, strLine);
 end;
 
-procedure TDATCustomModel.Insert(Index: Integer; objLine: TDATType);
+procedure TDATModel.Insert(Index: Integer; objLine: TDATType);
 
 begin
   FModelCollection.Insert(Index, objLine);
 end;
 
-procedure TDATCustomModel.Insert(Index: Integer; strLine: string);
-
-var
-  NewDATType: TDATType;
+procedure TDATModel.Insert(Index: Integer; strLine: string);
 
 begin
-  NewDATType := StrToDAT(strLine);
-  Insert(Index, NewDATType)
+  Insert(Index, StrToDAT(strLine))
 end;
 
-procedure TDATCustomModel.Exchange(Index1, Index2: Integer);
+procedure TDATModel.Exchange(Index1, Index2: Integer);
 
 begin
   FModelCollection.Exchange(Index1, Index2);
 end;
 
-procedure TDATCustomModel.Rotate(w,x,y,z: Double);
+procedure TDATModel.Rotate(w,x,y,z: Double);
 
 var
   i: Integer;
@@ -658,7 +634,7 @@ begin
      (Lines[i] as TDATElement).Rotate(w,x,y,z);
 end;
 
-procedure TDATCustomModel.Transform(M: TDATMatrix; Reverse: Boolean = false);
+procedure TDATModel.Transform(M: TDATMatrix; Reverse: Boolean = false);
 
 var
   i: Integer;
@@ -669,7 +645,7 @@ begin
       (Lines[i] as TDATElement).Transform(M,Reverse);
 end;
 
-procedure TDATCustomModel.Translate(x,y,z: Double);
+procedure TDATModel.Translate(x,y,z: Double);
 
 var
   i: Integer;
@@ -680,18 +656,18 @@ begin
      (Lines[i] as TDATElement).Translate(x,y,z);
 end;
 
-procedure TDATCustomModel.Clear;
+procedure TDATModel.Clear;
 
 begin
   FModelCollection.Clear;
 end;
 
-function TDATCustomModel.GetCount: Integer;
+function TDATModel.GetCount: Integer;
 begin
   Result := FModelCollection.Count;
 end;
 
-function TDATCustomModel.Compare(Line1, Line2: TDATType; Reverse: Boolean = False): Integer;
+function TDATModel.Compare(Line1, Line2: TDATType; Reverse: Boolean = False): Integer;
 
 var
   i: Integer;
@@ -720,7 +696,7 @@ begin
   if Reverse then Result := -Result;
 end;
 
-procedure TDATCustomModel.DoSort(Start, Finish: Integer; Reverse: Boolean = False);
+procedure TDATModel.DoSort(Start, Finish: Integer; Reverse: Boolean = False);
 
 var
   i, j: Integer;
@@ -750,12 +726,10 @@ begin
   until i >= Finish;
 end;
 
-procedure TDATCustomModel.Sort(Reverse: Boolean = False);
+procedure TDATModel.Sort(Reverse: Boolean = False);
 begin
   DoSort(0, Count-1, Reverse);
 end;
-
-{ TDATModel Code }
 
 procedure TDATModel.SetFilePath(fPath: string);
 begin
@@ -838,12 +812,6 @@ begin
   if Index < 0 then Index := Count;
   for i := ModelObj.Count - 1 downto 0 do
     Insert(Index, ModelObj[i].DATString);
-end;
-
-procedure TDATModel.Clear;
-
-begin
-  inherited Clear;
 end;
 
 procedure TDATModel.InlinePart(Index: Integer; SearchPaths: TStringList = nil);
@@ -937,12 +905,11 @@ var
   DLine: string;
 
 begin
-  if (not (Lines[Index] is TDATComment)) and
-     (not (Lines[Index] is TDATBlankLine)) then
+  if Lines[Index] is TDATElement then
   begin
     DLine := Lines[Index].DATString;
     Delete(Index);
-    Insert(Index, DLine);
+    Insert(Index, '0 ' + DLine);
   end;
 end;
 
@@ -954,10 +921,10 @@ var
 begin
   if Lines[Index] is TDATComment then
   begin
-    Dline := (Lines[Index] as TDATComment).Comment;
+    DLine := TDATComment(Lines[Index]).Comment;
     Delete(Index);
     Insert(Index, DLine);
-    if Lines[Index] is TDATBlankLine then
+    if Lines[Index] is TDATInvalidLine then
     begin
       Delete(Index);
       Insert(Index, '0 ' + DLine);
@@ -965,55 +932,12 @@ begin
   end;
 end;
 
-procedure TDATModel.Add(objLine: TDATType);
-begin
-  inherited Add(objLine);
-end;
-
-procedure TDATModel.Add(strLine: string);
-begin
-  inherited Add(strLine);
-end;
-
-procedure TDATModel.Insert(Index: Integer; objLine: TDATType);
-
-begin
-  inherited Insert(Index, objLine);
-end;
-
-procedure TDATModel.Insert(Index: Integer; strLine: string);
-begin
-  inherited Insert(Index, strLine);
-end;
-
-procedure TDATModel.Exchange(Index1, Index2: Integer);
-
-begin
-  inherited Exchange(Index1, Index2);
-end;
-
-
-procedure TDATModel.Rotate(w,x,y,z: Double);
-begin
-  inherited Rotate(w,x,y,z);
-end;
-
-procedure TDATModel.Transform(M: TDATMatrix; Reverse: Boolean = false);
-begin
-  inherited Transform(M, Reverse);
-end;
-
-procedure TDATModel.Translate(x,y,z: Double);
-begin
-  inherited Translate(x,y,z);
-end;
-
 // TDATMPDModel
 constructor TDATMPDModel.Create;
 
 begin
   inherited Create;
-  FModelCollection := TObjectList.Create;
+  FModelCollection := TObjectList<TDATModel>.Create;
 end;
 
 destructor TDATMPDModel.Destroy;
@@ -1238,7 +1162,7 @@ initialization
   {Some locales use "," as the decimal separator
    This changes the decimal separtor to "." as required by the LDraw spec
    without changing the master settings. }
-  DecimalSeparator := '.';
+  FormatSettings.DecimalSeparator := '.';
 
 finalization
 // Nothing
