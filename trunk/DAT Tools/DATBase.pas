@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,6 +24,9 @@ uses
 
 type
   EInvalidDATLine = class(Exception);
+
+  TDATRotationAccuracy = 1..13;
+  TDATPositionAccuracy = 1..13;
 
   (* These types allow passing of fixed arrays between procedures
      instead of varible length arrays *)
@@ -116,7 +119,8 @@ type
       FColor: Integer;
 
     protected
-      FPntAcc, FRotAcc: ShortInt;
+      FPntAcc: TDATPositionAccuracy;
+      FRotAcc: TDATRotationAccuracy;
       FDATMatrix: TDATMatrix;
       function GetCoordinate(Index: Integer): Double;
       procedure SetCoordinate(Index: Integer; Value: Double);
@@ -135,8 +139,8 @@ type
       property MatrixVals[idx1,idx2: Integer]: Double read GetMatrixVal write SetMatrixVal;
 
       property Color: Integer read FColor write FColor default 0;
-      property RotationDecimalPlaces: ShortInt read FRotAcc write FRotAcc default 15;
-      property PositionDecimalPlaces: ShortInt read FPntAcc write FPntAcc default 15;
+      property RotationDecimalPlaces: TDATRotationAccuracy read FRotAcc write FRotAcc;
+      property PositionDecimalPlaces: TDATPositionAccuracy read FPntAcc write FPntAcc;
 
       (* Multiply the current Object by the given Matrix *)
       procedure Transform(M: TDATMatrix;
@@ -375,8 +379,8 @@ constructor TDATElement.Create;
 begin
   inherited Create;
   FColor := 0;
-  FPntAcc := 14;
-  FRotAcc := 14;
+  FPntAcc := 13;
+  FRotAcc := 13;
   FDATMatrix[4,4] := 1;
 end;
 
@@ -564,7 +568,7 @@ var
  strSep: Char;
 
 begin
-  strSep := DecimalSeparator;
+  strSep := FormatSettings.DecimalSeparator;
 
   Result := '1 ' +
             IntToStr(Color) + ' ' +
@@ -582,7 +586,7 @@ begin
             FloatToStr(RoundTo(MatrixVals[3,3], -Abs(RotationDecimalPlaces))) + ' ' +
             SubPart;
 
-  DecimalSeparator := strSep;
+  FormatSettings.DecimalSeparator := strSep;
 end;
 
 procedure TDATSubPart.ProcessDATLine(strText:string);
@@ -990,7 +994,7 @@ initialization
   {Some locales use "," as the decimal separator
    This changes the decimal separtor to "." as required by the LDraw spec
    without changing the master settings. }
-  DecimalSeparator := '.';
+  FormatSettings.DecimalSeparator := '.';
 
 finalization
 // Nothing

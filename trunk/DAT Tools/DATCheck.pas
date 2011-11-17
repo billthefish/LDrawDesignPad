@@ -1,8 +1,8 @@
 unit DATCheck;
 (*
-  Copyright (C) 2003-2010 Orion Pobursky
+  Copyright (C) 2003-2011 Orion Pobursky
 
-  This file is derived from:
+  This file originally derived from:
     L3Input.cpp and L3Math.cpp
     Part of the L3 project for handling LDraw *.dat files
     Copyright (C) 1997-1999  Lars C. Hassing (lch@ccieurope.com)
@@ -28,7 +28,7 @@ unit DATCheck;
 interface
 
 uses
-  Contnrs;
+  Generics.Collections;
 
 type
   TDATErrorType = (deRow1AllZeros, deRow2AllZeros, deRow3AllZeros,
@@ -53,15 +53,15 @@ const
   strRow3AllZeros = 'Row 3 all zeros';
   strYColumnAllZeros = 'Y column all zeros';
   strSingularMatrix = 'Singular Matrix';
-  strTriangleCollinear = 'Triangle collinear';
-  strQuadCollinear = 'Quad collinear';
+  strTriangleCollinear = 'Triangle collinear (angle = %g)';
+  strQuadCollinear = 'Quad collinear (angle = %g)';
   strIdenticalVertices = 'Identical Vertices';
   strConcaveSplit13 = 'Concave quad, split on diagonal of points 1 and 3';
   strConcaveSplit24 = 'Concave quad, split on diagonal of points 2 and 4';
   strBowtie1423 = 'Bowtie quad, reorder points to sequence 1, 4, 2, 3';
   strBowtie1243 = 'Bowtie quad, reorder points to sequence 1, 2, 4, 3';
-  strNonCoplanerVertices = 'Quad points not coplaner';
-  strIdenticalLine = 'Identical to line';
+  strNonCoplanerVertices = 'Quad points not coplaner (angle = %g)';
+  strIdenticalLine = 'Identical to line %d';
   strColor24Illegal = 'Color 24 illegal for this linetype';
   strBadSyntax = 'Syntax Error';
 
@@ -70,7 +70,7 @@ var
   CollinearMaxAngle: Double = 179.9;
   CollinearMinAngle: Double = 0.025;
 
-function L3CheckLine(const Line: string): TObjectList;
+function L3CheckLine(const Line: string): TObjectList<TDATError>;
 function GetErrorString(error: TDATError): string;
 
 implementation
@@ -166,7 +166,7 @@ begin
     Result := Angle2;
 end;
 
-function CheckSubPart(datsubpart: TDATSubPart): TObjectList;
+function CheckSubPart(datsubpart: TDATSubPart): TObjectList<TDATError>;
 
 var
   det, tempval: Double;
@@ -174,7 +174,7 @@ var
   error: TDATError;
 
 begin
-  Result := TObjectList.Create;
+  Result := TObjectList<TDATError>.Create;
   Result.Clear;
   with datsubpart do
   begin
@@ -233,13 +233,13 @@ begin
   end;
 end;
 
-function CheckLine2(const line: TDATLine): TObjectList;
+function CheckLine2(const line: TDATLine): TObjectList<TDATError>;
 
 var
   error: TDATError;
 
 begin
-  Result := TObjectList.Create;
+  Result := TObjectList<TDATError>.Create;
   Result.Clear;
   with line do
     if CheckSamePoint(Point[1],Point[2]) then
@@ -249,14 +249,14 @@ begin
     end;
 end;
 
-function CheckTri(const tri: TDATTriangle): TObjectList;
+function CheckTri(const tri: TDATTriangle): TObjectList<TDATError>;
 
 var
   angle1, angle2, angle3: Double;
   error: TDATError;
 
 begin
-  Result := TObjectList.Create;
+  Result := TObjectList<TDATError>.Create;
   Result.Clear;
   with tri do
   begin
@@ -284,7 +284,7 @@ begin
   end;
 end;
 
-function CheckQuad(const quad: TDATQuad): TObjectList;
+function CheckQuad(const quad: TDATQuad): TObjectList<TDATError>;
 
 var
   maxangle, angle1, angle2, angle3, angle4: Double;
@@ -292,7 +292,7 @@ var
   v01, v02, v03, v12, v13, v23: TDATPoint;
   error: TDATError;
 begin
-  Result := TObjectList.Create;
+  Result := TObjectList<TDATError>.Create;
   Result.Clear;
   with quad do
   begin
@@ -376,13 +376,13 @@ begin
   end;
 end;
 
-function CheckOpLine(const opline: TDATOpline): TObjectList;
+function CheckOpLine(const opline: TDATOpline): TObjectList<TDATError>;
 
 var
   error: TDATError;
 
 begin
-  Result := TObjectList.Create;
+  Result := TObjectList<TDATError>.Create;
   Result.Clear;
   with opline do
     if CheckSamePoint(Point[1],Point[2]) or CheckSamePoint(Point[3],Point[4]) then
@@ -392,7 +392,7 @@ begin
     end;
 end;
 
-function L3CheckLine(const Line: string): TObjectList;
+function L3CheckLine(const Line: string): TObjectList<TDATError>;
 
 var
   DLine: TDATType;
@@ -410,13 +410,13 @@ begin
     begin
       if DLine is TDATInvalidLine then
       begin
-        Result := TObjectList.Create;
+        Result := TObjectList<TDATError>.Create;
         Result.Clear;
         error := TDATError.Create(deBadSyntax);
         Result.Add(error);
       end
       else
-        Result := TObjectList.Create;
+        Result := TObjectList<TDATError>.Create;
     end;
   end;
 
@@ -432,17 +432,14 @@ begin
     deYColumnAllZeros: Result := strYColumnAllZeros;
     deSigularMatrix: Result := strSingularMatrix;
     deIdenticalVertices: Result := strIdenticalVertices;
-    deTriangleCollinear: Result := strTriangleCollinear + ' (angle = ' +
-                                   FloatToStr(error.ErrorValue) + ')';
-    deQuadCollinear: Result := strQuadCollinear + ' (angle = ' +
-                               FloatToStr(error.ErrorValue) + ')';
+    deTriangleCollinear: Result := Format(strTriangleCollinear, [error.ErrorValue]);
+    deQuadCollinear: Result := Format(strQuadCollinear, [error.ErrorValue]);
     deConcaveQuadSplit24: Result := strConcaveSplit24;
     deConcaveQuadSplit13: Result := strConcaveSplit13;
     deBowtieQuad1423: Result := strBowtie1423;
     deBowtieQuad1243: Result := strBowtie1243;
-    deNonCoplanerVerticesNormAngle: Result := strNonCoplanerVertices +
-                              ' (angle = ' + FloatToStr(error.ErrorValue) + ')';
-    deIdenticalLine: Result := strIdenticalLine + ' ' + IntToStr(Trunc(error.ErrorValue));
+    deNonCoplanerVerticesNormAngle: Result := Format(strNonCoplanerVertices, [error.ErrorValue]);
+    deIdenticalLine: Result := Format(strIdenticalLine, [Trunc(error.ErrorValue)]);
     deColor24Illegal: Result := strColor24Illegal;
     deBadSyntax: Result := strBadSyntax;
     else Result := '';

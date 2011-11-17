@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -59,8 +59,6 @@ type
       function NormalizeVector(Vector: TDATPoint): TDATPoint;
       function BezMakeMatrix(Vector: TDATPoint): TDATRotationMatrix;
       function MakeBezControlPoint(point1, point2: TDATPoint; Factor: Double): TDATPoint;
-
-    protected
       function GetModelText: string;
 
     public

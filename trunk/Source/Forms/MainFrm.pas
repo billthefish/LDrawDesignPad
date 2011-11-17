@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,14 +20,11 @@ unit MainFrm;
 interface
 
 uses
-  errorbar, JvAppInst, JvDockTree, JvDockControlForm,
-  JvDockDelphiStyle, JvComponentBase, Dialogs, ExtCtrls, Menus, ImgList,
-  Controls, StdActns, Classes, ActnList, ComCtrls, ToolWin, Windows, Graphics,
-  Forms, Messages, SysUtils, Types, StdCtrls, ShellAPI, DATBase, AppEvnts,
-  commonprocs, LDDPSynEdit, SynEdit, SynEditMiscClasses,
-  SynEditSearch, SynEditOptionsDialog, SynEditPrint, SynEditHighlighter,
-  SynHighlighterLDraw, SynCompletionProposal, SynEditTypes,
-  Buttons, JvTabBar, Contnrs, JvFormPlacement;
+  Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.ImgList, Vcl.Controls, Vcl.StdActns,
+  System.Classes, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Winapi.Windows,
+  Vcl.Graphics, Vcl.Forms, Winapi.Messages, System.SysUtils, System.Types,
+  Vcl.StdCtrls, Vcl.AppEvnts, DScintilla, DScintillaCustom, ScintillaLDDP,
+  Vcl.Buttons, Generics.Collections, Vcl.Tabs, LDDPHelperTypes;
 
 type
   TLDDPMain = class(TForm)
@@ -70,7 +67,7 @@ type
     pmuExternalPrograms: TMenuItem;
     pmuFile: TMenuItem;
     HelpAbout: TAction;
-    ilProgramIcons: TImageList;
+    ProgramIcons: TImageList;
     InlinePart1: TMenuItem;
     Insert2: TMenuItem;
     MenuItem2: TMenuItem;
@@ -80,15 +77,15 @@ type
     N8: TMenuItem;
     N10: TMenuItem;
     Paste1: TMenuItem;
-    pmMemo: TPopupMenu;
-    pmPolling: TPopupMenu;
-    pmToolbars: TPopupMenu;
+    EditorPopupMenu: TPopupMenu;
+    PollingMenuList: TPopupMenu;
+    ToolbarPopupMenu: TPopupMenu;
     mnuPollEvery5sec: TMenuItem;
     mnuPollEvery1sec: TMenuItem;
     mnuPollevery2sec: TMenuItem;
     StandardPartHeader2: TMenuItem;
     StatusBar: TStatusBar;
-    tmPoll: TTimer;
+    PollTimer: TTimer;
     tbrFile: TToolBar;
     tbrExternalPrograms: TToolBar;
     tbrEditing: TToolBar;
@@ -106,8 +103,8 @@ type
     ToolButton8: TToolButton;
     TrimLines2: TMenuItem;
     UpdateHeader2: TMenuItem;
-    OpenDialog1: TOpenDialog;
-    SaveDialog1: TSaveDialog;
+    OpenFileDialog: TOpenDialog;
+    SaveFileDialog: TSaveDialog;
     acFileOpen: TAction;
     acFileSaveAs: TAction;
     acFilePrint: TAction;
@@ -229,7 +226,7 @@ type
     tbnColor13: TToolButton;
     tbnColor14: TToolButton;
     tbnColor15: TToolButton;
-    pmExternal: TPopupMenu;
+    ExternalMenuList: TPopupMenu;
     pmuColorReplace: TMenuItem;
     acSubFile: TAction;
     SubfileSelection1: TMenuItem;
@@ -240,9 +237,6 @@ type
     acErrorList: TAction;
     mnuErrorList: TMenuItem;
     acFileClose: TAction;
-    JvDockServer1: TJvDockServer;
-    JvDockDelphiStyle1: TJvDockDelphiStyle;
-    AppInst: TJvAppInstances;
     tbrTools: TToolBar;
     ToolButton35: TToolButton;
     ToolButton36: TToolButton;
@@ -257,12 +251,11 @@ type
     ToolButton18: TToolButton;
     ToolButton19: TToolButton;
     ToolButton2: TToolButton;
-    pmMirror: TPopupMenu;
+    MirrorMenuList: TPopupMenu;
     XAxis3: TMenuItem;
     YAxis3: TMenuItem;
     ZAxis3: TMenuItem;
     mnuPollOnCustomInterval: TMenuItem;
-    ApplicationEvents1: TApplicationEvents;
     Search1: TMenuItem;
     acMoveXPos: TAction;
     acMoveXNeg: TAction;
@@ -362,11 +355,6 @@ type
     CustomPollInterval1: TMenuItem;
     CustomPollInterval2: TMenuItem;
     PluginMenu: TMenuItem;
-    CodeComp: TSynCompletionProposal;
-    printer: TSynEditPrint;
-    EditorOptions: TSynEditOptionsDialog;
-    SearchEngine: TSynEditSearch;
-    editor: TLDDPSynEdit;
     acFindDown: TAction;
     acFindUp: TAction;
     acFindReset: TAction;
@@ -379,11 +367,12 @@ type
     ToolButton31: TToolButton;
     ToolButton34: TToolButton;
     ToolButton39: TToolButton;
-    DocTabBar: TJvTabBar;
     ToolButton30: TToolButton;
-    Highlighter: TSynLDRSyn;
-    acHighlighterOptions: TAction;
-    HighlighterOptions1: TMenuItem;
+    editor: TScintillaLDDP;
+    DocTabBar: TTabControl;
+    ToolButton40: TToolButton;
+    acMoveGridCustom: TAction;
+    TabImages: TImageList;
     procedure acHomepageExecute(Sender: TObject);
     procedure acLDViewExecute(Sender: TObject);
     procedure acMLCadExecute(Sender: TObject);
@@ -417,7 +406,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure HelpAboutExecute(Sender: TObject);
-    procedure tmPollTimer(Sender: TObject);
+    procedure PollTimerTimer(Sender: TObject);
     procedure acFileSaveAsExecute(Sender: TObject);
     procedure acFileOpenExecute(Sender: TObject);
     procedure acFileCloseAllExecute(Sender: TObject);
@@ -434,7 +423,7 @@ type
     procedure tbUserDefinedClick(Sender: TObject);
     procedure acSubFileExecute(Sender: TObject);
     procedure acSortSelectionExecute(Sender: TObject);
-    procedure acEditorOptionsExecute(Sender: TObject);
+//    procedure acEditorOptionsExecute(Sender: TObject);
     procedure acErrorListExecute(Sender: TObject);
     procedure acFileCloseExecute(Sender: TObject);
     procedure AppInstCmdLineReceived(Sender: TObject;
@@ -468,7 +457,6 @@ type
     procedure acPollToSelectedLineExecute(Sender: TObject);
     procedure acPollOnDemandExecute(Sender: TObject);
     procedure acMoveSnapToGridExecute(Sender: TObject);
-    procedure editorStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure editorMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure editorDblClick(Sender: TObject);
@@ -477,36 +465,31 @@ type
     procedure acFindResetExecute(Sender: TObject);
     procedure acFindCloseExecute(Sender: TObject);
     procedure DocTabBarChange(Sender: TObject);
-    procedure DocTabBarTabClosed(Sender: TObject; Item: TJvTabBarItem);
-    procedure DocTabBarTabCloseQuery(Sender: TObject; Item: TJvTabBarItem;
-      var CanClose: Boolean);
-    procedure DocTabBarTabSelecting(Sender: TObject; Item: TJvTabBarItem;
-      var AllowSelect: Boolean);
-    procedure DocTabBarTabSelected(Sender: TObject; Item: TJvTabBarItem);
-    procedure editorReplaceText(Sender: TObject; const ASearch,
-      AReplace: string; Line, Column: Integer; var Action: TSynReplaceAction);
-    procedure acHighlighterOptionsExecute(Sender: TObject);
+    procedure editorUpdateUI(Sender: TObject; updated: Integer);
+    procedure acMoveGridCustomExecute(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
 
   private
-    EditorMousePos: TBufferCoord;
     Initialized: Boolean;
-    SearchOptions: TSynSearchOptions;
+    OfficialFiles, Metas: string;
+
     procedure LoadPlugins;
 
   protected
     procedure AppInitialize;
     function tempFileName(index: Integer): string;
-    function ParseString(toparse: string): string;
+    function ParseExternalPath(const ExternalPath: string): string;
     procedure SetKeyWordList;
     procedure MakeExternalPrograms;
     procedure MakeColorBar;
     procedure BuildMetaMenu;
-    function CloseTabQuery(FileName: string): TModalResult;
+    function CloseTabQuery(const FileName: string): TModalResult;
 
   public
     PluginActionList: TActionList;
+    DocPointerList: TList<PEditorDoc>;
     strChangedCompleteText, strChangedSelText: string;
-    procedure OpenFile(filename: string);
+    procedure OpenFile(filename: string; Revert: Boolean = false);
     procedure CloseFile(DocNumber: Integer);
     procedure SaveFile(DocNumber: Integer);
     procedure UpdateMRU(NewFileName: TFileName = '');
@@ -527,28 +510,29 @@ implementation
 
 uses
   AboutDlg, BezWindow, SortDlg, Splash, ColorReplaceFrm,
-  SubpartForm, windowsspecific, OptionsFrm, EditorDoc,
-  DATModel, DATUtils, DATCheck, DATErrorFix, HighlighterPropDlg,
-  StrUtils, IniFiles, DATColour, ReplaceDlg;
+  SubpartForm, windowsspecific, OptionsFrm, Winapi.ShellAPI,
+  DATModel, DATUtils, DATCheck, DATErrorFix, lddpoptions,
+  System.StrUtils, System.IniFiles, DATColour, ReplaceDlg, commonprocs,
+  DScintillaTypes, DATBase;
 
 // General Editor Actions
 
 procedure TLDDPMain.acEditCutExecute(Sender: TObject);
 // Cut text
 begin
- editor.CutToClipboard;
+  editor.Cut;
 end;
 
 procedure TLDDPMain.acEditCopyExecute(Sender: TObject);
 // Copy text
 begin
- editor.CopyToClipboard;
+  editor.Copy;
 end;
 
 procedure TLDDPMain.acEditPasteExecute(Sender: TObject);
 // Paste text
 begin
-  editor.PasteFromClipboard;
+  editor.Paste;
 end;
 
 procedure TLDDPMain.acUndoExecute(Sender: TObject);
@@ -565,28 +549,14 @@ end;
 
 procedure TLDDPMain.acIncIndentExecute(Sender: TObject);
 // Indent line/selection based on tabWidth
-var
-  startline, endline, i: Integer;
-
 begin
-  editor.ExpandSelection(startline, endline);
-  editor.BeginUndoBlock;
-  for i := startline to endline do
-    editor.SetLineIndent(i, editor.GetLineIndent(i) + 1);
-  editor.EndUndoBlock;
+  editor.IndentSelection;
 end;
 
 procedure TLDDPMain.acDecIndentExecute(Sender: TObject);
 // Un-indent line/selection based on tabWidth
-var
-  startline, endline, i: Integer;
-
 begin
-  editor.ExpandSelection(startline, endline);
-  editor.BeginUndoBlock;
-  for i := startline to endline do
-    editor.SetLineIndent(i, editor.GetLineIndent(i) - 1);
-  editor.EndUndoBlock;
+  editor.UnindentSelection;
 end;
 
 procedure TLDDPMain.acInsertPartHeaderExecute(Sender: TObject);
@@ -596,7 +566,7 @@ var
 
 begin
   HeaderText := '0 Part name'+ #13#10 +
-                '0 Name: ' + ExtractFileName(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).Filename) + #13#10 +
+                '0 Name: ' + ExtractFileName(DocPointerList[DocTabBar.TabIndex]^.FileName) + #13#10 +
                 '0 Author: ' + editor.LDDPOptions.Username;
   if editor.LDDPOptions.UserPTName <> '' then
     HeaderText := HeaderText + ' [' + editor.LDDPOptions.UserPTName + ']';
@@ -604,7 +574,6 @@ begin
   HeaderText := HeaderText + #13#10 + '0 !LDRAW_ORG Unofficial Part';
 
   editor.Lines.Insert(0, HeaderText);
-  editor.Modified := True;
 end;
 
 procedure TLDDPMain.acInsertHistoryStatementExecute(Sender: TObject);
@@ -613,53 +582,18 @@ begin
   editor.Lines.Insert(editor.CaretX,
                '0 !HISTORY ' + FormatDateTime('yyyy-mm-dd', Now) + ' [' +
                editor.LDDPOptions.Username + '] Update description');
-  editor.Modified := True;
 end;
 
 procedure TLDDPMain.acCommentBlockExecute(Sender: TObject);
 // Comment selected text
-var
-  j:integer;
-  commenttext: TStringList;
-  startline, endline: Integer;
-
 begin
-  //Expand Selection block
-  editor.ExpandSelection(startline, endline);
-
-  commenttext := TStringList.Create;
-  commenttext.Text := editor.SelText;
-
-  for j := 0 to commenttext.Count - 1 do
-    if not IsBlankLine(commenttext[j]) then
-      commenttext[j] := '0 ' + commenttext[j];
-
-  editor.SelText := StripEndingCRLF(commenttext.Text);
-
-  editor.SelectLines(startline, endline);
-  commenttext.Free;
+  editor.CommentSelection;
 end;
 
 procedure TLDDPMain.acUncommentBlockExecute(Sender: TObject);
 // Uncomment selected text
-var
-  j: Integer;
-  startline,endline: Integer;
-  DModel: TDATModel;
-
 begin
-  editor.ExpandSelection(startline, endline);
-
-  DModel := LDDPCreateDATModel;
-  DModel.ModelText := editor.SelText;
-
-  for j := 0 to DModel.Count-1 do
-    DModel.UnCommentLine(j);
-
-  editor.SelText := DModel.ModelText;
-
-  editor.SelectLines(startline, endline);
-  DModel.Free;
+  editor.UncommentSelection;
 end;
 
 procedure TLDDPMain.acTrimLinesExecute(Sender: TObject);
@@ -697,7 +631,7 @@ begin
 
   editor.ExpandSelection(i, i);
 
-  DATModel1.FilePath := ExtractFilePath(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).Filename);
+  DATModel1.FilePath := ExtractFilePath(DocPointerList[DocTabBar.TabIndex]^.FileName);
   DATModel1.ModelText := editor.SelText;
 
   for i := DATModel1.Count - 1 downto 0 do
@@ -712,7 +646,6 @@ begin
     end;
 
   editor.SelText := DATModel1.ModelText;
-  editor.Modified := true;
 
   DATModel1.Free;
 end;
@@ -737,7 +670,7 @@ var
   i, j, startline, endline: Integer;
   quad: TDATQuad;
   line1, line2: TDATGeometric;
-  errorlist: TObjectList;
+  errorlist: TObjectList<TDATError>;
   DoNotCombine: Boolean;
 
 begin
@@ -766,19 +699,19 @@ begin
             if errorlist.Count > 0 then
             begin
               for j := 0 to errorlist.Count - 1 do
-                if (errorlist[j] as TDATError).ErrorType = deBowtieQuad1423 then
+                if errorlist[j].ErrorType = deBowtieQuad1423 then
                   FixBowtieQuad1423(quad)
-                else if (errorlist[j] as TDATError).ErrorType = deBowtieQuad1243 then
+                else if errorlist[j].ErrorType = deBowtieQuad1243 then
                   FixBowtieQuad1243(quad);
               errorlist := L3CheckLine(quad.DATString);
               for j := 0 to errorlist.Count - 1 do
-                if ((errorlist[j] as TDATError).ErrorType = deQuadCollinear) or
-                   ((errorlist[j] as TDATError).ErrorType = deNonCoplanerVerticesNormAngle) or
-                   ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit24) or
-                   ((errorlist[j] as TDATError).ErrorType = deConcaveQuadSplit13) then
+                if (errorlist[j].ErrorType = deQuadCollinear) or
+                   (errorlist[j].ErrorType = deNonCoplanerVerticesNormAngle) or
+                   (errorlist[j].ErrorType = deConcaveQuadSplit24) or
+                   (errorlist[j].ErrorType = deConcaveQuadSplit13) then
                   case MessageDlg('Combining these triangles:' + #13#10 +
-                                    line1.DATString + ' (Line: ' + IntToStr(editor.CharIndexToRowCol(editor.SelStart).Line + i) + ')' + #13#10 +
-                                    line2.DATString + ' (Line: ' + IntToStr(editor.CharIndexToRowCol(editor.SelStart).Line + i + 1) + ')' + #13#10 +
+                                    line1.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelectionStart + i)) + ')' + #13#10 +
+                                    line2.DATString + ' (Line: ' + IntToStr(editor.LineFromPosition(editor.SelectionStart + i + 1)) + ')' + #13#10 +
                                     'gives the following error:' + #13#10 +
                                     GetErrorString(errorlist[j] as TDATError) + #13#10 + #13#10 +
                                     'Combine anyway?', mtWarning, [mbYes, mbNo, mbAbort], 0, mbNo) of
@@ -841,8 +774,8 @@ begin
     acOptionsExecute(Sender);
     Exit;
   end;
-  editor.Lines.SaveToFile(tempFileName(DocTabBar.SelectedTab.Index));
-  DoCommand(editor.LDDPOptions.LDViewPath + '\LDVIEW.exe -Poll=3 "' + tempFileName(DocTabBar.SelectedTab.Index) + '"',SW_SHOWNA,false);
+  editor.Lines.SaveToFile(tempFileName(DocTabBar.TabIndex));
+  DoCommand(editor.LDDPOptions.LDViewPath + '\LDVIEW.exe -Poll=3 "' + tempFileName(DocTabBar.TabIndex) + '"',SW_SHOWNA,false);
 end;
 
 procedure TLDDPMain.acMLCadExecute(Sender: TObject);
@@ -858,7 +791,7 @@ begin
     acOptionsExecute(Sender);
     Exit;
   end;
-  DoCommand(editor.LDDPOptions.MLCadPath + '\MLCAD.exe "' + TLDDPEditorDoc(DocTabBar.SelectedTab.Data).Filename + '"',SW_SHOWNA,false);
+  DoCommand(editor.LDDPOptions.MLCadPath + '\MLCAD.exe "' + DocPointerList[DocTabBar.TabIndex]^.Filename + '"',SW_SHOWNA,false);
 end;
 
 procedure TLDDPMain.acUserDefinedExecute(Sender: TObject);
@@ -885,10 +818,10 @@ begin
   end;
 
   if StrToBool(ExProgram[4]) then
-    ShowMessage(ExProgram[1] + ' ' + ParseString(ExProgram[2]));
+    ShowMessage(ExProgram[1] + ' ' + ParseExternalPath(ExProgram[2]));
 
-  editor.Lines.SaveToFile(tempFilename(DocTabBar.SelectedTab.Index));
-  DoCommand(ExProgram[1] + ' ' + ParseString(ExProgram[2]), opt, StrToBool(ExProgram[3]));
+  editor.Lines.SaveToFile(tempFilename(DocTabBar.TabIndex));
+  DoCommand(ExProgram[1] + ' ' + ParseExternalPath(ExProgram[2]), opt, StrToBool(ExProgram[3]));
   ExProgram.Free;
 end;
 
@@ -897,22 +830,27 @@ end;
 procedure TLDDPMain.acFileNewExecute(Sender: TObject);
 // Creates a new untitled document
 var
-  LDoc: TLDDPEditorDoc;
-  NewTab: TJvTabBarItem;
+  NewDoc: PEditorDoc;
 
 begin
-  if Assigned(DocTabBar.SelectedTab) then
-    TLDDPEditorDoc(DocTabBar.SelectedTab.Data).AssignFromEditor(editor);
+  NewDoc := New(PEditorDoc);
 
-  LDoc := TLDDPEditorDoc.Create(editor);
-  LDoc.FileName := sUntitled;
+  DocTabBar.Tabs.Add(sUntitled);
 
-  NewTab := DocTabBar.AddTab(LDoc.FileName);
-  NewTab.Data := LDoc;
-  DocTabBar.SelectedTab := NewTab;
+  NewDoc^.EditorDoc := Pointer(editor.CreateDocument);
+  NewDoc^.Filename := sUntitled;
+  DocPointerList.Add(NewDoc);
+  DocTabBar.TabIndex := DocTabBar.Tabs.Count - 1;
 
-  editor.Clear;
-  LDoc.AssignFromEditor(editor);
+  editor.SetDocPointer(NewDoc^.EditorDoc);
+
+  editor.SetLexer(SCLEX_LDRAW);
+  editor.MultipleSelection := True;
+  editor.SetEditorOptions;
+  editor.SetKeyWords(0, OfficialFiles);
+  editor.SetKeyWords(1, Metas);
+
+  editor.SetSavePoint;
 end;
 
 procedure TLDDPMain.acFileOpenExecute(Sender: TObject);
@@ -921,18 +859,18 @@ var
   i: Integer;
 
 begin
-  if OpenDialog1.Execute then
-    for i := 0 to OpenDialog1.Files.Count - 1 do
-      OpenFile(OpenDialog1.Files[i]);
+  if OpenFileDialog.Execute then
+    for i := 0 to OpenFileDialog.Files.Count - 1 do
+      OpenFile(OpenFileDialog.Files[i]);
 end;
 
 procedure TLDDPMain.acFilePrintExecute(Sender: TObject);
 begin
-  printer.Title := TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName;
-  printer.Print;
+//  printer.Title := TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName;
+//  printer.Print;
 end;
 
-procedure TLDDPMain.OpenFile(filename: string);
+procedure TLDDPMain.OpenFile(filename: string; Revert: Boolean = false);
 // Open the specified file and set initial data
 var
   i: Integer;
@@ -943,49 +881,52 @@ begin
   begin
     for i := 0 to DocTabBar.Tabs.Count - 1 do
     begin
-      if TLDDPEditorDoc(DocTabBar.Tabs[i].Data).FileName = filename then
+      if DocPointerList[i]^.Filename = filename then
       begin
-        DocTabBar.SelectedTab := DocTabBar.Tabs[i];
-        if MessageDlg('Reload last saved version?' + #13#10 +
-                      'All changes will be lost!', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+        DocTabBar.TabIndex := i;
+        if (editor.Modified or Revert)
+           and (MessageDlg('External changes detected' + #13#10 +
+                           'Reload last saved version?' + #13#10 +
+                           'All changes will be lost!',
+                           mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
         begin
-          editor.Lines.LoadFromFile(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName);
-          FileAge(filename, fage);
-          TLDDPEditorDoc(DocTabBar.Tabs[i].Data).LastChanged := fage;
+          editor.Lines.LoadFromFile(DocPointerList[DocTabBar.TabIndex]^.Filename);
+          FileAge(DocPointerList[DocTabBar.TabIndex]^.Filename, DocPointerList[DocTabBar.TabIndex]^.FileAge);
+          editor.SetSavePoint;
         end;
         Exit;
       end;
     end;
     acFileNew.Execute;
-    TLDDPEditorDoc(DocTabBar.Tabs[DocTabBar.Tabs.Count - 1].Data).FileName := filename;
-    FileAge(filename, fage);
-    TLDDPEditorDoc(DocTabBar.Tabs[DocTabBar.Tabs.Count - 1].Data).LastChanged := fage;
-    DocTabBar.Tabs[DocTabBar.Tabs.Count - 1].Caption := ExtractFileName(filename);
+    DocPointerList[DocTabBar.TabIndex]^.Filename := filename;
+    DocTabBar.Tabs[DocTabBar.TabIndex] := ExtractFileName(filename);
     editor.Lines.LoadFromFile(filename);
+    FileAge(DocPointerList[DocTabBar.TabIndex]^.Filename, DocPointerList[DocTabBar.TabIndex]^.FileAge);
+    editor.SetSavePoint;
     UpdateMRU(filename);
   end
   else
-    MessageDlg('File ' + TLDDPEditorDoc(DocTabBar.SelectedTab.Data).Filename + ' not found', mtError, [mbOK], 0);
+    MessageDlg('File ' + filename + ' not found', mtError, [mbOK], 0);
 end;
 
 procedure TLDDPMain.acFileSaveExecute(Sender: TObject);
 // Save file to disk if it already exists otherwise run Save As
 begin
-  SaveFile(DocTabBar.SelectedTab.Index);
+  SaveFile(DocTabBar.TabIndex);
 end;
 
 procedure TLDDPMain.acFileSaveAsExecute(Sender: TObject);
 // Saves a file to disk after asking for filename
 begin
-  SaveDialog1.FileName := TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName;
-  if SaveDialog1.Execute then
+  SaveFileDialog.FileName := DocPointerList[DocTabBar.TabIndex]^.Filename;
+  if SaveFileDialog.Execute then
   begin
-    if ((TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName = sUntitled) or
-        (TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName <> SaveDialog1.FileName)) then
-      UpdateMRU(SaveDialog1.FileName);
-    TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName := SaveDialog1.FileName;
-    DocTabBar.SelectedTab.Caption := ExtractFileName(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName);
-    SaveFile(DocTabBar.SelectedTab.Index);
+    if ((DocPointerList[DocTabBar.TabIndex]^.Filename = sUntitled) or
+        (DocPointerList[DocTabBar.TabIndex]^.Filename <> SaveFileDialog.FileName)) then
+      UpdateMRU(SaveFileDialog.FileName);
+    DocPointerList[DocTabBar.TabIndex]^.Filename := SaveFileDialog.FileName;
+    DocTabBar.Tabs[DocTabBar.TabIndex] := ExtractFileName(DocPointerList[DocTabBar.TabIndex]^.Filename);
+    SaveFile(DocTabBar.TabIndex);
   end;
 end;
 
@@ -995,24 +936,27 @@ var
   i: Integer;
 
 begin
-   for i:= DocTabBar.Tabs.Count - 1 downto 0 do
+   for i := DocTabBar.Tabs.Count - 1 downto 0 do
      SaveFile(i);
 end;
 
 procedure TLDDPMain.SaveFile(DocNumber: Integer);
 // Save the file of the specified tab
 var
-  fage: TDateTime;
+  OldIndex: Integer;
 
 begin
-  if TLDDPEditorDoc(DocTabBar.Tabs[DocNumber].Data).Filename = sUntitled then
+  OldIndex := DocTabBar.TabIndex;
+  DocTabBar.TabIndex := DocNumber;
+  if DocTabBar.Tabs[DocNumber] = sUntitled then
     acFileSaveAs.Execute
   else
   begin
-    editor.Lines.SaveToFile(TLDDPEditorDoc(DocTabBar.Tabs[DocNumber].Data).Filename);
-    FileAge(TLDDPEditorDoc(DocTabBar.Tabs[DocNumber].Data).Filename, fage);
-    TLDDPEditorDoc(DocTabBar.Tabs[DocNumber].Data).LastChanged := fage;
+    editor.Lines.SaveToFile(DocPointerList[DocNumber]^.Filename);
+    FileAge(DocPointerList[DocNumber]^.Filename, DocPointerList[DocNumber]^.FileAge);
+    editor.SetSavePoint;
   end;
+  DocTabBar.TabIndex := OldIndex;
 end;
 
 procedure TLDDPMain.acFileExitExecute(Sender: TObject);
@@ -1024,9 +968,7 @@ end;
 procedure TLDDPMain.acFileRevertExecute(Sender: TObject);
 // Reloads active document losing any changes
 begin
-  if MessageDlg('Reload last saved version?' + #13#10 +
-                  'All changes will be lost!', mtConfirmation, [mbYes, mbNo], 0)=mrYes then
-    OpenFile(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName);
+    OpenFile(DocPointerList[DocTabBar.TabIndex]^.Filename, True);
 end;
 
 procedure TLDDPMain.acFileCloseAllExecute(Sender: TObject);
@@ -1042,31 +984,44 @@ end;
 procedure TLDDPMain.acFileCloseExecute(Sender: TObject);
 // Close tab under cursor
 begin
-  CloseFile(DocTabBar.SelectedTab.Index);
+  CloseFile(DocTabBar.TabIndex);
 end;
 
 procedure TLDDPMain.CloseFile(DocNumber: Integer);
+
+var
+  OldIndex: Integer;
+
 begin
-  if TLDDPEditorDoc(DocTabBar.Tabs[DocNumber].Data).Modified then
-    case CloseTabQuery(TLDDPEditorDoc(DocTabBar.Tabs[DocNumber].Data).FileName) of
+  OldIndex := DocTabBar.TabIndex;
+  DocTabBar.TabIndex := DocNumber;
+
+  if editor.Modified then
+    case CloseTabQuery(DocPointerList[DocTabBar.TabIndex]^.Filename) of
       mrYes: SaveFile(DocNumber);
       mrCancel: Exit;
     end;
-  if FileExists(tempFilename(DocTabBar.Tabs[DocNumber].Index)) then
-    DeleteFile(tempFilename(DocTabBar.Tabs[DocNumber].Index));
-  DocTabBar.Tabs[DocNumber].Data.Free;
+  if FileExists(tempFilename(DocTabBar.TabIndex)) then
+    DeleteFile(tempFilename(DocTabBar.TabIndex));
+
+  editor.SetDocPointer(nil);
+  editor.ReleaseDocument(DocPointerList[DocTabBar.TabIndex]^.EditorDoc);
+  Dispose(DocPointerList[DocTabBar.TabIndex]);
+  DocPointerList.Delete(DocTabBar.TabIndex);
   DocTabBar.Tabs.Delete(DocNumber);
-   //DocumentTabs.Close(DocNumber);
+  if OldIndex <= (DocTabBar.Tabs.Count - 1) then
+    DocTabBar.TabIndex := OldIndex;
+
 end;
 
-function TLDDPMain.CloseTabQuery(FileName: string): TModalResult;
+function TLDDPMain.CloseTabQuery(const FileName: string): TModalResult;
 begin
- Result := MessageDlg('Save changes to ' + FileName + '?'
-                    + #13#10 + #13#10 +
-                    'Yes: Saves the changes and closes this document.' + #13#10 +
-                    'No: Closes the document without saving any changes.'+ #13#10 +
-                    'Cancel: Keeps the document open',
-                    mtConfirmation, [mbYes, mbNo, mbCancel], 0)
+  Result := MessageDlg('Save changes to ' + FileName + '?' +
+                       #13#10 + #13#10 +
+                       'Yes: Saves the changes and closes this document.' + #13#10 +
+                       'No: Closes the document without saving any changes.'+ #13#10 +
+                       'Cancel: Keeps the document open',
+                       mtConfirmation, [mbYes, mbNo, mbCancel], 0)
 end;
 
 // Help actions
@@ -1085,31 +1040,32 @@ end;
 
 procedure TLDDPMain.acOptionsExecute(Sender: TObject);
 // Show options window
+var
+  i: Integer;
+
 begin
   with TLDDPOptionsForm.Create(Application) do
   begin
-    LDDPOptions := editor.LDDPOptions;
+    LDDPOptions.Assign(editor.LDDPOptions);
     if ShowModal = mrOK then
-      editor.LDDPOptions := LDDPOptions;
+      editor.LDDPOptions.Assign(LDDPOptions);
     Free;
   end;
-  if DirectoryExists(editor.LDDPOptions.LDrawPath) then
-    LDrawBasePath := editor.LDDPOptions.LDrawPath;
-  editorStatusChange(Sender,[scAll]);
+
+  SetKeyWordList;
+  editor.SetKeyWords(0, OfficialFiles);
+  editor.SetKeyWords(1, Metas);
+
   MakeColorBar;
   MakeExternalPrograms;
-end;
 
-procedure TLDDPMain.acHighlighterOptionsExecute(Sender: TObject);
-
-begin
-  with TLDDPHighterEditorPropertiesDlg.Create(Application) do
+  for i := 0 to DocPointerList.Count - 1 do
   begin
-    Highlighter.Assign(Self.Highlighter);
-    if ShowModal = mrOK then
-      Self.Highlighter.Assign(Highlighter);
-    Free;
+    editor.SetDocPointer(DocPointerList[i]^.EditorDoc);
+    editor.SetEditorOptions;
   end;
+  if DocPointerList.Count > 0 then
+    editor.SetDocPointer(DocPointerList[DocTabBar.TabIndex]^.EditorDoc);
 end;
 
 procedure TLDDPMain.acHomepageExecute(Sender: TObject);
@@ -1141,10 +1097,10 @@ begin
   end
   else
   begin
-    OutputFile := GetShortFileName(tempFilename(DocTabBar.SelectedTab.Index));
+    OutputFile := GetShortFileName(tempFilename(DocTabBar.TabIndex));
     TempFile := TstringList.create;
     CommandLine := GetShortFileName(editor.LDDPOptions.LSynthPath) + '\lsynthcp.exe ';
-    InputFile := GetShortFileName(ExtractFilePath(tempFilename(DocTabBar.SelectedTab.Index))) + ExtractFileName(tempFileName(DocTabBar.SelectedTab.Index));
+    InputFile := GetShortFileName(ExtractFilePath(tempFilename(DocTabBar.TabIndex))) + ExtractFileName(tempFileName(DocTabBar.TabIndex));
     editor.lines.SaveToFile(InputFile);
     TempFile.Add(CommandLine + ' ' + InputFile + ' ' + OutputFile);
     CommandFile := GetShortFileName(WinTempDir) + GetTmpFileName + '.bat';
@@ -1177,7 +1133,7 @@ begin
         if frmDATCurve.ShowModal = mrOk then
         begin
           frmDATCurve.HoseDATCode.RotationDecimalPlaces := editor.LDDPOptions.RotationDecAcc;
-          frmDATCurve.HoseDATCode.PositionDecimalPlaces := editor.LDDPOptions.PostionDecAcc;
+          frmDATCurve.HoseDATCode.PositionDecimalPlaces := editor.LDDPOptions.PositionDecAcc;
           editor.SelText := frmDATCurve.HoseDATCode.ModelText + #13#10;
         end;
       finally
@@ -1213,7 +1169,6 @@ var
 
 begin
     editor.ExpandSelection(startline, endline);
-    editor.BeginUndoBlock;
     for i := startline to endline do
     begin
       Randomize;
@@ -1227,7 +1182,6 @@ begin
           RandColor := Trunc(Random(16));
       editor.SetLineColor(i, RandColor);
     end;
-    editor.EndUndoBlock;
     editor.SelectLines(startline, endline);
 end;
 
@@ -1241,55 +1195,30 @@ begin
     end;
 end;
 
-procedure TLDDPMain.acEditorOptionsExecute(Sender: TObject);
-// Show the editor options form
-var
-  op: TSynEditorOptionsContainer;
-
-begin
-  op := TSynEditorOptionsContainer.Create(nil);
-  try
-    op.Assign(editor);
-    if EditorOptions.Execute(op) then
-      op.AssignTo(editor);
-  finally
-    op.Free;
-  end;
-end;
-
 // Movement actions
 
 procedure TLDDPMain.acMoveGridCoarseExecute(Sender: TObject);
 begin
   if acMoveGridCoarse.Checked then
-  begin
     editor.GridSetting := gsCoarse;
-  end
-  else
-    if (not acMoveGridFine.Checked) and (acMoveGridMedium.Checked) then
-      acMoveGridCoarse.Checked := True;
+end;
+
+procedure TLDDPMain.acMoveGridCustomExecute(Sender: TObject);
+begin
+  if acMoveGridCustom.Checked then
+    editor.GridSetting := gsCustom;
 end;
 
 procedure TLDDPMain.acMoveGridMediumExecute(Sender: TObject);
 begin
   if acMoveGridMedium.Checked then
-  begin
     editor.GridSetting := gsMedium;
-  end
-  else
-    if (not acMoveGridCoarse.Checked) and (acMoveGridFine.Checked) then
-      acMoveGridMedium.Checked := True;
 end;
 
 procedure TLDDPMain.acMoveGridFineExecute(Sender: TObject);
 begin
   if acMoveGridFine.Checked then
-  begin
     editor.GridSetting := gsFine;
-  end
-  else
-    if (not acMoveGridCoarse.Checked) and (acMoveGridMedium.Checked) then
-      acMoveGridFine.Checked := True;
 end;
 
 procedure TLDDPMain.acMoveRotXNegExecute(Sender: TObject);
@@ -1361,14 +1290,14 @@ end;
 
 procedure TLDDPMain.acPollEnablePollingExecute(Sender: TObject);
 begin
-  tmPoll.Enabled := acPollEnablePolling.Checked;
+  PollTimer.Enabled := acPollEnablePolling.Checked;
 end;
 
 procedure TLDDPMain.acPollOnDemandExecute(Sender: TObject);
 begin
   acPollOnDemand.ShortCut := TextToShortCut('F11');
-  tmPoll.Enabled := False;
-  tmPollTimer(nil);
+  PollTimer.Enabled := False;
+  PollTimerTimer(nil);
 end;
 
 procedure TLDDPMain.acPollToSelectedLineExecute(Sender: TObject);
@@ -1378,9 +1307,9 @@ end;
 
 procedure TLDDPMain.SetPollTime(Sender: TObject);
 begin
-  tmPoll.Enabled := False;
-  tmPoll.Interval := (Sender as TAction).Tag;
-  tmPoll.Enabled := True;
+  PollTimer.Enabled := False;
+  PollTimer.Interval := (Sender as TAction).Tag;
+  PollTimer.Enabled := True;
   acPollOnDemand.ShortCut := TextToShortCut('')
 end;
 
@@ -1394,19 +1323,19 @@ end;
 
 procedure TLDDPMain.acFindDownExecute(Sender: TObject);
 begin
-  SearchOptions := [];
+//  SearchOptions := [];
   FindText(FindComboBox.Text);
 end;
 
 procedure TLDDPMain.acFindResetExecute(Sender: TObject);
 begin
-  SearchOptions := [ssoEntireScope];
+//  SearchOptions := [ssoEntireScope];
   FindText(FindComboBox.Text);
 end;
 
 procedure TLDDPMain.acFindUpExecute(Sender: TObject);
 begin
-  SearchOptions := [ssoBackwards];
+//  SearchOptions := [ssoBackwards];
   FindText(FindComboBox.Text);
 end;
 
@@ -1427,13 +1356,14 @@ end;
 procedure TLDDPMain.acFindNextExecute(Sender: TObject);
 // Find Next occurence of a previous find procedure
 begin
-  SearchOptions := [];
+//  SearchOptions := [];
   FindText(FindComboBox.Text);
 end;
 
 procedure TLDDPMain.acReplaceExecute(Sender: TObject);
 // Execute Replace Dialogue
 begin
+(*
   if editor.SelLength > 0 then
   begin
     LDDPReplaceDlg.cbSearchText.Text := editor.SelText;
@@ -1455,14 +1385,16 @@ begin
       editor.SearchReplace(LDDPReplaceDlg.cbSearchText.Text, LDDPReplaceDlg.cbReplaceText.Text, SearchOptions);
     end;
   end;
+ *)
 end;
 
 procedure TLDDPMain.FindText(SearchText: string);
-var
-  Text: string;
-  Idx: Integer;
+//var
+//  Text: string;
+//  Idx: Integer;
 
 begin
+(*
   Text := FindComboBox.Text;
   if Text <> '' then
   begin
@@ -1479,6 +1411,7 @@ begin
 
   if editor.SearchReplace(SearchText, '', SearchOptions) = 0 then
     StatusBar.Panels[0].Text := 'Found 0 matches';
+*)
 end;
 
 procedure TLDDPMain.acReplaceColorExecute(Sender: TObject);
@@ -1498,10 +1431,8 @@ var
 
 begin
     editor.ExpandSelection(startline, endline);
-    editor.BeginUndoBlock;
     for i := startline to endline do
       editor.SetLineColor(i, (Sender as TComponent).Tag);
-    editor.EndUndoBlock;
     editor.SelectLines(startline, endline);
 end;
 
@@ -1543,6 +1474,7 @@ end;
 
 procedure TLDDPMain.acErrorListExecute(Sender: TObject);
 begin
+(*
   if (Sender as TAction).Checked then
     frErrorWindow.Show
   else
@@ -1553,6 +1485,7 @@ begin
     frErrorWindow.RestorePosition;
     frErrorWindow.acErrorCheck.Execute;
   end;
+*)
 end;
 
 // Other procedures
@@ -1574,6 +1507,7 @@ var
   line: string;
 
 begin
+(*
   line := editor.Lines[EditorMousePos.Line - 1];
 
   while (line[EditorMousePos.Char] <> #32) and
@@ -1587,14 +1521,89 @@ begin
         (EditorMousePos.Char <= Length(line)) do
     Inc(EditorMousePos.Char);
   editor.SelEnd := editor.RowColToCharIndex(EditorMousePos);
+*)
 end;
 
 procedure TLDDPMain.editorMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+(*
   editor.GetPositionOfMouse(EditorMousePos);
+*)
 end;
 
+procedure TLDDPMain.editorUpdateUI(Sender: TObject; updated: Integer);
+var
+  i: Integer;
+  DLine: TDATType;
+  fage: TDateTime;
+
+begin
+
+  // Set undo and redo state
+  acUndo.Enabled := (DocTabBar.Tabs.Count > 0) and editor.CanUndo;
+  acRedo.Enabled := (DocTabBar.Tabs.Count > 0) and editor.CanRedo;
+
+  // Update panel values
+  StatusBar.Panels[1].text := IntToStr(editor.CaretY) + ':' + IntToStr(editor.CaretX);
+  // Enable inline function based on line or selection
+  if editor.SelLength = 0 then
+  begin
+    DLine := StrToDAT(editor.Lines[editor.CaretY - 1]);
+    acInline.Enabled := DLine.LineType = ltSubpart;
+    DLine.Free;
+  end
+  else
+  begin
+    acInline.Enabled := False;
+
+    for i := editor.LineFromPosition(editor.SelectionStart) to editor.LineFromPosition(editor.SelectionEnd) do
+    begin
+      DLine := StrToDAT(editor.Lines[i]);
+      if DLine.LineType = ltSubpart then
+      begin
+        acInline.Enabled := True;
+        Break;
+      end;
+      DLine.Free;
+    end;
+  end;
+
+  // Check plugin type and enable as appropriate
+  for i := 0 to PluginActionList.ActionCount - 1 do
+  begin
+    case (PluginActionList.Actions[i] as TAction).Tag of
+      0: (PluginActionList.Actions[i] as TAction).Enabled := true;
+      1: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength = 0;
+      2: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength <> 0;
+    end;
+  end;
+
+  // Check external changes
+
+  if (DocPointerList[DocTabBar.TabIndex]^.Fileage <> 0) and
+     FileExists(DocPointerList[DocTabBar.TabIndex]^.Filename) then
+  begin
+    FileAge(DocPointerList[DocTabBar.TabIndex]^.Filename, fage);
+    if fage <> DocPointerList[DocTabBar.TabIndex]^.FileAge then
+      OpenFile(DocPointerList[DocTabBar.TabIndex]^.Filename, True);
+  end;
+
+  if editor.Modified then
+  begin
+    DocTabBar.Tabs[DocTabBar.TabIndex] :=
+      ExtractFileName(DocPointerList[DocTabBar.TabIndex]^.Filename) + ' *';
+    Statusbar.Panels[2].Text:='Modified';
+  end
+  else
+  begin
+    DocTabBar.Tabs[DocTabBar.TabIndex] :=
+      ExtractFileName(DocPointerList[DocTabBar.TabIndex]^.Filename);
+    Statusbar.Panels[2].Text:='';
+  end;
+end;
+
+(*
 procedure TLDDPMain.editorReplaceText(Sender: TObject; const ASearch,
   AReplace: string; Line, Column: Integer; var Action: TSynReplaceAction);
 var
@@ -1645,96 +1654,13 @@ end;
 
 procedure TLDDPMain.editorStatusChange(Sender: TObject;
   Changes: TSynStatusChanges);
-var
-  i: Integer;
-  DLine: TDATType;
-  fage: TDateTime;
-
-begin
-
-  // Set undo and redo state
-  acUndo.Enabled := (DocTabBar.Tabs.Count > 0) and editor.CanUndo;
-  acRedo.Enabled := (DocTabBar.Tabs.Count > 0) and editor.CanRedo;
-
-  if (scCaretX in Changes) or
-     (scCaretY in Changes) or
-     (scSelection in Changes) then
-  begin
-    // Update panel values
-    StatusBar.Panels[1].text := IntToStr(editor.CaretY) + ':' + IntToStr(editor.CaretX);
-    // Enable inline function based on line or selection
-    if editor.SelLength = 0 then
-    begin
-      DLine := StrToDAT(editor.Lines[editor.CaretY - 1]);
-      acInline.Enabled := DLine.LineType = ltSubpart;
-      DLine.Free;
-    end
-    else
-    begin
-      acInline.Enabled := False;
-
-      for i := editor.CharIndexToRowCol(editor.SelStart).Line to editor.CharIndexToRowCol(editor.SelEnd).Line do
-      begin
-        DLine := StrToDAT(editor.Lines[i]);
-        if DLine.LineType = ltSubpart then
-        begin
-          acInline.Enabled := True;
-          Break;
-        end;
-        DLine.Free;
-      end;
-    end;
-
-    // Check plugin type and enable as appropriate
-    for i := 0 to PluginActionList.ActionCount - 1 do
-    begin
-      case (PluginActionList.Actions[i] as TAction).Tag of
-        0: (PluginActionList.Actions[i] as TAction).Enabled := true;
-        1: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength = 0;
-        2: (PluginActionList.Actions[i] as TAction).Enabled := editor.SelLength <> 0;
-      end;
-    end;
-  end;
-
-  // Check external changes
-  if (TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName <> sUntitled) and
-     FileExists(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName) then
-  begin
-    FileAge(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName, fage);
-    if fage <> TLDDPEditorDoc(DocTabBar.SelectedTab.Data).LastChanged then
-    begin
-      if MessageDlg('File has been externally changed.' + #13#10 +
-                      'Reload last saved version?' + #13#10 +
-                      'All changes will be lost!',
-                    mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
-        OpenFile(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName);
-      TLDDPEditorDoc(DocTabBar.SelectedTab.Data).LastChanged := fage;
-    end;
-  end;
-
-  if scModified in Changes then
-  begin
-    TLDDPEditorDoc(DocTabBar.SelectedTab.Data).Modified := editor.Modified;
-    if TLDDPEditorDoc(DocTabBar.SelectedTab.Data).Modified then
-    begin
-      DocTabBar.SelectedTab.Caption :=
-        ExtractFileName(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName) + ' *';
-      Statusbar.Panels[2].Text:='Modified';
-    end
-    else
-    begin
-      DocTabBar.SelectedTab.Caption :=
-        ExtractFileName(TLDDPEditorDoc(DocTabBar.SelectedTab.Data).FileName);
-      Statusbar.Panels[2].Text:='';
-    end;
-  end;
-end;
-
+*)
 procedure TLDDPMain.FormCreate(Sender: TObject);
 begin
   DragAcceptFiles(Handle,True);
   Initialized := False;
   PluginActionList := TActionList.Create(Self);
+  DocPointerList := TList<PEditorDoc>.Create;
 end;
 
 procedure TLDDPMain.FormShow(Sender: TObject);
@@ -1765,16 +1691,24 @@ begin
       CreateDir(IniFilePath);
     CopyFile(PWideChar(ExtractFilePath(Application.ExeName) + '\uiconfig.ini'), PWideChar(IniFilePath + '\uiconfig.ini'), false);
 
+
     //Load form parameters from INI file
-    acMoveGridCoarse.Execute;
+    if Assigned(editor.LDDPOptions) then
+      editor.LDDPOptions.Load(IniFilePath + '\LDDP.ini', 'LDDP Options ' + GetAppVersion(Application.ExeName));
+
+    if not DirectoryExists(LDrawBasePath) then
+    begin
+      ShowMessage('Please set the LDraw Base Path)');
+      acOptionsExecute(nil);
+    end;
+
+    MakeExternalPrograms;
+    MakeColorBar;
+
     LoadFormValues;
+
     BuildMetaMenu;
     FindToolbar.Visible := False;
-
-    //Set up Editor Options Form
-    EditorOptions.Form.Keystrokes.TabVisible := False;
-    EditorOptions.Form.Options.TabVisible := False;
-    EditorOptions.Form.gbBookmarks.Visible := False;
 
     // View menu settings;
     acViewFileToolbar.Checked := tbrFile.Visible;
@@ -1797,9 +1731,9 @@ begin
     // Set initial directory to that of the last opened file
     // or home directory if no file is listed
     if LastOpen1.Count > 0 then
-      OpenDialog1.InitialDir := ExtractFileDir(LastOpen1[0].Caption)
+      OpenFileDialog.InitialDir := ExtractFileDir(LastOpen1[0].Caption)
     else
-      OpenDialog1.InitialDir := PersonalFolderPath;
+      OpenFileDialog.InitialDir := PersonalFolderPath;
 
     //Load files listed on the command line
     if ParamCount > 0 then
@@ -1813,6 +1747,7 @@ begin
     Initialized := True;
   end;
 end;
+
 
 procedure TLDDPMain.MakeColorBar;
 var
@@ -1872,7 +1807,7 @@ begin
 
       with LDDPMain.tbrColorReplace.Buttons[i] do
       begin
-        ImageIndex := LDDPMain.ilProgramIcons.AddMasked(ColorButtonBitmap, clFuchsia);
+        ImageIndex := LDDPMain.ProgramIcons.AddMasked(ColorButtonBitmap, clFuchsia);
         Hint := CurrentItem[0] + ' ' + CurrentItem[1];
         Caption := CurrentItem[0] + ' ' + CurrentItem[1];
         Tag := StrToInt(CurrentItem[1]);
@@ -1892,7 +1827,7 @@ begin
   for i := mnuUserDefined.Count - 1 downto 0 do
   begin
     mnuUserDefined.Items[i].Free;
-    pmExternal.Items.Free;
+    ExternalMenuList.Items.Free;
   end;
   for i := 0 to editor.LDDPOptions.ExternalProgramList.Count - 1 do
   begin
@@ -1902,12 +1837,12 @@ begin
     MenuItem.Action := acUserDefined;
     MenuItem.Caption := ExProgram[0];
     MenuItem.Tag := i;
-    MenuItem2 := TMenuItem.Create(pmExternal);
+    MenuItem2 := TMenuItem.Create(ExternalMenuList);
     MenuItem2.Action := LDDPMain.acUserDefined;
     MenuItem2.Caption := ExProgram[0];
     MenuItem2.Tag := i;
     LDDPMain.mnuUserDefined.Add(MenuItem);
-    LDDPMain.pmExternal.Items.Add(MenuItem2);
+    LDDPMain.ExternalMenuList.Items.Add(MenuItem2);
     ExProgram.Free;
   end;
 end;
@@ -1915,7 +1850,7 @@ end;
 procedure TLDDPMain.MetaMenuClick(Sender: TObject);
 // Insert the selected meta command
 begin
-  editor.Lines.Insert(editor.CaretXY.Line, '0 ' +
+  editor.Lines.Insert(editor.LineFromPosition(editor.GetCurrentPos), '0 ' +
                       (Sender as TMenuItem).Hint);
 end;
 
@@ -1926,77 +1861,32 @@ var
 
 begin
   // Set official part autocomplete
-
+  OfficialFiles := '';
+  Metas := '';
   if FindFirst(LDrawBasePath + '\parts\*.dat', faAnyFile, sc) = 0 then
     repeat
-      Highlighter.AddOfficialPart(ExtractFileName(sc.Name));
+      OfficialFiles := OfficialFiles + ' ' + LowerCase(ExtractFileName(sc.Name));
     until FindNext(sc) <> 0;
   if FindFirst(LDrawBasePath + '\parts\s\*.dat', faAnyFile, sc) = 0 then
     repeat
-      Highlighter.AddOfficialPart('s\' + ExtractFileName(sc.Name));
+      OfficialFiles := OfficialFiles + ' s\' + LowerCase(ExtractFileName(sc.Name));
     until FindNext(sc) <> 0;
   if FindFirst(LDrawBasePath + '\p\*.dat', faAnyFile, sc) = 0 then
     repeat
-      Highlighter.AddOfficialPart(ExtractFileName(sc.Name));
+      OfficialFiles := OfficialFiles + ' ' + Lowercase(ExtractFileName(sc.Name));
     until FindNext(sc) <> 0;
   if FindFirst(LDrawBasePath + '\p\48\*.dat', faAnyFile, sc) = 0 then
     repeat
-      Highlighter.AddOfficialPart('48\' + ExtractFileName(sc.Name));
+      OfficialFiles := OfficialFiles + ' 48\' + LowerCase(ExtractFileName(sc.Name));
     until FindNext(sc) <> 0;
   FindClose(sc);
-  // Set Meta command auto complete
-//  with LanguageManager.LanguageList.Find('LDraw').Keywords[1].Keywords do
-//    CommaText := ReadUIConfigValue('MetaCommands');
+
+  Metas := StringReplace(ReadUIConfigValue('MetaCommands'), ',', ' ', [rfReplaceAll]);
 end;
 
 procedure TLDDPMain.DocTabBarChange(Sender: TObject);
 begin
-  if frErrorWindow.Visible  then
-    frErrorWindow.acErrorCheck.Execute;
-end;
-
-procedure TLDDPMain.DocTabBarTabClosed(Sender: TObject; Item: TJvTabBarItem);
-begin
-  Item.Data.Free;
-  if DocTabBar.Tabs.Count - 1 <= 0 then
-    acFileNew.Execute;
-end;
-
-procedure TLDDPMain.DocTabBarTabCloseQuery(Sender: TObject; Item: TJvTabBarItem;
-  var CanClose: Boolean);
-begin
-  if TLDDPEditorDoc(Item.Data).Modified then
-  begin
-    case CloseTabQuery(TLDDPEditorDoc(Item.Data).FileName) of
-      mrYes:
-      begin
-        SaveFile(Item.Index);
-        CanClose := True;
-      end;
-      mrNo : CanClose := True;
-      mrCancel: CanClose := False;
-    end;
-  end
-  else
-    CanClose := true;
-
-  if CanClose and (FileExists(tempFilename(Item.Index))) then
-    DeleteFile(tempFilename(Item.Index));
-end;
-
-procedure TLDDPMain.DocTabBarTabSelected(Sender: TObject; Item: TJvTabBarItem);
-begin
-  if Assigned(DocTabBar.SelectedTab) and Assigned(DocTabBar.SelectedTab.Data) and
-     Assigned(editor) then
-    TLDDPEditorDoc(DocTabBar.SelectedTab.Data).AssignToEditor(editor);
-end;
-
-procedure TLDDPMain.DocTabBarTabSelecting(Sender: TObject; Item: TJvTabBarItem;
-  var AllowSelect: Boolean);
-begin
-  if Assigned(DocTabBar.SelectedTab) and Assigned(DocTabBar.SelectedTab.Data) and
-     Assigned(editor) then
-    TLDDPEditorDoc(DocTabBar.SelectedTab.Data).AssignFromEditor(editor);
+  editor.SetDocPointer(DocPointerList[DocTabBar.TabIndex]^.EditorDoc);
 end;
 
 procedure TLDDPMain.LoadPlugins;
@@ -2042,7 +1932,7 @@ begin
       try
         plgBitmap := TBitMap.Create;
         plgBitmap.LoadFromFile(ChangeFileExt(PluginFile, '.bmp'));
-        imgix := ilProgramIcons.AddMasked(plgBitmap, clFuchsia);
+        imgix := ProgramIcons.AddMasked(plgBitmap, clFuchsia);
         plgBitmap.Free;
       except
         imgix := -1;
@@ -2086,7 +1976,7 @@ begin
   begin
     libname := (Sender as TAction).Name + '.dll';
 
-    s1 := editor.SelStart;
+    s1 := editor.SelectionStart;
     s2 := editor.SelLength;
     s3 := editor.CaretY;
     s4 := editor.CaretX;
@@ -2100,8 +1990,8 @@ begin
 
     if s2 <> 0 then
     begin
-      editor.SelStart := s1;
-      editor.SelEnd := s2;
+      editor.SelectionStart := s1;
+      editor.SelectionEnd := s2;
     end;
   end;
 end;
@@ -2114,7 +2004,7 @@ begin
  // do nothing
 end;
 
-procedure TLDDPMain.tmPollTimer(Sender: TObject);
+procedure TLDDPMain.PollTimerTimer(Sender: TObject);
 // if polling time triggers the actual editor window is written to its 
 // firm assigned temp filename
 var
@@ -2129,15 +2019,15 @@ begin
         st.Text := editor.Lines.Text;
         while st.Count > editor.CaretY do
           st.Delete(st.Count - 1);
-        st.SaveToFile(tempFilename(DocTabBar.SelectedTab.Index));
+        st.SaveToFile(tempFilename(DocTabBar.TabIndex));
       end
       else 
-        editor.lines.SaveToFile(tempFilename(DocTabBar.SelectedTab.Index));
+        editor.Lines.SaveToFile(tempFilename(DocTabBar.TabIndex));
     except
       on E: Exception do
       begin
         mnuEnablePolling.Checked := False;
-        tmPoll.Enabled := False;
+        PollTimer.Enabled := False;
         ShowMessage(E.Message);
       end;
     end;
@@ -2190,7 +2080,6 @@ var
   i: Integer;
 
 begin
-  Highlighter.LoadFromFile(IniFilePath + '\highlighter.ini');
   LDDPini := TIniFile.Create(IniFilePath + '\LDDP.ini');
 
   Inisection := 'LDDP Main';
@@ -2216,6 +2105,8 @@ begin
     acMoveGridMedium.Execute;
   if LDDPini.ReadBool(IniSection, 'acMoveGridCoarse_Checked', acMoveGridCoarse.Checked) then
     acMoveGridCoarse.Execute;
+  if LDDPini.ReadBool(IniSection, 'acMoveGridCustom_Checked', acMoveGridCustom.Checked) then
+    acMoveGridCustom.Execute;
   if LDDPini.ReadBool(IniSection, 'acPollEnablePolling_Checked', acPollEnablePolling.Checked) then
     acPollEnablePolling.Execute;
   if LDDPini.ReadBool(IniSection, 'acPollToSelectedLine_Checked', acPollToSelectedLine.Checked) then
@@ -2231,29 +2122,9 @@ begin
   if LDDPini.ReadBool(IniSection, 'acPollOnDemand_Checked', acPollOnDemand.Checked) then
     acPollOnDemand.Execute;
 
-  // Set editor values
-  editor.Gutter.Visible := LDDPini.ReadBool(IniSection, 'editor_GutterVisible', editor.Gutter.Visible);
-  editor.Gutter.AutoSize := LDDPini.ReadBool(IniSection, 'editor_GutterAutoSize', editor.Gutter.AutoSize);
-  editor.Gutter.ShowLineNumbers := LDDPini.ReadBool(IniSection, 'editor_GutterShowLineNumbers', editor.Gutter.ShowLineNumbers);
-  editor.Gutter.ZeroStart := LDDPini.ReadBool(IniSection, 'editor_GutterZeroStart', editor.Gutter.ZeroStart);
-  editor.Gutter.LeadingZeros := LDDPini.ReadBool(IniSection, 'editor_GutterLeadingZeros', editor.Gutter.LeadingZeros);
-  editor.Gutter.UseFontStyle := LDDPini.ReadBool(IniSection, 'editor_GutterUseFontStyle', editor.Gutter.UseFontStyle);
-  editor.Gutter.Color := LDDPini.ReadInteger(IniSection, 'editor_GutterColor', editor.Gutter.Color);
-  editor.RightEdge := LDDPini.ReadInteger(IniSection, 'editor_RightEdge', editor.RightEdge);
-  editor.RightEdgeColor := LDDPini.ReadInteger(IniSection, 'editor_RightEdgeColor', editor.RightEdgeColor);
-  editor.ExtraLineSpacing := LDDPini.ReadInteger(IniSection, 'editor_ExtraLineSpacing', editor.ExtraLineSpacing);
-  editor.TabWidth := LDDPini.ReadInteger(IniSection, 'editor_TabWidth', editor.TabWidth);
-
   LDDPReplaceDlg.ReplaceHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', LDDPReplaceDlg.ReplaceHistory);
   LDDPReplaceDlg.SearchHistory := LDDPini.ReadString(IniSection, 'SearchReplaceDlg_SearchTextHistory', LDDPReplaceDlg.SearchHistory);
   FindComboBox.Items.CommaText := LDDPini.ReadString(IniSection, 'FindComboBox_CommaText', FindComboBox.Items.CommaText);
-
-  editor.LDDPOptions.Load(IniFilePath + '\LDDP.ini', 'LDDP Options' + GetAppVersion(Application.ExeName));
-  if DirectoryExists(editor.LDDPOptions.LDrawPath) then
-    LDrawBasePath := editor.LDDPOptions.LDrawPath;
-
-  MakeExternalPrograms;
-  MakeColorBar;
 
   LDDPini.Free;
 end;
@@ -2316,9 +2187,7 @@ var
   i: Integer;
 
 begin
-  editor.LDDPOptions.Save(IniFilePath + '\LDDP.ini', 'LDDP Options' + GetAppVersion(Application.ExeName));
-  Highlighter.SaveToFile(IniFilePath + '\highlighter.ini');
-
+  editor.LDDPOptions.Save(IniFilePath + '\LDDP.ini', 'LDDP Options ' + GetAppVersion(Application.ExeName));
   LDDPini := TMemIniFile.Create(IniFilePath + '\LDDP.ini');
 
   // Save Main position, size, and toolbar visibility
@@ -2344,6 +2213,7 @@ begin
   LDDPini.WriteBool(IniSection, 'acMoveGridFine_Checked', acMoveGridFine.Checked);
   LDDPini.WriteBool(IniSection, 'acMoveGridMedium_Checked', acMoveGridMedium.Checked);
   LDDPini.WriteBool(IniSection, 'acMoveGridCoarse_Checked', acMoveGridCoarse.Checked);
+  LDDPini.WriteBool(IniSection, 'acMoveGridCustom_Checked', acMoveGridCustom.Checked);
 
   LDDPini.WriteBool(IniSection, 'acPollEnablePolling_Checked', acPollEnablePolling.Checked);
   LDDPini.WriteBool(IniSection, 'acPollToSelectedLine_Checked', acPollToSelectedLine.Checked);
@@ -2357,19 +2227,6 @@ begin
   LDDPini.WriteString(IniSection, 'SearchReplaceDlg_ReplaceTextHistory', LDDPReplaceDlg.ReplaceHistory);
   LDDPini.WriteString(IniSection, 'SearchReplaceDlg_SearchTextHistory', LDDPReplaceDlg.SearchHistory);
 
-  //Save Editor Options
-  LDDPini.WriteBool(IniSection, 'editor_GutterVisible', editor.Gutter.Visible);
-  LDDPini.WriteBool(IniSection, 'editor_GutterAutoSize', editor.Gutter.AutoSize);
-  LDDPini.WriteBool(IniSection, 'editor_GutterShowLineNumbers', editor.Gutter.ShowLineNumbers);
-  LDDPini.WriteBool(IniSection, 'editor_GutterZeroStart', editor.Gutter.ZeroStart);
-  LDDPini.WriteBool(IniSection, 'editor_GutterLeadingZeros', editor.Gutter.LeadingZeros);
-  LDDPini.WriteBool(IniSection, 'editor_GutterUseFontStyle', editor.Gutter.UseFontStyle);
-  LDDPini.WriteInteger(IniSection, 'editor_GutterColor', editor.Gutter.Color);
-  LDDPini.WriteInteger(IniSection, 'editor_RightEdge', editor.RightEdge);
-  LDDPini.WriteInteger(IniSection, 'editor_RightEdgeColor', editor.RightEdgeColor);
-  LDDPini.WriteInteger(IniSection, 'editor_ExtraLineSpacing', editor.ExtraLineSpacing);
-  LDDPini.WriteInteger(IniSection, 'editor_TabWidth', editor.TabWidth);
-
   LDDPini.UpdateFile;
   LDDPini.Free;
 end;
@@ -2378,32 +2235,36 @@ function TLDDPMain.tempFileName(index: Integer): string;
 // Creates and returns a unique temporary filename
 begin
   if (index < (DocTabBar.Tabs.Count)) and (index >= 0) then
-    Result := ExtractFilePath(TLDDPEditorDoc(DocTabBar.Tabs[index].Data).FileName) + PathDelim +
-              ChangeFileExt(ExtractFileName(TLDDPEditorDoc(DocTabBar.Tabs[index].Data).FileName), '.lddptmp')
+    Result := ExtractFilePath(DocPointerList[DocTabBar.TabIndex]^.Filename) + PathDelim +
+              ChangeFileExt(ExtractFileName(DocPointerList[DocTabBar.TabIndex]^.Filename), '.lddptmp')
   else
     Result := '';
 end;
 
-function TLDDPMain.ParseString(toparse: string): string;
+function TLDDPMain.ParseExternalPath(const ExternalPath: string): string;
 var
-  short, long: string;
+  ShortFileName, LongFileName: string;
     // %0 will be replaced by the path and filename of the exported file LDDP has generated,
     // %1 is replaced by the path only,
     // %2 will be replaced by the file-name only (without extension),
     // %3 is used a place holder for the path and the filename without extension.
     // %4, %5, %6, %7 are the same as %0 to %3 except they use the short form for paths and file-names that means the 8.3 notation of MS-DOS.
 begin
-  long := tempFilename(DocTabBar.SelectedTab.Index);
-  short := ExtractShortPathName(long);
-  toparse := StringReplace(toparse,'%0',long,[rfReplaceAll]);
-  toparse := StringReplace(toparse,'%1',ExtractFilePath(long),[rfReplaceAll]);
-  toparse := StringReplace(toparse,'%2',ChangeFileExt(ExtractFileName(long),''),[rfReplaceAll]);
-  toparse := StringReplace(toparse,'%3',ChangeFileExt(long,''),[rfReplaceAll]);
-  toparse := StringReplace(toparse,'%4',short,[rfReplaceAll]);
-  toparse := StringReplace(toparse,'%5',ExtractFilePath(short),[rfReplaceAll]);
-  toparse := StringReplace(toparse,'%6',ChangeFileExt(ExtractFileName(short),''),[rfReplaceAll]);
-  toparse := StringReplace(toparse,'%7',ChangeFileExt(short,''),[rfReplaceAll]);
-  Result := toParse;
+  LongFileName := tempFilename(DocTabBar.TabIndex);
+  ShortFileName := ExtractShortPathName(LongFileName);
+  Result := StringReplace(Result,'%0',LongFileName,[rfReplaceAll]);
+  Result := StringReplace(Result,'%1',ExtractFilePath(LongFileName),[rfReplaceAll]);
+  Result := StringReplace(Result,'%2',ChangeFileExt(ExtractFileName(LongFileName),''),[rfReplaceAll]);
+  Result := StringReplace(Result,'%3',ChangeFileExt(LongFileName,''),[rfReplaceAll]);
+  Result := StringReplace(Result,'%4',ShortFileName,[rfReplaceAll]);
+  Result := StringReplace(Result,'%5',ExtractFilePath(ShortFileName),[rfReplaceAll]);
+  Result := StringReplace(Result,'%6',ChangeFileExt(ExtractFileName(ShortFileName),''),[rfReplaceAll]);
+  Result := StringReplace(Result,'%7',ChangeFileExt(ShortFileName,''),[rfReplaceAll]);
+end;
+
+procedure TLDDPMain.FormActivate(Sender: TObject);
+begin
+  editorUpdateUI(Sender, 0);
 end;
 
 procedure TLDDPMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -2413,23 +2274,30 @@ var
 begin
   for i := DocTabBar.Tabs.Count - 1 downto 0 do
   begin
-    if TLDDPEditorDoc(DocTabBar.Tabs[i].Data).Modified then
-      case CloseTabQuery(TLDDPEditorDoc(DocTabBar.Tabs[i].Data).FileName) of
+    DocTabBar.TabIndex := i;
+    if editor.Modified then
+      case CloseTabQuery(DocPointerList[i]^.Filename) of
         mrYes: SaveFile(i);
         mrCancel:
         begin
-          DocTabBar.SelectedTab := DocTabBar.Tabs[i];
+          DocTabBar.TabIndex := i;
           Action := caNone;
           Exit;
         end;
       end;
-    if FileExists(tempFilename(DocTabBar.Tabs[i].Index)) then
-      DeleteFile(tempFilename(DocTabBar.Tabs[i].Index));
+    if FileExists(tempFilename(DocTabBar.TabIndex)) then
+      DeleteFile(tempFilename(DocTabBar.TabIndex));
   end;
   SaveFormValues;
   PluginActionList.Free;
-  for i := 0 to DocTabBar.Tabs.Count - 1 do
-    DocTabBar.Tabs[i].Data.Free;
+  editor.SetDocPointer(nil);
+  for i :=  DocPointerList.Count - 1 downto 0 do
+  begin
+    editor.ReleaseDocument(DocPointerList[i]^.EditorDoc);
+    Dispose(DocPointerList[i]);
+    DocPointerList.Delete(i);
+  end;
+  DocPointerList.Free;
 end;
 
 procedure TLDDPMain.tbUserDefinedClick(Sender: TObject);
@@ -2442,8 +2310,8 @@ initialization
    This changes the decimal separtor to "." as required by the LDraw spec
    without changing the master settings. }
   Application.UpdateFormatSettings := False;
-  DecimalSeparator := '.';
-  ThousandSeparator:=',';
+  FormatSettings.DecimalSeparator := '.';
+  FormatSettings.ThousandSeparator:=',';
 
 finalization
 // Nothing

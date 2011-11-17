@@ -2,7 +2,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
   Left = 8
   Top = 8
   Width = 600
-  Height = 404
+  Height = 413
   VertScrollBar.Range = 37
   BorderStyle = bsDialog
   Caption = 'Misc. Options'
@@ -24,8 +24,8 @@ object LDDPOptionsForm: TLDDPOptionsForm
     Left = 0
     Top = 0
     Width = 594
-    Height = 339
-    ActivePage = TabSheet1
+    Height = 348
+    ActivePage = TabSheet4
     Align = alClient
     MultiLine = True
     TabOrder = 0
@@ -33,22 +33,14 @@ object LDDPOptionsForm: TLDDPOptionsForm
     object tsExternal: TTabSheet
       Caption = '&Program Paths'
       ImageIndex = -1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 576
-      ExplicitHeight = 301
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
         Width = 586
-        Height = 311
+        Height = 320
         Align = alClient
         Caption = 'External Progam Locations'
         TabOrder = 0
-        ExplicitLeft = 40
-        ExplicitTop = -24
-        ExplicitWidth = 576
-        ExplicitHeight = 301
         object Label5: TLabel
           Left = 8
           Top = 22
@@ -151,8 +143,8 @@ object LDDPOptionsForm: TLDDPOptionsForm
         Left = 0
         Top = 0
         Width = 586
-        Height = 311
-        ActivePage = TabSheet7
+        Height = 320
+        ActivePage = TabSheet2
         Align = alClient
         TabOrder = 0
         object TabSheet6: TTabSheet
@@ -208,7 +200,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
             HasMaxValue = True
             HasMinValue = True
             MaxValue = 180.000000000000000000
-            TabOrder = 1
+            TabOrder = 2
           end
           object Memo3: TMemo
             Left = 250
@@ -224,7 +216,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
                 'n '
               '179.9 degrees')
             ReadOnly = True
-            TabOrder = 2
+            TabOrder = 1
           end
           object Memo4: TMemo
             Left = 250
@@ -238,7 +230,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
               'Quads considered coplaner if the angle is less than or equal '
               'to 3 degrees. An angle of less than 1 degree is recommended')
             ReadOnly = True
-            TabOrder = 3
+            TabOrder = 4
           end
           object Memo1: TMemo
             Left = 250
@@ -252,7 +244,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
               'Points are collinear if the angle defined by them is less than '
               '0.025 degrees')
             ReadOnly = True
-            TabOrder = 4
+            TabOrder = 5
           end
           object CollinearMinAngleEdit: TJvValidateEdit
             Left = 163
@@ -268,7 +260,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
             HasMaxValue = True
             HasMinValue = True
             MaxValue = 180.000000000000000000
-            TabOrder = 5
+            TabOrder = 3
           end
         end
         object TabSheet7: TTabSheet
@@ -301,28 +293,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
             Width = 81
             Height = 13
             Caption = 'Color Box Sorting'
-          end
-          object sePntAcc: TJvValidateEdit
-            Left = 179
-            Top = 1
-            Width = 81
-            Height = 21
-            CriticalPoints.MaxValue = 15.000000000000000000
-            CriticalPoints.MaxValueIncluded = True
-            CriticalPoints.MinValueIncluded = True
-            EditText = '3'
-            TabOrder = 0
-          end
-          object seRotAcc: TJvValidateEdit
-            Left = 179
-            Top = 28
-            Width = 81
-            Height = 21
-            CriticalPoints.MaxValue = 15.000000000000000000
-            CriticalPoints.MaxValueIncluded = True
-            CriticalPoints.MinValueIncluded = True
-            EditText = '3'
-            TabOrder = 1
           end
           object cboAutoRoundOnly: TCheckBox
             Left = 3
@@ -360,14 +330,58 @@ object LDDPOptionsForm: TLDDPOptionsForm
               'Sort by Color Name'
               'Sort by Main Color')
           end
+          object PositionAcc: TComboBox
+            Left = 179
+            Top = 0
+            Width = 145
+            Height = 21
+            Style = csDropDownList
+            ItemIndex = 3
+            TabOrder = 0
+            Text = '4'
+            Items.Strings = (
+              '1'
+              '2'
+              '3'
+              '4'
+              '5'
+              '6'
+              '7'
+              '8'
+              '9'
+              '10'
+              '11'
+              '12'
+              '13')
+          end
+          object RotationAcc: TComboBox
+            Left = 179
+            Top = 27
+            Width = 145
+            Height = 21
+            Style = csDropDownList
+            ItemIndex = 3
+            TabOrder = 1
+            Text = '4'
+            Items.Strings = (
+              '1'
+              '2'
+              '3'
+              '4'
+              '5'
+              '6'
+              '7'
+              '8'
+              '9'
+              '10'
+              '11'
+              '12'
+              '13')
+          end
         end
         object TabSheet8: TTabSheet
           Caption = 'User Information'
           ImageIndex = 2
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 568
-          ExplicitHeight = 273
           object Label3: TLabel
             Left = 3
             Top = 3
@@ -421,7 +435,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
             Height = 73
             Align = alTop
             Caption = 'Fine Grid Settings'
-            TabOrder = 0
+            TabOrder = 2
             object Label13: TLabel
               Left = 11
               Top = 20
@@ -607,7 +621,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
             Height = 73
             Align = alTop
             Caption = 'Coarse Grid Settings'
-            TabOrder = 2
+            TabOrder = 0
             object Label24: TLabel
               Left = 11
               Top = 20
@@ -693,16 +707,105 @@ object LDDPOptionsForm: TLDDPOptionsForm
               TabOrder = 3
             end
           end
+          object GroupBox6: TGroupBox
+            Left = 0
+            Top = 219
+            Width = 578
+            Height = 73
+            Align = alTop
+            Caption = 'Custom Grid Settings'
+            TabOrder = 3
+            object Label31: TLabel
+              Left = 11
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'X Step'
+            end
+            object Label32: TLabel
+              Left = 98
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Y Step'
+            end
+            object Label33: TLabel
+              Left = 185
+              Top = 20
+              Width = 32
+              Height = 13
+              Caption = 'Z Step'
+            end
+            object Label34: TLabel
+              Left = 272
+              Top = 20
+              Width = 70
+              Height = 13
+              Caption = 'Rotation Angle'
+            end
+            object seGridCustomX: TJvValidateEdit
+              Left = 11
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '1'
+              TabOrder = 0
+            end
+            object seGridCustomY: TJvValidateEdit
+              Left = 98
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '1'
+              TabOrder = 1
+            end
+            object seGridCustomZ: TJvValidateEdit
+              Left = 185
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '1'
+              TabOrder = 2
+            end
+            object seGridCustomAngle: TJvValidateEdit
+              Left = 272
+              Top = 39
+              Width = 81
+              Height = 21
+              CriticalPoints.MinValue = 0.100000000000000000
+              CriticalPoints.MaxValueIncluded = False
+              CriticalPoints.MinValueIncluded = True
+              TrimDecimals = True
+              DisplayFormat = dfFloat
+              DecimalPlaces = 2
+              EditText = '10'
+              TabOrder = 3
+            end
+          end
         end
       end
     end
     object TabSheet5: TTabSheet
       Caption = '&Search Paths'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 576
-      ExplicitHeight = 301
       object SearchPathsList: TListView
         Left = 0
         Top = 0
@@ -722,24 +825,20 @@ object LDDPOptionsForm: TLDDPOptionsForm
         TabOrder = 0
         ViewStyle = vsReport
         OnSelectItem = SearchPathsListSelectItem
-        ExplicitWidth = 576
       end
       object Panel5: TPanel
         Left = 0
         Top = 201
         Width = 586
-        Height = 110
+        Height = 119
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitWidth = 576
-        ExplicitHeight = 100
         object btnPathUp: TBitBtn
           Left = 261
           Top = 6
           Width = 25
           Height = 25
-          DoubleBuffered = True
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             1800000000000003000000000000000000000000000000000000FF00FFFF00FF
@@ -767,7 +866,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
             FF00FFFF00FFFF00FFFF00FFFF00FF000000000000C0C0C0FF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentDoubleBuffered = False
           TabOrder = 0
           OnClick = btnPathUpClick
         end
@@ -776,7 +874,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Top = 6
           Width = 25
           Height = 25
-          DoubleBuffered = True
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             1800000000000003000000000000000000000000000000000000FF00FFFF00FF
@@ -804,7 +901,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
             FF00FFFF00FFFF00FFFF00FF000000000000000000000000FF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
-          ParentDoubleBuffered = False
           TabOrder = 1
           OnClick = btnPathDownClick
         end
@@ -878,7 +974,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
         Left = 0
         Top = 0
         Width = 586
-        Height = 311
+        Height = 320
         Align = alClient
         Caption = 'Color Bar Colors'
         TabOrder = 0
@@ -908,7 +1004,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Left = 2
           Top = 15
           Width = 137
-          Height = 294
+          Height = 303
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
@@ -954,7 +1050,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Width = 113
           Height = 25
           Caption = '&Restore Defaults'
-          DoubleBuffered = True
           Glyph.Data = {
             36050000424D3605000000000000360400002800000010000000100000000100
             0800000000000001000000000000000000000001000000000000000000000000
@@ -998,7 +1093,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
             B900000000BABB00FDFDFDFDFDFD007879B9BABABABABA00FDFDFDFDFDFDFD00
             0079B9B9B90000FDFDFDFDFDFDFDFDFDFD00000000FDFDFDFDFDFDFDFDFDFDFD
             FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
-          ParentDoubleBuffered = False
           TabOrder = 4
           OnClick = btnColorRestoreClick
         end
@@ -1024,13 +1118,13 @@ object LDDPOptionsForm: TLDDPOptionsForm
         Left = 225
         Top = 0
         Width = 361
-        Height = 311
+        Height = 320
         Align = alRight
         Caption = 'User Defined Program Configuration'
         TabOrder = 0
         object rgStyle: TRadioGroup
           Left = 2
-          Top = 248
+          Top = 257
           Width = 357
           Height = 61
           Align = alBottom
@@ -1048,7 +1142,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Left = 2
           Top = 145
           Width = 207
-          Height = 103
+          Height = 112
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -1056,7 +1150,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
             Left = 0
             Top = 0
             Width = 207
-            Height = 103
+            Height = 112
             Align = alClient
             BevelEdges = []
             BevelInner = bvNone
@@ -1161,7 +1255,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           Left = 209
           Top = 145
           Width = 150
-          Height = 103
+          Height = 112
           Align = alClient
           BevelEdges = []
           BevelOuter = bvNone
@@ -1169,7 +1263,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           TabOrder = 3
           object btnAddExternal: TButton
             Left = 0
-            Top = 37
+            Top = 46
             Width = 150
             Height = 33
             Align = alBottom
@@ -1179,7 +1273,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
           end
           object btnDelExternal: TButton
             Left = 0
-            Top = 70
+            Top = 79
             Width = 150
             Height = 33
             Align = alBottom
@@ -1193,7 +1287,7 @@ object LDDPOptionsForm: TLDDPOptionsForm
         Left = 0
         Top = 0
         Width = 225
-        Height = 311
+        Height = 320
         Align = alClient
         ItemHeight = 13
         TabOrder = 1
@@ -1201,10 +1295,168 @@ object LDDPOptionsForm: TLDDPOptionsForm
         OnDblClick = lbxExternalDblClick
       end
     end
+    object TabSheet3: TTabSheet
+      Caption = 'E&ditor Settings'
+      ImageIndex = 5
+      object GroupBox8: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 313
+        Height = 320
+        Align = alLeft
+        Caption = 'Style Options'
+        TabOrder = 0
+        object Label17: TLabel
+          Left = 151
+          Top = 139
+          Width = 85
+          Height = 13
+          Caption = 'Background Color'
+        end
+        object Label9: TLabel
+          Left = 151
+          Top = 92
+          Width = 81
+          Height = 13
+          Caption = 'Foreground Color'
+        end
+        object Label35: TLabel
+          Left = 151
+          Top = 46
+          Width = 20
+          Height = 13
+          Caption = 'Size'
+        end
+        object AttrList: TListBox
+          Left = 8
+          Top = 16
+          Width = 137
+          Height = 252
+          ItemHeight = 13
+          Items.Strings = (
+            '0'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+            '11'
+            '12'
+            '13'
+            '14'
+            '15'
+            '16'
+            '17'
+            '18')
+          TabOrder = 0
+          OnClick = AttrListClick
+        end
+        object BackColor: TColorBox
+          Left = 151
+          Top = 158
+          Width = 145
+          Height = 22
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbCustomColor, cbPrettyNames]
+          TabOrder = 1
+          OnClick = ValueChange
+        end
+        object ForeColor: TColorBox
+          Left = 151
+          Top = 111
+          Width = 145
+          Height = 22
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbCustomColor, cbPrettyNames]
+          TabOrder = 2
+          OnClick = ValueChange
+        end
+        object GroupBox4: TGroupBox
+          Left = 151
+          Top = 186
+          Width = 145
+          Height = 82
+          Caption = 'Text Attributes'
+          TabOrder = 3
+          object cbItalic: TCheckBox
+            Left = 3
+            Top = 39
+            Width = 97
+            Height = 17
+            Caption = 'Italic'
+            TabOrder = 0
+            OnClick = ValueChange
+          end
+          object cbUnderline: TCheckBox
+            Left = 3
+            Top = 62
+            Width = 97
+            Height = 17
+            Caption = 'Underline'
+            TabOrder = 1
+            OnClick = ValueChange
+          end
+          object cbBold: TCheckBox
+            Left = 3
+            Top = 16
+            Width = 97
+            Height = 17
+            Caption = 'Bold'
+            TabOrder = 2
+            OnClick = ValueChange
+          end
+        end
+        object FontBox: TJvFontComboBox
+          Left = 151
+          Top = 16
+          Width = 145
+          Height = 23
+          DroppedDownWidth = 145
+          MaxMRUCount = 0
+          FontName = 'Courier New'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Courier New'
+          Font.Style = []
+          ItemIndex = 10
+          Options = [foAnsiOnly, foTrueTypeOnly, foScalableOnly, foWysiWyg]
+          ParentFont = False
+          Sorted = False
+          TabOrder = 4
+          OnClick = ValueChange
+        end
+        object FontSize: TComboBox
+          Left = 151
+          Top = 65
+          Width = 145
+          Height = 21
+          Style = csDropDownList
+          ItemIndex = 2
+          TabOrder = 5
+          Text = '10'
+          OnClick = ValueChange
+          Items.Strings = (
+            '6'
+            '8'
+            '10'
+            '12'
+            '14'
+            '16'
+            '18'
+            '20'
+            '24'
+            '32')
+        end
+      end
+    end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 339
+    Top = 348
     Width = 594
     Height = 37
     Align = alBottom
@@ -1220,7 +1472,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
       Height = 25
       Caption = 'OK'
       Default = True
-      DoubleBuffered = True
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
@@ -1265,7 +1516,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
         FDFDFDFDFD00B8B8B000FDFDFDFDFDFDFDFDFDFDFD00B8B0B800FDFDFDFDFDFD
         FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD}
       ModalResult = 1
-      ParentDoubleBuffered = False
       TabOrder = 0
     end
     object btnCancel: TBitBtn
@@ -1276,7 +1526,6 @@ object LDDPOptionsForm: TLDDPOptionsForm
       Anchors = [akLeft, akTop, akRight, akBottom]
       Cancel = True
       Caption = 'Cancel'
-      DoubleBuffered = True
       Glyph.Data = {
         36050000424D3605000000000000360400002800000010000000100000000100
         0800000000000001000000000000000000000001000000010000000000000000
@@ -1321,19 +1570,18 @@ object LDDPOptionsForm: TLDDPOptionsForm
         5757004F5757570E00FDFDFD00575757575700004E57574F00FDFDFDFD005757
         5700FDFD00000000FDFDFDFDFDFD000000FDFDFDFDFDFDFDFDFD}
       ModalResult = 2
-      ParentDoubleBuffered = False
       TabOrder = 1
     end
   end
   object ColorDialog1: TColorDialog
-    Left = 72
-    Top = 336
+    Left = 104
+    Top = 328
   end
   object OptionImages: TImageList
-    Left = 40
-    Top = 336
+    Left = 32
+    Top = 328
     Bitmap = {
-      494C0101020004001C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000400440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1471,5 +1719,15 @@ object LDDPOptionsForm: TLDDPOptionsForm
       FFC1E00300000000FFC1E00100000000FFE0C00100000000FFE0C00100000000
       FFF1E0C300000000FFFFF1FF0000000000000000000000000000000000000000
       000000000000}
+  end
+  object FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Options = [fdAnsiOnly, fdTrueTypeOnly, fdFixedPitchOnly, fdForceFontExist, fdNoVectorFonts, fdWysiwyg, fdScalableOnly]
+    Left = 168
+    Top = 328
   end
 end

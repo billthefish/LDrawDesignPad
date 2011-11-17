@@ -1,20 +1,24 @@
-unit SciScintillaLDDP;
+unit ScintillaLDDP;
 
 interface
 
 uses
-  SysUtils, Classes, Controls, SciScintillaBase, SciScintillaMemo, SciScintilla,
-  DATBase, lddpoptions;
+  SysUtils, Classes, Controls, DScintillaCustom, DScintilla, DATBase, DATModel,
+  lddpoptions;
 
 type
-  TLDDPGridSetting = (gsCoarse, gsMedium, gsFine);
+  TLDDPGridSetting = (gsCoarse, gsMedium, gsFine, gsCustom);
 
-  TScintillaLDDP = class(TScintilla)
+  TScintillaLDDP = class;
+
+  TScintillaLDDP = class(TDScintilla)
   private
     FLDDPOptions: TLDDPOptions;
     FGridSetting: TLDDPGridSetting;
-    procedure SetLDDPOptions(const Value: TLDDPOptions);
+    FDATModel: TDATModel;
+
     procedure SetGridSetting(const Value: TLDDPGridSetting);
+    function GetSelLength: Integer;
 
   protected
     { Protected declarations }
@@ -44,18 +48,57 @@ type
     procedure GridMoveY(Negative: Boolean = False);
     procedure GridMoveZ(Negative: Boolean = False);
     procedure SnapToGrid;
+    procedure IndentSelection;
+    procedure UnindentSelection;
+    procedure CommentSelection;
+    procedure UncommentSelection;
+    procedure SetEditorOptions;
+    procedure SetEditorStyles;
+
+    // These are properties in Scintilla or one that I've come to expect from
+    // edit type controls
+    property SelectionStart: Integer read GetSelectionStart write SetSelectionStart;
+    property SelLength: Integer read GetSelLength;
+    property SelectionEnd: Integer read GetSelectionEnd write SetSelectionEnd;
+    property SelText: string read GetSelText write ReplaceSel;
+    property Modified: Boolean read GetModify;
 
   published
-    property LDDPOptions: TLDDPOptions read FLDDPOptions write SetLDDPOptions;
+    property LDDPOptions: TLDDPOptions read FLDDPOptions write FLDDPOptions;
     property GridSetting: TLDDPGridSetting read FGridSetting write SetGridSetting;
+
+    property MultipleSelection: Boolean read GetMultipleSelection write SetMultipleSelection;
   end;
+
+//Until I get the LDraw lexer added to the Scintilla project these consts are needed
+const
+  SCLEX_LDRAW = 102;
+  SCE_LDRAW_DEFAULT = 0;
+  SCE_LDRAW_COMMENT = 1;
+  SCE_LDRAW_SUBFILE = 2;
+  SCE_LDRAW_LINE = 3;
+  SCE_LDRAW_TRIANGLE = 4;
+  SCE_LDRAW_QUAD = 5;
+  SCE_LDRAW_OPLINE = 6;
+  SCE_LDRAW_COLOR = 7;
+  SCE_LDRAW_POSITION = 8;
+  SCE_LDRAW_TRIPLE1 = 9;
+  SCE_LDRAW_TRIPLE2 = 10;
+  SCE_LDRAW_TRIPLE3 = 11;
+  SCE_LDRAW_TRIPLE4 = 12;
+  SCE_LDRAW_MATRIX1 = 13;
+  SCE_LDRAW_MATRIX2 = 14;
+  SCE_LDRAW_MATRIX3 = 15;
+  SCE_LDRAW_OFFICIAL_FILENAME = 16;
+  SCE_LDRAW_UNOFFICIAL_FILENAME = 17;
+  SCE_LDRAW_META = 18;
 
 procedure Register;
 
 implementation
 
 uses
-  DATModel, DATUtils, SciStreamDefault;
+  DATUtils;
 
 procedure TScintillaLDDP.SelectLine(Line: Integer);
 begin
@@ -64,8 +107,7 @@ end;
 
 procedure TScintillaLDDP.SelectLines(StartLine, EndLine: Integer);
 begin
-  SetCurrentPos(GetLineEndPosition(endline));
-  SetAnchor(PositionFromLine(startline));
+  SetSelection(GetLineEndPosition(endline), PositionFromLine(startline));
 end;
 
 procedure TScintillaLDDP.ExpandSelection(out startln, endln: Integer);
@@ -78,10 +120,10 @@ var
   startline, endline: Integer;
 
 begin
-  startline := LineFromPosition(SelStart);
+  startline := LineFromPosition(SelectionStart);
 
   if SelLength > 0 then
-    endline := LineFromPosition(SelStart + SelLength - 1)
+    endline := LineFromPosition(SelectionStart + SelLength - 1)
   else
     endline := startline;
 
@@ -101,16 +143,36 @@ begin
   Result := LineFromPosition(GetCurrentPos) + 1;
 end;
 
+procedure TScintillaLDDP.CommentSelection;
+var
+  i, startline, endline: integer;
+
+begin
+  //Expand Selection block
+  ExpandSelection(startline, endline);
+
+  FDATModel.ModelText := SelText;
+
+  for i := 0 to FDATModel.Count - 1 do
+    FDATModel.CommentLine(i);
+
+  SelText := FDATModel.ModelText;
+  SelectLines(startline, endline);
+end;
+
 constructor TScintillaLDDP.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  StreamClass := TSciStreamDefault;
   FLDDPOptions := TLDDPOptions.Create;
+  FDATModel := TDATModel.Create;
 end;
 
 destructor TScintillaLDDP.Destroy;
 begin
-  FLDDPOptions.Free;
+  if Assigned(FLDDPOptions) then
+    FLDDPOptions.Free;
+  if Assigned(FDATModel) then
+    FDATModel.Free;
   inherited;
 end;
 
@@ -126,7 +188,7 @@ begin
     if LDDPOptions.OnlyRoundDuringAutoRound then
       DModel := TDATModel.Create
     else
-      DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+      DModel := CreateDATModel(FLDDPOptions.PositionDecAcc, FLDDPOptions.RotationDecAcc);
 
     DModel.ModelText := SelText;
 
@@ -149,7 +211,7 @@ begin
     if LDDPOptions.OnlyRoundDuringAutoRound then
       DModel := TDATModel.Create
     else
-      DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+      DModel := CreateDATModel(FLDDPOptions.PositionDecAcc, FLDDPOptions.RotationDecAcc);
 
     ExpandSelection(startline, endline);
 
@@ -180,7 +242,7 @@ begin
   if LDDPOptions.OnlyRoundDuringAutoRound then
     DModel := TDATModel.Create
   else
-    DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+    DModel := CreateDATModel(FLDDPOptions.PositionDecAcc, FLDDPOptions.RotationDecAcc);
 
   DModel.ModelText := SelText;
 
@@ -198,21 +260,52 @@ var
 
 begin
   ExpandSelection(startline,endline);
-  DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+  DModel := CreateDATModel(FLDDPOptions.PositionDecAcc, FLDDPOptions.RotationDecAcc);
   DModel.ModelText := SelText;
   SelText := DModel.ModelText;
   SelectLines(startline, endline);
 end;
 
+procedure TScintillaLDDP.SetEditorOptions;
+begin
+  SetEditorStyles;
+end;
+
+procedure TScintillaLDDP.SetEditorStyles;
+var
+  i: Integer;
+  Styles: TStringList;
+
+begin
+  Styles := TStringList.Create;
+  try
+    for i := 0 to 18 do
+    begin
+      Styles.CommaText := LDDPOptions.EditorStyles[i];
+      if StyleGetFont(i) <> Styles[0] then
+        StyleSetFont(i, Styles[0]);
+      if StyleGetSize(i) <> StrToInt(Styles[1]) then
+        StyleSetSize(i, StrToInt(Styles[1]));
+      if StyleGetFore(i) <> StrToInt(Styles[2]) then
+        StyleSetFore(i, StrToInt(Styles[2]));
+      if StyleGetBack(i) <> StrToInt(Styles[3]) then
+        StyleSetBack(i, StrToInt(Styles[3]));
+      if StyleGetBold(i) <> StrToBool(Styles[4]) then
+        StyleSetBold(i, StrToBool(Styles[4]));
+      if StyleGetItalic(i) <> StrToBool(Styles[5]) then
+        StyleSetItalic(i, StrToBool(Styles[5]));
+      if StyleGetUnderLine(i) <> StrToBool(Styles[6]) then
+        StyleSetUnderline(i, StrToBool(Styles[6]));
+    end;
+  finally
+    Styles.Free;
+  end;
+  Colourise(0, -1);
+end;
+
 procedure TScintillaLDDP.SetGridSetting(const Value: TLDDPGridSetting);
 begin
   FGridSetting := Value;
-end;
-
-procedure TScintillaLDDP.SetLDDPOptions(const Value: TLDDPOptions);
-begin
-  if Assigned(Value) then
-    FLDDPOptions.Assign(Value);
 end;
 
 procedure TScintillaLDDP.SetLineColor(line, color: Integer);
@@ -227,7 +320,7 @@ begin
     if DLine is TDATElement then
     begin
       (DLine as TDATElement).Color := color;
-      (DLine as TDATElement).PositionDecimalPlaces := FLDDPOptions.PostionDecAcc;
+      (DLine as TDATElement).PositionDecimalPlaces := FLDDPOptions.PositionDecAcc;
       (DLine as TDATElement).RotationDecimalPlaces := FLDDPOptions.RotationDecAcc;
       Lines[line] := (DLine as TDATElement).DATString;
     end;
@@ -245,7 +338,7 @@ var
 begin
   ExpandSelection(startline, endline);
 
-  DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+  DModel := CreateDATModel(FLDDPOptions.PositionDecAcc, FLDDPOptions.RotationDecAcc);
   DModel.ModelText := SelText;
 
   for i := 0 to DModel.Count - 1 do
@@ -299,7 +392,7 @@ begin
   if LDDPOptions.OnlyRoundDuringAutoRound then
     DModel := TDATModel.Create
   else
-    DModel := CreateDATModel(FLDDPOptions.PostionDecAcc, FLDDPOptions.RotationDecAcc);
+    DModel := CreateDATModel(FLDDPOptions.PositionDecAcc, FLDDPOptions.RotationDecAcc);
 
   DModel.ModelText := SelText;
 
@@ -308,6 +401,36 @@ begin
   SelText := DModel.ModelText;
   SelectLines(startline, endline);
   DModel.Free;
+end;
+
+procedure TScintillaLDDP.UncommentSelection;
+var
+  i, startline, endline: integer;
+
+begin
+  //Expand Selection block
+  ExpandSelection(startline, endline);
+
+  FDATModel.ModelText := SelText;
+
+  for i := 0 to FDATModel.Count - 1 do
+    FDATModel.UncommentLine(i);
+
+  SelText := FDATModel.ModelText;
+  SelectLines(startline, endline);
+end;
+
+procedure TScintillaLDDP.UnindentSelection;
+var
+  startline, endline, i: Integer;
+
+begin
+  ExpandSelection(startline, endline);
+  BeginUndoAction;
+  for i := startline to endline do
+    if GetLineIndentation(i) - 1 >= 0 then
+      SetLineIndentation(i, GetLineIndentation(i) - 1);
+  EndUndoAction;
 end;
 
 function TScintillaLDDP.GetLineColor(line: Integer): Integer;
@@ -324,12 +447,18 @@ begin
   DLine.Free;
 end;
 
+function TScintillaLDDP.GetSelLength: Integer;
+begin
+  Result := SelectionStart - SelectionEnd;
+end;
+
 function TScintillaLDDP.GridAngle: Double;
 begin
   case GridSetting of
     gsCoarse: Result := LDDPOptions.GridCoarseAngle;
     gsMedium: Result := LDDPOptions.GridMedAngle;
     gsFine: Result := LDDPOptions.GridFineAngle;
+    gsCustom: Result := LDDPOptions.GridCustomAngle;
     else Result := 90;
   end;
 end;
@@ -388,6 +517,7 @@ begin
     gsCoarse: Result := LDDPOptions.GridCoarseX;
     gsMedium: Result := LDDPOptions.GridMedX;
     gsFine: Result := LDDPOptions.GridFineX;
+    gsCustom: Result := LDDPOptions.GridCustomX;
     else Result := 10;
   end;
 end;
@@ -398,6 +528,7 @@ begin
     gsCoarse: Result := LDDPOptions.GridCoarseY;
     gsMedium: Result := LDDPOptions.GridMedY;
     gsFine: Result := LDDPOptions.GridFineY;
+    gsCustom: Result := LDDPOptions.GridCustomY;
     else Result := 10;
   end;
 end;
@@ -408,8 +539,21 @@ begin
     gsCoarse: Result := LDDPOptions.GridCoarseZ;
     gsMedium: Result := LDDPOptions.GridMedZ;
     gsFine: Result := LDDPOptions.GridFineZ;
+    gsCustom: Result := LDDPOptions.GridCustomZ;
     else Result := 10;
   end;
+end;
+
+procedure TScintillaLDDP.IndentSelection;
+var
+  startline, endline, i: Integer;
+
+begin
+  ExpandSelection(startline, endline);
+  BeginUndoAction;
+  for i := startline to endline do
+    SetLineIndentation(i, GetLineIndentation(i) + 1);
+  EndUndoAction;
 end;
 
 procedure Register;

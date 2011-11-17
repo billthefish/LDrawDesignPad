@@ -4,9 +4,19 @@
 			<MainSource>LDDesignPad.DPR</MainSource>
 			<Config Condition="'$(Config)'==''">Debug</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-			<ProjectVersion>12.0</ProjectVersion>
+			<ProjectVersion>13.4</ProjectVersion>
+			<FrameworkType>VCL</FrameworkType>
+			<Base>True</Base>
+			<Platform Condition="'$(Platform)'==''">Win32</Platform>
+			<TargetedPlatforms>1</TargetedPlatforms>
+			<AppType>Application</AppType>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+			<Base_Win32>true</Base_Win32>
+			<CfgParent>Base</CfgParent>
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
@@ -19,8 +29,23 @@
 			<CfgParent>Base</CfgParent>
 			<Base>true</Base>
 		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+			<Cfg_2_Win32>true</Cfg_2_Win32>
+			<CfgParent>Cfg_2</CfgParent>
+			<Cfg_2>true</Cfg_2>
+			<Base>true</Base>
+		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
-			<DCC_UsePackage>vclx;vcl;vclimg;dbrtl;Rave77VCL;bdertl;rtl;vclactnband;vcldb;vcldbx;vcltouch;xmlrtl;dsnap;dsnapcon;TeeUI;TeeDB;Tee;vclib;ibxpress;adortl;IndyCore;IndySystem;IndyProtocols;inet;intrawebdb_100_140;Intraweb_100_140;VclSmp;vclie;inetdb;webdsnap;websnap;inetdbbde;inetdbxpress;soaprtl;vclribbon;DbxCommonDriver;DbxClientDriver;DBXInterBaseDriver;DBXMySQLDriver;dbexpress;dbxcds;Jcl;JclVcl;JvCoreD14R;JvSystemD14R;JvStdCtrlsD14R;JvAppFrmD14R;JvBandsD14R;JvDBD14R;JvDlgsD14R;JvBDED14R;JvCmpD14R;JvCryptD14R;JvCtrlsD14R;JvCustomD14R;JvDockingD14R;JvDotNetCtrlsD14R;JvEDID14R;JvGlobusD14R;JvHMID14R;JvInterpreterD14R;JvJansD14R;JvManagedThreadsD14R;JvMMD14R;JvNetD14R;JvPageCompsD14R;JvPluginD14R;JvPrintPreviewD14R;JvRuntimeDesignD14R;JvTimeFrameworkD14R;JvValidatorsD14R;JvWizardD14R;JvXPCtrlsD14R;SynEdit_R2010;PLDDPSynEdit;LDDPDocTabs;LDDPDialogs</DCC_UsePackage>
+			<Icon_MainIcon>LDDesignPad_Icon1.ico</Icon_MainIcon>
+			<Manifest_File>None</Manifest_File>
+			<VerInfo_Locale>1033</VerInfo_Locale>
+			<VerInfo_MinorVer>1</VerInfo_MinorVer>
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=2.1.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+			<VerInfo_MajorVer>2</VerInfo_MajorVer>
+			<DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_UnitSearchPath>..\Source\Units;..\Source\Forms;..\DAT Tools;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UsePackage>vclx;vcl;vclimg;dbrtl;Rave77VCL;bdertl;rtl;vclactnband;vcldb;vcldbx;vcltouch;xmlrtl;dsnap;dsnapcon;TeeUI;TeeDB;Tee;vclib;ibxpress;adortl;IndyCore;IndySystem;IndyProtocols;inet;intrawebdb_100_140;Intraweb_100_140;VclSmp;vclie;inetdb;webdsnap;websnap;inetdbbde;inetdbxpress;soaprtl;vclribbon;DbxCommonDriver;DbxClientDriver;DBXInterBaseDriver;DBXMySQLDriver;dbexpress;dbxcds;Jcl;JclVcl;JvCoreD14R;JvSystemD14R;JvStdCtrlsD14R;JvAppFrmD14R;JvBandsD14R;JvDBD14R;JvDlgsD14R;JvBDED14R;JvCmpD14R;JvCryptD14R;JvCtrlsD14R;JvCustomD14R;JvDockingD14R;JvDotNetCtrlsD14R;JvEDID14R;JvGlobusD14R;JvHMID14R;JvInterpreterD14R;JvJansD14R;JvManagedThreadsD14R;JvMMD14R;JvNetD14R;JvPageCompsD14R;JvPluginD14R;JvPrintPreviewD14R;JvRuntimeDesignD14R;JvTimeFrameworkD14R;JvValidatorsD14R;JvWizardD14R;JvXPCtrlsD14R;SynEdit_R2010;LDDPDocTabs;LDDPDialogs;$(DCC_UsePackage)</DCC_UsePackage>
 			<DCC_DcuOutput>..\Current Build\DCU\</DCC_DcuOutput>
 			<DCC_ExeOutput>..\Current Build\</DCC_ExeOutput>
 			<DCC_BplOutput>..\Current Build\DCU\</DCC_BplOutput>
@@ -28,13 +53,17 @@
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_DependencyCheckOutputName>..\Current Build\LDDesignPad.exe</DCC_DependencyCheckOutputName>
-			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_Platform>x86</DCC_Platform>
 			<DCC_N>true</DCC_N>
 			<DCC_S>false</DCC_S>
 			<DCC_K>false</DCC_K>
 			<DCC_E>false</DCC_E>
 			<DCC_F>false</DCC_F>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base_Win32)'!=''">
+			<DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
 			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -45,8 +74,12 @@
 		<PropertyGroup Condition="'$(Cfg_2)'!=''">
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=2.1.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=;Comments=</VerInfo_Keys>
+		</PropertyGroup>
 		<ItemGroup>
-			<DelphiCompile Include="LDDesignPad.DPR">
+			<DelphiCompile Include="$(MainSource)">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
 			<DCCReference Include="..\DAT Tools\DATBase.pas"/>
@@ -65,9 +98,6 @@
 			</DCCReference>
 			<DCCReference Include="..\Source\Forms\SubpartForm.pas">
 				<Form>LDDPSubFileDlg</Form>
-			</DCCReference>
-			<DCCReference Include="..\Source\Forms\errorbar.pas">
-				<Form>frErrorWindow</Form>
 			</DCCReference>
 			<DCCReference Include="..\Source\Forms\MainFrm.pas">
 				<Form>LDDPMain</Form>
@@ -90,23 +120,21 @@
 			<DCCReference Include="..\Source\Forms\ColorReplaceFrm.pas">
 				<Form>LDDPColorReplaceForm</Form>
 			</DCCReference>
-			<DCCReference Include="..\Source\Units\EditorDoc.pas"/>
-			<DCCReference Include="..\Source\Forms\HighlighterPropDlg.pas">
-				<Form>LDDPHighterEditorPropertiesDlg</Form>
-			</DCCReference>
-			<BuildConfiguration Include="Base">
-				<Key>Base</Key>
-			</BuildConfiguration>
+			<DCCReference Include="..\Source\Units\ScintillaLDDP.pas"/>
+			<DCCReference Include="..\Source\Units\LDDPHelperTypes.pas"/>
 			<BuildConfiguration Include="Debug">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
 			</BuildConfiguration>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_1</Key>
 				<CfgParent>Base</CfgParent>
 			</BuildConfiguration>
 		</ItemGroup>
-		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
 		<ProjectExtensions>
 			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
 			<Borland.ProjectType/>
@@ -148,11 +176,16 @@
 						<VersionInfoKeys Name="Comments"/>
 					</VersionInfoKeys>
 					<Excluded_Packages>
-						<Excluded_Packages Name="$(BDS)\bin\dcloffice2k140.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-						<Excluded_Packages Name="$(BDS)\bin\dclofficexp140.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
 					</Excluded_Packages>
 				</Delphi.Personality>
+				<Platforms>
+					<Platform value="Win32">True</Platform>
+				</Platforms>
+				<ModelSupport>False</ModelSupport>
 			</BorlandProject>
 			<ProjectFileVersion>12</ProjectFileVersion>
 		</ProjectExtensions>
+		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
 	</Project>

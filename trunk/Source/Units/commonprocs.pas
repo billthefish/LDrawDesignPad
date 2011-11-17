@@ -1,4 +1,4 @@
-{These sources are copyright (C) 2003-2010 Orion Pobursky.
+{These sources are copyright (C) 2003-2011 Orion Pobursky.
 
 This source is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ unit commonprocs;
 interface
 
 uses
-  DATModel, Menus, Classes;
+  DATModel, Menus;
 
 function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
 function StripEndingCRLF(const str: string): string;
@@ -31,7 +31,7 @@ function LDDPCreateDATModel: TDATModel;
 implementation
 
 uses
-  MainFrm, SysUtils, DATUtils;
+  MainFrm, SysUtils, Classes, DATUtils;
 
 function CreateMenuItem(const Caption, Hint: string; ParentMenuItem: TMenuItem): TMenuItem;
 
@@ -73,7 +73,7 @@ begin
   if LDDPMain.editor.LDDPOptions.OnlyRoundDuringAutoRound then
     Result := TDATModel.Create
   else
-    Result := CreateDATModel(LDDPMain.editor.LDDPOptions.PostionDecAcc,
+    Result := CreateDATModel(LDDPMain.editor.LDDPOptions.PositionDecAcc,
                              LDDPMain.editor.LDDPOptions.RotationDecAcc);
 end;
 
